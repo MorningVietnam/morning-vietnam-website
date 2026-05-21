@@ -249,7 +249,7 @@ export const tours: Tour[] = [
     },
     valueAnchor: {
       "1day": {
-        headline: "$52. Twelve hours in the places that shaped a nation.",
+        headline: "$61. Twelve hours in the places that shaped a nation.",
         paragraphs: [
           "Transport Hanoi return, all entry fees (Mausoleum complex, K9 Đá Chông, Ba Vì National Park), lunch at Bình Hoa Quán, dedicated host for the day, Unlock Challenge, Welcome pack. Nothing to pay on arrival.",
           "The standard Ba Đình city tour charges $20–35 for a guide who walks you past the rope barriers. This goes further — out of Hanoi, into Ba Vì, to places most tours don't cover. The day ends at a mountain temple built by the people, not the state.",
@@ -263,7 +263,7 @@ export const tours: Tour[] = [
         ],
       },
       "2d1n": {
-        headline: "$102. Two days — the mausoleum, the secret forest base, a night in Ba Vì.",
+        headline: "$146. Two days — the mausoleum, the secret forest base, a night in Ba Vì.",
         paragraphs: [
           "Everything in the 1-day, plus: overnight at Amour Resort Ba Vì, breakfast + dinner Day 2, and a morning hike through tropical forest inside Ba Vì National Park. Different quality of day when you're not racing back to Hanoi.",
           "Ba Vì at dawn — before the resort guests are up and the trails are still empty — is a completely different place from the afternoon visit. The 2D1N is built around that.",
@@ -544,7 +544,7 @@ export const tours: Tour[] = [
       closingLine: "Two days. One mountain pass. A valley most tourists will never find.",
     },
     valueAnchor: {
-      headline: "From $119. For a route that exists outside the tourist circuit entirely.",
+      headline: "From $185. For a route that exists outside the tourist circuit entirely.",
       paragraphs: [
         "There is no Klook listing for O Quy Hồ. No GetYourGuide page for Sì Thâu Chải. The glass bridge at Rồng Mây only opened in 2023 and still has no English-language operator running it properly. We built this route because the northwest deserves better than what the standard Sapa circuit offers.",
         "The price covers sleeper bus both ways, transport all day, all meals, a fully-hosted village homestay, jungle trek with trail lunch, glass bridge entry, Unlock Challenge, and a dedicated host for 48 hours. The only thing not included is whatever you buy at the Sa Pa night market on Day 2.",
@@ -824,10 +824,10 @@ export const tours: Tour[] = [
     },
     valueAnchor: {
       "1day": {
-        headline: "$79. Work out what that covers.",
+        headline: "$85. Work out what that covers.",
         paragraphs: [
           "Transport from Hanoi (return), lunch, dinner, all activity fees, cave entrance, dedicated host for 12 hours. The Unlock Challenge included.",
-          "Most day tours to Mai Châu charge $40–50 for a bus seat, a buffet, and a photo stop. This is what the other $29–39 buys: actual access, small group, and a guide who knows the valley personally.",
+          "Most day tours to Mai Châu charge $40–50 for a bus seat, a buffet, and a photo stop. This is what the other $35–45 buys: actual access, small group, and a guide who knows the valley personally.",
           "10% group discount for 4+ people booking direct.",
         ],
         compareTable: [
@@ -839,7 +839,7 @@ export const tours: Tour[] = [
         ],
       },
       "2d1n": {
-        headline: "$140. Two days, everything included — do the math.",
+        headline: "$145. Two days, everything included — do the math.",
         paragraphs: [
           "Transport (return), all meals Day 1 lunch through Day 2 lunch, homestay accommodation, all activities across both days, dedicated host. Nothing to pay on arrival.",
           "A comparable overnight tour elsewhere charges $80–100 for transport + room alone. Content — the cave, the waterfall, the challenge, the workshop — is extra, or absent.",
@@ -854,7 +854,7 @@ export const tours: Tour[] = [
         ],
       },
       "3d2n": {
-        headline: "$205. Three days, two valleys, two cultures. The math is embarrassing.",
+        headline: "$225. Three days, two valleys, two cultures. The math is embarrassing.",
         paragraphs: [
           "Everything in the 2D1N, plus: a second night at A La Homestay in Pà Cò, all Day 3 meals, Hmong paper workshop, cloud hunt at Hang Kia, Cao Phong orange farm stop. Both homestays included.",
           "You'd spend more than this booking accommodation alone across three nights in the north — without the transport, the host, or any of the access.",
@@ -1085,7 +1085,7 @@ export const tours: Tour[] = [
 
     valueAnchor: {
       "3d2n": {
-        headline: "$246. Three days, two homestays, a trek nobody else is running. Do the math.",
+        headline: "Three days. Two homestays. A jungle trek no operator has built before.",
         paragraphs: [
           "Transport Hanoi return, all meals Day 1 lunch through Day 3 dinner, two nights accommodation (Homestay Trường Huy + A La Pà Cò), all activity and entrance fees, Unlock Challenge, dedicated host for 3 days. Nothing to decide or pay on arrival.",
           "The Phiêng Cành → Hang Táu trek alone isn't something you can book independently — it needs a local guide who knows the route, xe ôm coordination at Hang Táu, and timing built around the rest of the itinerary. That's what the host handles.",

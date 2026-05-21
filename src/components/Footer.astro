@@ -1,0 +1,344 @@
+---
+const year = new Date().getFullYear();
+const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: same form ID as NotifyPopup, or create separate "newsletter" form
+---
+
+<footer class="site-footer2">
+  <!-- ZONE 1: Heading + Subscribe + Nav columns -->
+  <div class="site-footer2__top">
+    <div class="container site-footer2__top-grid">
+      <!-- Left: heading + subscribe -->
+      <div class="site-footer2__left">
+        <h2 class="site-footer2__heading">
+          Vietnam deeper.<br/>Horizons wider.
+        </h2>
+        <p class="site-footer2__sub">Join the list — first dibs on new tours, real stories from the road.</p>
+        <form
+          class="site-footer2__form"
+          action={`https://formspree.io/f/${FORMSPREE_ID}`}
+          method="POST"
+        >
+          <input type="hidden" name="_subject" value="Morning Vietnam — Newsletter signup" />
+          <label for="footer-email" class="sr-only">Email address</label>
+          <input
+            type="email"
+            id="footer-email"
+            name="email"
+            required
+            placeholder="your@email.com"
+            autocomplete="email"
+          />
+          <button type="submit" class="site-footer2__submit">Subscribe</button>
+        </form>
+        <p class="site-footer2__form-success" hidden>You're on the list ✓</p>
+      </div>
+
+      <!-- Right: 4 nav columns -->
+      <div class="site-footer2__nav">
+        <div class="site-footer2__col">
+          <h3>Tours</h3>
+          <ul>
+            <li><a href="/tours">All tours</a></li>
+            <li><a href="/tours?region=north">North Vietnam</a></li>
+            <li><a href="/tours?region=soon">Coming soon</a></li>
+          </ul>
+        </div>
+        <div class="site-footer2__col">
+          <h3>Explore</h3>
+          <ul>
+            <li><a href="/explore/about">About us</a></li>
+            <li><a href="/explore/vietnam-facts">Vietnam facts</a></li>
+            <li><a href="/explore/faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="site-footer2__col">
+          <h3>Help</h3>
+          <ul>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="mailto:good@morningvietnam.co">Email us</a></li>
+            <li><a href="https://wa.me/84961836611" target="_blank" rel="noopener">WhatsApp</a></li>
+          </ul>
+        </div>
+        <div class="site-footer2__col">
+          <h3>Socials</h3>
+          <ul>
+            <li><a href="https://www.instagram.com/morningvietnam.local" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            <li><a href="https://www.facebook.com/morningvietnam.local" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+            <li><a href="https://www.tiktok.com/@morningvietnam.local" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE 2: giant logo image + copyright -->
+  <div class="site-footer2__bottom">
+    <div class="site-footer2__logo-zone" aria-hidden="true">
+      <img
+        src="/secondary-lightcyan.png"
+        alt=""
+        class="site-footer2__logo-img"
+        loading="lazy"
+      />
+    </div>
+    <div class="container site-footer2__bottom-row">
+      <p class="site-footer2__copy">© {year} Morning Vietnam Co. Ltd. All rights reserved.</p>
+      <p class="site-footer2__copy">Travel agency business license number: 01-3135/2026/CDLQGVN-GP LHQT</p>
+      <div class="site-footer2__legal">
+        <a href="#">Privacy policy</a>
+        <a href="#">Terms & conditions</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Newsletter form AJAX
+  const ff = document.querySelector('.site-footer2__form') as HTMLFormElement | null;
+  const fs = document.querySelector('.site-footer2__form-success') as HTMLElement | null;
+  ff?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(ff.action, {
+        method: 'POST',
+        body: new FormData(ff),
+        headers: { Accept: 'application/json' }
+      });
+      if (res.ok) {
+        ff.style.display = 'none';
+        fs?.removeAttribute('hidden');
+      }
+    } catch {}
+  });
+
+  // Logo jump-from-bottom when nav section scrolls into view
+  const logoImg = document.querySelector('.site-footer2__logo-img');
+  const footerNav = document.querySelector('.site-footer2__nav');
+  if (logoImg && footerNav) {
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        logoImg.classList.add('is-visible');
+        obs.disconnect();
+      }
+    }, { threshold: 0.25 });
+    obs.observe(footerNav);
+  }
+</script>
+
+<style>
+  .site-footer2 {
+    background: var(--color-java);
+    color: var(--color-light-cyan);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Zone 1 ───────────────────────── */
+  .site-footer2__top {
+    padding: 96px 0 64px;
+  }
+
+  .site-footer2__top-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.8fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .site-footer2__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 3.5vw, 50px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--color-light-cyan);
+    margin-bottom: 24px;
+  }
+
+  .site-footer2__sub {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(217, 247, 245, 0.8);
+    margin-bottom: 28px;
+    max-width: 360px;
+  }
+
+  .site-footer2__form {
+    display: flex;
+    gap: 0;
+    max-width: 420px;
+    background: rgba(217, 247, 245, 0.14);
+    border: 1.5px solid rgba(217, 247, 245, 0.35);
+    border-radius: 100px;
+    padding: 4px;
+  }
+
+  .site-footer2__form input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px 20px;
+    color: var(--color-light-cyan);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    min-width: 0;
+  }
+
+  .site-footer2__form input::placeholder {
+    color: rgba(217, 247, 245, 0.55);
+  }
+
+  .site-footer2__submit {
+    background: var(--color-nordic);
+    color: var(--color-light-cyan);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 100px;
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .site-footer2__submit:hover {
+    background: #000;
+  }
+
+  .site-footer2__form-success {
+    margin-top: 12px;
+    color: var(--color-light-cyan);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* Nav columns */
+  .site-footer2__nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .site-footer2__col h3 {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-light-cyan);
+    margin-bottom: 16px;
+    opacity: 0.6;
+  }
+
+  .site-footer2__col ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .site-footer2__col a {
+    font-size: 14px;
+    font-family: 'Google Sans', var(--font-heading), sans-serif;
+    font-weight: 700;
+    color: var(--color-light-cyan);
+    opacity: 0.85;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+  }
+
+  .site-footer2__col a:hover {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  /* ── Zone 2 ───────────────────────── */
+  .site-footer2__bottom {
+    border-top: 1px solid rgba(217, 247, 245, 0.18);
+    overflow: hidden;
+  }
+
+  .site-footer2__logo-zone {
+    width: 100%;
+    padding: 40px 0 0;
+    overflow: hidden;
+  }
+
+  @keyframes logoJump {
+    from { transform: translateY(110%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .site-footer2__logo-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform: translateY(110%);
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .site-footer2__logo-img.is-visible {
+    animation: logoJump 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .site-footer2__bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0 36px;
+  }
+
+  .site-footer2__copy {
+    font-size: 13px;
+    color: rgba(217, 247, 245, 0.65);
+  }
+
+  .site-footer2__legal {
+    display: flex;
+    gap: 24px;
+  }
+
+  .site-footer2__legal a {
+    font-size: 13px;
+    color: rgba(217, 247, 245, 0.65);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .site-footer2__legal a:hover {
+    color: var(--color-light-cyan);
+  }
+
+  /* ── Responsive ───────────────────── */
+  @media (max-width: 960px) {
+    .site-footer2__top-grid {
+      grid-template-columns: 1fr;
+      gap: 56px;
+    }
+    .site-footer2__nav {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 24px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .site-footer2__top { padding: 64px 0 48px; }
+    .site-footer2__form { max-width: 100%; }
+    .site-footer2__logo-zone { padding-top: 24px; }
+    .site-footer2__bottom-row {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+    .site-footer2__legal { justify-content: center; }
+  }
+</style>

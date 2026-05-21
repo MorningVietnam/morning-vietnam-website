@@ -1,17 +1,1324 @@
 ---
+// TODO: Replace placeholder testimonials with real reviews from Google/TripAdvisor when available
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Marquee from '../components/Marquee.astro';
+import { tours } from '../data/tours.ts';
 
+const featuredTours = tours.filter(t => !t.comingSoon).slice(0, 3);
+
+const team = [
+  { image: "/team/tung.png",    name: "Tùng",     role: "Co-founder", quote: "If there's a shortcut through the mountains, I've probably walked it twice." },
+  { image: "/team/the-anh.png", name: "Thế Anh",  role: "Co-founder", quote: "The best stories aren't in guidebooks. They're at the dinner table." },
+  { image: "/team/son.png",     name: "Sơn",      role: "",           quote: "You won't notice the little things I prepare. But you'll feel them." },
+  { image: "/team/ha.png",      name: "Hà",       role: "",           quote: "If you're not smiling yet, give me five minutes." },
+  { image: "/team/my.png",      name: "My",       role: "",           quote: "Life's too short to be serious on an adventure. Let's play." },
+];
+
+const regions = [
+  {
+    name: "North Vietnam",
+    sub: "Starting here — Hanoi hub",
+    image: "https://images.unsplash.com/photo-1528127269322-539801943592?w=900&q=80",
+    href: "/tours",
+    status: "available",
+  },
+  {
+    name: "Central Vietnam",
+    sub: "Hue · Da Nang · Hoi An",
+    image: "https://images.unsplash.com/photo-1568775791746-bcc117bcb312?w=900&q=80",
+    href: "/tours",
+    status: "soon",
+  },
+  {
+    name: "South Vietnam",
+    sub: "Mekong Delta · HCMC",
+    image: "https://images.unsplash.com/photo-1589562337460-9d825d2cd5a2?w=900&q=80",
+    href: "/tours",
+    status: "soon",
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title="Home"
+  description="Morning Vietnam designs adventure journeys across Vietnam where you don't just visit — you live it. Small group inbound tours with local immersion and gamified challenges."
+>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════════════ -->
+  <section class="hp-hero">
+    <div class="container hp-hero__manifesto" aria-hidden="true">
+      Journeys crafted through<br />
+      Vietnam's spectacular nature,<br />
+      designed to connect<br />
+      strangers into family.
+    </div>
+    <div class="hp-hero__brand" id="hp-brand-text" aria-hidden="true">MORNING</div>
+    <div class="hp-hero__photo">
+      <img
+        src="/nho-que.jpg"
+        alt="Nho Que river winding through limestone mountains, Ha Giang"
+        fetchpriority="high"
+      />
+    </div>
+    <div class="hp-hero__overlay"></div>
+    <div class="container hp-hero__content">
+      <p class="hp-hero__eyebrow">Small groups · Local guides · Real Vietnam</p>
+      <h1 class="hp-hero__h1">Vietnam deeper.<br /><em>Horizons wider.</em></h1>
+      <p class="hp-hero__sub">
+        Handcrafted adventures from Hanoi — where you don't just visit, you live it.
+      </p>
+    </div>
+    <div class="hp-hero__actions">
+      <a href="/tours" class="c-button c-button--primary">Explore tours</a>
+      <a href="/explore/about" class="c-button c-button--light">Our story</a>
+    </div>
+    <div class="hp-hero__scroll-hint" aria-hidden="true">
+      <svg width="14" height="24" viewBox="0 0 14 24" fill="none">
+        <path d="M7 0v18M2 12l5 6 5-6" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ═══ MARQUEE ═══════════════════════════════════════════════════ -->
+  <Marquee />
+
+  <!-- ═══ TRUST ════════════════════════════════════════════════════ -->
+  <section class="hp-trust">
+    <div class="container">
+      <p class="section-label hp-trust__eyebrow">Why teams trust us</p>
+      <div class="hp-trust__grid">
+        <div class="hp-trust__card reveal">
+          <span class="hp-trust__big">Licensed</span>
+          <p class="hp-trust__caption">International tour operator license. Full legal authorization for inbound tour operations across Vietnam.</p>
+        </div>
+        <div class="hp-trust__card reveal reveal-delay-1">
+          <span class="hp-trust__big">6+</span>
+          <p class="hp-trust__caption">Active tours in North Vietnam right now. Central and South coming Q3/Q4 2026.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SHOWCASE ══════════════════════════════════════════════════ -->
+  <section class="hp-showcase2">
+    <div class="container hp-showcase2__inner">
+      <!-- Left: heading + image -->
+      <div class="hp-showcase2__left">
+        <p class="section-label">Pick your adventure</p>
+        <h2 class="hp-showcase2__heading" id="showcase-heading">{featuredTours[0].name}</h2>
+        <div class="hp-showcase2__image">
+          <img id="showcase-image" src={featuredTours[0].image} alt={featuredTours[0].name} />
+        </div>
+      </div>
+
+      <!-- Right: sidebar info + nav -->
+      <div class="hp-showcase2__right">
+        <div class="hp-showcase2__index">
+          <span id="showcase-current">01</span><span class="hp-showcase2__index-total">/0{featuredTours.length}</span>
+        </div>
+        <p class="hp-showcase2__desc" id="showcase-desc">{featuredTours[0].description?.slice(0, 220) ?? featuredTours[0].tagline}</p>
+
+        <div class="hp-showcase2__meta">
+          <div class="hp-showcase2__meta-row">
+            <span class="hp-showcase2__meta-label">Duration</span>
+            <span class="hp-showcase2__meta-value" id="showcase-duration">{featuredTours[0].duration.join(' / ')}</span>
+          </div>
+          <div class="hp-showcase2__meta-row">
+            <span class="hp-showcase2__meta-label">Languages</span>
+            <span class="hp-showcase2__meta-value" id="showcase-lang">{featuredTours[0].languages.join(' · ')}</span>
+          </div>
+        </div>
+
+        <div class="hp-showcase2__actions">
+          <a href={`/tours/${featuredTours[0].slug}`} id="showcase-link" class="c-button c-button--primary">See this tour →</a>
+          <button class="hp-showcase2__nav" id="showcase-next" aria-label="Next tour">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M13 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Dot pagination -->
+        <div class="hp-showcase2__dots" role="tablist">
+          {featuredTours.map((tour, i) => (
+            <button class={`hp-showcase2__dot${i === 0 ? ' active' : ''}`} data-idx={String(i)} aria-label={tour.name}></button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Data island for JS -->
+    <script type="application/json" id="showcase-data" is:inline set:html={JSON.stringify(featuredTours)}></script>
+  </section>
+
+  <!-- ═══ REGIONS ═══════════════════════════════════════════════════ -->
+  <section class="hp-regions">
+    <div class="container">
+      <p class="section-label">The country</p>
+      <h2 class="hp-regions__title">North. Central. South.</h2>
+      <div class="hp-regions__grid">
+        {regions.map(r => (
+          <a href={r.href} class={`hp-region${r.status === 'soon' ? ' hp-region--soon' : ''}`}>
+            <div class="hp-region__photo">
+              <img src={r.image} alt={r.name} loading="lazy" />
+            </div>
+            <div class="hp-region__overlay">
+              <h3 class="hp-region__name">{r.name}</h3>
+              <span class="hp-region__sub">{r.sub}</span>
+              {r.status === 'soon' && <span class="hp-region__badge">Coming 2026</span>}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ WHY ═══════════════════════════════════════════════════════ -->
+  <section class="hp-why">
+    <div class="container hp-why__header">
+      <p class="section-label">Why Morning Vietnam?</p>
+      <h2 class="hp-why__title">Travel the way<br />it should feel.</h2>
+    </div>
+    <div class="container hp-why__grid">
+      <div class="hp-why__card reveal">
+        <span class="hp-why__icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="10" r="4"/>
+            <path d="M4 26c0-4.418 3.582-8 8-8s8 3.582 8 8"/>
+            <circle cx="24" cy="10" r="3"/>
+            <path d="M21 25.5c.4-3.4 2.6-6.3 5-7.5"/>
+          </svg>
+        </span>
+        <h3 class="hp-why__heading">Small groups.<br />Real access.</h3>
+        <p class="hp-why__text">Maximum 8 people per tour. No cattle herds, no missed moments. Small enough to go where buses can't.</p>
+      </div>
+      <div class="hp-why__card reveal reveal-delay-1">
+        <span class="hp-why__icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4C11.582 4 8 7.582 8 12c0 7 8 16 8 16s8-9 8-16c0-4.418-3.582-8-8-8z"/>
+            <circle cx="16" cy="12" r="3"/>
+          </svg>
+        </span>
+        <h3 class="hp-why__heading">Local hosts.<br />Not tour guides.</h3>
+        <p class="hp-why__text">Born, raised, and passionate about Vietnam. They take you where the guidebooks don't go — and share what the guidebooks don't say.</p>
+      </div>
+      <div class="hp-why__card reveal reveal-delay-2">
+        <span class="hp-why__icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="16" width="14" height="11" rx="2"/>
+            <path d="M12 16v-5a4 4 0 0 1 8 0v-2"/>
+            <circle cx="16" cy="22" r="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+        </span>
+        <h3 class="hp-why__heading">Unlock challenges.<br />Not checklists.</h3>
+        <p class="hp-why__text">Every tour has our signature Unlock format — team challenges at cultural moments. You leave as family, not strangers.</p>
+      </div>
+      <div class="hp-why__card reveal reveal-delay-3">
+        <span class="hp-why__icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4l10 4v8c0 5.5-4 9.5-10 12C10 25.5 6 21.5 6 16V8l10-4z"/>
+            <path d="M12 16l3 3 5-6"/>
+          </svg>
+        </span>
+        <h3 class="hp-why__heading">No payment upfront.<br />Just a spot.</h3>
+        <p class="hp-why__text">Reserve your spot, pay later. Free cancellation up to 14 days before departure. No hidden fees, no surprises.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ THE CREW ════════════════════════════════════════════════════ -->
+  <section class="hp-crew">
+    <div class="container">
+      <p class="section-label">The crew</p>
+      <h2 class="hp-crew__heading">Behind Every Journey, Real Humans <span class="hp-crew__accent">Who Care.</span></h2>
+      <p class="hp-crew__sub">We're not a faceless travel company. Meet the people who will turn your trip into something personal.</p>
+      <div class="hp-crew__grid">
+        {team.map(member => (
+          <div class="hp-crew__card">
+            <a class="hp-crew__avatar" href="https://facebook.com/morningvietnam.local" target="_blank" rel="noopener noreferrer">
+              <img class="hp-crew__photo" src={member.image} alt={member.name} />
+              <div class="hp-crew__tooltip">Morning! ☀️</div>
+            </a>
+            <p class="hp-crew__name">
+              {member.name}{member.role ? <span class="hp-crew__role"> · {member.role}</span> : ''}
+            </p>
+            <p class="hp-crew__quote">"{member.quote}"</p>
+          </div>
+        ))}
+      </div>
+      <p class="hp-crew__hint">Click on the picture to say Morning!</p>
+    </div>
+  </section>
+
+  <!-- ═══ TESTIMONIALS ════════════════════════════════════════════════ -->
+  <!-- ═══ TESTIMONIALS ════════════════════════════════════════════ -->
+  <section class="hp-testi">
+    <div class="hp-testi__slides">
+      <div class="hp-testi__slide active" data-idx="0">
+        <div class="hp-testi__image">
+          <img src="/testimonial/1.jpeg" alt="" loading="lazy" />
+        </div>
+        <div class="hp-testi__overlay"></div>
+        <div class="container hp-testi__content">
+          <blockquote class="hp-testi__quote">
+            "I came to Vietnam expecting another guided tour. I left with a family. The Unlock challenge in Mai Châu broke down every wall — by night two we were cooking with locals like we'd known them for years."
+          </blockquote>
+          <div class="hp-testi__rating" aria-label="5 out of 5 stars">★ ★ ★ ★ ★</div>
+          <div class="hp-testi__author">Sarah K.</div>
+          <div class="hp-testi__role">Solo traveler · France · Mai Châu 3D2N</div>
+        </div>
+      </div>
+
+      <div class="hp-testi__slide" data-idx="1">
+        <div class="hp-testi__image">
+          <img src="/testimonial/2.webp" alt="" loading="lazy" />
+        </div>
+        <div class="hp-testi__overlay"></div>
+        <div class="container hp-testi__content">
+          <blockquote class="hp-testi__quote">
+            "Most tours feel like a moving museum. Morning Vietnam feels like a homecoming. The hosts don't perform Vietnam — they live it, and they let you in."
+          </blockquote>
+          <div class="hp-testi__rating" aria-label="5 out of 5 stars">★ ★ ★ ★ ★</div>
+          <div class="hp-testi__author">Marcus T.</div>
+          <div class="hp-testi__role">Couple · Germany · Ninh Bình 2D1N</div>
+        </div>
+      </div>
+
+      <div class="hp-testi__slide" data-idx="2">
+        <div class="hp-testi__image">
+          <img src="/testimonial/3.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="hp-testi__overlay"></div>
+        <div class="container hp-testi__content">
+          <blockquote class="hp-testi__quote">
+            "Eight people, one van, three days. By the end we had a WhatsApp group that's still active a year later. That's the kind of tour I came for and never thought I'd find."
+          </blockquote>
+          <div class="hp-testi__rating" aria-label="5 out of 5 stars">★ ★ ★ ★ ★</div>
+          <div class="hp-testi__author">Léa M.</div>
+          <div class="hp-testi__role">Friend group · Belgium · Cát Bà 2D1N</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hp-testi__dots" role="tablist">
+      <button class="hp-testi__dot active" data-target="0" aria-label="Testimonial 1"></button>
+      <button class="hp-testi__dot" data-target="1" aria-label="Testimonial 2"></button>
+      <button class="hp-testi__dot" data-target="2" aria-label="Testimonial 3"></button>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ════════════════════════════════════════════════════════ -->
+  <section class="hp-cta">
+    <div class="hp-cta__photo">
+      <img
+        src="/cta-bg.webp"
+        alt="Mua Cave, Ninh Bình"
+        loading="lazy"
+      />
+    </div>
+    <div class="hp-cta__overlay"></div>
+    <div class="container hp-cta__inner">
+      <p class="section-label hp-cta__eyebrow">Ready when you are</p>
+      <h2 class="hp-cta__heading">Ready for<br />Vietnam?</h2>
+      <p class="hp-cta__sub">Tell us your travel dates — we'll find your perfect tour.</p>
+      <div class="hp-cta__btns">
+        <a href="/contact" class="c-button c-button--primary">Plan my trip</a>
+        <a
+          href="https://wa.me/84961836611"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="c-button hp-cta__wa"
+        >
+          WhatsApp us
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ NEW TO MORNING VIETNAM? ════════════════════════════════ -->
+  <section class="b-ctaimages" id="new-to-mv">
+
+    <div class="b-ctaimages__images">
+      <!-- Top 4: fan above heading -->
+      <div class="b-ctaimages__image b-ctaimages__image--t1" data-rotate="-12">
+        <picture><img src="/mv-3.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--t2" data-rotate="8">
+        <picture><img src="/mv-7.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--t3" data-rotate="-5">
+        <picture><img src="/mv-1.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--t4" data-rotate="14">
+        <picture><img src="/mv-5.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <!-- Bottom 4: fan below button -->
+      <div class="b-ctaimages__image b-ctaimages__image--b1" data-rotate="10">
+        <picture><img src="/mv-8.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--b2" data-rotate="-7">
+        <picture><img src="/mv-2.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--b3" data-rotate="5">
+        <picture><img src="/mv-6.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--b4" data-rotate="-12">
+        <picture><img src="/mv-4.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+    </div>
+
+    <div class="b-ctaimages__wrapper">
+      <h2 class="b-ctaimages__heading">New to<br />Morning Vietnam?</h2>
+      <p class="b-ctaimages__content">
+        We'll walk you through what makes our tours different:<br />
+        from Unlock challenges to real local immersion,<br />
+        and why small groups change everything.
+      </p>
+      <a href="/explore/about" class="c-button c-button--primary b-ctaimages__button">
+        Curious about Us?
+      </a>
+    </div>
+
+  </section>
+
+</BaseLayout>
+
+<style>
+  /* ── Hero ──────────────────────────────────────────────────────── */
+  .hp-hero {
+    position: relative;
+    height: 100vh;
+    min-height: 640px;
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--color-java) 0%, var(--color-light-cyan) 100%);
+  }
+
+  /* z-index stack: photo(1) → overlay(2) → brand(hidden, 0) → content/manifesto/actions(5) */
+  .hp-hero__manifesto {
+    position: absolute;
+    top: calc(var(--site-header-h, 100px) + 88px);
+    left: 0;
+    right: 0;
+    z-index: 5;
+    color: white;
+    font-family: 'Google Sans', 'Noto Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    line-height: 1.9;
+    opacity: 0.65;
+    pointer-events: none;
+    user-select: none;
+    animation: fadeInUp 0.9s 0.3s ease both;
+  }
+
+  .hp-hero__brand {
+    position: absolute;
+    top: calc(var(--site-header-h, 100px) - 20px);
+    left: 0;
+    right: 0;
+    z-index: 0;
+    text-align: center;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(140px, 26vw, 320px);
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: var(--color-white-nectar);
+    opacity: 0.95;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    will-change: transform;
+  }
+
+  .hp-hero__photo {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .hp-hero__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hp-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      to bottom,
+      rgba(29, 160, 160, 0.42) 0%,
+      rgba(4, 51, 65, 0.28) 45%,
+      rgba(4, 51, 65, 0.62) 100%
+    );
+  }
+
+  .hp-hero__content {
+    position: absolute;
+    bottom: 96px;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    color: white;
+    animation: fadeInUp 0.9s 0.2s ease both;
+  }
+
+  .hp-hero__eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-riptide);
+    margin-bottom: 20px;
+  }
+
+  .hp-hero__h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(44px, 7.5vw, 96px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    color: white;
+  }
+
+  .hp-hero__h1 em {
+    font-style: italic;
+    color: var(--color-riptide);
+  }
+
+  .hp-hero__sub {
+    font-size: clamp(16px, 1.8vw, 20px);
+    opacity: 0.78;
+    max-width: 480px;
+    line-height: 1.65;
+    margin-bottom: 36px;
+  }
+
+  .hp-hero__actions {
+    position: absolute;
+    right: 48px;
+    bottom: 108px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+    animation: fadeInUp 0.9s 0.5s ease both;
+  }
+
+  .hp-hero__scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    right: 48px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.38);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    animation: fadeInUp 1s 1.2s ease both;
+  }
+
+  /* ── Stats ─────────────────────────────────────────────────────── */
+  .hp-trust {
+    background: var(--color-white-nectar);
+    padding-block: 96px;
+  }
+
+  .hp-trust__eyebrow {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .hp-trust__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .hp-trust__card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 4px 20px rgba(4, 51, 65, 0.06);
+    transition: transform 0.4s var(--ease-smooth), box-shadow 0.4s var(--ease-smooth);
+  }
+
+  .hp-trust__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(4, 51, 65, 0.12);
+  }
+
+  .hp-trust__big {
+    font-family: var(--font-heading);
+    font-size: clamp(48px, 6vw, 88px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .hp-trust__caption {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--color-nordic);
+    opacity: 0.65;
+  }
+
+  @media (max-width: 860px) {
+    .hp-trust__grid { grid-template-columns: 1fr; gap: 16px; }
+    .hp-trust__card { padding: 32px 24px; }
+  }
+
+  /* ── Showcase ──────────────────────────────────────────────────── */
+  /* ── Showcase 2-col slider ──────────────────────────────────────── */
+  .hp-showcase2 {
+    background: var(--color-light-cyan);
+    padding-block: 100px;
+    overflow: hidden;
+  }
+  .hp-showcase2__inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 80px;
+    align-items: stretch;
+  }
+  .hp-showcase2__left {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .hp-showcase2__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    transition: opacity 0.4s ease;
+  }
+  .hp-showcase2__image {
+    flex: 1;
+    min-height: 420px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(4, 51, 65, 0.18);
+  }
+  .hp-showcase2__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.4s ease, transform 0.6s var(--ease-smooth, ease);
+  }
+  .hp-showcase2__right {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding-top: 40px;
+  }
+  .hp-showcase2__index {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    letter-spacing: 0.04em;
+  }
+  .hp-showcase2__index-total {
+    opacity: 0.4;
+  }
+  .hp-showcase2__desc {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--color-nordic);
+    opacity: 0.75;
+    transition: opacity 0.4s ease;
+  }
+  .hp-showcase2__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px 0;
+    border-top: 1px solid rgba(4, 51, 65, 0.15);
+    border-bottom: 1px solid rgba(4, 51, 65, 0.15);
+  }
+  .hp-showcase2__meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .hp-showcase2__meta-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-java);
+  }
+  .hp-showcase2__meta-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-nordic);
+  }
+  .hp-showcase2__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .hp-showcase2__nav {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-nordic);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .hp-showcase2__nav:hover {
+    background: var(--color-sorbus);
+    transform: translateX(4px);
+  }
+  .hp-showcase2__dots {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .hp-showcase2__dot {
+    width: 36px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(4, 51, 65, 0.2);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, width 0.3s ease;
+    padding: 0;
+  }
+  .hp-showcase2__dot.active {
+    background: var(--color-nordic);
+    width: 60px;
+  }
+  .hp-showcase2.fading .hp-showcase2__heading,
+  .hp-showcase2.fading .hp-showcase2__image img,
+  .hp-showcase2.fading .hp-showcase2__desc {
+    opacity: 0.3;
+  }
+  @media (max-width: 960px) {
+    .hp-showcase2__inner { grid-template-columns: 1fr; gap: 48px; }
+    .hp-showcase2__image { min-height: 320px; }
+    .hp-showcase2__right { padding-top: 0; }
+  }
+
+  /* ── Regions ────────────────────────────────────────────────────── */
+  .hp-regions {
+    background: var(--color-white-nectar);
+    padding-block: 96px;
+  }
+
+  .hp-regions__title {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 48px;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+  }
+
+  .hp-regions__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .hp-region {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    border-radius: 16px;
+    display: block;
+    text-decoration: none;
+  }
+
+  .hp-region__photo {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hp-region__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease-smooth);
+  }
+
+  .hp-region:hover .hp-region__photo img {
+    transform: scale(1.07);
+  }
+
+  .hp-region__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(4, 51, 65, 0.85) 0%, rgba(4, 51, 65, 0.1) 55%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 28px;
+    gap: 6px;
+  }
+
+  .hp-region__name {
+    font-family: var(--font-heading);
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 700;
+    color: white;
+    line-height: 1.1;
+  }
+
+  .hp-region__sub {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.4;
+  }
+
+  .hp-region--soon .hp-region__photo img {
+    filter: grayscale(50%) brightness(0.65);
+  }
+
+  .hp-region__badge {
+    display: inline-block;
+    margin-top: 4px;
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-riptide);
+    border: 1.5px solid rgba(125, 226, 209, 0.6);
+    padding: 4px 10px;
+    border-radius: 100px;
+    align-self: flex-start;
+  }
+
+  /* ── Why ────────────────────────────────────────────────────────── */
+  .hp-why {
+    background: white;
+    padding-block: 96px;
+  }
+
+  .hp-why__header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .hp-why__title {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 68px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1.05;
+    margin-top: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .hp-why__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .hp-why__card {
+    background: var(--color-light-cyan);
+    border-radius: 20px;
+    padding: 36px 28px 40px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: transform 0.35s var(--ease-smooth), box-shadow 0.35s var(--ease-smooth);
+  }
+
+  .hp-why__card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 48px rgba(29, 160, 160, 0.22);
+  }
+
+  .hp-why__icon {
+    color: var(--color-java);
+    display: flex;
+    align-items: center;
+  }
+
+  .hp-why__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(18px, 1.6vw, 22px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1.25;
+  }
+
+  .hp-why__text {
+    font-size: 14px;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    line-height: 1.8;
+    flex: 1;
+  }
+
+  /* ── Testimonials ───────────────────────────────────────────────── */
+  /* ── Testimonials full-bleed ─────────────────────────────────── */
+  .hp-testi {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    overflow: hidden;
+    background: var(--color-nordic);
+  }
+  .hp-testi__slides {
+    position: absolute;
+    inset: 0;
+  }
+  .hp-testi__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s var(--ease-smooth, ease);
+    pointer-events: none;
+  }
+  .hp-testi__slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .hp-testi__image {
+    position: absolute;
+    inset: 0;
+  }
+  .hp-testi__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hp-testi__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(4, 51, 65, 0.75) 0%,
+      rgba(4, 51, 65, 0.3) 50%,
+      transparent 100%
+    );
+  }
+  .hp-testi__content {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    color: white;
+    max-width: 760px;
+  }
+  .hp-testi__quote {
+    font-family: var(--font-heading);
+    font-size: clamp(22px, 2.6vw, 36px);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+  }
+  .hp-testi__rating {
+    font-size: 16px;
+    letter-spacing: 0.3em;
+    color: var(--color-riptide);
+    margin-bottom: 12px;
+  }
+  .hp-testi__author {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .hp-testi__role {
+    font-size: 13px;
+    opacity: 0.75;
+    letter-spacing: 0.04em;
+  }
+  .hp-testi__dots {
+    position: absolute;
+    bottom: 56px;
+    right: 48px;
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+  }
+  .hp-testi__dot {
+    width: 32px;
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.35);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, width 0.3s ease;
+    padding: 0;
+  }
+  .hp-testi__dot.active {
+    background: var(--color-riptide);
+    width: 56px;
+  }
+  @media (max-width: 768px) {
+    .hp-testi__content { bottom: 100px; max-width: 100%; }
+    .hp-testi__dots { right: 24px; bottom: 36px; }
+  }
+
+  /* ── CTA ────────────────────────────────────────────────────────── */
+  .hp-cta {
+    position: relative;
+    min-height: 82vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--color-nordic);
+  }
+
+  .hp-cta__photo {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .hp-cta__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hp-cta__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      to top,
+      rgba(4, 51, 65, 0.92) 0%,
+      rgba(4, 51, 65, 0.6) 42%,
+      rgba(4, 51, 65, 0.18) 100%
+    );
+  }
+
+  .hp-cta__inner {
+    position: relative;
+    z-index: 3;
+    padding-bottom: 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .hp-cta__eyebrow {
+    color: var(--color-riptide);
+  }
+
+  .hp-cta__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(52px, 8vw, 112px);
+    font-weight: 700;
+    color: white;
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    margin-top: 12px;
+    margin-bottom: 28px;
+  }
+
+  .hp-cta__sub {
+    font-size: clamp(16px, 1.8vw, 20px);
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 40px;
+    max-width: 460px;
+    line-height: 1.65;
+  }
+
+  .hp-cta__btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .hp-cta__wa {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .hp-cta__wa:hover {
+    background: white;
+    color: var(--color-nordic);
+    border-color: white;
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .hp-why__grid { grid-template-columns: repeat(2, 1fr); }
+    .hp-hero__actions { right: 32px; bottom: 100px; }
+  }
+
+  @media (max-width: 860px) {
+    .hp-regions__grid { grid-template-columns: 1fr 1fr; }
+    .hp-regions__grid .hp-region:last-child {
+      grid-column: span 2;
+      aspect-ratio: 16/7;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hp-hero__content { bottom: 80px; }
+    .hp-hero__brand { font-size: clamp(80px, 26vw, 180px); top: calc(var(--site-header-h, 100px) - 10px); }
+    .hp-why__grid { grid-template-columns: 1fr; }
+    .hp-why__card { padding: 28px 24px; }
+    .hp-hero__actions { right: 24px; bottom: 96px; }
+    .hp-cta__heading { font-size: clamp(44px, 10vw, 80px); }
+    .hp-cta__inner { padding-bottom: 80px; }
+  }
+
+  @media (max-width: 560px) {
+    .hp-regions__grid { grid-template-columns: 1fr; }
+    .hp-regions__grid .hp-region:last-child {
+      grid-column: 1;
+      aspect-ratio: 3/4;
+    }
+    .hp-cta__btns { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* ── The Crew ──────────────────────────────────────────────────── */
+  .hp-crew {
+    background: white;
+    padding-block: 96px;
+  }
+
+  .hp-crew__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(26px, 3.5vw, 44px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    max-width: 760px;
+    margin: 16px 0 12px;
+    line-height: 1.15;
+  }
+
+  .hp-crew__accent { color: var(--color-sorbus); }
+
+  .hp-crew__sub {
+    font-size: 16px;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    max-width: 640px;
+    margin-bottom: 56px;
+    line-height: 1.7;
+  }
+
+  .hp-crew__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 32px;
+  }
+
+  .hp-crew__card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hp-crew__avatar {
+    display: block;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s ease;
+  }
+
+  .hp-crew__avatar:hover { transform: scale(1.04); }
+
+  .hp-crew__photo {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .hp-crew__tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ea6739;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .hp-crew__tooltip.is-visible { opacity: 1; }
+
+  .hp-crew__name {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin: 0;
+  }
+
+  .hp-crew__role {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.5;
+  }
+
+  .hp-crew__quote {
+    font-style: italic;
+    font-size: 13px;
+    color: var(--color-nordic);
+    opacity: 0.55;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .hp-crew__hint {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 13px;
+    color: var(--color-nordic);
+    opacity: 0.4;
+  }
+
+  @media (max-width: 768px) {
+    .hp-crew__grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  }
+
+  @media (max-width: 480px) {
+    .hp-crew__grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  }
+</style>
+
+<script>
+  // ── Crew tooltip ───────────────────────────────────────────────
+  document.querySelectorAll<HTMLElement>('.hp-crew__avatar').forEach(avatar => {
+    avatar.addEventListener('click', () => {
+      const tip = avatar.querySelector<HTMLElement>('.hp-crew__tooltip');
+      if (!tip) return;
+      tip.classList.add('is-visible');
+      setTimeout(() => tip.classList.remove('is-visible'), 1500);
+    });
+  });
+
+  // ── Hero brand parallax ────────────────────────────────────────
+  const brandText = document.getElementById('hp-brand-text') as HTMLElement | null;
+  if (brandText && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY * -0.4;
+      brandText.style.transform = `translateY(${y}px)`;
+    }, { passive: true });
+  }
+
+  // ── Showcase 2-col slider ──────────────────────────────────────
+  const showcase = document.querySelector('.hp-showcase2') as HTMLElement | null;
+  const showcaseDataEl = document.getElementById('showcase-data');
+  if (showcase && showcaseDataEl) {
+    const data = JSON.parse(showcaseDataEl.textContent ?? '[]');
+    const dots = document.querySelectorAll<HTMLButtonElement>('.hp-showcase2__dot');
+    const nextBtn = document.getElementById('showcase-next');
+
+    const els = {
+      heading:  document.getElementById('showcase-heading'),
+      image:    document.getElementById('showcase-image') as HTMLImageElement | null,
+      current:  document.getElementById('showcase-current'),
+      desc:     document.getElementById('showcase-desc'),
+      duration: document.getElementById('showcase-duration'),
+      lang:     document.getElementById('showcase-lang'),
+      link:     document.getElementById('showcase-link') as HTMLAnchorElement | null,
+    };
+
+    let idx = 0;
+    let timer: ReturnType<typeof setInterval>;
+
+    function update(newIdx: number) {
+      if (newIdx === idx) return;
+      showcase!.classList.add('fading');
+      setTimeout(() => {
+        idx = ((newIdx % data.length) + data.length) % data.length;
+        const t = data[idx];
+        if (els.heading)  els.heading.textContent  = t.name;
+        if (els.image)  { els.image.src = t.image; els.image.alt = t.name; }
+        if (els.current)  els.current.textContent  = String(idx + 1).padStart(2, '0');
+        if (els.desc)     els.desc.textContent      = (t.description?.slice(0, 220) ?? t.tagline);
+        if (els.duration) els.duration.textContent  = t.duration.join(' / ');
+        if (els.lang)     els.lang.textContent      = t.languages.join(' · ');
+        if (els.link)     els.link.href             = `/tours/${t.slug}`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        showcase!.classList.remove('fading');
+      }, 400);
+    }
+
+    dots.forEach(d => d.addEventListener('click', () => {
+      clearInterval(timer);
+      update(parseInt(d.dataset.idx ?? '0'));
+      startTimer();
+    }));
+
+    nextBtn?.addEventListener('click', () => {
+      clearInterval(timer);
+      update(idx + 1);
+      startTimer();
+    });
+
+    function startTimer() {
+      timer = setInterval(() => update(idx + 1), 6000);
+    }
+
+    showcase.addEventListener('mouseenter', () => clearInterval(timer));
+    showcase.addEventListener('mouseleave', startTimer);
+    startTimer();
+  }
+
+  // ── Testimonials full-bleed slider ─────────────────────────────
+  const testi = document.querySelector('.hp-testi');
+  if (testi) {
+    const slides = testi.querySelectorAll<HTMLElement>('.hp-testi__slide');
+    const tdots  = testi.querySelectorAll<HTMLButtonElement>('.hp-testi__dot');
+    let tIdx = 0;
+    let tTimer: ReturnType<typeof setInterval>;
+
+    function goTesti(n: number) {
+      tIdx = ((n % slides.length) + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('active', i === tIdx));
+      tdots.forEach((d, i)  => d.classList.toggle('active', i === tIdx));
+    }
+
+    tdots.forEach(d => d.addEventListener('click', () => {
+      clearInterval(tTimer);
+      goTesti(parseInt(d.dataset.target ?? '0'));
+      startTesti();
+    }));
+
+    function startTesti() {
+      tTimer = setInterval(() => goTesti(tIdx + 1), 6000);
+    }
+
+    testi.addEventListener('mouseenter', () => clearInterval(tTimer));
+    testi.addEventListener('mouseleave', startTesti);
+    startTesti();
+  }
+</script>

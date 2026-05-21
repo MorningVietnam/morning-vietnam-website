@@ -1,0 +1,558 @@
+---
+const path = Astro.url.pathname;
+const isExplore = path.startsWith('/explore');
+const isTours   = path === '/tours' || path.startsWith('/tours/');
+const isContact = path === '/contact';
+
+const marqueeItems = [
+  "Vietnam deeper. Horizons wider.",
+  "Small groups. Real moments.",
+  "Licensed tour operator",
+  "From strangers to family",
+  "Active but accessible",
+  "EN / FR / DE",
+];
+---
+
+<!-- ═══ SITE HEADER WRAPPER (fixed) ═══════════════════════════════════════ -->
+<div class="header" id="site-header">
+
+  <!-- 1. Marquee banner -->
+  <div class="b-marquee" aria-hidden="true">
+    <div class="b-marquee__track">
+      {[...marqueeItems, ...marqueeItems].map(item => (
+        <span class="b-marquee__item">
+          {item}
+          <span class="b-marquee__sep">✦</span>
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <!-- 2. Nav bar -->
+  <div class="header__bar">
+    <div class="wrapper header__inner">
+
+      <!-- Logo -->
+      <a href="/" class="header__logo" aria-label="Morning Vietnam — home">
+        <img src="/logo.png" alt="Morning Vietnam" class="header__logo-img" />
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="header__nav" aria-label="Main navigation">
+        <ul class="header__nav-list">
+
+          <!-- Explore (dropdown only — NOT a link) -->
+          <li class="nav-item nav-item--dropdown">
+            <span class:list={["nav-link", "nav-link--trigger", { "nav-link--active": isExplore }]}>
+              Explore
+              <svg class="nav-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <div class="nav-dropdown" role="menu">
+              <a href="/explore/about" class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">About Us</span>
+                <span class="nav-dropdown__desc">Our story &amp; the team</span>
+              </a>
+              <a href="/explore/vietnam-facts" class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">Vietnam Facts</span>
+                <span class="nav-dropdown__desc">54 ethnicities. 3,260km coastline.</span>
+              </a>
+              <a href="/explore/faq" class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">FAQ</span>
+                <span class="nav-dropdown__desc">Everything you need to know</span>
+              </a>
+            </div>
+          </li>
+
+          <!-- Tours (direct link) -->
+          <li class="nav-item">
+            <a
+              href="/tours"
+              class:list={["nav-link", { "nav-link--active": isTours }]}
+            >Tours</a>
+          </li>
+
+          <!-- Contact (direct link) -->
+          <li class="nav-item">
+            <a
+              href="/contact"
+              class:list={["nav-link", { "nav-link--active": isContact }]}
+            >Contact</a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Right: CTA + hamburger -->
+      <div class="header__right">
+        <a href="/contact" class="c-button c-button--primary header__book-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0">
+            <circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"/>
+            <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+            <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+          </svg>
+          Say "Morning!"
+        </a>
+        <button
+          class="hamburger"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+        >
+          <span class="hamburger__line"></span>
+          <span class="hamburger__line"></span>
+          <span class="hamburger__line"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /.header -->
+
+
+<!-- ═══ MOBILE NAV ════════════════════════════════════════════════════════ -->
+<nav
+  class="mobile-nav"
+  id="mobile-nav"
+  aria-label="Navigation menu"
+  aria-hidden="true"
+>
+  <button class="mobile-nav__close" aria-label="Close navigation menu">✕</button>
+
+  <ul class="mobile-nav__list">
+    <li class="mobile-nav__group">
+      <span>Explore</span>
+      <ul class="mobile-nav__sub">
+        <li><a href="/explore/about">About Us</a></li>
+        <li><a href="/explore/vietnam-facts">Vietnam Facts</a></li>
+        <li><a href="/explore/faq">FAQ</a></li>
+      </ul>
+    </li>
+    <li><a href="/tours">Tours</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+
+  <a href="/contact" class="c-button c-button--primary">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0">
+      <circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"/>
+      <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+      <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+      <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+    </svg>
+    Say "Morning!"
+  </a>
+</nav>
+
+<div class="mobile-nav-overlay" aria-hidden="true"></div>
+
+
+<!-- ═══ HEADER SCRIPTS ════════════════════════════════════════════════════ -->
+<script>
+  (() => {
+    const mobileNav    = document.getElementById('mobile-nav') as HTMLElement;
+    const overlay      = document.querySelector('.mobile-nav-overlay') as HTMLElement;
+    const hamburger    = document.querySelector('.hamburger') as HTMLButtonElement;
+    const closeBtn     = document.querySelector('.mobile-nav__close') as HTMLButtonElement;
+
+    function openMobileNav() {
+      mobileNav.classList.add('open');
+      mobileNav.setAttribute('aria-hidden', 'false');
+      overlay.classList.add('open');
+      hamburger.classList.add('open');
+      hamburger.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      mobileNav.classList.remove('open');
+      mobileNav.setAttribute('aria-hidden', 'true');
+      overlay.classList.remove('open');
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    hamburger?.addEventListener('click', () => {
+      mobileNav.classList.contains('open') ? closeMobileNav() : openMobileNav();
+    });
+
+    closeBtn?.addEventListener('click', closeMobileNav);
+    overlay?.addEventListener('click', closeMobileNav);
+
+    // Close on any nav link click
+    mobileNav?.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+
+    // Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && mobileNav.classList.contains('open')) closeMobileNav();
+    });
+  })();
+</script>
+
+
+<!-- ═══ STYLES ════════════════════════════════════════════════════════════ -->
+<style is:global>
+  /* ── Layout variables ────────────────────────────────────────────── */
+  :root {
+    --marquee-height: 40px;
+    --nav-height:     60px;
+    --site-header-h:  calc(var(--marquee-height) + var(--nav-height));
+  }
+
+  /* ── Fixed wrapper ───────────────────────────────────────────────── */
+  .header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 800;
+  }
+
+  /* ── Nav bar ─────────────────────────────────────────────────────── */
+  .header__bar {
+    height: var(--nav-height);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* Scrolled: frosted glass */
+  .header.scrolled .header__bar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 2px 24px rgba(4, 51, 65, 0.08);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 32px;
+  }
+
+  /* ── Logo ────────────────────────────────────────────────────────── */
+  .header__logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .header__logo-img {
+    height: 65px;
+    width: auto;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+
+  .header__logo:hover .header__logo-img {
+    opacity: 0.8;
+  }
+
+  /* ── Desktop nav ─────────────────────────────────────────────────── */
+  .header__nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  .header__nav-list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+
+  /* Nav link — white on transparent, nordic on scrolled */
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.88);
+    cursor: pointer;
+    transition: color 0.25s ease, background 0.25s ease;
+    white-space: nowrap;
+    text-decoration: none;
+    user-select: none;
+  }
+
+  .header.scrolled .nav-link {
+    color: var(--color-nordic);
+  }
+
+  .nav-link:hover {
+    color: var(--color-java);
+    background: rgba(29, 160, 160, 0.12);
+  }
+
+  .header.scrolled .nav-link:hover {
+    background: rgba(29, 160, 160, 0.1);
+  }
+
+  /* Active state: sorbus underline */
+  .nav-link--active {
+    color: var(--color-riptide) !important;
+    position: relative;
+  }
+
+  .nav-link--active::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 16px;
+    right: 16px;
+    height: 2px;
+    background: var(--color-riptide);
+    border-radius: 1px;
+  }
+
+  .header.scrolled .nav-link--active {
+    color: var(--color-sorbus) !important;
+  }
+
+  .header.scrolled .nav-link--active::after {
+    background: var(--color-sorbus);
+  }
+
+  /* ── Explore dropdown (exact Happly spec) ────────────────────────── */
+  .nav-item--dropdown { position: relative; }
+
+  .nav-link--trigger {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-arrow {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .nav-item--dropdown:hover .nav-arrow { transform: rotate(180deg); }
+
+  .nav-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    min-width: 240px;
+    background: white;
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 8px 40px rgba(4, 51, 65, 0.15);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 10;
+  }
+
+  /* Bridge the 12px gap between trigger and dropdown so hover doesn't drop */
+  .nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: -20px;
+    right: -20px;
+    height: 14px;
+  }
+
+  .nav-item--dropdown:hover .nav-dropdown {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .nav-dropdown__link {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+    text-decoration: none;
+  }
+
+  .nav-dropdown__link:hover { background: var(--color-light-cyan); }
+
+  .nav-dropdown__label {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--color-nordic);
+  }
+
+  .nav-dropdown__desc {
+    font-size: 12px;
+    color: var(--color-nordic);
+    opacity: 0.6;
+  }
+
+  /* ── Right side ──────────────────────────────────────────────────── */
+  .header__right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .header__book-btn {
+    font-size: 13px;
+    padding: 10px 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  /* ── Hamburger ───────────────────────────────────────────────────── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+  }
+
+  .hamburger:hover { background: rgba(255,255,255,0.12); }
+  .header.scrolled .hamburger:hover { background: rgba(4,51,65,0.08); }
+
+  .hamburger__line {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
+    transform-origin: center;
+  }
+
+  .header.scrolled .hamburger__line { background: var(--color-nordic); }
+
+  .hamburger.open .hamburger__line:nth-child(1) { transform: translateY(7px) rotate(45deg);  }
+  .hamburger.open .hamburger__line:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open .hamburger__line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── Mobile nav (exact Happly spec) ─────────────────────────────── */
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    background: var(--color-nordic);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 32px;
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  .mobile-nav.open { transform: translateX(0); }
+
+  .mobile-nav__close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 8px;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .mobile-nav__close:hover {
+    color: white;
+    transform: rotate(90deg);
+  }
+
+  .mobile-nav__list {
+    list-style: none;
+    margin-top: 48px;
+    padding: 0;
+  }
+
+  .mobile-nav__list > li > a,
+  .mobile-nav__list > li > span {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    display: block;
+    padding: 12px 0;
+    text-decoration: none;
+  }
+
+  .mobile-nav__list > li > a:hover { color: var(--color-riptide); }
+
+  .mobile-nav__sub {
+    list-style: none;
+    padding: 4px 0 8px 24px;
+  }
+
+  .mobile-nav__sub li a {
+    font-size: 20px;
+    color: var(--color-riptide);
+    display: block;
+    padding: 6px 0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .mobile-nav__sub li a:hover { color: white; }
+
+  .mobile-nav > .c-button {
+    margin-top: auto;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  /* ── Overlay ─────────────────────────────────────────────────────── */
+  .mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 899;
+    background: rgba(4, 51, 65, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .mobile-nav-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── Responsive breakpoints ──────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .header__book-btn { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    .header__nav { display: none; }
+    .hamburger   { display: flex; }
+  }
+
+  /* ── Page offset helper ──────────────────────────────────────────── */
+  .page-offset {
+    padding-top: var(--site-header-h);
+  }
+</style>

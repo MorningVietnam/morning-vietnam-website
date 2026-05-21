@@ -1,0 +1,97 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title,
+  description = "Morning Vietnam designs adventure journeys across Vietnam where you don't just visit — you live it. Small group inbound tours with local immersion and gamified challenges.",
+  image = "/og-default.jpg",
+} = Astro.props;
+
+const siteURL = 'https://morningvietnam.co';
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? siteURL);
+const isHome = Astro.url.pathname === '/';
+const pageTitle = isHome
+  ? 'Morning Vietnam | Vietnam deeper. Horizons wider.'
+  : `${title} | Morning Vietnam`;
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- TODO: Replace GTM-XXXXXXX with real ID before going live -->
+  <!-- Google Tag Manager (commented out until real ID is set)
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+  End Google Tag Manager -->
+
+  <!-- Meta Pixel placeholder — add your Pixel ID in GTM -->
+
+  <title>{pageTitle}</title>
+  <meta name="description" content={description} />
+  <meta name="keywords" content="Vietnam inbound tour, Vietnam adventure tours, Vietnam small group tours, Vietnam local experience, Morning Vietnam" />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content={canonicalURL} />
+  <meta property="og:title"       content={pageTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image"       content={new URL(image, siteURL)} />
+  <meta property="og:site_name"   content="Morning Vietnam" />
+  <meta property="og:locale"      content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:site"        content="@morningvietnam" />
+  <meta name="twitter:title"       content={pageTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image"       content={new URL(image, siteURL)} />
+
+  <!-- Robots -->
+  <meta name="robots" content="index, follow" />
+
+  <!-- Google Fonts: preconnect + Commissioner (heading) + Noto Sans (body fallback) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;700&family=Noto+Sans:ital,wght@0,400;0,500;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="icon" type="image/jpeg" href="/favicon.jpg" />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+</head>
+<body>
+  <!-- Google Tag Manager noscript (commented out until real ID is set)
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  End Google Tag Manager noscript -->
+
+  <Header />
+  <main id="main-content">
+    <slot />
+  </main>
+  <Footer />
+  <script src="../scripts/main.js"></script>
+</body>
+</html>
+
+<style is:global>
+  /* Load order: variables.css → global.css → animations.css
+     global.css @imports variables.css and animations.css internally */
+  @import '../styles/global.css';
+
+  /* Noto Sans as body font fallback for Google Sans */
+  body {
+    font-family: 'Google Sans', 'Noto Sans', 'Product Sans', sans-serif;
+  }
+</style>

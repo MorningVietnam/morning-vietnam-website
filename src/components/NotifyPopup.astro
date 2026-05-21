@@ -1,0 +1,152 @@
+---
+// Notify-me popup for Coming Soon tours
+// Submits to Formspree endpoint (replace FORM_ID below)
+const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree form ID
+---
+
+<div class="b-popup" id="notify-popup" role="dialog" aria-modal="true" aria-labelledby="notify-popup-title">
+  <div class="b-popup__holder">
+    <button class="b-popup__close" data-popup-close aria-label="Close">×</button>
+    <h2 id="notify-popup-title" class="notify-popup__title">Be first to know.</h2>
+    <p class="notify-popup__sub">Drop your email — we'll tell you the day this tour goes live. No spam, no marketing fluff.</p>
+    <form
+      class="notify-popup__form"
+      action={`https://formspree.io/f/${FORMSPREE_ID}`}
+      method="POST"
+    >
+      <input type="hidden" name="_subject" value="Morning Vietnam — New tour notification signup" />
+      <input type="hidden" name="tour" id="notify-popup-tour-input" value="" />
+      <div class="notify-popup__field">
+        <label for="notify-email" class="sr-only">Email</label>
+        <input
+          type="email"
+          id="notify-email"
+          name="email"
+          required
+          placeholder="your@email.com"
+          autocomplete="email"
+        />
+      </div>
+      <div class="notify-popup__field">
+        <label for="notify-name" class="sr-only">Name (optional)</label>
+        <input
+          type="text"
+          id="notify-name"
+          name="name"
+          placeholder="Your name (optional)"
+          autocomplete="name"
+        />
+      </div>
+      <button type="submit" class="c-button c-button--primary notify-popup__submit">
+        Notify me
+      </button>
+      <p class="notify-popup__success" hidden>
+        Thanks — you're on the list. We'll be in touch when it's live.
+      </p>
+      <p class="notify-popup__error" hidden>
+        Something went wrong. Try again or email good@morningvietnam.co
+      </p>
+    </form>
+  </div>
+</div>
+
+<style>
+  .notify-popup__title {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .notify-popup__sub {
+    font-size: 15px;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .notify-popup__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .notify-popup__field input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    background: white;
+    color: var(--color-nordic);
+    transition: border-color 0.2s ease;
+  }
+
+  .notify-popup__field input:focus {
+    outline: none;
+    border-color: var(--color-java);
+  }
+
+  .notify-popup__submit {
+    margin-top: 8px;
+    align-self: flex-start;
+  }
+
+  .notify-popup__success {
+    color: var(--color-java);
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .notify-popup__error {
+    color: var(--color-sorbus);
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+</style>
+
+<script>
+  // Pre-fill tour name when triggered from a specific tour card
+  document.querySelectorAll('[data-popup-trigger="#notify-popup"]').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const tourName =
+        trigger.closest('[data-tour-region]')?.querySelector('.tour-card__name')?.textContent?.trim() ?? '';
+      const tourInput = document.getElementById('notify-popup-tour-input') as HTMLInputElement | null;
+      if (tourInput) tourInput.value = tourName;
+    });
+  });
+
+  // Handle form submission via AJAX — prevents page redirect on Formspree response
+  const form = document.querySelector('.notify-popup__form') as HTMLFormElement | null;
+  const successMsg = document.querySelector('.notify-popup__success') as HTMLElement | null;
+  const errorMsg = document.querySelector('.notify-popup__error') as HTMLElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    successMsg?.setAttribute('hidden', '');
+    errorMsg?.setAttribute('hidden', '');
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        form.reset();
+        successMsg?.removeAttribute('hidden');
+      } else {
+        errorMsg?.removeAttribute('hidden');
+      }
+    } catch {
+      errorMsg?.removeAttribute('hidden');
+    }
+  });
+</script>

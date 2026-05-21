@@ -1,0 +1,723 @@
+/* ==========================================================================
+   Morning Vietnam — Animation & Component System
+   Adapted from Happly design patterns
+   ========================================================================== */
+
+
+/* ─── @keyframes ─────────────────────────────────────────────────────────── */
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+
+/* ==========================================================================
+   MARQUEE — infinite scrolling ticker
+   Canonical source of truth. Customise per-instance via CSS vars:
+     --marquee-bg    (default: --color-nordic)
+     --marquee-color (default: --color-white)
+     --marquee-speed (default: 30s)
+   ========================================================================== */
+
+.b-marquee {
+  overflow: hidden;
+  background: var(--marquee-bg, var(--color-nordic));
+  height: var(--marquee-height, auto);
+  padding: 10px 0;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.b-marquee__track {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  animation: marquee var(--marquee-speed, 30s) linear infinite;
+}
+
+.b-marquee__track:hover {
+  animation-play-state: paused;
+}
+
+.b-marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  color: var(--marquee-color, var(--color-white));
+  font-size: var(--text-sm);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.b-marquee__sep {
+  color: var(--color-riptide);
+  opacity: 0.7;
+  font-size: 0.6em;
+}
+
+
+/* ==========================================================================
+   TOUR SHOWCASE — horizontal expanding panels
+   ========================================================================== */
+
+.b-showcase {
+  display: flex;
+  height: 100vh;
+  min-height: 600px;
+  transition: all var(--transition-base);
+}
+
+.b-showcase__list {
+  display: flex;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.b-showcase__item {
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: flex 0.6s var(--ease-smooth);
+}
+
+.b-showcase__item.active {
+  flex: 2.5;
+}
+
+.b-showcase__item__topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--color-sorbus);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease-smooth);
+  z-index: 10;
+}
+
+.b-showcase__item.active .b-showcase__item__topbar {
+  transform: scaleX(1);
+}
+
+.b-showcase__item__image {
+  position: absolute;
+  inset: 0;
+}
+
+.b-showcase__item__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-smooth);
+  filter: brightness(0.7);
+}
+
+.b-showcase__item:hover .b-showcase__item__image img,
+.b-showcase__item.active .b-showcase__item__image img {
+  transform: scale(1.05);
+  filter: brightness(0.8);
+}
+
+.b-showcase__item__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px 32px;
+  background: linear-gradient(to top, rgba(4, 51, 65, 0.9) 0%, transparent 100%);
+  color: var(--color-white);
+  transition: all var(--transition-base);
+}
+
+.b-showcase__item__index {
+  font-size: 12px;
+  opacity: 0.6;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.b-showcase__item__heading {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 4vw, 56px);
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.b-showcase__item__info {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s var(--ease-smooth), opacity 0.3s ease;
+}
+
+.b-showcase__item.active .b-showcase__item__info {
+  max-height: 320px;
+  opacity: 1;
+}
+
+.b-showcase__item__info p {
+  font-size: var(--text-sm);
+  opacity: 0.85;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.b-showcase__item__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.b-showcase__meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.b-showcase__meta-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-riptide);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.b-showcase__meta-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  text-align: right;
+}
+
+
+/* ==========================================================================
+   SCROLL REVEAL — Intersection Observer hook classes
+   ========================================================================== */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s var(--ease-smooth), transform 0.7s var(--ease-smooth);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* Stagger grid children */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+}
+
+.stagger.visible > *             { opacity: 1; transform: translateY(0); }
+.stagger.visible > *:nth-child(1) { transition-delay: 0.05s; }
+.stagger.visible > *:nth-child(2) { transition-delay: 0.15s; }
+.stagger.visible > *:nth-child(3) { transition-delay: 0.25s; }
+.stagger.visible > *:nth-child(4) { transition-delay: 0.35s; }
+.stagger.visible > *:nth-child(5) { transition-delay: 0.45s; }
+.stagger.visible > *:nth-child(6) { transition-delay: 0.55s; }
+
+
+/* ==========================================================================
+   BUTTONS — Happly .c-button system
+   ========================================================================== */
+
+.c-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 100px;
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 2px solid transparent;
+  text-decoration: none;
+}
+
+.c-button--primary {
+  background: var(--color-sorbus);
+  color: var(--color-white);
+  border-color: var(--color-sorbus);
+}
+
+.c-button--primary:hover {
+  background: transparent;
+  color: var(--color-sorbus);
+}
+
+.c-button--light {
+  background: var(--color-white);
+  color: var(--color-nordic);
+  border-color: var(--color-white);
+}
+
+.c-button--light:hover {
+  background: var(--color-nordic);
+  color: var(--color-white);
+  border-color: var(--color-nordic);
+}
+
+.c-button--outline {
+  background: transparent;
+  border-color: currentColor;
+}
+
+.c-button--outline:hover {
+  background: var(--color-java);
+  color: var(--color-white);
+  border-color: var(--color-java);
+}
+
+.c-button--teal {
+  background: var(--color-java);
+  color: var(--color-white);
+  border-color: var(--color-java);
+}
+
+.c-button--teal:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+
+/* ==========================================================================
+   TESTIMONIALS SLIDER
+   ========================================================================== */
+
+.b-testimonials {
+  position: relative;
+  overflow: hidden;
+}
+
+.b-testimonials__items {
+  display: flex;
+  transition: transform 0.6s var(--ease-smooth);
+}
+
+.b-testimonials__item {
+  min-width: 100%;
+  padding: 60px 40px;
+  flex-shrink: 0;
+}
+
+.b-testimonials__quote {
+  font-size: var(--text-body-lg);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-nordic);
+  margin-bottom: 32px;
+}
+
+.b-testimonials__author {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.b-testimonials__author img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.b-testimonials__author__name {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-nordic);
+}
+
+.b-testimonials__author__role {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.b-testimonials__pagination {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.b-testimonials__pagination__bullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-riptide);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  padding: 0;
+}
+
+.b-testimonials__pagination__bullet.active {
+  width: 24px;
+  border-radius: 4px;
+  background: var(--color-java);
+}
+
+
+/* ==========================================================================
+   POPUP / MODAL
+   ========================================================================== */
+
+.b-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 51, 65, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-smooth);
+}
+
+.b-popup.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.b-popup__holder {
+  background: var(--color-white-nectar);
+  border-radius: 16px;
+  padding: 48px;
+  max-width: 560px;
+  width: 90%;
+  transform: translateY(20px);
+  transition: transform 0.4s var(--ease-smooth);
+}
+
+.b-popup.active .b-popup__holder {
+  transform: translateY(0);
+}
+
+.b-popup__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-light-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  border: none;
+  font-size: 18px;
+  color: var(--color-nordic);
+}
+
+.b-popup__close:hover {
+  background: var(--color-riptide);
+  transform: rotate(90deg);
+}
+
+
+/* ==========================================================================
+   CART — slide-in from right
+   ========================================================================== */
+
+.cart-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  max-width: 100vw;
+  background: var(--color-white);
+  z-index: 900;
+  transform: translateX(100%);
+  transition: transform 0.4s var(--ease-smooth);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-modal.open {
+  transform: translateX(0);
+}
+
+.cart-modal__header {
+  padding: 24px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.cart-modal__footer {
+  padding: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 899;
+  background: rgba(4, 51, 65, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-smooth);
+}
+
+.cart-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+
+/* ==========================================================================
+   NAV DROPDOWN
+   ========================================================================== */
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 200px;
+  background: var(--color-white);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: all 0.25s var(--ease-smooth);
+}
+
+.nav-item:hover .nav-dropdown,
+.nav-item:focus-within .nav-dropdown {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.nav-dropdown__item {
+  display: block;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-nordic);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-dropdown__item:hover {
+  background: var(--color-light-cyan);
+  color: var(--color-java);
+}
+
+.nav-dropdown__item.active {
+  color: var(--color-java);
+  font-weight: 700;
+}
+
+
+/* ==========================================================================
+   STICKY HEADER — shrink on scroll
+   ========================================================================== */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 800;
+  transition: all var(--transition-fast);
+  padding: 20px 0;
+}
+
+.header.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 12px 0;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+
+/* ==========================================================================
+   b-ctaimages — "New to Morning Vietnam?"
+   Layout: 4 photos above heading, 4 photos below button.
+   All start stacked at section center (JS-driven, scroll-scrubbed).
+   Trigger: animation begins when section center enters viewport bottom.
+   ========================================================================== */
+
+.b-ctaimages {
+  height: 100vh;
+  margin: 4rem 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  background: var(--color-light-cyan);
+}
+
+.b-ctaimages__wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.b-ctaimages__heading {
+  font-family: var(--font-heading);
+  font-size: clamp(3.2rem, 7.2vw, 11rem);
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  color: var(--color-nordic);
+  margin-bottom: 3.2rem;
+  max-width: 82rem;
+}
+
+.b-ctaimages__content {
+  font-size: clamp(0.7rem, 1vw, 1rem);
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  max-width: 53.6rem;
+  color: var(--color-nordic);
+  opacity: 0.75;
+  margin-bottom: 3.2rem;
+}
+
+.b-ctaimages__images {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* No CSS transition — animation is fully scroll-driven by JS */
+.b-ctaimages__image {
+  position: absolute;
+  will-change: transform;
+}
+
+.b-ctaimages__image picture {
+  display: block;
+  border: 1px solid rgba(4, 51, 65, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.b-ctaimages__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Top 4: fan above heading ─────────────────────────────────── */
+.b-ctaimages__image--t1 { top: 3%;   left: 2%;   width: 17%; aspect-ratio: 3/4; z-index: 1; }
+.b-ctaimages__image--t2 { top: 13%;  left: 19%;  width: 15%; aspect-ratio: 3/4; z-index: 1; }
+.b-ctaimages__image--t3 { top: 2%;   left: 37%;  width: 9%;  aspect-ratio: 1;   z-index: 3; }
+.b-ctaimages__image--t4 { top: 3%;   right: 2%;  width: 16%; aspect-ratio: 3/4; z-index: 3; }
+
+/* ── Bottom 4: fan below button ───────────────────────────────── */
+.b-ctaimages__image--b1 { bottom: 4%;  left: 2%;   width: 18%; aspect-ratio: 4/3; z-index: 1; }
+.b-ctaimages__image--b2 { bottom: 12%; left: 21%;  width: 13%; aspect-ratio: 1;   z-index: 1; }
+.b-ctaimages__image--b3 { bottom: 4%;  right: 21%; width: 15%; aspect-ratio: 3/4; z-index: 3; }
+.b-ctaimages__image--b4 { bottom: 7%;  right: 2%;  width: 14%; aspect-ratio: 4/3; z-index: 3; }
+
+@media (max-width: 575px) {
+  .b-ctaimages__image--t2,
+  .b-ctaimages__image--t3,
+  .b-ctaimages__image--b2,
+  .b-ctaimages__image--b3 { display: none; }
+
+  .b-ctaimages__image--t1 { width: 29%; }
+  .b-ctaimages__image--t4 { width: 24%; }
+  .b-ctaimages__image--b1 { width: 31%; }
+  .b-ctaimages__image--b4 { width: 25%; }
+}
+
+
+/* ==========================================================================
+   LEGACY / UTILITY (backward compat with existing components)
+   ========================================================================== */
+
+/* Fade in up — direct animation */
+.fade-in-up {
+  animation: fadeInUp 0.6s var(--ease-smooth) both;
+}
+
+/* Scale in */
+.scale-in {
+  animation: scaleIn 0.4s var(--ease-smooth) both;
+}
+
+/* Loading skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-light-cyan) 25%,
+    var(--color-riptide) 50%,
+    var(--color-light-cyan) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+}

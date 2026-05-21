@@ -1,0 +1,133 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const path = Astro.url.pathname;
+
+const subLinks = [
+  { href: '/explore/about',         label: 'About'         },
+  { href: '/explore/vietnam-facts', label: 'Vietnam Facts' },
+  { href: '/explore/faq',           label: 'FAQ'           },
+];
+---
+
+<BaseLayout title={`Explore — ${title}`} description={description}>
+
+  <section class="explore-hero">
+    <div class="explore-hero-bg">
+      <img src="https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?w=1400&q=80" alt="Vietnam streets at night" />
+      <div class="explore-hero-overlay"></div>
+    </div>
+    <div class="container explore-hero-content">
+      <p class="section-label">Discover Vietnam</p>
+      <h1>Explore Vietnam</h1>
+      <p class="explore-hero-sub">History, culture, food, and everything you need to know before you go.</p>
+    </div>
+  </section>
+
+  <div class="explore-subnav-bar">
+    <div class="container">
+      <nav class="explore-subnav" aria-label="Explore sections">
+        {subLinks.map(link => (
+          <a
+            href={link.href}
+            class:list={['subnav-link', { active: path === link.href || path.startsWith(link.href + '/') }]}
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+
+  <slot />
+
+</BaseLayout>
+
+<style>
+  .explore-hero {
+    position: relative;
+    height: 420px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .explore-hero-bg {
+    position: absolute;
+    inset: 0;
+  }
+
+  .explore-hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .explore-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 60%);
+  }
+
+  .explore-hero-content {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    padding-bottom: var(--space-12);
+  }
+
+  .explore-hero-content h1 {
+    font-size: var(--text-5xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .explore-hero-sub {
+    font-size: var(--text-xl);
+    opacity: 0.85;
+  }
+
+  /* Subnav */
+  .explore-subnav-bar {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 50;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .explore-subnav {
+    display: flex;
+    gap: 0;
+  }
+
+  .subnav-link {
+    display: inline-block;
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    border-bottom: 3px solid transparent;
+    letter-spacing: 0.03em;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .subnav-link:hover {
+    color: var(--color-primary);
+  }
+
+  .subnav-link.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+
+  @media (max-width: 560px) {
+    .explore-hero-content h1 { font-size: var(--text-4xl); }
+    .subnav-link { padding: var(--space-3) var(--space-5); }
+  }
+</style>

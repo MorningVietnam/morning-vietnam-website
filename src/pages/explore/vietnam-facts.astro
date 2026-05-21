@@ -1,0 +1,408 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const facts = [
+  {
+    number: "54",
+    label: "Ethnic minorities",
+    detail: "Each with distinct language, dress, tradition, and cuisine. Morning Vietnam tours visit real communities.",
+  },
+  {
+    number: "3,260km",
+    label: "Coastline",
+    detail: "From Gulf of Tonkin to Gulf of Thailand. More coastline than the UK.",
+  },
+  {
+    number: "8",
+    label: "UNESCO World Heritage Sites",
+    detail: "Halong Bay, Hoi An, Hue Complex, My Son, Phong Nha — Vietnam punches above its weight.",
+  },
+  {
+    number: "95M+",
+    label: "People",
+    detail: "The 15th most populous country. And the most hospitable hosts you'll ever meet.",
+  },
+  {
+    number: "500+",
+    label: "Years of culinary tradition",
+    detail: "Pho, Banh Mi, Bun Bo Hue — a cuisine shaped by geography, history, and 54 cultures.",
+  },
+  {
+    number: "Top 15",
+    label: "Most biodiverse country",
+    detail: "National parks covering 8% of land. The forests, karsts, and wetlands of our tour routes.",
+  },
+];
+
+const regions = [
+  {
+    name: "North Vietnam",
+    status: "available",
+    detail: "Where Morning Vietnam starts. Hanoi hub, mountain valleys, ethnic highland.",
+  },
+  {
+    name: "Central Vietnam",
+    status: "soon",
+    detail: "Coming Q3 2026. Imperial Hue, coast, Hoi An.",
+  },
+  {
+    name: "South Vietnam",
+    status: "soon",
+    detail: "Coming Q4 2026. Mekong Delta, HCMC.",
+  },
+];
+
+const foodItems = [
+  "Phở", "Bánh Mì", "Cao Lầu", "Bún Bò Huế",
+  "Chả Cá", "Bánh Xèo", "Bún Chả", "Cơm Tấm",
+  "Mì Quảng", "Bún Riêu",
+];
+---
+
+<BaseLayout
+  title="Vietnam Facts"
+  description="54 ethnicities, 3,260km of coast, 8 UNESCO sites — Vietnam is deeper than you think."
+>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════════════ -->
+  <section class="facts-hero">
+    <div class="container facts-hero__content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <a href="/explore/about">Explore</a>
+        <span aria-hidden="true">›</span>
+        <span>Vietnam Facts</span>
+      </nav>
+      <h1>Vietnam. Deeper than you think.</h1>
+      <p class="facts-hero__sub">54 ethnicities. 3,260km of coast. One country that surprises every time.</p>
+    </div>
+  </section>
+
+
+  <!-- ═══ STAT CARDS ════════════════════════════════════════════════ -->
+  <section class="facts-section">
+    <div class="container">
+      <p class="section-label">By the numbers</p>
+      <h2 class="facts-section__heading">The numbers behind Vietnam</h2>
+      <div class="facts-grid stagger">
+        {facts.map((f, i) => (
+          <div class={`fact-card reveal reveal-delay-${(i % 3) + 1}`}>
+            <div class="fact-card__number">{f.number}</div>
+            <div class="fact-card__label">{f.label}</div>
+            <div class="fact-card__detail">{f.detail}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ REGIONS MAP ═══════════════════════════════════════════════ -->
+  <section class="regions-section">
+    <div class="container">
+      <p class="section-label">Geography</p>
+      <h2>Vietnam runs 1,650km north to south.</h2>
+      <div class="regions-map">
+        {regions.map(r => (
+          <div class={`region-block region-block--${r.status}`}>
+            <div class="region-block__name">{r.name}</div>
+            <p class="region-block__detail">{r.detail}</p>
+            {r.status === 'available' && (
+              <a href="/tours" class="c-button c-button--teal region-block__cta">See tours →</a>
+            )}
+            {r.status === 'soon' && (
+              <span class="region-block__badge">Coming soon</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ FOOD MARQUEE ══════════════════════════════════════════════ -->
+  <section class="food-marquee-section">
+    <div class="container food-marquee-header">
+      <h2>A cuisine for every region</h2>
+    </div>
+    <div class="b-marquee food-marquee" aria-label="Vietnamese dishes">
+      <div class="b-marquee__track">
+        {[...foodItems, ...foodItems].map(item => (
+          <span class="b-marquee__item">
+            {item}
+            <span class="b-marquee__sep" aria-hidden="true">•</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ BOTTOM CTA ════════════════════════════════════════════════ -->
+  <section class="facts-cta">
+    <div class="container facts-cta__inner">
+      <div>
+        <h2>Experience these facts in person.</h2>
+        <p>Not through a screen. Not from a bus window.</p>
+      </div>
+      <a href="/tours" class="c-button c-button--primary">Book a tour →</a>
+    </div>
+  </section>
+
+</BaseLayout>
+
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────────── */
+  .facts-hero {
+    background: var(--color-java);
+    min-height: 50vh;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .facts-hero__content {
+    padding-top: calc(var(--site-header-h) + 48px);
+    padding-bottom: 56px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .breadcrumb a { color: rgba(255, 255, 255, 0.5); transition: color 0.2s; }
+  .breadcrumb a:hover { color: white; }
+
+  .facts-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 6vw, 68px);
+    font-weight: 700;
+    color: white;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    max-width: 800px;
+  }
+
+  .facts-hero__sub {
+    font-size: clamp(15px, 2vw, 20px);
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  /* ── Stats section ────────────────────────────────────────────── */
+  .facts-section {
+    padding-block: 96px;
+    background: white;
+  }
+
+  .facts-section__heading {
+    font-size: clamp(24px, 3.5vw, 40px);
+    color: var(--color-nordic);
+    margin-bottom: 48px;
+  }
+
+  .facts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .fact-card {
+    background: white;
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: 0 4px 24px rgba(4, 51, 65, 0.08);
+    border: 1px solid var(--color-border);
+    transition: all 0.4s ease;
+  }
+
+  .fact-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(29, 160, 160, 0.2);
+    border-color: var(--color-riptide);
+  }
+
+  .fact-card__number {
+    font-family: var(--font-heading);
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--color-java);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .fact-card__label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    margin-bottom: 12px;
+  }
+
+  .fact-card__detail {
+    font-size: 14px;
+    color: var(--color-nordic);
+    opacity: 0.65;
+    line-height: 1.65;
+  }
+
+  /* ── Regions map ──────────────────────────────────────────────── */
+  .regions-section {
+    padding-block: 96px;
+    background: var(--color-light-cyan);
+  }
+
+  .regions-section h2 {
+    font-size: clamp(24px, 3.5vw, 40px);
+    color: var(--color-nordic);
+    margin-bottom: 48px;
+  }
+
+  .regions-map {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+  }
+
+  .region-block {
+    padding: 40px 32px;
+    background: white;
+    border-right: 1px solid var(--color-border);
+    border-left: 4px solid transparent;
+    transition: background 0.25s, border-color 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .region-block:last-child { border-right: none; }
+
+  .region-block--available {
+    border-left-color: var(--color-java);
+  }
+
+  .region-block--soon {
+    border-left-color: var(--color-border);
+  }
+
+  .region-block:hover {
+    background: #f8fffe;
+    border-left-color: var(--color-java);
+  }
+
+  .region-block__name {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-nordic);
+  }
+
+  .region-block__detail {
+    font-size: 14px;
+    color: var(--color-nordic);
+    opacity: 0.65;
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .region-block__cta {
+    font-size: 13px;
+    padding: 10px 20px;
+    align-self: flex-start;
+  }
+
+  .region-block__badge {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-nordic);
+    opacity: 0.35;
+    align-self: flex-start;
+  }
+
+  /* ── Food marquee ─────────────────────────────────────────────── */
+  .food-marquee-section {
+    background: var(--color-nordic);
+    padding-top: 56px;
+  }
+
+  .food-marquee-header {
+    padding-bottom: 32px;
+  }
+
+  .food-marquee-header h2 {
+    font-size: clamp(22px, 3vw, 36px);
+    color: white;
+  }
+
+  .food-marquee {
+    padding: 14px 0;
+  }
+
+  .food-marquee .b-marquee__item {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: rgba(255, 255, 255, 0.8);
+    gap: 20px;
+    padding: 0 20px;
+  }
+
+  .food-marquee .b-marquee__sep {
+    color: var(--color-riptide);
+    opacity: 0.6;
+  }
+
+  /* ── Bottom CTA ───────────────────────────────────────────────── */
+  .facts-cta {
+    background: var(--color-light-cyan);
+    padding-block: 80px;
+  }
+
+  .facts-cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .facts-cta h2 {
+    font-size: clamp(24px, 3.5vw, 40px);
+    color: var(--color-nordic);
+    margin-bottom: 8px;
+  }
+
+  .facts-cta p {
+    font-size: 17px;
+    color: var(--color-nordic);
+    opacity: 0.65;
+  }
+
+  /* ── Responsive ───────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .facts-grid { grid-template-columns: repeat(2, 1fr); }
+    .regions-map { grid-template-columns: 1fr; }
+    .region-block { border-right: none; border-bottom: 1px solid var(--color-border); }
+    .region-block:last-child { border-bottom: none; }
+    .facts-cta__inner { flex-direction: column; text-align: center; align-items: center; }
+  }
+
+  @media (max-width: 480px) {
+    .facts-grid { grid-template-columns: 1fr; }
+    .fact-card__number { font-size: 40px; }
+  }
+</style>

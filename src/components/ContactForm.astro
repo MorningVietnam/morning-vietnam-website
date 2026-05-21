@@ -1,0 +1,176 @@
+---
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<form class:list={["contact-form", { compact }]} id="contactForm" novalidate>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="cf-name">Full Name *</label>
+      <input type="text" id="cf-name" name="name" placeholder="Jane Smith" required autocomplete="name" />
+      <span class="form-error" data-error="name"></span>
+    </div>
+    <div class="form-group">
+      <label for="cf-email">Email Address *</label>
+      <input type="email" id="cf-email" name="email" placeholder="jane@example.com" required autocomplete="email" />
+      <span class="form-error" data-error="email"></span>
+    </div>
+  </div>
+
+  {!compact && (
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cf-phone">Phone (optional)</label>
+        <input type="tel" id="cf-phone" name="phone" placeholder="+1 555 000 0000" autocomplete="tel" />
+      </div>
+      <div class="form-group">
+        <label for="cf-tour">Tour of Interest</label>
+        <select id="cf-tour" name="tour">
+          <option value="">— Select a tour —</option>
+          <option>Ha Long Bay Overnight Cruise</option>
+          <option>Hoi An Lantern Village & Street Food</option>
+          <option>Sapa Rice Terrace Trek</option>
+          <option>Mekong Delta Day Trip</option>
+          <option>Hanoi Street Food Night Tour</option>
+          <option>Phong Nha Cave Explorer</option>
+          <option>Custom / Private Tour</option>
+        </select>
+      </div>
+    </div>
+  )}
+
+  <div class="form-group">
+    <label for="cf-message">Message *</label>
+    <textarea id="cf-message" name="message" rows={compact ? 4 : 6} placeholder="Tell us about your travel dates, group size, or any questions…" required></textarea>
+    <span class="form-error" data-error="message"></span>
+  </div>
+
+  <button type="submit" class="btn btn-primary form-submit">
+    Send Message
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+  </button>
+
+  <p class="form-success" id="formSuccess" hidden>
+    ✓ Thanks! We'll be in touch within 24 hours.
+  </p>
+</form>
+
+<script>
+  const form = document.getElementById('contactForm') as HTMLFormElement;
+  const success = document.getElementById('formSuccess');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let valid = true;
+
+    const fields: Array<{ name: string; label: string; type?: string }> = [
+      { name: 'name', label: 'Full Name' },
+      { name: 'email', label: 'Email Address', type: 'email' },
+      { name: 'message', label: 'Message' },
+    ];
+
+    fields.forEach(({ name, label, type }) => {
+      const el = form.elements.namedItem(name) as HTMLInputElement;
+      const err = form.querySelector(`[data-error="${name}"]`) as HTMLElement;
+      if (!el || !err) return;
+
+      const val = el.value.trim();
+      let msg = '';
+
+      if (!val) {
+        msg = `${label} is required.`;
+      } else if (type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        msg = 'Please enter a valid email address.';
+      }
+
+      err.textContent = msg;
+      el.classList.toggle('input-error', !!msg);
+      if (msg) valid = false;
+    });
+
+    if (valid) {
+      form.reset();
+      success?.removeAttribute('hidden');
+      setTimeout(() => success?.setAttribute('hidden', ''), 6000);
+    }
+  });
+</script>
+
+<style>
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  input,
+  select,
+  textarea {
+    padding: var(--space-3) var(--space-4);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-base);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    outline: none;
+    width: 100%;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  }
+
+  textarea { resize: vertical; min-height: 100px; }
+
+  .input-error {
+    border-color: #d93025 !important;
+  }
+
+  .form-error {
+    font-size: var(--text-xs);
+    color: #d93025;
+    min-height: 1em;
+  }
+
+  .form-submit {
+    align-self: flex-start;
+    padding: var(--space-3) var(--space-8);
+  }
+
+  .form-success {
+    padding: var(--space-4);
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>

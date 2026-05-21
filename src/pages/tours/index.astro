@@ -1,0 +1,264 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TourCard from '../../components/TourCard.astro';
+import NotifyPopup from '../../components/NotifyPopup.astro';
+import { tours } from '../../data/tours.ts';
+---
+
+<BaseLayout
+  title="Our Tours"
+  description="Vietnam deeper. Horizons wider. Small-group tours handcrafted for real discovery."
+>
+
+  <!-- Hero -->
+  <section class="tours-hero">
+    <div class="container tours-hero__content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <span>Tours</span>
+      </nav>
+      <h1>Our Tours</h1>
+      <p class="tours-hero__sub">Vietnam deeper. Horizons wider.</p>
+    </div>
+  </section>
+
+  <!-- Filter bar -->
+  <div class="filter-bar" id="filter-bar">
+    <div class="filter-bar__inner">
+      <button class="filter-pill active" data-filter="all">All tours</button>
+      <button class="filter-pill" data-filter="north">North Vietnam</button>
+      <button class="filter-pill" data-filter="soon">Coming Soon</button>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <section class="tours-section">
+    <div class="tours-grid">
+      {tours.map((tour, i) => <TourCard tour={tour} index={i} />)}
+    </div>
+  </section>
+
+  <NotifyPopup />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .tours-hero {
+    background: var(--color-nordic);
+    min-height: 50vh;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: var(--space-12);
+  }
+
+  .tours-hero__content {
+    padding-top: calc(var(--site-header-h) + var(--space-12));
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: var(--space-6);
+  }
+
+  .breadcrumb a {
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.2s ease;
+  }
+
+  .breadcrumb a:hover { color: var(--color-riptide); }
+
+  .tours-hero h1 {
+    font-family: var(--font-heading);
+    font-size: var(--text-h1);
+    font-weight: 700;
+    color: white;
+    line-height: 1.05;
+    margin-bottom: var(--space-4);
+  }
+
+  .tours-hero__sub {
+    font-size: var(--text-xl);
+    color: var(--color-riptide);
+    font-weight: 500;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    position: sticky;
+    top: var(--site-header-h);
+    z-index: 100;
+    background: white;
+    border-bottom: 1px solid var(--color-light-cyan);
+    padding: 16px 24px;
+  }
+
+  .filter-bar__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-pill {
+    padding: 8px 20px;
+    border-radius: 100px;
+    border: 2px solid var(--color-light-cyan);
+    background: white;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .filter-pill.active,
+  .filter-pill:hover {
+    background: var(--color-sorbus);
+    border-color: var(--color-sorbus);
+    color: white;
+  }
+
+  /* Grid */
+  .tours-section {
+    padding: 48px 24px;
+  }
+
+  .tours-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  @media (max-width: 1024px) {
+    .tours-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .tours-grid { grid-template-columns: 1fr; }
+    .filter-bar { padding: 12px 16px; }
+    .tours-section { padding: 32px 16px; }
+  }
+
+  /* Popup */
+  .b-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(4, 51, 65, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .b-popup.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .b-popup__holder {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 420px;
+    width: 90%;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+
+  .b-popup.active .b-popup__holder {
+    transform: translateY(0);
+  }
+
+  .b-popup__close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 20px;
+    color: var(--color-nordic);
+    opacity: 0.4;
+    cursor: pointer;
+    background: none;
+    border: none;
+    line-height: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .b-popup__close:hover { opacity: 1; }
+
+  .b-popup__holder h3 {
+    font-size: 24px;
+    color: var(--color-nordic);
+    margin-bottom: 8px;
+  }
+
+  .b-popup__holder p {
+    font-size: 14px;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    margin-bottom: 24px;
+  }
+
+  .notify-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .notify-form input {
+    padding: 12px 16px;
+    border: 2px solid var(--color-light-cyan);
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .notify-form input:focus {
+    border-color: var(--color-java);
+  }
+
+  .notify-success {
+    color: var(--color-java);
+    font-weight: 600;
+    font-size: 16px;
+    text-align: center;
+    padding: var(--space-4) 0;
+  }
+</style>
+
+<script>
+  // Filter pills
+  const pills = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
+  const cards = document.querySelectorAll<HTMLElement>('[data-tour-region]');
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const filter = pill.dataset.filter ?? 'all';
+
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+
+      cards.forEach(card => {
+        const region = card.dataset.tourRegion ?? '';
+        const match = filter === 'all' || region === filter;
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        card.style.opacity = match ? '1' : '0.2';
+        card.style.transform = match ? 'scale(1)' : 'scale(0.97)';
+        card.style.pointerEvents = match ? '' : 'none';
+      });
+    });
+  });
+</script>

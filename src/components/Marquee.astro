@@ -1,0 +1,35 @@
+---
+interface Props {
+  items?: string[];
+  speed?: number; /* seconds for one full cycle */
+  bg?: string;
+  color?: string;
+}
+
+const {
+  items = [
+    "Ha Long Bay Cruises",
+    "Hoi An Lantern Nights",
+    "Sapa Rice Terraces",
+    "Mekong Delta River Life",
+    "Hanoi Street Food",
+    "Phong Nha Caves",
+    "Hue Imperial City",
+    "Da Nang & Marble Mountains",
+  ],
+  speed = 30,
+  bg = "var(--color-java)",
+  color = "var(--color-white)",
+} = Astro.props;
+---
+
+<div class="b-marquee" style={`--marquee-bg:${bg};--marquee-color:${color};--marquee-speed:${speed}s`}>
+  <div class="b-marquee__track">
+    {items.map(item => (
+      <span class="b-marquee__item">
+        {item}
+        <span class="b-marquee__sep" aria-hidden="true">✦</span>
+      </span>
+    ))}
+  </div>
+</div>

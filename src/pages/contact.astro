@@ -1,0 +1,679 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const tourOptions = [
+  "Not sure yet — help me choose",
+  "Ho Chi Minh: A Life",
+  "Unlock Mai Châu",
+  "Ninh Bình In A New Way",
+  "Cát Bà: Not Just About Sea",
+  "Lai Châu Motortour",
+  "Mai - Mộc In 1 Trip",
+  "Private / custom tour",
+];
+
+const sourceOptions = [
+  "Google",
+  "Instagram",
+  "TikTok",
+  "Facebook",
+  "Friend or family",
+  "Travel agent",
+  "Other",
+];
+
+const faqItems = [
+  {
+    q: "How quickly do you reply?",
+    a: "Within 24 hours on weekdays, usually much sooner. We're based in Hanoi (ICT, UTC+7) — if you message in the morning our time, you'll hear back the same day.",
+  },
+  {
+    q: "Do I need to pay a deposit now?",
+    a: "No payment is required to get in touch or make a booking request. We'll confirm your tour first, then ask for a small deposit to secure your spot.",
+  },
+  {
+    q: "What's the cancellation policy?",
+    a: "Free cancellation up to 14 days before departure (deposit refunded in full). 50% refund 7–14 days before. No refund under 7 days, but we'll always try to rebook you on a future date.",
+  },
+];
+---
+
+<BaseLayout
+  title="Contact Us"
+  description="Get in touch with Morning Vietnam — we reply within 24 hours. Questions, custom tours, group bookings."
+>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════════════ -->
+  <section class="contact-hero">
+    <div class="container contact-hero__content">
+      <h1>Let's talk about your Vietnam trip</h1>
+      <p class="contact-hero__sub">We reply within 24 hours. Usually much faster.</p>
+    </div>
+  </section>
+
+
+  <!-- ═══ CONTACT SPLIT ═════════════════════════════════════════════ -->
+  <section class="contact-split-section">
+    <div class="container contact-split">
+
+      <!-- LEFT: Form -->
+      <div class="form-col">
+        <h2>Send us a message</h2>
+
+        <form class="contact-form" id="contact-form" novalidate>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="cf-name">Full name <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="cf-name" name="name" required autocomplete="name" placeholder="Your full name" />
+            </div>
+            <div class="field">
+              <label for="cf-email">Email <span class="required" aria-hidden="true">*</span></label>
+              <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder="you@example.com" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="cf-date">Preferred travel date</label>
+              <input
+                type="date"
+                id="cf-date"
+                name="date"
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <div class="field">
+              <label for="cf-group">Group size</label>
+              <input type="number" id="cf-group" name="groupSize" min="1" max="20" placeholder="e.g. 4" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="cf-tour">Tour interest</label>
+            <select id="cf-tour" name="tour">
+              {tourOptions.map(opt => <option value={opt}>{opt}</option>)}
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="cf-message">Message / special requests</label>
+            <textarea
+              id="cf-message"
+              name="message"
+              rows="5"
+              placeholder="Tell us about your ideal trip, any questions, dietary requirements, accessibility needs..."
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label for="cf-source">How did you hear about us?</label>
+            <select id="cf-source" name="source">
+              <option value="">— Select one —</option>
+              {sourceOptions.map(opt => <option value={opt}>{opt}</option>)}
+            </select>
+          </div>
+
+          <button type="submit" class="c-button c-button--primary contact-form__submit">
+            Send message
+          </button>
+
+        </form>
+
+        <!-- Success state -->
+        <div class="form-success" id="form-success" style="display:none">
+          <div class="form-success__icon">✅</div>
+          <h3>Message sent!</h3>
+          <p>We'll get back to you within 24 hours. Check your inbox — we'll reply from <strong>good@morningvietnam.co</strong></p>
+          <a href="/tours" class="c-button c-button--teal form-success__cta">Browse tours while you wait →</a>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Info -->
+      <div class="info-col">
+
+        <h2>Get in touch directly</h2>
+
+        <div class="info-items">
+
+          <a href="https://wa.me/84961836611" target="_blank" rel="noopener noreferrer" class="info-item info-item--link">
+            <div class="info-item__icon">💬</div>
+            <div>
+              <strong>WhatsApp</strong>
+              <p>+84 (0) 961 83 6611</p>
+              <span class="info-item__note">Fastest response — we reply same day</span>
+            </div>
+            <svg class="info-item__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+
+          <a href="mailto:good@morningvietnam.co" class="info-item info-item--link">
+            <div class="info-item__icon">✉️</div>
+            <div>
+              <strong>Email</strong>
+              <p>good@morningvietnam.co</p>
+              <span class="info-item__note">We reply within 24 hours</span>
+            </div>
+            <svg class="info-item__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+
+          <div class="info-item">
+            <div class="info-item__icon">📍</div>
+            <div>
+              <strong>Office</strong>
+              <p>No 7, Alley 178/1, Thai Ha Street<br />Hanoi, Vietnam</p>
+              <span class="info-item__note">Mon–Fri, 9am–6pm ICT (UTC+7)</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-item__icon">🌐</div>
+            <div>
+              <strong>We speak</strong>
+              <p>English · Français · Deutsch · Tiếng Việt</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- B2B box -->
+        <div class="b2b-box">
+          <div class="b2b-box__label">For travel professionals</div>
+          <h3>Travel agents &amp; DMC partners</h3>
+          <p>We have a dedicated B2B channel with dedicated pricing and commission structure. Email us directly with your client brief.</p>
+          <a
+            href="mailto:good@morningvietnam.co?subject=B2B%20Partnership%20Enquiry"
+            class="c-button c-button--light b2b-box__cta"
+          >
+            Email the B2B team →
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══ MINI FAQ ══════════════════════════════════════════════════ -->
+  <section class="mini-faq-section">
+    <div class="container mini-faq-inner">
+      <h2>Quick answers</h2>
+      <div class="mini-faq-list">
+        {faqItems.map(item => (
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>{item.q}</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer__inner">{item.a}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ MAP ═══════════════════════════════════════════════════════ -->
+  <section class="map-section">
+    <div class="container">
+      <div class="map-wrap">
+        <iframe
+          title="Morning Vietnam office — Thái Hà, Hà Nội"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.4614591835946!2d105.82731677501537!3d21.022500380614485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab54a2d5d3c3%3A0x7a6b0bf7e5f8c5a2!2sTh%C3%A1i%20H%C3%A0%2C%20%C4%90%E1%BB%91ng%20%C4%90a%2C%20H%C3%A0%20N%E1%BB%99i%2C%20Vietnam!5e0!3m2!1sen!2svn!4v1747299600000!5m2!1sen!2svn"
+          width="100%"
+          height="400"
+          style="border:0"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+      <p class="map-caption">Morning Vietnam · No 7/1, Alley 178 Thái Hà, Đống Đa, Hà Nội</p>
+    </div>
+  </section>
+
+</BaseLayout>
+
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────────── */
+  .contact-hero {
+    background: linear-gradient(135deg, var(--color-java) 0%, #147a7a 100%);
+    min-height: 36vh;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .contact-hero__content {
+    padding-top: calc(var(--site-header-h) + 48px);
+    padding-bottom: 52px;
+  }
+
+  .contact-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 700;
+    color: white;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    max-width: 680px;
+  }
+
+  .contact-hero__sub {
+    font-size: clamp(15px, 2vw, 19px);
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  /* ── Contact split ────────────────────────────────────────────── */
+  .contact-split-section {
+    padding-block: 80px;
+    background: var(--color-light-cyan);
+  }
+
+  .contact-split {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  /* ── Form column ──────────────────────────────────────────────── */
+  .form-col h2 {
+    font-size: clamp(22px, 3vw, 32px);
+    color: var(--color-nordic);
+    margin-bottom: 32px;
+  }
+
+  .contact-form .field {
+    margin-bottom: 20px;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .contact-form label {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .required { color: var(--color-sorbus); }
+
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--color-light-cyan);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: var(--font-body);
+    color: var(--color-nordic);
+    background: white;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    appearance: none;
+  }
+
+  .contact-form select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23043341' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+
+  .contact-form input:focus,
+  .contact-form select:focus,
+  .contact-form textarea:focus {
+    outline: none;
+    border-color: var(--color-java);
+    box-shadow: 0 0 0 4px rgba(29, 160, 160, 0.1);
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: var(--color-nordic);
+    opacity: 0.35;
+  }
+
+  .contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .contact-form input[type="date"] {
+    color-scheme: light;
+  }
+
+  .contact-form__submit {
+    width: 100%;
+    justify-content: center;
+    font-size: 16px;
+    padding-block: 16px;
+    margin-top: 8px;
+  }
+
+  /* Form success state */
+  .form-success {
+    text-align: center;
+    padding: 48px 32px;
+    background: white;
+    border-radius: 20px;
+    border: 2px solid var(--color-light-cyan);
+  }
+
+  .form-success__icon { font-size: 56px; margin-bottom: 16px; }
+
+  .form-success h3 {
+    font-size: 28px;
+    color: var(--color-nordic);
+    margin-bottom: 12px;
+  }
+
+  .form-success p {
+    font-size: 16px;
+    color: var(--color-nordic);
+    opacity: 0.65;
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .form-success__cta { display: inline-flex; }
+
+  /* ── Info column ──────────────────────────────────────────────── */
+  .info-col h2 {
+    font-size: clamp(22px, 3vw, 32px);
+    color: var(--color-nordic);
+    margin-bottom: 32px;
+  }
+
+  .info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 32px;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 16px;
+    background: white;
+    transition: background 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .info-item--link:hover {
+    background: var(--color-light-cyan);
+    box-shadow: 0 4px 16px rgba(29, 160, 160, 0.12);
+  }
+
+  .info-item__icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--color-light-cyan);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .info-item > div { flex: 1; }
+
+  .info-item strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-java);
+    margin-bottom: 4px;
+  }
+
+  .info-item p {
+    font-size: 15px;
+    color: var(--color-nordic);
+    line-height: 1.5;
+  }
+
+  .info-item__note {
+    display: block;
+    font-size: 12px;
+    color: var(--color-nordic);
+    opacity: 0.45;
+    margin-top: 4px;
+  }
+
+  .info-item__arrow {
+    color: var(--color-java);
+    flex-shrink: 0;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .info-item--link:hover .info-item__arrow {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  /* B2B box */
+  .b2b-box {
+    background: var(--color-nordic);
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .b2b-box__label {
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-riptide);
+  }
+
+  .b2b-box h3 {
+    font-size: 20px;
+    color: white;
+    line-height: 1.2;
+  }
+
+  .b2b-box p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.65;
+  }
+
+  .b2b-box__cta {
+    align-self: flex-start;
+    margin-top: 6px;
+  }
+
+  /* ── Mini FAQ ─────────────────────────────────────────────────── */
+  .mini-faq-section {
+    padding-block: 72px;
+    background: white;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mini-faq-inner {
+    max-width: 760px;
+  }
+
+  .mini-faq-inner h2 {
+    font-size: clamp(22px, 3vw, 36px);
+    color: var(--color-nordic);
+    margin-bottom: 32px;
+  }
+
+  .mini-faq-list {
+    border-top: 1px solid var(--color-light-cyan);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--color-light-cyan);
+  }
+
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--color-nordic);
+    gap: 16px;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    transition: color 0.2s;
+  }
+
+  .faq-question:hover { color: var(--color-java); }
+
+  .faq-item.open .faq-question { color: var(--color-java); }
+
+  .faq-icon {
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--color-java);
+    transition: transform 0.3s ease, color 0.3s ease;
+    flex-shrink: 0;
+    line-height: 1;
+    width: 24px;
+    text-align: center;
+  }
+
+  .faq-item.open .faq-icon {
+    transform: rotate(45deg);
+    color: var(--color-sorbus);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  .faq-answer__inner {
+    padding: 0 0 20px 0;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--color-nordic);
+    opacity: 0.65;
+  }
+
+  /* ── Map ──────────────────────────────────────────────────────── */
+  .map-section {
+    padding-block: 0 0;
+    background: white;
+  }
+
+  .map-section .container {
+    padding-bottom: 0;
+  }
+
+  .map-wrap {
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+  }
+
+  .map-wrap iframe {
+    display: block;
+  }
+
+  .map-caption {
+    background: var(--color-nordic);
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 13px;
+    padding: 14px 24px;
+    text-align: center;
+    border-radius: 0 0 16px 16px;
+    margin-bottom: 0;
+  }
+
+  /* ── Responsive ───────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .contact-split {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .info-col { order: -1; }
+  }
+
+  @media (max-width: 640px) {
+    .field-row { grid-template-columns: 1fr; }
+    .contact-split-section { padding-block: 56px; }
+  }
+</style>
+
+
+<script>
+  // ── Form submit ────────────────────────────────────────────────
+  const form = document.getElementById('contact-form') as HTMLElement;
+  const success = document.getElementById('form-success') as HTMLElement;
+
+  form?.addEventListener('submit', e => {
+    e.preventDefault();
+    form.style.display = 'none';
+    success.style.display = 'block';
+    // Scroll to success message
+    success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // ── Mini FAQ accordion ─────────────────────────────────────────
+  document.querySelectorAll<HTMLElement>('.faq-item').forEach(item => {
+    const btn = item.querySelector<HTMLButtonElement>('.faq-question');
+    const answer = item.querySelector<HTMLElement>('.faq-answer');
+    if (!btn || !answer) return;
+
+    answer.style.maxHeight = '0';
+
+    btn.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+
+      document.querySelectorAll<HTMLElement>('.faq-item.open').forEach(open => {
+        open.classList.remove('open');
+        const a = open.querySelector<HTMLElement>('.faq-answer');
+        if (a) a.style.maxHeight = '0';
+        open.querySelector<HTMLButtonElement>('.faq-question')?.setAttribute('aria-expanded', 'false');
+      });
+
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+</script>

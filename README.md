@@ -41,3 +41,14 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## Formspree setup
+
+The "Notify me" popup on Coming Soon tours submits to Formspree.
+
+1. Sign up free at https://formspree.io
+2. Create a new form, copy the form ID (format: `xxxxxxxx`)
+3. Replace `YOUR_FORMSPREE_ID` in `src/components/NotifyPopup.astro` with the ID
+4. Free tier: 50 submissions/month — enough for waitlist signups
+
+Submissions include: `email`, `name` (optional), `tour` (pre-filled from the card), `_subject`.

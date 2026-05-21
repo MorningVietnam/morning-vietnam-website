@@ -1,0 +1,2239 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NotifyPopup from '../../components/NotifyPopup.astro';
+import { tours } from '../../data/tours.ts';
+
+export function getStaticPaths() {
+  return tours.map(tour => ({ params: { slug: tour.slug }, props: { tour } }));
+}
+
+const { tour } = Astro.props;
+
+if (tour.comingSoon) {
+  return Astro.redirect('/tours');
+}
+
+const galleryItems = tour.gallery && tour.gallery.length > 0
+  ? tour.gallery
+  : [{ src: tour.image, alt: tour.name }];
+
+const hasDurationOptions = tour.durationOptions && tour.durationOptions.length > 1;
+
+const pitch = tour.pitch;
+const hasDurationPitch = pitch && typeof pitch === 'object' && !('headline' in (pitch as any)) && !Array.isArray(pitch);
+const firstDurKey: string = (tour.durationOptions as any)?.[0]?.id || '1day';
+const pitchDefault: any = hasDurationPitch
+  ? ((pitch as any)[firstDurKey] ?? Object.values(pitch as any)[0])
+  : pitch;
+
+const hasDurationValue = tour.valueAnchor && typeof tour.valueAnchor === 'object' && !('headline' in (tour.valueAnchor as any));
+const valueAnchorObj: any = hasDurationValue
+  ? ((tour.valueAnchor as any)[firstDurKey] ?? Object.values(tour.valueAnchor as any)[0])
+  : tour.valueAnchor;
+const valueAnchor: any = valueAnchorObj?.headline ? valueAnchorObj : null;
+
+const overview     = tour.storytelling;
+const elevation    = tour.elevationProfile;
+const elevMax: number = (tour as any).elevationMax ?? 1500;
+const activityCards = tour.activityCards;
+const welcomePack  = tour.welcomePack;
+const unlock       = tour.unlockChallenge;
+const season       = tour.seasonality;
+const faqs         = tour.faqs;
+
+const tripInfoData   = (tour.tripInfo as any) || null;
+const hasTripInfo    = !!tripInfoData;
+const defaultTripKey = (tour.durationOptions as any)?.[0]?.id || 'default';
+const defaultTripItems: any[] = hasTripInfo
+  ? (tripInfoData[defaultTripKey] || tripInfoData['default'] || [])
+  : [];
+---
+
+<BaseLayout title={tour.name} description={tour.tagline}>
+
+  <!-- ═══ S1 · b-product (split hero) ════════════════════════════ -->
+  <section class="td-product page-offset">
+    <div class="td-product__inner">
+
+      <!-- Left: Image gallery -->
+      <div class="td-product__gallery">
+        {tour.gallery && tour.gallery.length > 0 ? (
+          <>
+            <div class="td-product__main-image">
+              <img id="td-main-img" src={galleryItems[0].src} alt={galleryItems[0].alt} fetchpriority="high" />
+              {galleryItems.length > 1 && (
+                <div class="td-gallery__nav">
+                  <button id="td-prev" class="td-gallery__arrow" aria-label="Previous image">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <button id="td-next" class="td-gallery__arrow" aria-label="Next image">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+            <div class="td-product__thumbs">
+              {galleryItems.map((g, i) => (
+                <button
+                  class={`td-product__thumb${i === 0 ? ' active' : ''}`}
+                  data-src={g.src}
+                  data-alt={g.alt}
+                  aria-label={`Image ${i + 1}`}
+                >
+                  <img src={g.src} alt={g.alt} loading="lazy" />
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div class="td-product__photo-pending">
+            <div class="td-product__photo-pending-icon">📷</div>
+            <strong>PHOTO PENDING</strong>
+            <p>Hero gallery for {tour.name}. Brief: 4–6 wide shots showing the route, activities, and people. Candid moments preferred over posed.</p>
+          </div>
+        )}
+      </div>
+
+      <!-- Right: Purchase panel -->
+      <div class="td-product__panel" id="td-product-panel" data-duration-options={hasDurationOptions ? JSON.stringify(tour.durationOptions) : ''}>
+        <p class="td-product__eyebrow">
+          {tour.region === 'north' ? 'North Vietnam' : tour.region === 'soon' ? 'Coming soon' : tour.region}
+          &nbsp;·&nbsp;{tour.duration.join(' / ')}
+        </p>
+        <h1 class="td-product__heading">{tour.name}</h1>
+
+        {hasDurationOptions ? (
+          <>
+            <!-- Duration toggle buttons -->
+            <div class="td-duration__tabs" id="td-duration-tabs">
+              {tour.durationOptions.map((opt: {id: string; label: string}, i: number) => (
+                <button
+                  class={`td-duration__tab${i === 0 ? ' is-active' : ''}`}
+                  data-duration={opt.id}
+                  type="button"
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
+            <!-- Dynamic price -->
+            {tour.durationOptions[0].price != null && (
+              <div class="td-product__price" id="td-price-display">
+                <span id="td-price-amount">${tour.durationOptions[0].price}</span>
+                <span class="td-product__price-unit">/person</span>
+              </div>
+            )}
+
+            <!-- Dynamic tagline -->
+            <p class="td-product__tagline" id="td-tagline-display">{tour.durationOptions[0].tagline}</p>
+
+            {!tour.comingSoon ? (
+              <div class="td-product__cta" id="td-cta-display">
+                <a
+                  href={`https://wa.me/84961836611?text=${encodeURIComponent(tour.durationOptions[0].waText)}`}
+                  target="_blank"
+                  rel="noopener"
+                  class="c-button c-button--primary td-product__book"
+                  id="td-cta-btn"
+                >
+                  {tour.durationOptions[0].ctaLabel}
+                </a>
+                <p class="td-product__cta-note" id="td-cta-note">{tour.durationOptions[0].ctaNote}</p>
+              </div>
+            ) : (
+              <div class="td-product__cta">
+                <button class="c-button c-button--outline" data-popup-trigger="#notify-popup">
+                  Notify me when live
+                </button>
+                <p class="td-product__cta-note">{tour.price}</p>
+              </div>
+            )}
+
+            <!-- Trip Info cards -->
+            {hasTripInfo && (
+              <div class="td-tripinfo" id="td-tripinfo-section"
+                data-trip-info={JSON.stringify(tripInfoData)}>
+                <p class="td-tripinfo__section-label">Trip info</p>
+                <div class="td-tripinfo__grid" id="td-tripinfo-grid">
+                  {defaultTripItems.map((item: any) => (
+                    <div class="td-tripinfo__card">
+                      <div class="td-tripinfo__icon-wrap">
+                        <i class={`ti ti-${item.icon}`} aria-hidden="true"></i>
+                      </div>
+                      <div>
+                        <p class="td-tripinfo__label">{item.label}</p>
+                        <p class="td-tripinfo__value">{item.value}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div class="td-product__price">
+              {tour.priceUSD ? `$${tour.priceUSD}` : 'TBA'}
+              <span class="td-product__price-unit">/person</span>
+            </div>
+            <p class="td-product__tagline">{tour.tagline}</p>
+
+            {!tour.comingSoon ? (
+              <div class="td-product__cta">
+                <a
+                  href={`https://wa.me/84961836611?text=Hi%20Morning%20Vietnam%20-%20I'd%20like%20to%20book%20${encodeURIComponent(tour.name)}`}
+                  target="_blank"
+                  rel="noopener"
+                  class="c-button c-button--primary td-product__book"
+                >
+                  Reserve my spot →
+                </a>
+                <p class="td-product__cta-note">No payment now. We hold your spot, you pay 14 days before. Free cancellation.</p>
+              </div>
+            ) : (
+              <div class="td-product__cta">
+                <button class="c-button c-button--outline" data-popup-trigger="#notify-popup">
+                  Notify me when live
+                </button>
+                <p class="td-product__cta-note">{tour.price}</p>
+              </div>
+            )}
+
+            <!-- Trip Info cards (single-duration tours) -->
+            {hasTripInfo && (
+              <div class="td-tripinfo" id="td-tripinfo-section">
+                <p class="td-tripinfo__section-label">Trip info</p>
+                <div class="td-tripinfo__grid" id="td-tripinfo-grid">
+                  {defaultTripItems.map((item: any) => (
+                    <div class="td-tripinfo__card">
+                      <div class="td-tripinfo__icon-wrap">
+                        <i class={`ti ti-${item.icon}`} aria-hidden="true"></i>
+                      </div>
+                      <div>
+                        <p class="td-tripinfo__label">{item.label}</p>
+                        <p class="td-tripinfo__value">{item.value}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ S2 · b-marquee ═════════════════════════════════════════ -->
+  <div class="b-marquee td-marquee" aria-hidden="true">
+    <div class="b-marquee__track">
+      {[...Array(2)].map(() => (
+        <>
+          <span class="b-marquee__item">All meals included<span class="b-marquee__sep">✦</span></span>
+          <span class="b-marquee__item">Licensed int'l operator<span class="b-marquee__sep">✦</span></span>
+          <span class="b-marquee__item">No payment upfront<span class="b-marquee__sep">✦</span></span>
+          <span class="b-marquee__item">Free cancellation<span class="b-marquee__sep">✦</span></span>
+          <span class="b-marquee__item">Unlock Challenge included<span class="b-marquee__sep">✦</span></span>
+        </>
+      ))}
+    </div>
+  </div>
+
+  <!-- ═══ S3 · b-pitch (Hook storytelling) ═══════════════════════ -->
+  <section class="td-pitch" id="td-pitch-section" data-pitch={hasDurationPitch ? JSON.stringify(tour.pitch) : ''}>
+    <div class="td-pitch__inner">
+      <p class="section-label">The pitch</p>
+      <blockquote class="td-pitch__headline" id="td-pitch-headline">
+        {pitchDefault?.headline || "By tonight, you'll have done things most weekenders never get to."}
+      </blockquote>
+      <div class="td-pitch__body">
+        {(pitchDefault?.paragraphs || []).map((p: string) => <p>{p}</p>)}
+        <p class="td-pitch__closing" id="td-pitch-closing">{pitchDefault?.closingLine || ''}</p>
+      </div>
+      <ul class="td-pitch__bullets" id="td-pitch-bullets">
+        {(pitchDefault?.bullets || []).map((b: string) => <li>{b}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══ S4 · b-value (Justify the price) ═══════════════════════ -->
+  {valueAnchor && (
+    <section class="td-value" id="td-value-section" data-value-anchor={hasDurationValue ? JSON.stringify(tour.valueAnchor) : ''}>
+      <div class="td-value__inner">
+        <div class="td-value__left">
+          <p class="section-label">Worth it?</p>
+          <h2 class="td-value__heading" id="td-value-headline">{valueAnchor.headline}</h2>
+          <div class="td-value__body" id="td-value-paragraphs">
+            {(valueAnchor.paragraphs || []).map((p: string) => <p>{p}</p>)}
+          </div>
+        </div>
+        <div class="td-value__right">
+          <table class="td-value__table">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="td-value__th-typical">Typical tour</th>
+                <th class="td-value__th-us">Morning Vietnam</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(valueAnchor.compareTable || []).map((row: {metric: string; typical: string; us: string}) => (
+                <tr>
+                  <td class="td-value__metric">{row.metric}</td>
+                  <td class="td-value__bad">{row.typical}</td>
+                  <td class="td-value__good">{row.us}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ═══ S5 · b-overview ════════════════════════════════════════ -->
+  <section class="td-overview">
+    <div class="td-overview__inner">
+      <div class="td-overview__left">
+        <p class="section-label">About this tour</p>
+        <h2 class="td-overview__headline">{overview?.headline || tour.tagline}</h2>
+        <div class="td-overview__body">
+          {(overview?.paragraphs?.length ? overview.paragraphs : [tour.description]).map((p: string | undefined) => p ? <p>{p}</p> : null)}
+        </div>
+      </div>
+      <div class="td-overview__right">
+        {overview?.pullImage ? (
+          <img src={overview.pullImage} alt={tour.name} loading="lazy" />
+        ) : (
+          <div class="td-overview__photo-pending">
+            <strong>PHOTO PENDING</strong>
+            <p>Wide environmental shot for {tour.name} — landscape or activity moment, vertical orientation preferred (3:4 or 4:5).</p>
+          </div>
+        )}
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══ S4 · b-timeline (SVG elevation chart) ═════════════════ -->
+  <section class="td-timeline">
+    <div class="td-timeline__inner">
+      <p class="section-label">The journey</p>
+      <h2 class="td-timeline__heading">A day, mapped.</h2>
+      <p class="td-timeline__sub">Time across, elevation up. Every spike is a moment worth remembering.</p>
+
+      {elevation && elevation.length > 0 ? (
+        <div class="td-timeline__chart-wrap">
+          <svg
+            class="td-timeline__svg"
+            viewBox="0 0 1200 450"
+            preserveAspectRatio="xMidYMid meet"
+            role="img"
+            aria-label={`Elevation timeline for ${tour.name}`}
+          >
+            <defs>
+              <linearGradient id="elevationGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--color-java)" stop-opacity="0.6" />
+                <stop offset="100%" stop-color="var(--color-java)" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+
+            {/* Y-axis gridlines + labels — scale to elevMax */}
+            {Array.from({ length: Math.floor(elevMax / 300) + 1 }, (_, i) => i * 300).map((elev) => {
+              const yPos = 340 - (elev / elevMax) * 280;
+              return (
+                <>
+                  <line x1="60" y1={yPos} x2="1160" y2={yPos} stroke="rgba(4,51,65,0.08)" stroke-width="1" />
+                  <text x="50" y={yPos + 4} text-anchor="end" font-size="11" fill="rgba(4,51,65,0.5)" font-family="Commissioner, sans-serif">{elev}m</text>
+                </>
+              );
+            })}
+
+            {/* Paths: per-duration, built generically from durationOnly field */}
+            {(() => {
+              const allPts = elevation!;
+              const sharedPts = allPts.filter((p: any) => !p.durationOnly);
+              const pts1day = [...sharedPts, ...allPts.filter((p: any) => p.durationOnly === '1day')];
+              const pts2d1n = [...sharedPts, ...allPts.filter((p: any) => p.durationOnly === '2d1n')];
+              const pts3d2n = [...sharedPts, ...allPts.filter((p: any) => p.durationOnly === '3d2n')];
+
+              function makePath(pts: any[], close: boolean) {
+                const step = 1100 / Math.max(1, pts.length - 1);
+                let d = pts.map((p: any, i: number) => {
+                  const x = 60 + i * step;
+                  const y = 340 - (p.elevation / elevMax) * 280;
+                  return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                }).join(' ');
+                if (close) {
+                  const lastX = 60 + (pts.length - 1) * step;
+                  d += ` L ${lastX} 340 L 60 340 Z`;
+                }
+                return d;
+              }
+
+              const step1day = 1100 / Math.max(1, pts1day.length - 1);
+              const step2d1n = 1100 / Math.max(1, pts2d1n.length - 1);
+              const step3d2n = 1100 / Math.max(1, pts3d2n.length - 1);
+
+              function renderDots(pts: any[], durClass: string, step: number) {
+                return pts.map((p: any, i: number) => {
+                  const x = 60 + i * step;
+                  const y = 340 - (p.elevation / elevMax) * 280;
+                  return (
+                    <g class={`td-timeline__point ${durClass}${p.highlight ? ' is-highlight' : ''}`} data-duration={p.durationOnly || 'all'}>
+                      <circle cx={x} cy={y} r={p.highlight ? 12 : 8} fill={p.highlight ? 'var(--color-sorbus)' : 'var(--color-java)'} stroke="white" stroke-width="3" />
+                      <text x={x} y={y - 22} text-anchor="middle" font-size="11" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>
+                      {(() => {
+                        const label = p.label as string;
+                        let line1 = label;
+                        let line2 = '';
+                        if (label.includes(' · ')) {
+                          const idx = label.indexOf(' · ');
+                          line1 = label.substring(0, idx);
+                          line2 = label.substring(idx + 3);
+                        } else if (label.includes(' — ')) {
+                          const idx = label.indexOf(' — ');
+                          line1 = label.substring(0, idx);
+                          line2 = label.substring(idx + 3);
+                        } else if (label.length > 14) {
+                          const mid = Math.floor(label.length / 2);
+                          const spaceIdx = label.lastIndexOf(' ', mid + 4);
+                          if (spaceIdx > 0) { line1 = label.substring(0, spaceIdx); line2 = label.substring(spaceIdx + 1); }
+                        }
+                        const fw = p.highlight ? '700' : '500';
+                        const baseY = 370;
+                        return (
+                          <>
+                            <text x={x} y={baseY} text-anchor="middle" font-size="11" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>
+                            {line2 && <text x={x} y={baseY + 14} text-anchor="middle" font-size="11" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
+                            <text x={x} y={baseY + (line2 ? 28 : 14)} text-anchor="middle" font-size="10" fill="rgba(4,51,65,0.5)" font-family="Commissioner, sans-serif">{p.elevation}m</text>
+                          </>
+                        );
+                      })()}
+                    </g>
+                  );
+                });
+              }
+
+              return (
+                <>
+                  {/* fills */}
+                  <path class="svg-path-1day" d={makePath(pts1day, true)} fill="url(#elevationGradient)" opacity="0.25" />
+                  {pts2d1n.length > 0 && <path class="svg-path-2d1n" d={makePath(pts2d1n, true)} fill="url(#elevationGradient)" opacity="0.25" />}
+                  {pts3d2n.length > 0 && <path class="svg-path-3d2n" d={makePath(pts3d2n, true)} fill="url(#elevationGradient)" opacity="0.25" />}
+                  {/* lines */}
+                  <path class="svg-path-1day" d={makePath(pts1day, false)} fill="none" stroke="var(--color-java)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  {pts2d1n.length > 0 && <path class="svg-path-2d1n" d={makePath(pts2d1n, false)} fill="none" stroke="var(--color-java)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />}
+                  {pts3d2n.length > 0 && <path class="svg-path-3d2n" d={makePath(pts3d2n, false)} fill="none" stroke="var(--color-java)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />}
+                  {/* dots */}
+                  {renderDots(pts1day, 'svg-path-1day', step1day)}
+                  {pts2d1n.length > 0 && renderDots(pts2d1n, 'svg-path-2d1n', step2d1n)}
+                  {pts3d2n.length > 0 && renderDots(pts3d2n, 'svg-path-3d2n', step3d2n)}
+                </>
+              );
+            })()}
+
+            {/* X-axis baseline */}
+            <line x1="60" y1="340" x2="1160" y2="340" stroke="var(--color-nordic)" stroke-width="1.5" opacity="0.3" />
+          </svg>
+        </div>
+      ) : (
+        <div class="td-timeline__placeholder">
+          <strong>Timeline data pending.</strong>
+          <p>Elevation profile for {tour.name} will be added once the route is finalized.</p>
+        </div>
+      )}
+      {activityCards && activityCards.length > 0 && (
+        <div class="td-timeline__cards">
+          {activityCards.map((c: {badges?: string[]; badge?: string; badgeLabel?: string; time: string; title: string; desc: string; highlight: boolean; durationOnly?: string}) => (
+            <div
+              class={`td-timeline__act-card${c.highlight ? ' is-highlight' : ''}${c.durationOnly === '1day' ? ' is-1day-only' : ''}${c.durationOnly === '2d1n' ? ' is-2d1n-only' : ''}${c.durationOnly === '3d2n' ? ' is-3d2n-only' : ''}`}
+              data-duration={c.durationOnly || 'all'}
+            >
+              <div class="td-timeline__act-badges">
+                {(c.badges || (c.badgeLabel ? [c.badgeLabel] : [])).map((b: string) => (
+                  <span class={`td-timeline__act-badge td-timeline__act-badge--${b.toLowerCase()}`}>{b}</span>
+                ))}
+              </div>
+              <div class={`td-timeline__act-time${c.highlight ? ' is-highlight' : ''}`}>{c.time}</div>
+              <div class="td-timeline__act-title">{c.title}</div>
+              <p class="td-timeline__act-desc">{c.desc}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+
+  <!-- ═══ S7 · b-welcome (Welcome pack) ════════════════════════ -->
+  <section class="td-welcome">
+    <div class="td-welcome__inner">
+      <p class="section-label">Your welcome pack</p>
+      <h2 class="td-welcome__heading">{welcomePack?.subheading || "Everything in your bag has a reason."}</h2>
+      <p class="td-welcome__intro">{welcomePack?.intro || "On the road, your guide hands you a Morning Vietnam pack. Not merch. Each item was chosen for what the day asks of you."}</p>
+      <div class="td-welcome__grid">
+        {(welcomePack?.items || []).map((item: {icon: string; name: string; why: string}) => (
+          <div class="td-welcome__card">
+            <div class="td-welcome__icon">{item.icon}</div>
+            <div class="td-welcome__name">{item.name}</div>
+            <div class="td-welcome__why">{item.why}</div>
+          </div>
+        ))}
+        <div class="td-welcome__card-img">
+          <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80" alt="Welcome pack" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ S6 · b-unlock (the secret game) ═══════════════════════ -->
+  {unlock && (
+    <section class="td-unlock">
+      <div class="td-unlock__inner">
+        <p class="section-label">{unlock.sectionLabel}</p>
+        <h2 class="td-unlock__heading">{unlock.headline}</h2>
+        <p class="td-unlock__intro">{unlock.intro}</p>
+
+        <div class="td-unlock__cards">
+          {(unlock.steps || []).map((step: {num: number; title: string; desc: string}) => (
+            <div class="td-unlock__card">
+              <div class="td-unlock__num">{step.num}</div>
+              <h3 class="td-unlock__card-title">{step.title}</h3>
+              <p class="td-unlock__card-desc">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {unlock.note && (
+          <div class="td-unlock__note">
+            <p>{unlock.note}</p>
+          </div>
+        )}
+
+        {unlock.teaser && (
+          <p class="td-unlock__teaser">{unlock.teaser}</p>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- ═══ S9 · b-season (When to go) ═══════════════════════════ -->
+  <section class="td-season">
+    <div class="td-season__inner">
+      <p class="section-label">When to go</p>
+      <h2 class="td-season__heading">By season.</h2>
+      <p class="td-season__intro">{season?.intro || "There's no wrong time. But here's what each season gives you."}</p>
+
+      <div class="td-season__bar">
+        {(season?.months || []).map((m: {name: string; level: string}) => (
+          <div class={`td-season__month td-season__month--${m.level}`}>
+            <span class="td-season__month-label">{m.name}</span>
+            <span class="td-season__month-mark">{
+              m.level === 'best' ? '★' :
+              m.level === 'good' ? '◎' :
+              '~'
+            }</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="td-season__legend">
+        <span><i class="td-season__dot td-season__dot--best"></i>Best conditions</span>
+        <span><i class="td-season__dot td-season__dot--good"></i>Good, some haze</span>
+        <span><i class="td-season__dot td-season__dot--wet"></i>Wet season — still doable</span>
+      </div>
+
+      <div class="td-season__notes">
+        {(season?.notes || []).map((note: {title: string; desc: string}, i: number) => (
+          <div class={`td-season__note${i === 1 ? ' td-season__note--wet' : ''}`}>
+            <h4>{note.title}</h4>
+            <p>{note.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ S7 · b-reviews ════════════════════════════════════════ -->
+  <section class="td-reviews">
+    <div class="td-reviews__inner">
+      <div class="td-reviews__left">
+        <p class="section-label">Real travelers, real reviews</p>
+        <h2 class="td-reviews__rating">4.9<span class="td-reviews__rating-unit">/5</span></h2>
+        <p class="td-reviews__based">Based on 32 reviews</p>
+        <div class="td-reviews__breakdown">
+          <div class="td-reviews__row"><span>5★</span><div class="td-reviews__bar"><div class="td-reviews__bar-fill" style="width:92%"></div></div><span>29</span></div>
+          <div class="td-reviews__row"><span>4★</span><div class="td-reviews__bar"><div class="td-reviews__bar-fill" style="width:7%"></div></div><span>2</span></div>
+          <div class="td-reviews__row"><span>3★</span><div class="td-reviews__bar"><div class="td-reviews__bar-fill" style="width:3%"></div></div><span>1</span></div>
+          <div class="td-reviews__row"><span>2★</span><div class="td-reviews__bar"><div class="td-reviews__bar-fill" style="width:0%"></div></div><span>0</span></div>
+          <div class="td-reviews__row"><span>1★</span><div class="td-reviews__bar"><div class="td-reviews__bar-fill" style="width:0%"></div></div><span>0</span></div>
+        </div>
+        <p class="td-reviews__placeholder-note">⚠ Placeholder data — swap when real reviews available.</p>
+      </div>
+      <div class="td-reviews__right">
+        <article class="td-review">
+          <div class="td-review__rating">★★★★★</div>
+          <p class="td-review__quote">"I came expecting a guided tour. I left with a family. The Unlock challenge broke down every wall — by the end of the day, we were swapping numbers."</p>
+          <p class="td-review__author"><strong>Sarah K.</strong> · Solo · France · <em>verified</em></p>
+        </article>
+        <article class="td-review">
+          <div class="td-review__rating">★★★★★</div>
+          <p class="td-review__quote">"Most tours feel like a museum on wheels. Morning Vietnam feels like a homecoming. The host didn't perform Vietnam — he let us in."</p>
+          <p class="td-review__author"><strong>Marcus T.</strong> · Couple · Germany · <em>verified</em></p>
+        </article>
+        <article class="td-review">
+          <div class="td-review__rating">★★★★★</div>
+          <p class="td-review__quote">"Eight people, one van, three days. We have a WhatsApp group that's still active a year later. That's it. That's the review."</p>
+          <p class="td-review__author"><strong>Léa M.</strong> · Friend group · Belgium · <em>verified</em></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ S8 · b-cta (full-bleed quote) ═════════════════════════ -->
+  <section class="td-cta">
+    <div class="td-cta__image">
+      <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=2000&q=85" alt="" loading="lazy" />
+    </div>
+    <div class="td-cta__overlay"></div>
+    <div class="td-cta__content">
+      <blockquote class="td-cta__quote">
+        Your moment.<br/>Your Vietnam.
+      </blockquote>
+      <p class="td-cta__sub">Tours that don't perform the country to you — they let you in.</p>
+      <a href="/tours" class="c-button c-button--light">See all tours →</a>
+    </div>
+  </section>
+
+  <!-- ═══ S9 · b-faq ════════════════════════════════════════════ -->
+  <section class="td-faq">
+    <div class="td-faq__inner">
+      <div class="td-faq__left">
+        <p class="section-label">FAQ</p>
+        <h2 class="td-faq__heading">Questions, answered.</h2>
+        <p class="td-faq__sub">Can't find what you're looking for? <a href="https://wa.me/84961836611" target="_blank" rel="noopener">WhatsApp us</a>.</p>
+      </div>
+      <div class="td-faq__right">
+        {(faqs || []).map((f: {q: string; a: string}) => (
+          <details class="td-faq__item">
+            <summary>{f.q}</summary>
+            <div class="td-faq__answer">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ S10 · b-related ═══════════════════════════════════════ -->
+  <section class="td-related">
+    <div class="td-related__inner">
+      <p class="section-label">More journeys</p>
+      <h2 class="td-related__heading">If this resonates,<br/>you'll love these too.</h2>
+      <div class="td-related__grid">
+        {tours
+          .filter((t: {slug: string; comingSoon?: boolean}) => t.slug !== tour.slug && !t.comingSoon)
+          .slice(0, 3)
+          .map((other: {slug: string; image: string; name: string; region: string; tagline: string}) => (
+            <a href={`/tours/${other.slug}`} class="td-related__card">
+              <div class="td-related__card-image">
+                <img src={other.image} alt={other.name} loading="lazy" />
+              </div>
+              <div class="td-related__card-body">
+                <p class="td-related__card-region">{other.region === 'north' ? 'North Vietnam' : other.region}</p>
+                <h3 class="td-related__card-name">{other.name}</h3>
+                <p class="td-related__card-tagline">{other.tagline}</p>
+                <span class="td-related__card-link">See this tour →</span>
+              </div>
+            </a>
+          ))}
+      </div>
+    </div>
+  </section>
+
+  <NotifyPopup />
+</BaseLayout>
+
+<style>
+  /* ── S1 b-product split ──────────────────────────── */
+  .td-product {
+    background: var(--color-light-cyan);
+    overflow: hidden;
+  }
+
+  .td-product__inner {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    min-height: calc(100vh - var(--site-header-h));
+    align-items: stretch;
+  }
+
+  .td-product__gallery {
+    position: relative;
+    min-height: 600px;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--color-light-cyan);
+  }
+
+  .td-product__main-image {
+    flex: 1;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .td-product__main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .td-gallery__nav {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+  }
+
+  .td-gallery__arrow {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--color-light-cyan);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-java);
+    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 2px 10px rgba(4,51,65,0.18);
+    flex-shrink: 0;
+  }
+
+  .td-gallery__arrow:hover {
+    transform: scale(1.12);
+    background: white;
+    box-shadow: 0 4px 16px rgba(4,51,65,0.22);
+  }
+
+  .td-gallery__arrow:active { transform: scale(0.96); }
+
+  .td-product__thumbs {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .td-product__thumb {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .td-product__thumb.active { border-color: var(--color-nordic); }
+  .td-product__thumb:hover  { transform: translateY(-2px); }
+  .td-product__thumb img    { width: 100%; height: 100%; object-fit: cover; }
+
+  .td-product__photo-pending {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px dashed var(--color-java);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    color: var(--color-nordic);
+  }
+
+  .td-product__photo-pending-icon { font-size: 48px; margin-bottom: 16px; }
+
+  .td-product__photo-pending strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    letter-spacing: 0.16em;
+    color: var(--color-sorbus);
+    margin-bottom: 12px;
+  }
+
+  .td-product__photo-pending p {
+    font-size: 13px;
+    opacity: 0.7;
+    max-width: 320px;
+    line-height: 1.6;
+  }
+
+  .td-product__panel {
+    padding: 64px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background: var(--color-light-cyan);
+    overflow-y: auto;
+  }
+
+  .td-product__eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    text-transform: lowercase;
+  }
+
+  .td-product__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--color-java);
+  }
+
+  .td-product__price {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1;
+  }
+
+  .td-product__price-unit {
+    font-size: 16px;
+    font-weight: 400;
+    opacity: 0.6;
+    margin-left: 4px;
+  }
+
+  .td-product__tagline {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-nordic);
+    opacity: 0.8;
+  }
+
+
+  .td-product__cta        { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+  .td-product__book       { align-self: flex-start; padding: 16px 32px; font-size: 15px; }
+
+  .td-product__cta-note   { font-size: 12px; opacity: 0.55; color: var(--color-nordic); line-height: 1.5; }
+
+  /* ── Duration show/hide ─────────────────────────── */
+  /* Dùng :global() để bypass Astro scoped CSS */
+
+  /* Mặc định ẩn 2D1N elements, hiện 1day elements */
+  :global(.is-2d1n-only) {
+    display: none !important;
+  }
+  :global(g.is-2d1n-only) {
+    display: unset !important;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* is-1day-only: visible by default, hidden in 2d1n and 3d2n modes */
+  :global(g.is-1day-only) {
+    display: unset !important;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  :global(body.dur-2d1n .is-1day-only) { display: none !important; }
+  :global(body.dur-2d1n g.is-1day-only) { visibility: hidden; pointer-events: none; }
+  :global(body.dur-3d2n .is-1day-only) { display: none !important; }
+  :global(body.dur-3d2n g.is-1day-only) { visibility: hidden; pointer-events: none; }
+
+  /* is-3d2n-only: hidden by default, shown in 3d2n mode */
+  :global(.is-3d2n-only) { display: none !important; }
+  :global(g.is-3d2n-only) { display: unset !important; visibility: hidden; pointer-events: none; }
+  :global(body.dur-3d2n .is-3d2n-only) { display: block !important; }
+  :global(body.dur-3d2n g.is-3d2n-only) { display: unset !important; visibility: visible; pointer-events: auto; }
+  :global(body.dur-3d2n .is-2d1n-only) { display: none !important; }
+  :global(body.dur-3d2n g.is-2d1n-only) { visibility: hidden; pointer-events: none; }
+
+  /* SVG paths: 1day visible by default, 2d1n + 3d2n hidden */
+  :global(.svg-path-2d1n) { display: none; }
+  :global(.svg-path-3d2n) { display: none; }
+  :global(.svg-path-1day) { display: unset; }
+  :global(body.dur-2d1n .svg-path-1day) { display: none; }
+  :global(body.dur-2d1n .svg-path-2d1n) { display: unset; }
+  :global(body.dur-3d2n .svg-path-1day) { display: none; }
+  :global(body.dur-3d2n .svg-path-2d1n) { display: none; }
+  :global(body.dur-3d2n .svg-path-3d2n) { display: unset; }
+
+  /* Khi body.dur-2d1n → hiện 2D1N, ẩn 1day */
+  :global(body.dur-2d1n .is-2d1n-only) {
+    display: block !important;
+  }
+  :global(body.dur-2d1n g.is-2d1n-only) {
+    display: unset !important;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* ── Duration tabs ──────────────────────────────── */
+  .td-duration__tabs {
+    display: flex;
+    gap: 8px;
+    background: rgba(4, 51, 65, 0.06);
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .td-duration__tab {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    opacity: 0.5;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .td-duration__tab.is-active {
+    background: white;
+    opacity: 1;
+    box-shadow: 0 2px 8px rgba(4, 51, 65, 0.14);
+    color: var(--color-java);
+  }
+
+  .td-duration__tab:hover:not(.is-active) {
+    opacity: 0.75;
+  }
+
+  /* ── Trip Info cards ─────────────────────────────── */
+  .td-tripinfo {
+    margin-top: 4px;
+    border-top: 1px solid rgba(4, 51, 65, 0.12);
+    padding-top: 20px;
+  }
+
+  .td-tripinfo__section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted, #aaa);
+    margin: 0 0 16px 0;
+  }
+
+  .td-tripinfo__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  /* :global because these are rebuilt via innerHTML on tab switch */
+  :global(.td-tripinfo__card) {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  :global(.td-tripinfo__icon-wrap) {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #d8d8d8;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.td-tripinfo__icon-wrap i) {
+    font-size: 20px;
+    color: var(--color-nordic, #043341);
+  }
+
+  :global(.td-tripinfo__label) {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-nordic, #043341);
+    margin: 0 0 2px 0;
+    line-height: 1.3;
+  }
+
+  :global(.td-tripinfo__value) {
+    font-size: 13px;
+    font-weight: 400;
+    color: #888780;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* ── S2 td-marquee ──────────────────────────────── */
+  .td-marquee {
+    --marquee-bg: var(--color-nordic);
+    --marquee-color: var(--color-riptide);
+    padding: 14px 0;
+  }
+
+  /* ── S3 td-pitch ────────────────────────────────── */
+  .td-pitch {
+    background: var(--color-light-cyan);
+    padding: 120px 0;
+  }
+
+  .td-pitch__inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .td-pitch__headline {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 3.6vw, 44px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-nordic);
+    letter-spacing: -0.015em;
+    padding-left: 24px;
+    border-left: 5px solid var(--color-sorbus);
+    margin: 24px 0 40px;
+  }
+
+  .td-pitch__body p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--color-nordic);
+    opacity: 0.85;
+    margin-bottom: 20px;
+    max-width: 720px;
+  }
+
+  .td-pitch__closing {
+    font-family: var(--font-heading);
+    font-size: 20px !important;
+    font-weight: 700;
+    color: var(--color-nordic) !important;
+    opacity: 1 !important;
+    margin-top: 32px !important;
+  }
+
+  .td-pitch__bullets {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 720px;
+  }
+
+  .td-pitch__bullets li {
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--color-nordic);
+    padding-left: 24px;
+    position: relative;
+  }
+
+  .td-pitch__bullets li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-sorbus);
+    font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    .td-pitch__inner    { padding: 0 24px; }
+    .td-pitch__headline { padding-left: 16px; border-left-width: 4px; }
+    .td-pitch          { padding: 80px 0; }
+    .td-pitch__bullets li { font-size: 15px; }
+  }
+
+  /* ── S4 td-value ────────────────────────────────── */
+  .td-value {
+    background: var(--color-white-nectar);
+    padding: 120px 0;
+  }
+
+  .td-value__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .td-value__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 4.4vw, 56px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-nordic);
+    margin: 12px 0 32px;
+  }
+
+  .td-value__heading em {
+    font-style: italic;
+    color: var(--color-sorbus);
+  }
+
+  .td-value__body p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--color-nordic);
+    opacity: 0.82;
+    margin-bottom: 16px;
+  }
+
+  .td-value__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(4,51,65,0.08);
+  }
+
+  .td-value__table th,
+  .td-value__table td {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(4,51,65,0.08);
+  }
+
+  .td-value__table thead th {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--color-light-cyan);
+    color: var(--color-nordic);
+  }
+
+  .td-value__th-us {
+    background: var(--color-java) !important;
+    color: white !important;
+  }
+
+  .td-value__metric {
+    font-weight: 600;
+    color: var(--color-nordic);
+  }
+
+  .td-value__bad {
+    color: rgba(4,51,65,0.55);
+    text-decoration: line-through;
+    text-decoration-color: rgba(234,103,57,0.4);
+  }
+
+  .td-value__good {
+    font-weight: 700;
+    color: var(--color-java);
+  }
+
+  .td-value__good::before {
+    content: '✓ ';
+    color: var(--color-java);
+    font-weight: 700;
+  }
+
+  .td-value__table tbody tr:last-child td { border-bottom: none; }
+
+  @media (max-width: 960px) {
+    .td-value__inner { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
+    .td-value        { padding: 80px 0; }
+  }
+
+  @media (max-width: 560px) {
+    .td-value__table th,
+    .td-value__table td { padding: 12px 14px; font-size: 13px; }
+  }
+
+  /* ── S5 td-overview ─────────────────────────────── */
+  .td-overview {
+    background: var(--color-white-nectar);
+    padding: 120px 0 80px;
+  }
+
+  .td-overview__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .td-overview__headline {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-nordic);
+    margin-bottom: 32px;
+  }
+
+  .td-overview__body p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--color-nordic);
+    opacity: 0.85;
+    margin-bottom: 18px;
+  }
+
+  .td-overview__right img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+  }
+
+  .td-overview__photo-pending {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background: rgba(29, 160, 160, 0.08);
+    border: 2px dashed var(--color-java);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    color: var(--color-nordic);
+  }
+
+  .td-overview__photo-pending strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--color-sorbus);
+    margin-bottom: 12px;
+  }
+
+  .td-overview__photo-pending p {
+    font-size: 13px;
+    opacity: 0.65;
+    line-height: 1.6;
+  }
+
+
+  /* ── S4 td-timeline ──────────────────────────────── */
+  .td-timeline {
+    background: var(--color-light-cyan);
+    padding: 120px 0;
+  }
+
+  .td-timeline__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .td-timeline__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    margin-bottom: 16px;
+  }
+
+  .td-timeline__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-nordic);
+    margin-bottom: 12px;
+  }
+
+  .td-timeline__sub {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    margin-bottom: 48px;
+    max-width: 560px;
+  }
+
+  .td-timeline__chart-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .td-timeline__svg {
+    display: block;
+  }
+
+  .td-timeline__placeholder {
+    background: rgba(29, 160, 160, 0.06);
+    border: 2px dashed var(--color-java);
+    border-radius: 16px;
+    padding: 64px 40px;
+    text-align: center;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── td-timeline activity cards ─────────────────── */
+  .td-timeline__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .td-timeline__act-card {
+    background: white;
+    border-radius: 12px;
+    padding: 22px 20px;
+    border-left: 4px solid var(--color-java);
+    box-shadow: 0 2px 12px rgba(4,51,65,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .td-timeline__act-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(4,51,65,0.10);
+  }
+
+  .td-timeline__act-card.is-highlight { border-left-color: var(--color-sorbus); }
+
+  .td-timeline__act-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .td-timeline__act-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  /* Badge color per type */
+  .td-timeline__act-badge--history       { background: var(--color-white-nectar); color: #413d04; }
+  .td-timeline__act-badge--meal          { background: #fde8d8; color: #8b3a10; }
+  .td-timeline__act-badge--challenge     { background: #e8f5e9; color: #2e7d32; }
+  .td-timeline__act-badge--hiking        { background: var(--color-light-cyan); color: var(--color-nordic); }
+  .td-timeline__act-badge--accommodation { background: #ede7f6; color: #4527a0; }
+  /* Fallbacks for old data */
+  .td-timeline__act-badge--trek    { background: var(--color-light-cyan); color: var(--color-nordic); }
+  .td-timeline__act-badge--food    { background: #fde8d8; color: #8b3a10; }
+  .td-timeline__act-badge--culture { background: var(--color-white-nectar); color: #413d04; }
+  .td-timeline__act-badge--free    { background: #e8f5e9; color: #2e7d32; }
+
+  .td-timeline__act-time {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    margin-bottom: 6px;
+  }
+
+  .td-timeline__act-time.is-highlight { color: var(--color-sorbus); }
+
+  .td-timeline__act-title {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .td-timeline__act-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-nordic);
+    opacity: 0.7;
+  }
+
+  /* ── S5 td-audience ──────────────────────────────── */
+  .td-audience {
+    background: var(--color-light-cyan);
+    padding: 120px 0;
+  }
+
+  .td-audience__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .td-audience__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    margin-bottom: 16px;
+  }
+
+  .td-audience__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-nordic);
+    margin-bottom: 56px;
+  }
+
+  .td-audience__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .td-audience__card {
+    background: white;
+    border-radius: 20px;
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .td-audience__card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(4, 51, 65, 0.12);
+  }
+
+  .td-audience__icon {
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .td-audience__card-title {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1.2;
+  }
+
+  .td-audience__card-desc {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--color-nordic);
+    opacity: 0.75;
+  }
+
+  /* ── Responsive ─────────────────────────────────── */
+  @media (max-width: 960px) {
+    .td-product__inner         { grid-template-columns: 1fr; }
+    .td-product__gallery       { min-height: 480px; padding: 32px 24px 24px; }
+    .td-product__panel         { padding: 40px 24px; }
+    .td-overview__inner        { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
+    .td-overview               { padding: 80px 0 60px; }
+    .td-timeline__inner        { padding: 0 24px; }
+    .td-timeline               { padding: 80px 0; }
+    .td-audience__inner        { padding: 0 24px; }
+    .td-audience               { padding: 80px 0; }
+    .td-audience__grid         { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .td-product__thumb { width: 60px; height: 60px; }
+    .td-product__heading { font-size: 36px; }
+    .td-product__price   { font-size: 28px; }
+    .td-audience__grid { grid-template-columns: 1fr; }
+    .td-tripinfo__grid { grid-template-columns: 1fr; }
+    :global(.td-tripinfo__icon-wrap) { width: 36px; height: 36px; }
+    :global(.td-tripinfo__icon-wrap i) { font-size: 17px; }
+    .td-duration__tab  { font-size: 13px; padding: 9px 12px; }
+  }
+
+  /* ── S7 td-welcome ─────────────────────────────── */
+  .td-welcome {
+    background: var(--color-light-cyan);
+    padding: 120px 0;
+  }
+
+  .td-welcome__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .td-welcome__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-nordic);
+    margin: 12px 0 20px;
+  }
+
+  .td-welcome__intro {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--color-nordic);
+    opacity: 0.75;
+    max-width: 640px;
+    margin-bottom: 56px;
+  }
+
+  .td-welcome__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+
+  .td-welcome__card {
+    background: var(--color-white-nectar);
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    border-top: 4px solid #a08f1d;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .td-welcome__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(4,51,65,0.10);
+  }
+
+  .td-welcome__icon { font-size: 36px; margin-bottom: 12px; }
+
+  .td-welcome__name {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    color: #413d04;
+    margin-bottom: 8px;
+  }
+
+  .td-welcome__why {
+    font-size: 12px;
+    line-height: 1.55;
+    color: rgba(65,61,4,0.7);
+  }
+
+  .td-welcome__card-img {
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+  }
+
+  .td-welcome__card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .td-welcome__inner { padding: 0 24px; }
+    .td-welcome__grid  { grid-template-columns: repeat(2, 1fr); }
+    .td-welcome        { padding: 80px 0; }
+  }
+
+  /* ── S6 td-unlock ──────────────────────────────── */
+  .td-unlock {
+    background: var(--color-nordic);
+    padding: 120px 0;
+  }
+
+  .td-unlock__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .td-unlock .section-label { color: var(--color-sorbus); }
+
+  .td-unlock__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(40px, 5.5vw, 72px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: var(--color-riptide);
+    margin: 12px 0 20px;
+  }
+
+  .td-unlock__intro {
+    font-size: 17px;
+    line-height: 1.7;
+    color: rgba(217,247,245,0.78);
+    max-width: 640px;
+    margin-bottom: 56px;
+  }
+
+  .td-unlock__cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .td-unlock__card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(217,247,245,0.14);
+    border-radius: 16px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .td-unlock__num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-sorbus);
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .td-unlock__card-title {
+    font-family: var(--font-heading);
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--color-riptide);
+    line-height: 1.2;
+  }
+
+  .td-unlock__card-desc {
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(217,247,245,0.72);
+  }
+
+  .td-unlock__note {
+    background: rgba(255,255,255,0.05);
+    border-left: 3px solid var(--color-sorbus);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+
+  .td-unlock__note p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(217,247,245,0.7);
+    font-style: italic;
+  }
+
+  .td-unlock__teaser {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(217,247,245,0.45);
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 900px) {
+    .td-unlock__cards { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .td-unlock        { padding: 80px 0; }
+    .td-unlock__inner { padding: 0 24px; }
+  }
+
+  /* ── S9 td-season ───────────────────────────────── */
+  .td-season {
+    background: var(--color-light-cyan);
+    padding: 120px 0;
+  }
+
+  .td-season__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .td-season__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-nordic);
+    margin: 12px 0 16px;
+  }
+
+  .td-season__intro {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-nordic);
+    opacity: 0.75;
+    margin-bottom: 40px;
+  }
+
+  .td-season__bar {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+
+  .td-season__month {
+    padding: 16px 4px;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 18px;
+  }
+
+  .td-season__month-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .td-season__month--best { background: var(--color-java);    color: white; }
+  .td-season__month--good { background: var(--color-riptide); color: var(--color-nordic); }
+  .td-season__month--wet  { background: rgba(4,51,65,0.12);   color: rgba(4,51,65,0.55); }
+
+  .td-season__legend {
+    display: flex;
+    gap: 28px;
+    font-size: 13px;
+    color: var(--color-nordic);
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  .td-season__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  .td-season__dot--best { background: var(--color-java); }
+  .td-season__dot--good { background: var(--color-riptide); }
+  .td-season__dot--wet  { background: rgba(4,51,65,0.25); }
+
+  .td-season__notes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .td-season__note {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 24px;
+    border-left: 4px solid var(--color-java);
+  }
+
+  .td-season__note--wet { border-left-color: #4a90d9; }
+
+  .td-season__note h4 {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 8px;
+  }
+
+  .td-season__note p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--color-nordic);
+    opacity: 0.75;
+  }
+
+  @media (max-width: 960px) {
+    .td-season__inner { padding: 0 24px; }
+    .td-season__bar   { grid-template-columns: repeat(6, 1fr); }
+    .td-season__notes { grid-template-columns: 1fr; }
+    .td-season        { padding: 80px 0; }
+  }
+
+  /* ── S7 td-reviews ──────────────────────────────── */
+  .td-reviews { background: var(--color-light-cyan); padding: 120px 0; }
+
+  .td-reviews__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 64px;
+  }
+
+  .td-reviews__rating {
+    font-family: var(--font-heading);
+    font-size: clamp(72px, 9vw, 128px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1;
+    margin: 16px 0 8px;
+  }
+
+  .td-reviews__rating-unit { font-size: 0.4em; opacity: 0.4; font-weight: 400; }
+  .td-reviews__based { font-size: 14px; color: var(--color-nordic); opacity: 0.6; margin-bottom: 32px; }
+
+  .td-reviews__breakdown { display: flex; flex-direction: column; gap: 8px; }
+
+  .td-reviews__row {
+    display: grid;
+    grid-template-columns: 32px 1fr 32px;
+    gap: 12px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--color-nordic);
+  }
+
+  .td-reviews__bar { height: 6px; background: var(--color-light-cyan); border-radius: 3px; overflow: hidden; }
+  .td-reviews__bar-fill { height: 100%; background: var(--color-java); }
+
+  .td-reviews__placeholder-note {
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--color-sorbus);
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .td-reviews__right { display: flex; flex-direction: column; gap: 32px; }
+
+  .td-review {
+    border-bottom: 1px solid rgba(4,51,65,0.1);
+    padding-bottom: 32px;
+  }
+
+  .td-review:last-child { border-bottom: none; }
+  .td-review__rating { font-size: 14px; letter-spacing: 0.16em; color: var(--color-sorbus); margin-bottom: 12px; }
+  .td-review__quote { font-size: 17px; line-height: 1.65; color: var(--color-nordic); margin-bottom: 14px; }
+  .td-review__author { font-size: 13px; color: var(--color-nordic); opacity: 0.7; }
+  .td-review__author em { opacity: 0.5; }
+
+  /* ── S8 td-cta ──────────────────────────────────── */
+  .td-cta {
+    position: relative;
+    min-height: 70vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .td-cta__image { position: absolute; inset: 0; z-index: 1; }
+  .td-cta__image img { width: 100%; height: 100%; object-fit: cover; }
+
+  .td-cta__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(to right, rgba(4,51,65,0.85) 0%, rgba(4,51,65,0.45) 70%, transparent 100%);
+  }
+
+  .td-cta__content {
+    position: relative;
+    z-index: 3;
+    max-width: 640px;
+    margin-left: max(48px, calc((100vw - var(--max-width)) / 2 + 48px));
+    padding: 80px 24px;
+    color: white;
+  }
+
+  .td-cta__quote {
+    font-family: var(--font-heading);
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+  }
+
+  .td-cta__sub {
+    font-size: 18px;
+    line-height: 1.6;
+    opacity: 0.85;
+    margin-bottom: 36px;
+    max-width: 460px;
+  }
+
+  @media (max-width: 960px) {
+    .td-unlock__content { padding: 64px 24px; margin: 0; }
+    .td-reviews__inner  { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
+    .td-cta__content    { margin-left: 0; padding: 64px 24px; }
+  }
+
+  /* ── S9 td-faq ──────────────────────────────────── */
+  .td-faq { background: var(--color-white-nectar); padding: 120px 0; }
+
+  .td-faq__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .td-faq__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-nordic);
+    margin: 12px 0 16px;
+  }
+
+  .td-faq__sub { font-size: 15px; color: var(--color-nordic); opacity: 0.7; }
+  .td-faq__sub a { color: var(--color-java); font-weight: 600; text-decoration: underline; }
+
+  .td-faq__item {
+    border-bottom: 1px solid rgba(4,51,65,0.15);
+    padding: 24px 0;
+  }
+
+  .td-faq__item:first-child { border-top: 1px solid rgba(4,51,65,0.15); }
+
+  .td-faq__item summary {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    padding-right: 32px;
+  }
+
+  .td-faq__item summary::-webkit-details-marker { display: none; }
+
+  .td-faq__item summary::after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: var(--color-java);
+    transition: transform 0.2s ease;
+  }
+
+  .td-faq__item[open] summary::after { content: '−'; }
+
+  .td-faq__answer {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--color-nordic);
+    opacity: 0.8;
+  }
+
+  /* ── S10 td-related ─────────────────────────────── */
+  .td-related { background: var(--color-light-cyan); padding: 120px 0; }
+
+  .td-related__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .td-related__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-nordic);
+    margin: 12px 0 56px;
+  }
+
+  .td-related__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .td-related__card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.4s var(--ease-smooth, ease);
+  }
+
+  .td-related__card:hover { transform: translateY(-6px); }
+
+  .td-related__card-image {
+    aspect-ratio: 4/3;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .td-related__card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-smooth, ease);
+  }
+
+  .td-related__card:hover .td-related__card-image img { transform: scale(1.06); }
+
+  .td-related__card-body { display: flex; flex-direction: column; gap: 8px; }
+
+  .td-related__card-region {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-java);
+  }
+
+  .td-related__card-name {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1.2;
+  }
+
+  .td-related__card-tagline {
+    font-size: 14px;
+    color: var(--color-nordic);
+    opacity: 0.65;
+    line-height: 1.55;
+  }
+
+  .td-related__card-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-sorbus);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 960px) {
+    .td-faq__inner     { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
+    .td-related__inner { padding: 0 24px; }
+    .td-related__grid  { grid-template-columns: 1fr; gap: 32px; }
+    .td-faq            { padding: 80px 0; }
+    .td-related        { padding: 80px 0; }
+  }
+</style>
+
+<script>
+  (() => {
+    const mainImg = document.getElementById('td-main-img') as HTMLImageElement | null;
+    const thumbs  = document.querySelectorAll<HTMLButtonElement>('.td-product__thumb');
+    const prevBtn = document.getElementById('td-prev') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('td-next') as HTMLButtonElement | null;
+    const gallery = document.querySelector('.td-product__gallery') as HTMLElement | null;
+
+    if (!mainImg || thumbs.length === 0) return;
+
+    let current = 0;
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    function goTo(idx: number) {
+      current = (idx + thumbs.length) % thumbs.length;
+      const t = thumbs[current];
+      mainImg!.style.opacity = '0';
+      setTimeout(() => {
+        mainImg!.src = t.dataset.src ?? '';
+        mainImg!.alt = t.dataset.alt ?? '';
+        mainImg!.style.opacity = '1';
+      }, 200);
+      thumbs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    }
+
+    function startTimer() {
+      timer = setInterval(() => goTo(current + 1), 3000);
+    }
+
+    function stopTimer() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function resetTimer() { stopTimer(); startTimer(); }
+
+    // Thumb clicks
+    thumbs.forEach((t, i) => {
+      t.addEventListener('click', () => { goTo(i); resetTimer(); });
+    });
+
+    // Arrow buttons
+    prevBtn?.addEventListener('click', () => { goTo(current - 1); resetTimer(); });
+    nextBtn?.addEventListener('click', () => { goTo(current + 1); resetTimer(); });
+
+    // Pause on hover, resume on leave
+    gallery?.addEventListener('mouseenter', stopTimer);
+    gallery?.addEventListener('mouseleave', startTimer);
+
+    if (thumbs.length > 1) startTimer();
+  })();
+
+  /* ── Duration switcher ─────────────────────────────── */
+  (() => {
+    const panel = document.getElementById('td-product-panel');
+    if (!panel) return;
+
+    // Tag elements using data-duration attribute from template
+    document.querySelectorAll<HTMLElement>('.td-timeline__act-card[data-duration], .td-timeline__point[data-duration]').forEach(el => {
+      const dur = el.dataset.duration;
+      if (dur && dur !== 'all') el.classList.add(`is-${dur}-only`);
+    });
+
+    const rawOptions = panel.dataset.durationOptions;
+    if (!rawOptions) return;
+
+    const durationOptions = JSON.parse(rawOptions);
+
+    const tabs = document.querySelectorAll<HTMLButtonElement>('.td-duration__tab');
+    const priceAmountEl = document.getElementById('td-price-amount');
+    const taglineEl = document.getElementById('td-tagline-display');
+    const ctaBtn = document.getElementById('td-cta-btn') as HTMLAnchorElement | null;
+    const ctaNote = document.getElementById('td-cta-note');
+
+    function switchDuration(id: string) {
+      const opt = durationOptions.find((o: any) => o.id === id);
+      if (!opt) return;
+
+      // 1. Active tab
+      tabs.forEach(t => t.classList.toggle('is-active', t.dataset.duration === id));
+
+      // 2. Price
+      const priceDisplay = document.getElementById('td-price-display');
+      if (opt.price != null) {
+        if (priceAmountEl) priceAmountEl.textContent = `$${opt.price}`;
+        if (priceDisplay) priceDisplay.style.display = '';
+      } else {
+        if (priceDisplay) priceDisplay.style.display = 'none';
+      }
+
+      // 3. Tagline
+      if (taglineEl) taglineEl.textContent = opt.tagline;
+
+      // 4. CTA
+      if (ctaBtn) {
+        ctaBtn.href = `https://wa.me/84961836611?text=${encodeURIComponent(opt.waText)}`;
+        ctaBtn.textContent = opt.ctaLabel;
+      }
+      if (ctaNote) ctaNote.textContent = opt.ctaNote;
+
+      // 5. Trip Info cards
+      const tripSection = document.getElementById('td-tripinfo-section');
+      if (tripSection && tripSection.dataset.tripInfo) {
+        const tripData = JSON.parse(tripSection.dataset.tripInfo);
+        const items = tripData[id] || tripData['default'] || [];
+        const grid = document.getElementById('td-tripinfo-grid');
+        if (grid && items.length) {
+          grid.innerHTML = items.map((item: any) => `
+            <div class="td-tripinfo__card">
+              <div class="td-tripinfo__icon-wrap">
+                <i class="ti ti-${item.icon}" aria-hidden="true"></i>
+              </div>
+              <div>
+                <p class="td-tripinfo__label">${item.label}</p>
+                <p class="td-tripinfo__value">${item.value}</p>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 6. Pitch swap
+      const pitchSection = document.getElementById('td-pitch-section');
+      if (pitchSection && pitchSection.dataset.pitch) {
+        const pitchData = JSON.parse(pitchSection.dataset.pitch);
+        if (pitchData[id]) {
+          const headlineEl = document.getElementById('td-pitch-headline');
+          const bulletList = document.getElementById('td-pitch-bullets');
+          const closingEl  = document.getElementById('td-pitch-closing');
+          if (headlineEl) headlineEl.textContent = pitchData[id].headline || '';
+          if (bulletList) bulletList.innerHTML = (pitchData[id].bullets || []).map((b: string) => `<li>${b}</li>`).join('');
+          if (closingEl)  closingEl.textContent  = pitchData[id].closingLine || '';
+        }
+      }
+
+      // 7. ValueAnchor swap
+      const valueSection = document.getElementById('td-value-section');
+      if (valueSection && valueSection.dataset.valueAnchor) {
+        const valueData = JSON.parse(valueSection.dataset.valueAnchor);
+        if (valueData[id]) {
+          const headlineEl = document.getElementById('td-value-headline');
+          const bodyEl     = document.getElementById('td-value-paragraphs');
+          if (headlineEl) headlineEl.textContent = valueData[id].headline || '';
+          if (bodyEl)     bodyEl.innerHTML = (valueData[id].paragraphs || []).map((p: string) => `<p>${p}</p>`).join('');
+        }
+      }
+
+      // 8. Toggle body class — CSS handles show/hide of duration-specific elements
+      document.body.classList.remove('dur-2d1n', 'dur-3d2n');
+      if (id === '2d1n') document.body.classList.add('dur-2d1n');
+      if (id === '3d2n') document.body.classList.add('dur-3d2n');
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const id = tab.dataset.duration;
+        if (id) switchDuration(id);
+      });
+    });
+  })();
+</script>

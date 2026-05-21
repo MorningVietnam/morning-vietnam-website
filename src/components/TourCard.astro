@@ -1,0 +1,251 @@
+---
+interface Tour {
+  slug: string;
+  name: string;
+  region: string;
+  duration: string[];
+  price: string;
+  priceUSD?: number | null;
+  tagline: string;
+  groupSize?: string;
+  languages?: string[];
+  comingSoon: boolean;
+  image: string;
+}
+
+interface Props {
+  tour: Tour;
+  index: number;
+}
+
+const { tour, index } = Astro.props;
+
+const THEMES = ['java', 'light-cyan', 'nordic', 'riptide'] as const;
+type Theme = typeof THEMES[number];
+
+const theme: Theme = tour.comingSoon ? 'nordic' : THEMES[index % THEMES.length];
+
+const regionLabel: Record<string, string> = {
+  north:   'North Vietnam',
+  central: 'Central Vietnam',
+  south:   'South Vietnam',
+  soon:    'Coming Soon',
+};
+---
+
+<article class="tour-card reveal" data-tour-region={tour.region} data-theme={theme}>
+  {tour.comingSoon ? (
+    <div class="tour-card__inner tour-card__inner--soon">
+      <div class="tour-card__image">
+        <img src={tour.image} alt={tour.name} loading="lazy" />
+        <div class="tour-card__overlay-soon">Coming Soon</div>
+      </div>
+      <div class="tour-card__body">
+        <div class="tour-card__region-tag">Coming Soon</div>
+        <h3 class="tour-card__name">{tour.name}</h3>
+        <p class="tour-card__tagline">{tour.tagline}</p>
+        <div class="tour-card__footer">
+          <button class="tour-card__notify" data-popup-trigger="#notify-popup">
+            Notify me →
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <a href={`/tours/${tour.slug}`} class="tour-card__inner">
+      <div class="tour-card__image">
+        <img src={tour.image} alt={tour.name} loading="lazy" />
+        <div class="tour-card__badge">{tour.duration.join(' / ')}</div>
+      </div>
+      <div class="tour-card__body">
+        <div class="tour-card__region-tag">{regionLabel[tour.region] ?? tour.region}</div>
+        <h3 class="tour-card__name">{tour.name}</h3>
+        <p class="tour-card__tagline">{tour.tagline}</p>
+        <div class="tour-card__footer">
+          {tour.priceUSD && <span class="tour-card__price">From ${tour.priceUSD}</span>}
+          <span class="tour-card__cta">View tour →</span>
+        </div>
+      </div>
+    </a>
+  )}
+</article>
+
+<style>
+  .tour-card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(4, 51, 65, 0.10);
+    transition: transform 0.4s cubic-bezier(0.645, 0.045, 0.355, 1),
+                box-shadow 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  .tour-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 56px rgba(4, 51, 65, 0.18);
+  }
+
+  .tour-card__inner {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  .tour-card__inner--soon { cursor: default; }
+
+  /* ── Image ─────────────────────────────────── */
+  .tour-card__image {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .tour-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .tour-card:hover .tour-card__image img { transform: scale(1.08); }
+
+  .tour-card__inner--soon .tour-card__image img {
+    filter: blur(2px);
+    transform: scale(1.03);
+  }
+
+  .tour-card__badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(4, 51, 65, 0.7);
+    backdrop-filter: blur(4px);
+    color: white;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .tour-card__overlay-soon {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 51, 65, 0.32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── Body ──────────────────────────────────── */
+  .tour-card__body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .tour-card__region-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .tour-card__name {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .tour-card__tagline {
+    font-size: 14px;
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  /* ── Footer row: price + CTA ───────────────── */
+  .tour-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+
+  .tour-card__price {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .tour-card__cta {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tour-card__notify {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 0;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Theme: java ───────────────────────────── */
+  .tour-card[data-theme="java"] .tour-card__body     { background: var(--color-java); }
+  .tour-card[data-theme="java"] .tour-card__region-tag { color: var(--color-riptide); }
+  .tour-card[data-theme="java"] .tour-card__name       { color: var(--color-light-cyan); }
+  .tour-card[data-theme="java"] .tour-card__tagline    { color: rgba(217,247,245,0.78); }
+  .tour-card[data-theme="java"] .tour-card__footer     { border-top: 1px solid rgba(255,255,255,0.18); }
+  .tour-card[data-theme="java"] .tour-card__price      { color: white; }
+  .tour-card[data-theme="java"] .tour-card__cta        { color: var(--color-riptide); }
+  .tour-card[data-theme="java"] .tour-card__notify     { color: var(--color-riptide); }
+
+  /* ── Theme: light-cyan ─────────────────────── */
+  .tour-card[data-theme="light-cyan"] .tour-card__body       { background: var(--color-light-cyan); }
+  .tour-card[data-theme="light-cyan"] .tour-card__region-tag { color: var(--color-java); }
+  .tour-card[data-theme="light-cyan"] .tour-card__name       { color: var(--color-nordic); }
+  .tour-card[data-theme="light-cyan"] .tour-card__tagline    { color: rgba(4,51,65,0.68); }
+  .tour-card[data-theme="light-cyan"] .tour-card__footer     { border-top: 1px solid rgba(4,51,65,0.14); }
+  .tour-card[data-theme="light-cyan"] .tour-card__price      { color: var(--color-nordic); }
+  .tour-card[data-theme="light-cyan"] .tour-card__cta        { color: var(--color-java); }
+  .tour-card[data-theme="light-cyan"] .tour-card__notify     { color: var(--color-java); }
+
+  /* ── Theme: nordic ─────────────────────────── */
+  .tour-card[data-theme="nordic"] .tour-card__body       { background: var(--color-nordic); }
+  .tour-card[data-theme="nordic"] .tour-card__region-tag { color: var(--color-riptide); }
+  .tour-card[data-theme="nordic"] .tour-card__name       { color: var(--color-light-cyan); }
+  .tour-card[data-theme="nordic"] .tour-card__tagline    { color: rgba(217,247,245,0.68); }
+  .tour-card[data-theme="nordic"] .tour-card__footer     { border-top: 1px solid rgba(255,255,255,0.12); }
+  .tour-card[data-theme="nordic"] .tour-card__price      { color: white; }
+  .tour-card[data-theme="nordic"] .tour-card__cta        { color: var(--color-riptide); }
+  .tour-card[data-theme="nordic"] .tour-card__notify     { color: var(--color-riptide); }
+
+  /* ── Theme: riptide ────────────────────────── */
+  .tour-card[data-theme="riptide"] .tour-card__body       { background: var(--color-riptide); }
+  .tour-card[data-theme="riptide"] .tour-card__region-tag { color: rgba(4,51,65,0.62); }
+  .tour-card[data-theme="riptide"] .tour-card__name       { color: var(--color-nordic); }
+  .tour-card[data-theme="riptide"] .tour-card__tagline    { color: rgba(4,51,65,0.7); }
+  .tour-card[data-theme="riptide"] .tour-card__footer     { border-top: 1px solid rgba(4,51,65,0.14); }
+  .tour-card[data-theme="riptide"] .tour-card__price      { color: var(--color-nordic); }
+  .tour-card[data-theme="riptide"] .tour-card__cta        { color: var(--color-nordic); }
+  .tour-card[data-theme="riptide"] .tour-card__notify     { color: var(--color-nordic); }
+</style>

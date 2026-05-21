@@ -1,0 +1,507 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const categories = [
+  {
+    id: "before-you-book",
+    title: "Before you book",
+    items: [
+      {
+        q: "Do I need to be fit or sporty?",
+        a: "No fitness requirement. Our tours are active but accessible. If you can walk comfortably for 3–4 hours on varied terrain, you're ready. We scout every trail before selling it.",
+      },
+      {
+        q: "What languages do you operate in?",
+        a: "English on all tours. French and German available on selected departures — confirm when booking.",
+      },
+      {
+        q: "Is Morning Vietnam a licensed operator?",
+        a: "Yes. We hold an International Tour Operator License issued 20 May 2026. Full details available on request.",
+      },
+      {
+        q: "What should I bring?",
+        a: "Comfortable walking shoes, layers for mountain tours, sunscreen, and an open mind. We send a full packing list when you book. Nothing exotic — just practical.",
+      },
+      {
+        q: "Where do tours depart from?",
+        a: "All tours depart from central Hanoi. Exact meeting points are confirmed in your booking. Most pick-ups are within the Old Quarter or Hoan Kiem area.",
+      },
+    ],
+  },
+  {
+    id: "about-the-tours",
+    title: "About the tours",
+    items: [
+      {
+        q: "What is the Unlock challenge format?",
+        a: "Each tour includes our signature Unlock challenges — team-based activities at key cultural moments. Village navigation, cooking competitions, local games. Think Amazing Race lite, not Survivor. It's what turns a group of strangers into a family.",
+      },
+      {
+        q: "What's included in the price?",
+        a: "Transport from Hanoi hub, all meals, accommodation, all activities, Unlock challenges, and your dedicated Morning Vietnam host. Flights, travel insurance, and personal expenses are not included.",
+      },
+      {
+        q: "Can I customize the itinerary?",
+        a: "Yes, within reason. All tours have a core structure we've tested and refined. We can adjust pacing, add a free afternoon, or accommodate dietary needs. Contact us before booking.",
+      },
+      {
+        q: "What happens if the weather is bad?",
+        a: "Rain doesn't cancel a Morning Vietnam tour — rain changes the adventure. Every tour has flexible alternatives built in. We've never had a tour ruined by weather.",
+      },
+      {
+        q: "Do you operate year-round?",
+        a: "We run tours throughout the year, adapting routes to the season. Some tours are at their best in dry season; others are genuinely better in the rain. Each tour page shows its optimal window.",
+      },
+    ],
+  },
+  {
+    id: "booking-payment",
+    title: "Booking & payment",
+    items: [
+      {
+        q: "Can I book as a solo traveler?",
+        a: "Absolutely. Solo but not alone — you join a small group and leave with friends. No single supplement on standard tours.",
+      },
+      {
+        q: "How does payment work?",
+        a: "No payment at booking. After we confirm your spot (within 24h), we'll request a deposit to secure your place. Balance due 14 days before departure. We accept bank transfer and major cards.",
+      },
+      {
+        q: "What's the cancellation policy?",
+        a: "Free cancellation up to 14 days before departure (deposit refunded). 50% refund 7–14 days before. No refund under 7 days, but we'll do our best to rebook you on a future date.",
+      },
+      {
+        q: "Can I extend my trip or add nights?",
+        a: "Yes, we can often arrange extra nights in Hanoi or at the destination. Let us know when you enquire and we'll build it into your quote.",
+      },
+    ],
+  },
+  {
+    id: "future-tours",
+    title: "Future tours",
+    items: [
+      {
+        q: "When can I book Central Vietnam and Mekong tours?",
+        a: "We're launching Central Vietnam (Hue / Da Nang / Hoi An) in Q3 2026 and Mekong Delta in Q4 2026. Join the early access list on the Tours page and be first to know.",
+      },
+      {
+        q: "Do you offer B2B / agent pricing?",
+        a: "Yes. We work with travel agents, OTAs, and DMC partners with dedicated pricing and commission structure. Contact us at good@morningvietnam.co with your client brief.",
+      },
+      {
+        q: "Can I suggest a destination or route?",
+        a: "We love it. Send your idea to good@morningvietnam.co — we're genuinely building the next routes based on where guests want to go. If yours gets built, you'll be first on the list.",
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="FAQ — Morning Vietnam"
+  description="Everything you need to know before booking a Morning Vietnam tour — fitness, payment, cancellation, and more."
+>
+
+  <!-- ═══ HERO ═══════════════════════════════════════════════════════ -->
+  <section class="fq-hero">
+    <div class="fq-hero__bg">
+      <img src="/images/faq-hero.jpg" alt="" aria-hidden="true" />
+      <div class="fq-hero__overlay"></div>
+    </div>
+    <div class="container fq-hero__content">
+      <nav class="fq-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <a href="/explore/about">Explore</a>
+        <span aria-hidden="true">›</span>
+        <span>FAQ</span>
+      </nav>
+      <h1>Questions?<br>We have <span class="fq-hero__accent">answers.</span></h1>
+      <p class="fq-hero__sub">Everything you need to know before you book.</p>
+    </div>
+  </section>
+
+
+  <!-- ═══ FAQ BODY ═══════════════════════════════════════════════════ -->
+  <section class="fq-body">
+    <div class="container fq-layout">
+
+      <!-- Sticky category nav -->
+      <nav class="fq-nav" id="fq-nav" aria-label="FAQ categories">
+        <ul class="fq-nav__list">
+          {categories.map(cat => (
+            <li>
+              <a href={`#${cat.id}`} class="fq-nav__link" data-target={cat.id}>
+                {cat.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Accordion groups -->
+      <div class="fq-content">
+        {categories.map(cat => (
+          <div class="fq-group" id={cat.id}>
+            <h2 class="fq-group__title">{cat.title}</h2>
+            {cat.items.map(item => (
+              <details class="fq-item">
+                <summary class="fq-summary">
+                  <span class="fq-summary__text">{item.q}</span>
+                  <span class="fq-summary__icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </summary>
+                <div class="fq-answer">{item.a}</div>
+              </details>
+            ))}
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══ CTA ════════════════════════════════════════════════════════ -->
+  <section class="fq-cta">
+    <div class="container fq-cta__inner">
+      <div class="fq-cta__text">
+        <h2>Still have a question?</h2>
+        <p>Chat with us — we reply within the hour.</p>
+      </div>
+      <div class="fq-cta__btns">
+        <a
+          href="https://wa.me/84961836611"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="c-button c-button--primary"
+        >
+          WhatsApp us
+        </a>
+        <a
+          href="mailto:good@morningvietnam.co"
+          class="c-button c-button--outline fq-cta__email"
+        >
+          good@morningvietnam.co
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+
+<style>
+  /* ── Hero ──────────────────────────────────────────────────────── */
+  .fq-hero {
+    position: relative;
+    min-height: 44vh;
+    background: var(--color-nordic);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .fq-hero__bg {
+    position: absolute;
+    inset: 0;
+  }
+
+  .fq-hero__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.18;
+  }
+
+  .fq-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--color-nordic) 25%, transparent 100%);
+  }
+
+  .fq-hero__content {
+    position: relative;
+    z-index: 1;
+    padding-top: calc(var(--site-header-h) + 48px);
+    padding-bottom: 60px;
+  }
+
+  .fq-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 24px;
+  }
+
+  .fq-breadcrumb a {
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.2s;
+  }
+
+  .fq-breadcrumb a:hover {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .fq-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1.05;
+    color: white;
+    margin-bottom: 16px;
+  }
+
+  .fq-hero__accent {
+    color: var(--color-riptide);
+  }
+
+  .fq-hero__sub {
+    font-size: clamp(15px, 2vw, 18px);
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  /* ── Body layout ───────────────────────────────────────────────── */
+  .fq-body {
+    padding-block: 80px;
+    background: white;
+  }
+
+  .fq-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  /* ── Sticky nav ────────────────────────────────────────────────── */
+  .fq-nav {
+    position: sticky;
+    top: calc(var(--site-header-h) + 32px);
+  }
+
+  .fq-nav__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .fq-nav__link {
+    display: block;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-nordic);
+    opacity: 0.4;
+    border-left: 2px solid transparent;
+    border-radius: 0 4px 4px 0;
+    text-decoration: none;
+    transition: opacity 0.2s, border-color 0.2s, color 0.2s, background 0.2s;
+  }
+
+  .fq-nav__link:hover {
+    opacity: 0.7;
+  }
+
+  .fq-nav__link.is-active {
+    opacity: 1;
+    color: var(--color-java);
+    border-left-color: var(--color-java);
+    background: rgba(29, 160, 160, 0.06);
+  }
+
+  /* ── FAQ groups ────────────────────────────────────────────────── */
+  .fq-group {
+    margin-bottom: 64px;
+  }
+
+  .fq-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .fq-group__title {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--color-light-cyan);
+    margin-bottom: 0;
+  }
+
+  /* ── Details accordion ─────────────────────────────────────────── */
+  .fq-item {
+    border-bottom: 1px solid var(--color-light-cyan);
+  }
+
+  .fq-item:last-child {
+    border-bottom: none;
+  }
+
+  .fq-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 0;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .fq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .fq-summary__text {
+    font-family: var(--font-heading);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    transition: color 0.2s;
+    flex: 1;
+  }
+
+  .fq-summary:hover .fq-summary__text {
+    color: var(--color-java);
+  }
+
+  .fq-item[open] .fq-summary__text {
+    color: var(--color-java);
+  }
+
+  .fq-summary__icon {
+    color: var(--color-java);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  .fq-item[open] .fq-summary__icon {
+    transform: rotate(180deg);
+    color: var(--color-sorbus);
+  }
+
+  .fq-answer {
+    padding: 0 0 24px 0;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  /* ── CTA ───────────────────────────────────────────────────────── */
+  .fq-cta {
+    background: var(--color-nordic);
+    padding-block: 80px;
+  }
+
+  .fq-cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .fq-cta h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 3.5vw, 40px);
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .fq-cta p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .fq-cta__btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .fq-cta__email {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .fq-cta__email:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    color: white;
+  }
+
+  /* ── Responsive ────────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .fq-layout {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .fq-nav {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .fq-summary__text {
+      font-size: 15px;
+    }
+
+    .fq-answer {
+      font-size: 15px;
+    }
+
+    .fq-cta__inner {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .fq-cta__btns {
+      justify-content: center;
+    }
+  }
+</style>
+
+
+<script>
+  // ── Intersection Observer: active nav highlight ──────────────────
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.fq-nav__link');
+  const sections = document.querySelectorAll<HTMLElement>('.fq-group');
+
+  if (navLinks.length && sections.length) {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navLinks.forEach(link => {
+              link.classList.toggle('is-active', link.dataset.target === id);
+            });
+          }
+        });
+      },
+      {
+        rootMargin: '-15% 0px -65% 0px',
+        threshold: 0,
+      }
+    );
+
+    sections.forEach(section => observer.observe(section));
+  }
+</script>

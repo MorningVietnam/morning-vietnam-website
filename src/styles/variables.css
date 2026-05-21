@@ -1,0 +1,91 @@
+:root {
+  /* ─── Brand palette ──────────────────────────────────────────────────── */
+  --color-java:         #1da0a0;   /* Primary — 60% usage                  */
+  --color-riptide:      #7de2d1;   /* Secondary — 40% usage                */
+  --color-light-cyan:   #d9f7f5;   /* Secondary — 40% usage                */
+  --color-nordic:       #043341;   /* Dark — text / backgrounds            */
+  --color-sorbus:       #ea6739;   /* Accent / CTA ONLY — 10% usage        */
+  --color-white-nectar: #f7f3d9;   /* Secondary palette — 70% bg           */
+  --color-lucky:        #a08f1d;
+  --color-madras:       #413d04;
+  --color-white:        #ffffff;
+  --color-black:        #000000;
+
+  /* ─── Semantic aliases (consumed by components) ─────────────────────── */
+  --color-primary:       var(--color-java);
+  --color-primary-dark:  #178080;
+  --color-primary-light: var(--color-riptide);
+  --color-accent:        var(--color-sorbus);
+  --color-accent-dark:   #c55228;
+  --color-bg:            var(--color-white-nectar);
+  --color-bg-alt:        var(--color-light-cyan);
+  --color-surface:       var(--color-white);
+  --color-text:          var(--color-nordic);
+  --color-text-muted:    #4a7a8a;
+  --color-border:        #b8ece8;
+
+  /* ─── Typography ─────────────────────────────────────────────────────── */
+  --font-heading: 'Commissioner', sans-serif;
+  --font-body:    'Google Sans', 'Product Sans', sans-serif;
+
+  /* Heading scale */
+  --text-hero:    clamp(56px, 10vw, 120px);
+  --text-h1:      clamp(40px, 6vw, 84px);
+  --text-h2:      clamp(32px, 4vw, 56px);
+  --text-h3:      36px;
+  --text-body-lg: 24px;
+  --text-body:    18px;
+  --text-sm:      14px;
+
+  /* Legacy aliases (used by existing components) */
+  --text-xs:   var(--text-sm);
+  --text-base: var(--text-body);
+  --text-lg:   var(--text-body-lg);
+  --text-xl:   var(--text-h3);
+  --text-2xl:  clamp(24px, 3vw, 36px);
+  --text-3xl:  var(--text-h2);
+  --text-4xl:  var(--text-h1);
+  --text-5xl:  var(--text-hero);
+
+  /* ─── Spacing ────────────────────────────────────────────────────────── */
+  --space-xs:  8px;
+  --space-sm:  16px;
+  --space-md:  24px;
+  --space-lg:  48px;
+  --space-xl:  80px;
+  --space-2xl: 120px;
+
+  /* Legacy aliases (used by existing components) */
+  --space-1:  4px;
+  --space-2:  var(--space-xs);
+  --space-3:  12px;
+  --space-4:  var(--space-sm);
+  --space-5:  20px;
+  --space-6:  var(--space-md);
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: var(--space-lg);
+  --space-16: 64px;
+  --space-20: var(--space-xl);
+  --space-24: 96px;
+
+  /* ─── Transitions ────────────────────────────────────────────────────── */
+  --ease-smooth:      cubic-bezier(0.645, 0.045, 0.355, 1);
+  --transition-fast:  0.2s var(--ease-smooth);
+  --transition-base:  0.4s var(--ease-smooth);
+  --transition-slow:  0.6s var(--ease-smooth);
+
+  /* ─── Layout ─────────────────────────────────────────────────────────── */
+  --max-width:     1440px;
+  --header-height: 60px;
+
+  /* ─── Borders / Shadows ──────────────────────────────────────────────── */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(4, 51, 65, 0.08);
+  --shadow-md: 0 4px 16px rgba(4, 51, 65, 0.12);
+  --shadow-lg: 0 8px 32px rgba(4, 51, 65, 0.18);
+}

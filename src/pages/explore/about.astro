@@ -1,0 +1,671 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const team = [
+  { initials: "TG", image: "/team/tung.png",     archetype: "The Local Compass",    name: "Tùng",     role: "Co-founder", quote: "If there's a shortcut through the mountains, I've probably walked it twice.",     bio: "Tùng doesn't plan routes on a map. He plans them on foot — every trail tested, every homestay vetted, every sunrise confirmed worth waking up for." },
+  { initials: "TA", image: "/team/the-anh.png",  archetype: "The Culture Curator",  name: "Thế Anh",  role: "Co-founder", quote: "The best stories aren't in guidebooks. They're at the dinner table.",              bio: "10 years in marketing and event production. Thế Anh designs the emotional arc of your journey — every challenge, every surprise, every moment you'll remember." },
+  { initials: "SN", image: "/team/son.png",       archetype: "The Detail Whisperer", name: "Sơn",      role: "",           quote: "You won't notice the little things I prepare. But you'll feel them.",              bio: "The person who makes sure your water bottle is full, your room is ready, and that 'random' beautiful viewpoint wasn't random at all." },
+  { initials: "HA", image: "/team/ha.png",        archetype: "The Energy Spark",     name: "Hà",       role: "",           quote: "If you're not smiling yet, give me five minutes.",                               bio: "Hà is the reason your group goes from polite strangers to arm-in-arm friends by day two." },
+  { initials: "MY", image: "/team/my.png",        archetype: "The Joy Maker",        name: "My",       role: "",           quote: "Life's too short to be serious on an adventure. Let's play.",                    bio: "My turns every challenge into a game and every game into a memory. She's the one you'll quote when you tell friends about this trip." },
+];
+---
+
+<BaseLayout
+  title="About Us"
+  description="Morning Vietnam was built by people who walked the trails before they sold them. Our story, our team, and why we exist."
+>
+
+  <!-- ═══ S1 · HERO ════════════════════════════════════════════════════ -->
+  <section class="au-hero">
+    <div class="au-hero__bg">
+      <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=1800&q=85" alt="" />
+    </div>
+    <div class="au-hero__overlay"></div>
+    <div class="au-hero__content container">
+      <h1 class="au-hero__h1">We didn't start a tour company.<br/>We started a <span class="hl-sorbus">way back in.</span></h1>
+      <p class="au-hero__sub">Back into the rhythm of a land most travelers only photograph.<br/>Back into the kind of human connection modern life forgot how to give us.</p>
+      <p class="au-hero__tagline">Vietnam deeper. Horizons wider.</p>
+    </div>
+  </section>
+
+  <!-- ═══ S2 · OUR STORY ═══════════════════════════════════════════════ -->
+  <section class="au-story">
+    <div class="container">
+      <p class="section-label">Our story</p>
+      <h2 class="au-story__heading">Before we told the world about Vietnam, <span class="hl-sorbus">we walked it.</span></h2>
+    </div>
+
+    <div class="au-story__block au-story__block--text-first">
+      <div class="au-story__text">
+        <p>We trekked limestone mountains that rise from emerald waters. Slept in valleys hidden from every guidebook. Sat with families in villages where the road ends and the stories begin.</p>
+        <p>We didn't do this for content. We did it because you can't design a journey into a place you only know from the surface.</p>
+      </div>
+      <div class="au-story__img">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80" alt="" loading="lazy" />
+      </div>
+    </div>
+
+    <div class="au-story__block au-story__block--img-first">
+      <div class="au-story__img">
+        <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=900&q=80" alt="" loading="lazy" />
+      </div>
+      <div class="au-story__text">
+        <p>Along the way, we noticed something. The most powerful moments weren't at the famous landmarks. They were in the in-between — the 5 a.m. coffee with a farmer, the game that made eight strangers laugh until they cried, the walk home through rice fields where nobody said a word because the silence was enough.</p>
+        <p>Those are the moments we design for. Not photo ops. Not itinerary checkboxes. Moments that make you feel like you lived a part of Vietnam — not just visited it.</p>
+      </div>
+    </div>
+
+    <div class="container au-story__closing">
+      <p class="au-story__closing-line">That feeling is why Morning Vietnam exists.</p>
+    </div>
+  </section>
+
+  <!-- ═══ S3 · HOW WE DESIGN ════════════════════════════════════════════ -->
+  <section class="au-design">
+    <div class="container">
+      <p class="section-label">How we design</p>
+      <h2 class="au-design__heading">Every journey is <span class="hl-sorbus">engineered.</span> Every moment feels spontaneous.</h2>
+      <p class="au-design__sub">Three things make a Morning Vietnam journey unlike anything else in this country.</p>
+      <div class="au-design__grid">
+        <div class="au-design__card">
+          <span class="au-design__badge">🧭 Curated Itinerary</span>
+          <h3>Designed, not packaged</h3>
+          <p>We walk every trail before you do. Eat at every table before you sit. Test every challenge before you play. Nothing is borrowed from a template — every route is original, every detail intentional.</p>
+        </div>
+        <div class="au-design__card">
+          <span class="au-design__badge">🎮 Gamified Format</span>
+          <h3>Play your way through</h3>
+          <p>Hidden challenges. Village puzzles. Team tasks that pull your group closer to the land and closer to each other. No scripts, no awkward icebreakers — just a format that turns strangers into teammates and teammates into family.</p>
+        </div>
+        <div class="au-design__card">
+          <span class="au-design__badge">🌿 Local Breath</span>
+          <h3>Local to the bone</h3>
+          <p>Our partners aren't vendors. They're families. You eat what they eat. Sleep where they sleep. Hear stories no guidebook has ever printed. This is not "local experience" as a marketing line. This is Tuesday dinner at someone's home.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ S4 · WHAT WE BELIEVE ══════════════════════════════════════════ -->
+  <section class="au-believe">
+    <div class="container">
+      <p class="section-label au-believe__label">What we believe</p>
+      <h2 class="au-believe__heading">Four things we'll <span class="hl-sorbus">never</span> compromise on.</h2>
+      <div class="au-believe__grid">
+        <div class="au-believe__item">
+          <h3>Identity is a bridge, not a wall.</h3>
+          <p>Every ethnicity, every border, every difference between "us" and "them" — on our journeys, they dissolve. You arrive from different countries. You leave as family around the same table.</p>
+        </div>
+        <div class="au-believe__item">
+          <h3>Depth over distance.</h3>
+          <p>We'd rather you spend three days truly knowing one valley than seven days skimming five cities. The best travel stories come from staying long enough to care.</p>
+        </div>
+        <div class="au-believe__item">
+          <h3>Connection is the real luxury.</h3>
+          <p>In a world that sells isolation as premium, we design journeys where the most valuable thing you take home is a relationship — with a place, with strangers who became friends, with a part of yourself you forgot was there.</p>
+        </div>
+        <div class="au-believe__item">
+          <h3>Vietnam is not a backdrop. Vietnam is <span class="hl-sorbus">the story.</span></h3>
+          <p>We don't use this country as scenery for your photos. We let it speak for itself — through its people, its food, its mountains, its mornings.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ S5 · THE CREW ═════════════════════════════════════════════════ -->
+  <section class="au-crew">
+    <div class="container">
+      <p class="section-label">The crew</p>
+      <h2 class="au-crew__heading">Behind Every Journey, Real Humans <span class="hl-sorbus">Who Care.</span></h2>
+      <p class="au-crew__sub">We're not a faceless travel company. Meet the people who will turn your trip into something personal. Pick whoever feels right — they'll take it from there.</p>
+      <div class="au-crew__grid">
+        {team.map(member => (
+          <div class="au-crew__card">
+            <a class="au-crew__avatar" href="https://facebook.com/morningvietnam.local" target="_blank" rel="noopener noreferrer">
+              <img class="au-crew__photo" src={member.image} alt={member.name} />
+              <div class="au-crew__tooltip">Morning! ☀️</div>
+            </a>
+            <p class="au-crew__name">
+              {member.name}{member.role ? <span class="au-crew__role"> · {member.role}</span> : ''}
+            </p>
+            <p class="au-crew__quote">"{member.quote}"</p>
+            <p class="au-crew__bio">{member.bio}</p>
+          </div>
+        ))}
+      </div>
+      <p class="au-crew__hint">Click on the picture to say Morning!</p>
+    </div>
+  </section>
+
+  <!-- ═══ S6 · CTA ══════════════════════════════════════════════════════ -->
+  <section class="au-cta">
+    <div class="container">
+      <h2 class="au-cta__heading">Ready To Say <span class="hl-sorbus">"Morning"?</span></h2>
+      <div class="au-cta__cards">
+        <div class="au-cta__card au-cta__card--b2c">
+          <h3>Your Journey Starts Here</h3>
+          <p>From one-day city deep-dives to multi-day mountain expeditions — find the adventure that fits your crew.</p>
+          <a href="/tours" class="c-button c-button--light">Explore Journeys →</a>
+        </div>
+        <div class="au-cta__card au-cta__card--b2b">
+          <h3>Partner With Us</h3>
+          <p>A product your clients can't find anywhere else. Let's talk rates, FAM trips, and custom itineraries.</p>
+          <a href="/contact" class="c-button c-button--primary">Let's Talk →</a>
+        </div>
+      </div>
+      <p class="au-cta__trust">Licensed international tour operator · 6 active journeys · Northern Vietnam, with Central &amp; South launching soon</p>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  /* ── Highlight pill ──────────────────────────────────────────────── */
+  .hl-sorbus {
+    display: inline;
+    background: #ea6739;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-weight: 700;
+  }
+
+  /* ═══ S1 · HERO ════════════════════════════════════════════════════ */
+  .au-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .au-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .au-hero__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .au-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 51, 65, 0.65);
+    z-index: 1;
+  }
+
+  .au-hero__content {
+    position: relative;
+    z-index: 2;
+    padding-top: 120px;
+    padding-bottom: 80px;
+  }
+
+  .au-hero__h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(42px, 7vw, 88px);
+    font-weight: 700;
+    color: white;
+    line-height: 1.05;
+    margin-bottom: 24px;
+    max-width: 900px;
+  }
+
+  .au-hero__sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.7;
+    max-width: 640px;
+    margin-bottom: 16px;
+  }
+
+  .au-hero__tagline {
+    font-style: italic;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  /* ═══ S2 · OUR STORY ═══════════════════════════════════════════════ */
+  .au-story {
+    background: var(--color-light-cyan);
+    padding-block: 96px;
+  }
+
+  .au-story__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    max-width: 760px;
+    margin: 16px 0 64px;
+    line-height: 1.2;
+  }
+
+  .au-story__block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 480px;
+  }
+
+  .au-story__img {
+    overflow: hidden;
+  }
+
+  .au-story__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .au-story__text {
+    padding: 64px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .au-story__text p {
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--color-nordic);
+    opacity: 0.8;
+  }
+
+  .au-story__closing {
+    text-align: center;
+    padding-top: 64px;
+  }
+
+  .au-story__closing-line {
+    font-style: italic;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    color: var(--color-nordic);
+  }
+
+  /* ═══ S3 · HOW WE DESIGN ════════════════════════════════════════════ */
+  .au-design {
+    background: white;
+    padding-block: 96px;
+  }
+
+  .au-design__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(26px, 3.5vw, 44px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    max-width: 760px;
+    margin: 16px 0 12px;
+    line-height: 1.15;
+  }
+
+  .au-design__sub {
+    font-size: 16px;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    margin-bottom: 56px;
+    max-width: 560px;
+    line-height: 1.65;
+  }
+
+  .au-design__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .au-design__card {
+    background: var(--color-light-cyan);
+    border-radius: 20px;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .au-design__badge {
+    display: inline-block;
+    background: var(--color-java);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    align-self: flex-start;
+  }
+
+  .au-design__card h3 {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-nordic);
+  }
+
+  .au-design__card p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--color-nordic);
+    opacity: 0.75;
+  }
+
+  /* ═══ S4 · WHAT WE BELIEVE ══════════════════════════════════════════ */
+  .au-believe {
+    background: var(--color-java);
+    padding-block: 96px;
+  }
+
+  .au-believe__label {
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+
+  .au-believe__heading {
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: white;
+    margin: 16px 0 64px;
+    max-width: 720px;
+    line-height: 1.1;
+  }
+
+  .au-believe__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .au-believe__item {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 48px 40px 48px 0;
+  }
+
+  .au-believe__item:nth-child(even) {
+    padding: 48px 0 48px 40px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .au-believe__item h3 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+
+  .au-believe__item p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* ═══ S5 · THE CREW ═════════════════════════════════════════════════ */
+  .au-crew {
+    background: white;
+    padding-block: 96px;
+  }
+
+  .au-crew__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(26px, 3.5vw, 44px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    max-width: 760px;
+    margin: 16px 0 12px;
+    line-height: 1.15;
+  }
+
+  .au-crew__sub {
+    font-size: 16px;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    max-width: 640px;
+    margin-bottom: 56px;
+    line-height: 1.7;
+  }
+
+  .au-crew__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 32px;
+  }
+
+  .au-crew__card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .au-crew__avatar {
+    display: block;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .au-crew__avatar:hover {
+    transform: scale(1.04);
+  }
+
+  .au-crew__photo {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .au-crew__tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ea6739;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .au-crew__tooltip.is-visible {
+    opacity: 1;
+  }
+
+  .au-crew__archetype {
+    display: inline-block;
+    background: var(--color-java);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+    align-self: flex-start;
+    margin-top: 8px;
+  }
+
+  .au-crew__name {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin: 0;
+  }
+
+  .au-crew__role {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.5;
+  }
+
+  .au-crew__quote {
+    font-style: italic;
+    font-size: 13px;
+    color: var(--color-nordic);
+    opacity: 0.55;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .au-crew__bio {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .au-crew__hint {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 13px;
+    color: var(--color-nordic);
+    opacity: 0.4;
+  }
+
+  /* ═══ S6 · CTA ══════════════════════════════════════════════════════ */
+  .au-cta {
+    background: linear-gradient(135deg, var(--color-java) 0%, var(--color-nordic) 100%);
+    padding-block: 96px;
+    text-align: center;
+  }
+
+  .au-cta__heading {
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: white;
+    margin-bottom: 56px;
+    line-height: 1.1;
+  }
+
+  .au-cta__cards {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 840px;
+    margin: 0 auto;
+  }
+
+  .au-cta__card {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+  }
+
+  .au-cta__card--b2c {
+    background: #ea6739;
+  }
+
+  .au-cta__card--b2c h3 {
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .au-cta__card--b2c p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .au-cta__card--b2b {
+    background: white;
+  }
+
+  .au-cta__card--b2b h3 {
+    color: var(--color-nordic);
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .au-cta__card--b2b p {
+    color: var(--color-nordic);
+    opacity: 0.7;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .au-cta__trust {
+    margin-top: 40px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  /* ═══ RESPONSIVE ════════════════════════════════════════════════════ */
+  @media (max-width: 960px) {
+    .au-crew__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .au-story__block {
+      grid-template-columns: 1fr;
+    }
+
+    .au-story__block--img-first .au-story__img {
+      order: -1;
+    }
+
+    .au-story__text {
+      padding: 48px 32px;
+    }
+
+    .au-story__img {
+      min-height: 320px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .au-design__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .au-believe__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .au-believe__item:nth-child(even) {
+      padding: 48px 0;
+      border-left: none;
+    }
+
+    .au-crew__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.au-crew__avatar').forEach(avatar => {
+    avatar.addEventListener('click', () => {
+      const tip = avatar.querySelector('.au-crew__tooltip');
+      if (!tip) return;
+      tip.classList.add('is-visible');
+      setTimeout(() => tip.classList.remove('is-visible'), 1500);
+    });
+  });
+</script>

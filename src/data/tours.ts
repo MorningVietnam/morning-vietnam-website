@@ -146,7 +146,7 @@ export const tours: Tour[] = [
     name:        "Ho Chi Minh: A Life",
     region:      "north",
     duration:    ["1 Day", "2D1N"],
-    price:       "From $61/person",
+    price:       "From $63/person",
     tagline:     "One man changed a nation. One day to understand why.",
     description: "Follow the physical places that shaped Hồ Chí Minh — from Ba Đình Square to the secret wartime base deep in Ba Vì forest. End at a mountain temple built by the people, not the state. Includes Unlock challenge at K9 Đá Chông.",
     highlights:  [
@@ -177,20 +177,20 @@ export const tours: Tour[] = [
       {
         id:       "1day",
         label:    "1 Day",
-        price:    61,
+        price:    63,
         tagline:  "Hanoi → Ba Vì → back by 20:00",
         ctaLabel: "I'm doing the 1-day  →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Ho Chi Minh: A Life (1 Day, $61)",
+        waText:   "Hi Morning Vietnam — I'd like to book Ho Chi Minh: A Life (1 Day, $63)",
       },
       {
         id:       "2d1n",
         label:    "2 Days 1 Night",
-        price:    146,
+        price:    152,
         tagline:  "Add a night in Ba Vì forest + hiking morning",
         ctaLabel: "I want the full 2 days  →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Ho Chi Minh: A Life (2 Days 1 Night, $146)",
+        waText:   "Hi Morning Vietnam — I'd like to book Ho Chi Minh: A Life (2 Days 1 Night, $152)",
       },
     ],
 
@@ -225,7 +225,7 @@ export const tours: Tour[] = [
     ],
 
     // ── Extended ──
-    priceUSD: 61,
+    priceUSD: 63,
     gallery: [
       { src: "/tours/hcm-a-life/2.webp",  alt: "Ho Chi Minh Mausoleum at Ba Đình Square — honor guard marching in formation" },
       { src: "/tours/hcm-a-life/4.webp",  alt: "Ho Chi Minh Stilt House (Nhà sàn) — traditional red wooden architecture with guards" },
@@ -249,7 +249,7 @@ export const tours: Tour[] = [
     },
     valueAnchor: {
       "1day": {
-        headline: "$61. Twelve hours in the places that shaped a nation.",
+        headline: "$63. Twelve hours in the places that shaped a nation.",
         paragraphs: [
           "Transport Hanoi return, all entry fees (Mausoleum complex, K9 Đá Chông, Ba Vì National Park), lunch at Bình Hoa Quán, dedicated host for the day, Unlock Challenge, Welcome pack. Nothing to pay on arrival.",
           "The standard Ba Đình city tour charges $20–35 for a guide who walks you past the rope barriers. This goes further — out of Hanoi, into Ba Vì, to places most tours don't cover. The day ends at a mountain temple built by the people, not the state.",
@@ -263,7 +263,7 @@ export const tours: Tour[] = [
         ],
       },
       "2d1n": {
-        headline: "$146. Two days — the mausoleum, the secret forest base, a night in Ba Vì.",
+        headline: "$152. Two days — the mausoleum, the secret forest base, a night in Ba Vì.",
         paragraphs: [
           "Everything in the 1-day, plus: overnight at Amour Resort Ba Vì, breakfast + dinner Day 2, and a morning hike through tropical forest inside Ba Vì National Park. Different quality of day when you're not racing back to Hanoi.",
           "Ba Vì at dawn — before the resort guests are up and the trails are still empty — is a completely different place from the afternoon visit. The 2D1N is built around that.",
@@ -388,7 +388,7 @@ export const tours: Tour[] = [
     name:        "Sa Pa · Lai Châu",
     region:      "north",
     duration:    ["2D1N"],
-    price:       "from $185",
+    price:       "from $193",
     tagline:     "Overnight sleeper bus, motorbike or car, ethnic minority villages, a tropical forest trek, and a glass bridge at sunset.",
     description: "Leave Hanoi at night. Wake up in the mist of Sa Pa. Spend two days riding through Vietnam's highest mountain pass into Lai Châu — a valley most travelers never find — then back through jungle trails and a glass bridge at 900m. Home by sunrise.",
     highlights: [
@@ -421,20 +421,20 @@ export const tours: Tour[] = [
       {
         id:       "car",
         label:    "Car Tour",
-        price:    185,
+        price:    193,
         tagline:  "Private car + driver. Sit back, watch the pass unfold through the window.",
         ctaLabel: "Book Car Tour →",
         ctaNote:  "No payment now. Spot held, pay 14 days before. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (Car Tour, $185/person)",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (Car Tour, $193/person)",
       },
       {
         id:       "motor",
         label:    "Motor Tour",
-        price:    203,
+        price:    211,
         tagline:  "Self-ride or backseat on our semi-auto 125cc. The pass earns the view.",
         ctaLabel: "Book Motor Tour →",
         ctaNote:  "Valid motorbike licence required for self-ride. No payment now. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (Motor Tour, $203/person)",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (Motor Tour, $211/person)",
       },
     ],
 
@@ -484,7 +484,7 @@ export const tours: Tour[] = [
     ],
 
     // ── Extended ──
-    priceUSD: 185,
+    priceUSD: 193,
     tripInfo: {
       "car": [
         { icon: "map-pin",         label: "Meeting point",     value: "Old Quarter, Hanoi · 21:30" },
@@ -544,7 +544,7 @@ export const tours: Tour[] = [
       closingLine: "Two days. One mountain pass. A valley most tourists will never find.",
     },
     valueAnchor: {
-      headline: "From $185. For a route that exists outside the tourist circuit entirely.",
+      headline: "From $193. For a route that exists outside the tourist circuit entirely.",
       paragraphs: [
         "There is no Klook listing for O Quy Hồ. No GetYourGuide page for Sì Thâu Chải. The glass bridge at Rồng Mây only opened in 2023 and still has no English-language operator running it properly. We built this route because the northwest deserves better than what the standard Sapa circuit offers.",
         "The price covers sleeper bus both ways, transport all day, all meals, a fully-hosted village homestay, jungle trek with trail lunch, glass bridge entry, Unlock Challenge, and a dedicated host for 48 hours. The only thing not included is whatever you buy at the Sa Pa night market on Day 2.",
@@ -677,36 +677,36 @@ export const tours: Tour[] = [
     tagline:     "The valley that rewards those who stay.",
     description: "Rice terraces, White Thai families, and challenges you won't find in any guidebook. One day minimum. Three days maximum. The valley decides.",
     duration:    ["1 Day", "2D1N", "3D2N"],
-    price:       "From $85/person",
-    priceUSD:    85,
+    price:       "From $89/person",
+    priceUSD:    89,
 
     durationOptions: [
       {
         id:       "1day",
         label:    "1 Day",
-        price:    85,
+        price:    89,
         tagline:  "Hanoi → Thung Khe → Mai Châu → back by 10:30 PM",
         ctaLabel: "I'm doing the 1-day →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (1 Day, $85)",
+        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (1 Day, $89)",
       },
       {
         id:       "2d1n",
         label:    "2 Days 1 Night",
-        price:    145,
+        price:    151,
         tagline:  "Hanoi → Thung Khe → Mai Châu → overnight → back Day 2",
         ctaLabel: "I'm doing the 2-day →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (2 Days 1 Night, $145)",
+        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (2 Days 1 Night, $151)",
       },
       {
         id:       "3d2n",
         label:    "3 Days 2 Nights",
-        price:    225,
+        price:    233,
         tagline:  "Hanoi → Mai Châu → Pà Cò → Cao Phong → back Day 3",
         ctaLabel: "I'm doing the 3-day →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (3 Days 2 Nights, $225)",
+        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (3 Days 2 Nights, $233)",
       },
     ],
 
@@ -824,7 +824,7 @@ export const tours: Tour[] = [
     },
     valueAnchor: {
       "1day": {
-        headline: "$85. Work out what that covers.",
+        headline: "$89. Work out what that covers.",
         paragraphs: [
           "Transport from Hanoi (return), lunch, dinner, all activity fees, cave entrance, dedicated host for 12 hours. The Unlock Challenge included.",
           "Most day tours to Mai Châu charge $40–50 for a bus seat, a buffet, and a photo stop. This is what the other $35–45 buys: actual access, small group, and a guide who knows the valley personally.",
@@ -839,7 +839,7 @@ export const tours: Tour[] = [
         ],
       },
       "2d1n": {
-        headline: "$145. Two days, everything included — do the math.",
+        headline: "$151. Two days, everything included — do the math.",
         paragraphs: [
           "Transport (return), all meals Day 1 lunch through Day 2 lunch, homestay accommodation, all activities across both days, dedicated host. Nothing to pay on arrival.",
           "A comparable overnight tour elsewhere charges $80–100 for transport + room alone. Content — the cave, the waterfall, the challenge, the workshop — is extra, or absent.",
@@ -854,7 +854,7 @@ export const tours: Tour[] = [
         ],
       },
       "3d2n": {
-        headline: "$225. Three days, two valleys, two cultures. The math is embarrassing.",
+        headline: "$233. Three days, two valleys, two cultures. The math is embarrassing.",
         paragraphs: [
           "Everything in the 2D1N, plus: a second night at A La Homestay in Pà Cò, all Day 3 meals, Hmong paper workshop, cloud hunt at Hang Kia, Cao Phong orange farm stop. Both homestays included.",
           "You'd spend more than this booking accommodation alone across three nights in the north — without the transport, the host, or any of the access.",

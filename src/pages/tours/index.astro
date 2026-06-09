@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import TourCard from '../../components/TourCard.astro';
 import NotifyPopup from '../../components/NotifyPopup.astro';
 import { tours } from '../../data/tours.ts';
+
+const catBaIdx = tours.findIndex(t => t.slug === 'mai-moc-in-1-trip');
 ---
 
 <BaseLayout
@@ -35,7 +37,29 @@ import { tours } from '../../data/tours.ts';
   <!-- Grid -->
   <section class="tours-section">
     <div class="tours-grid">
-      {tours.map((tour, i) => <TourCard tour={tour} index={i} />)}
+      {tours.map((tour: any, i: number) => (
+        <>
+          <TourCard tour={tour} index={i} />
+          {i === catBaIdx && (
+            <article class="bc reveal" data-tour-region="bespoke">
+              <a href="/contact" class="bc__inner">
+                <div class="bc__image">
+                  <img src="/bespoke-tour.jpg" alt="Bespoke Tour" loading="lazy" />
+                  <span class="bc__badge">By Request</span>
+                </div>
+                <div class="bc__body">
+                  <div class="bc__region">Private Journey</div>
+                  <h3 class="bc__name">Bespoke Tour</h3>
+                  <p class="bc__tagline">Only for You and your Beloved. We design the entire journey around your story — your pace, your places, your moments.</p>
+                  <div class="bc__footer">
+                    <span class="bc__cta">Plan your journey →</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          )}
+        </>
+      ))}
     </div>
   </section>
 
@@ -148,6 +172,110 @@ import { tours } from '../../data/tours.ts';
     .tours-section { padding: 32px 16px; }
   }
 
+  /* ── Bespoke card (self-contained, matches TourCard exactly) ── */
+  .bc {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(4, 51, 65, 0.10);
+    transition: transform 0.4s cubic-bezier(0.645, 0.045, 0.355, 1),
+                box-shadow 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  .bc:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 56px rgba(4, 51, 65, 0.18);
+  }
+
+  .bc__inner {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  .bc__image {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .bc__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .bc:hover .bc__image img { transform: scale(1.08); }
+
+  .bc__badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(4, 51, 65, 0.7);
+    backdrop-filter: blur(4px);
+    color: white;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    z-index: 1;
+  }
+
+  .bc__body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    background: var(--color-sorbus);
+  }
+
+  .bc__region {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .bc__name {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: white;
+  }
+
+  .bc__tagline {
+    font-size: 14px;
+    line-height: 1.55;
+    flex: 1;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .bc__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .bc__cta {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    color: white;
+  }
+
   /* Popup */
   .b-popup {
     position: fixed;
@@ -253,7 +381,7 @@ import { tours } from '../../data/tours.ts';
 
       cards.forEach(card => {
         const region = card.dataset.tourRegion ?? '';
-        const match = filter === 'all' || region === filter;
+        const match = filter === 'all' || region === filter || region === 'bespoke';
         card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
         card.style.opacity = match ? '1' : '0.2';
         card.style.transform = match ? 'scale(1)' : 'scale(0.97)';

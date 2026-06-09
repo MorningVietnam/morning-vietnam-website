@@ -8,7 +8,7 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree f
   <div class="b-popup__holder">
     <button class="b-popup__close" data-popup-close aria-label="Close">×</button>
     <h2 id="notify-popup-title" class="notify-popup__title">Be first to know.</h2>
-    <p class="notify-popup__sub">Drop your email — we'll tell you the day this tour goes live. No spam, no marketing fluff.</p>
+    <p class="notify-popup__sub">Drop your email/whatsapp number — we'll tell you the day this tour goes live. No spam, no marketing fluff.</p>
     <form
       class="notify-popup__form"
       action={`https://formspree.io/f/${FORMSPREE_ID}`}
@@ -19,12 +19,12 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree f
       <div class="notify-popup__field">
         <label for="notify-email" class="sr-only">Email</label>
         <input
-          type="email"
+          type="text"
           id="notify-email"
           name="email"
           required
-          placeholder="your@email.com"
-          autocomplete="email"
+          placeholder="your@email.com or your whatsapp number"
+          autocomplete="off"
         />
       </div>
       <div class="notify-popup__field">
@@ -47,6 +47,7 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree f
         Something went wrong. Try again or email good@morningvietnam.co
       </p>
     </form>
+    <img src="/mascot.png" alt="" class="notify-popup__mascot" aria-hidden="true" />
   </div>
 </div>
 
@@ -55,7 +56,7 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree f
     font-family: var(--font-heading);
     font-size: clamp(28px, 4vw, 40px);
     font-weight: 700;
-    color: var(--color-nordic);
+    color: var(--color-light-cyan);
     line-height: 1.05;
     letter-spacing: -0.02em;
     margin-bottom: 12px;
@@ -63,7 +64,7 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree f
 
   .notify-popup__sub {
     font-size: 15px;
-    color: var(--color-nordic);
+    color: var(--color-light-cyan);
     opacity: 0.7;
     line-height: 1.6;
     margin-bottom: 28px;
@@ -78,18 +79,22 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree f
   .notify-popup__field input {
     width: 100%;
     padding: 14px 18px;
-    border: 1.5px solid var(--color-border);
+    border: 1.5px solid rgba(4, 51, 65, 0.15);
     border-radius: 12px;
     font-size: 15px;
     font-family: inherit;
-    background: white;
+    background: var(--color-light-cyan);
     color: var(--color-nordic);
     transition: border-color 0.2s ease;
   }
 
+  .notify-popup__field input::placeholder {
+    color: rgba(4, 51, 65, 0.4);
+  }
+
   .notify-popup__field input:focus {
     outline: none;
-    border-color: var(--color-java);
+    border-color: var(--color-riptide);
   }
 
   .notify-popup__submit {
@@ -98,7 +103,7 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree f
   }
 
   .notify-popup__success {
-    color: var(--color-java);
+    color: var(--color-riptide);
     font-weight: 600;
     font-size: 14px;
     margin-top: 8px;
@@ -109,6 +114,16 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: replace with real Formspree f
     font-weight: 600;
     font-size: 14px;
     margin-top: 8px;
+  }
+
+  .notify-popup__mascot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 120px;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
   }
 </style>
 

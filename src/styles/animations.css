@@ -430,11 +430,13 @@
 }
 
 .b-popup__holder {
-  background: var(--color-white-nectar);
+  background: var(--color-java);
   border-radius: 16px;
   padding: 48px;
   max-width: 560px;
   width: 90%;
+  position: relative;
+  overflow: hidden;
   transform: translateY(20px);
   transition: transform 0.4s var(--ease-smooth);
 }

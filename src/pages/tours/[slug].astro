@@ -101,7 +101,7 @@ const defaultTripItems: any[] = hasTripInfo
       <!-- Right: Purchase panel -->
       <div class="td-product__panel" id="td-product-panel" data-duration-options={hasDurationOptions ? JSON.stringify(tour.durationOptions) : ''}>
         <p class="td-product__eyebrow">
-          {tour.region === 'north' ? 'North Vietnam' : tour.region === 'soon' ? 'Coming soon' : tour.region}
+          {tour.region === 'north' ? 'NORTH VIETNAM' : tour.region === 'soon' ? 'Coming soon' : tour.region}
           &nbsp;·&nbsp;{tour.duration.join(' / ')}
         </p>
         <h1 class="td-product__heading">{tour.name}</h1>
@@ -281,7 +281,7 @@ const defaultTripItems: any[] = hasTripInfo
                 <th class="td-value__th-us">Morning Vietnam</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="td-value-table-body">
               {(valueAnchor.compareTable || []).map((row: {metric: string; typical: string; us: string}) => (
                 <tr>
                   <td class="td-value__metric">{row.metric}</td>
@@ -802,7 +802,7 @@ const defaultTripItems: any[] = hasTripInfo
     letter-spacing: 0.06em;
     color: var(--color-nordic);
     opacity: 0.6;
-    text-transform: lowercase;
+    text-transform: uppercase;
   }
 
   .td-product__heading {
@@ -1106,7 +1106,7 @@ const defaultTripItems: any[] = hasTripInfo
     color: var(--color-sorbus);
   }
 
-  .td-value__body p {
+  :global(.td-value__body p) {
     font-size: 16px;
     line-height: 1.75;
     color: var(--color-nordic);
@@ -1124,15 +1124,15 @@ const defaultTripItems: any[] = hasTripInfo
     box-shadow: 0 4px 24px rgba(4,51,65,0.08);
   }
 
-  .td-value__table th,
-  .td-value__table td {
+  :global(.td-value__table th),
+  :global(.td-value__table td) {
     padding: 16px 20px;
     text-align: left;
     font-size: 14px;
     border-bottom: 1px solid rgba(4,51,65,0.08);
   }
 
-  .td-value__table thead th {
+  :global(.td-value__table thead th) {
     font-family: var(--font-heading);
     font-size: 12px;
     font-weight: 700;
@@ -1142,34 +1142,34 @@ const defaultTripItems: any[] = hasTripInfo
     color: var(--color-nordic);
   }
 
-  .td-value__th-us {
+  :global(.td-value__th-us) {
     background: var(--color-java) !important;
     color: white !important;
   }
 
-  .td-value__metric {
+  :global(.td-value__metric) {
     font-weight: 600;
     color: var(--color-nordic);
   }
 
-  .td-value__bad {
+  :global(.td-value__bad) {
     color: rgba(4,51,65,0.55);
     text-decoration: line-through;
     text-decoration-color: rgba(234,103,57,0.4);
   }
 
-  .td-value__good {
+  :global(.td-value__good) {
     font-weight: 700;
     color: var(--color-java);
   }
 
-  .td-value__good::before {
+  :global(.td-value__good)::before {
     content: '✓ ';
     color: var(--color-java);
     font-weight: 700;
   }
 
-  .td-value__table tbody tr:last-child td { border-bottom: none; }
+  :global(.td-value__table tbody tr:last-child td) { border-bottom: none; }
 
   @media (max-width: 960px) {
     .td-value__inner { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
@@ -2216,10 +2216,18 @@ const defaultTripItems: any[] = hasTripInfo
       if (valueSection && valueSection.dataset.valueAnchor) {
         const valueData = JSON.parse(valueSection.dataset.valueAnchor);
         if (valueData[id]) {
-          const headlineEl = document.getElementById('td-value-headline');
-          const bodyEl     = document.getElementById('td-value-paragraphs');
+          const headlineEl  = document.getElementById('td-value-headline');
+          const bodyEl      = document.getElementById('td-value-paragraphs');
+          const tableBody   = document.getElementById('td-value-table-body');
           if (headlineEl) headlineEl.textContent = valueData[id].headline || '';
           if (bodyEl)     bodyEl.innerHTML = (valueData[id].paragraphs || []).map((p: string) => `<p>${p}</p>`).join('');
+          if (tableBody)  tableBody.innerHTML = (valueData[id].compareTable || []).map((row: any) => `
+            <tr>
+              <td class="td-value__metric">${row.metric}</td>
+              <td class="td-value__bad">${row.typical}</td>
+              <td class="td-value__good">${row.us}</td>
+            </tr>
+          `).join('');
         }
       }
 

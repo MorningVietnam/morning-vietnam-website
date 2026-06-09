@@ -4,11 +4,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const tourOptions = [
   "Not sure yet — help me choose",
   "Ho Chi Minh: A Life",
+  "Sa Pa - Lai Chau",
   "Unlock Mai Châu",
+  "Mai - Mộc In 1 Trip",
   "Ninh Bình In A New Way",
   "Cát Bà: Not Just About Sea",
-  "Lai Châu Motortour",
-  "Mai - Mộc In 1 Trip",
   "Private / custom tour",
 ];
 
@@ -224,9 +224,16 @@ const faqItems = [
   <section class="map-section">
     <div class="container">
       <div class="map-wrap">
+        <a
+          href="https://maps.app.goo.gl/eNxtXo9UjUda7Az77"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="map-overlay-link"
+          aria-label="Open in Google Maps"
+        ></a>
         <iframe
           title="Morning Vietnam office — Thái Hà, Hà Nội"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.4614591835946!2d105.82731677501537!3d21.022500380614485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab54a2d5d3c3%3A0x7a6b0bf7e5f8c5a2!2sTh%C3%A1i%20H%C3%A0%2C%20%C4%90%E1%BB%91ng%20%C4%90a%2C%20H%C3%A0%20N%E1%BB%99i%2C%20Vietnam!5e0!3m2!1sen!2svn!4v1747299600000!5m2!1sen!2svn"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.9!2d105.8172525!3d21.0135338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x701a8656533c0cb%3A0x8d4d0cf88b3d1534!2sMorning%20Vietnam!5e0!3m2!1sen!2svn!4v1749400000000!5m2!1sen!2svn"
           width="100%"
           height="400"
           style="border:0"
@@ -235,7 +242,12 @@ const faqItems = [
           referrerpolicy="no-referrer-when-downgrade"
         ></iframe>
       </div>
-      <p class="map-caption">Morning Vietnam · No 7/1, Alley 178 Thái Hà, Đống Đa, Hà Nội</p>
+      <p class="map-caption">
+        Morning Vietnam Office · No 7, Alley 178/1, Thai Ha Street
+        <a href="https://maps.app.goo.gl/eNxtXo9UjUda7Az77" target="_blank" rel="noopener noreferrer" class="map-caption__link">
+          Open in Maps →
+        </a>
+      </p>
     </div>
   </section>
 
@@ -601,10 +613,25 @@ const faqItems = [
   }
 
   .map-wrap {
+    position: relative;
     border-radius: 20px 20px 0 0;
     overflow: hidden;
     border: 1px solid var(--color-border);
     border-bottom: none;
+  }
+
+  .map-overlay-link {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+  }
+
+  .map-caption__link {
+    margin-left: 0.5rem;
+    color: var(--color-java);
+    text-decoration: underline;
+    font-size: inherit;
   }
 
   .map-wrap iframe {

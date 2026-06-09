@@ -69,8 +69,8 @@ const regions = [
       </p>
     </div>
     <div class="hp-hero__actions">
-      <a href="/tours" class="c-button c-button--primary">Explore tours</a>
-      <a href="/explore/about" class="c-button c-button--light">Our story</a>
+      <a href="/tours" class="c-button c-button--primary hp-hero__btn-explore">EXPLORE OUR CURRATED TOURS</a>
+      <a href="/explore/about" class="c-button c-button--light hp-hero__btn-story">Our story</a>
     </div>
     <div class="hp-hero__scroll-hint" aria-hidden="true">
       <svg width="14" height="24" viewBox="0 0 14 24" fill="none">
@@ -251,61 +251,65 @@ const regions = [
     </div>
   </section>
 
-  <!-- ═══ TESTIMONIALS ════════════════════════════════════════════════ -->
   <!-- ═══ TESTIMONIALS ════════════════════════════════════════════ -->
   <section class="hp-testi">
-    <div class="hp-testi__slides">
-      <div class="hp-testi__slide active" data-idx="0">
-        <div class="hp-testi__image">
-          <img src="/testimonial/1.jpeg" alt="" loading="lazy" />
-        </div>
-        <div class="hp-testi__overlay"></div>
-        <div class="container hp-testi__content">
-          <blockquote class="hp-testi__quote">
-            "I came to Vietnam expecting another guided tour. I left with a family. The Unlock challenge in Mai Châu broke down every wall — by night two we were cooking with locals like we'd known them for years."
-          </blockquote>
-          <div class="hp-testi__rating" aria-label="5 out of 5 stars">★ ★ ★ ★ ★</div>
-          <div class="hp-testi__author">Sarah K.</div>
-          <div class="hp-testi__role">Solo traveler · France · Mai Châu 3D2N</div>
-        </div>
-      </div>
 
-      <div class="hp-testi__slide" data-idx="1">
-        <div class="hp-testi__image">
-          <img src="/testimonial/2.webp" alt="" loading="lazy" />
-        </div>
-        <div class="hp-testi__overlay"></div>
-        <div class="container hp-testi__content">
-          <blockquote class="hp-testi__quote">
-            "Most tours feel like a moving museum. Morning Vietnam feels like a homecoming. The hosts don't perform Vietnam — they live it, and they let you in."
-          </blockquote>
-          <div class="hp-testi__rating" aria-label="5 out of 5 stars">★ ★ ★ ★ ★</div>
-          <div class="hp-testi__author">Marcus T.</div>
-          <div class="hp-testi__role">Couple · Germany · Ninh Bình 2D1N</div>
-        </div>
+    <!-- Layer 1: Image stack (absolute, full bleed) -->
+    <div class="hp-testi__images">
+      <div class="hp-testi__image active" data-idx="0">
+        <img src="/testimonial/1.jpeg" alt="" loading="lazy" />
       </div>
+      <div class="hp-testi__image" data-idx="1">
+        <img src="/testimonial/2.webp" alt="" loading="lazy" />
+      </div>
+      <div class="hp-testi__image" data-idx="2">
+        <img src="/testimonial/3.jpg" alt="" loading="lazy" />
+      </div>
+    </div>
+    <div class="hp-testi__shade"></div>
 
-      <div class="hp-testi__slide" data-idx="2">
-        <div class="hp-testi__image">
-          <img src="/testimonial/3.jpg" alt="" loading="lazy" />
-        </div>
-        <div class="hp-testi__overlay"></div>
-        <div class="container hp-testi__content">
-          <blockquote class="hp-testi__quote">
-            "Eight people, one van, three days. By the end we had a WhatsApp group that's still active a year later. That's the kind of tour I came for and never thought I'd find."
-          </blockquote>
-          <div class="hp-testi__rating" aria-label="5 out of 5 stars">★ ★ ★ ★ ★</div>
-          <div class="hp-testi__author">Léa M.</div>
-          <div class="hp-testi__role">Friend group · Belgium · Cát Bà 2D1N</div>
-        </div>
+    <!-- Layer 2: Quote/author overlay (independently faded) -->
+    <div class="hp-testi__items">
+      <div class="hp-testi__item active" data-idx="0">
+        <blockquote class="hp-testi__quote">
+          "I came to Vietnam expecting another guided tour. I left with a family. The Unlock challenge in Mai Châu broke down every wall — by night two we were cooking with locals like we'd known them for years."
+        </blockquote>
+        <div class="hp-testi__rating" aria-label="5 out of 5 stars">★ ★ ★ ★ ★</div>
+        <div class="hp-testi__author">Sarah K.</div>
+        <div class="hp-testi__role">Solo traveler · France · Mai Châu 3D2N</div>
+      </div>
+      <div class="hp-testi__item" data-idx="1">
+        <blockquote class="hp-testi__quote">
+          "Most tours feel like a moving museum. Morning Vietnam feels like a homecoming. The hosts don't perform Vietnam — they live it, and they let you in."
+        </blockquote>
+        <div class="hp-testi__rating">★ ★ ★ ★ ★</div>
+        <div class="hp-testi__author">Marcus T.</div>
+        <div class="hp-testi__role">Couple · Germany · Ho Chi Minh A Life</div>
+      </div>
+      <div class="hp-testi__item" data-idx="2">
+        <blockquote class="hp-testi__quote">
+          "Eight people, one van, three days. By the end we had a WhatsApp group that's still active a year later. That's the kind of tour I came for and never thought I'd find."
+        </blockquote>
+        <div class="hp-testi__rating">★ ★ ★ ★ ★</div>
+        <div class="hp-testi__author">Léa M.</div>
+        <div class="hp-testi__role">Friend group · Belgium · Unlock Lai Châu</div>
       </div>
     </div>
 
-    <div class="hp-testi__dots" role="tablist">
-      <button class="hp-testi__dot active" data-target="0" aria-label="Testimonial 1"></button>
-      <button class="hp-testi__dot" data-target="1" aria-label="Testimonial 2"></button>
-      <button class="hp-testi__dot" data-target="2" aria-label="Testimonial 3"></button>
+    <!-- Layer 3: Nav (CTA + dots) -->
+    <div class="hp-testi__nav">
+      <div class="hp-testi__ctas">
+        <a href="/tours/unlock-mai-chau"    class="hp-testi__cta active" data-idx="0">See this tour →</a>
+        <a href="/tours/ho-chi-minh-a-life" class="hp-testi__cta"        data-idx="1">See this tour →</a>
+        <a href="/tours/lai-chau-motortour" class="hp-testi__cta"        data-idx="2">See this tour →</a>
+      </div>
+      <div class="hp-testi__dots" role="tablist">
+        <button class="hp-testi__dot active" data-target="0" aria-label="Testimonial 1"></button>
+        <button class="hp-testi__dot" data-target="1" aria-label="Testimonial 2"></button>
+        <button class="hp-testi__dot" data-target="2" aria-label="Testimonial 3"></button>
+      </div>
     </div>
+
   </section>
 
   <!-- ═══ CTA ════════════════════════════════════════════════════════ -->
@@ -511,6 +515,9 @@ const regions = [
     align-items: flex-end;
     animation: fadeInUp 0.9s 0.5s ease both;
   }
+
+  .hp-hero__btn-explore { font-size: 16px; }
+  .hp-hero__btn-story   { font-size: 11px; padding: 11px 22px; }
 
   .hp-hero__scroll-hint {
     position: absolute;
@@ -880,89 +887,176 @@ const regions = [
     flex: 1;
   }
 
-  /* ── Testimonials ───────────────────────────────────────────────── */
-  /* ── Testimonials full-bleed ─────────────────────────────────── */
+  /* ── Testimonials clip-path slider ──────────────────────────── */
   .hp-testi {
     position: relative;
-    height: 100vh;
-    min-height: 600px;
+    height: 90vh;
+    min-height: 540px;
     overflow: hidden;
     background: var(--color-nordic);
   }
-  .hp-testi__slides {
+
+  /* ── Image layer ── */
+  .hp-testi__images {
     position: absolute;
     inset: 0;
+    z-index: 1;
   }
-  .hp-testi__slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.8s var(--ease-smooth, ease);
-    pointer-events: none;
-  }
-  .hp-testi__slide.active {
-    opacity: 1;
-    pointer-events: all;
-  }
+
   .hp-testi__image {
     position: absolute;
     inset: 0;
+    overflow: hidden;
+    clip-path: inset(0 0 0 100%);
+    transition: clip-path 1.4s cubic-bezier(0.77, 0, 0.175, 1);
+    z-index: 1;
+    will-change: clip-path;
   }
+
+  .hp-testi__image.active {
+    clip-path: inset(0 0 0 0%);
+    z-index: 3;
+  }
+
+  .hp-testi__image.prev {
+    clip-path: inset(0 0 0 0%);
+    z-index: 2;
+  }
+
   .hp-testi__image img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 30%;
+    transform: scale(1.08);
+    transition: transform 1.6s cubic-bezier(0.77, 0, 0.175, 1);
   }
-  .hp-testi__overlay {
+
+  .hp-testi__image.active img {
+    transform: scale(1);
+  }
+
+  /* ── Dark gradient overlay (real div, reliable z-index) ── */
+  .hp-testi__shade {
     position: absolute;
     inset: 0;
+    z-index: 4;
+    pointer-events: none;
     background: linear-gradient(
       to top,
-      rgba(4, 51, 65, 0.75) 0%,
-      rgba(4, 51, 65, 0.3) 50%,
+      rgba(4, 51, 65, 0.85) 0%,
+      rgba(4, 51, 65, 0.5) 40%,
+      rgba(4, 51, 65, 0.15) 75%,
       transparent 100%
     );
   }
-  .hp-testi__content {
+
+  /* ── Text layer ── */
+  .hp-testi__items {
+    position: relative;
+    z-index: 5;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .hp-testi__item {
     position: absolute;
-    bottom: 80px;
+    bottom: max(24px, calc(120px - 27vh));
     left: 0;
     right: 0;
+    padding: 0 max(48px, calc((100vw - var(--max-width)) / 2 + 48px));
     color: white;
-    max-width: 760px;
+    max-width: 800px;
+    opacity: 0;
+    transition: opacity 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+    will-change: opacity;
   }
+
+  .hp-testi__item.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .hp-testi__quote {
     font-family: var(--font-heading);
-    font-size: clamp(22px, 2.6vw, 36px);
+    font-size: clamp(18px, 2.2vw, 30px);
     font-weight: 500;
-    line-height: 1.4;
+    line-height: 1.2;
     letter-spacing: -0.01em;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
+    text-align: justify;
   }
+
   .hp-testi__rating {
     font-size: 16px;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.01em;
     color: var(--color-riptide);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
+
   .hp-testi__author {
     font-size: 17px;
     font-weight: 700;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
+
   .hp-testi__role {
     font-size: 13px;
     opacity: 0.75;
     letter-spacing: 0.04em;
   }
-  .hp-testi__dots {
+
+  /* ── Nav: CTA button + dots, bottom-right ── */
+  .hp-testi__nav {
     position: absolute;
-    bottom: 56px;
-    right: 48px;
+    right: max(48px, calc((100vw - var(--max-width)) / 2 + 48px));
+    bottom: max(24px, calc(120px - 27vh));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    z-index: 6;
+  }
+
+  .hp-testi__ctas {
+    position: relative;
+    height: 40px;
+  }
+
+  .hp-testi__cta {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: var(--color-java);
+    color: var(--color-light-cyan, #e8f8f5);
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 100px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    pointer-events: none;
+  }
+
+  .hp-testi__cta.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .hp-testi__dots {
     display: flex;
     gap: 8px;
-    z-index: 5;
+    align-items: center;
   }
+
   .hp-testi__dot {
     width: 32px;
     height: 3px;
@@ -973,13 +1067,16 @@ const regions = [
     transition: background 0.3s ease, width 0.3s ease;
     padding: 0;
   }
+
   .hp-testi__dot.active {
     background: var(--color-riptide);
     width: 56px;
   }
+
   @media (max-width: 768px) {
-    .hp-testi__content { bottom: 100px; max-width: 100%; }
-    .hp-testi__dots { right: 24px; bottom: 36px; }
+    .hp-testi__item { bottom: 140px; }
+    .hp-testi__quote { font-size: clamp(16px, 4vw, 22px); }
+    .hp-testi__nav { right: 24px; bottom: 36px; }
   }
 
   /* ── CTA ────────────────────────────────────────────────────────── */
@@ -1293,32 +1390,57 @@ const regions = [
     startTimer();
   }
 
-  // ── Testimonials full-bleed slider ─────────────────────────────
+  // ── Testimonials wipe-from-right slider ──────────────────────
   const testi = document.querySelector('.hp-testi');
   if (testi) {
-    const slides = testi.querySelectorAll<HTMLElement>('.hp-testi__slide');
-    const tdots  = testi.querySelectorAll<HTMLButtonElement>('.hp-testi__dot');
-    let tIdx = 0;
-    let tTimer: ReturnType<typeof setInterval>;
+    const images  = testi.querySelectorAll<HTMLElement>('.hp-testi__image');
+    const items   = testi.querySelectorAll<HTMLElement>('.hp-testi__item');
+    const dots    = testi.querySelectorAll<HTMLButtonElement>('.hp-testi__dot');
+    const ctas    = Array.from(testi.querySelectorAll<HTMLElement>('.hp-testi__cta'));
+    let currentIdx = 0;
+    let timer: ReturnType<typeof setInterval>;
+    const TRANSITION_DURATION = 1400;
 
-    function goTesti(n: number) {
-      tIdx = ((n % slides.length) + slides.length) % slides.length;
-      slides.forEach((s, i) => s.classList.toggle('active', i === tIdx));
-      tdots.forEach((d, i)  => d.classList.toggle('active', i === tIdx));
+    function goTo(newIdx: number) {
+      if (newIdx === currentIdx) return;
+      newIdx = ((newIdx % images.length) + images.length) % images.length;
+
+      // Fade out current text first
+      items[currentIdx].classList.remove('active');
+
+      // Image wipe: prev stays visible underneath, new one wipes in on top
+      images[currentIdx].classList.remove('active');
+      images[currentIdx].classList.add('prev');
+      images[newIdx].classList.add('active');
+
+      // Clean up prev after transition
+      setTimeout(() => {
+        images.forEach((img, i) => { if (i !== newIdx) img.classList.remove('prev'); });
+      }, TRANSITION_DURATION);
+
+      // Fade in new text after short delay
+      setTimeout(() => { items[newIdx].classList.add('active'); }, 400);
+
+      // Update dots + ctas
+      dots.forEach((d, i) => d.classList.toggle('active', i === newIdx));
+      ctas.forEach((c, i) => c.classList.toggle('active', i === newIdx));
+
+      currentIdx = newIdx;
     }
 
-    tdots.forEach(d => d.addEventListener('click', () => {
-      clearInterval(tTimer);
-      goTesti(parseInt(d.dataset.target ?? '0'));
-      startTesti();
+    dots.forEach((d, i) => d.addEventListener('click', () => {
+      clearInterval(timer);
+      goTo(i);
+      startTimer();
     }));
 
-    function startTesti() {
-      tTimer = setInterval(() => goTesti(tIdx + 1), 6000);
+    function startTimer() {
+      timer = setInterval(() => goTo(currentIdx + 1), 10000);
     }
 
-    testi.addEventListener('mouseenter', () => clearInterval(tTimer));
-    testi.addEventListener('mouseleave', startTesti);
-    startTesti();
+    testi.addEventListener('mouseenter', () => clearInterval(timer));
+    testi.addEventListener('mouseleave', startTimer);
+
+    startTimer();
   }
 </script>

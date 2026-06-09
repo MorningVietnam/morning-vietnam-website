@@ -2,11 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const team = [
-  { initials: "TG", image: "/team/tung.png",     archetype: "The Local Compass",    name: "Tùng",     role: "Co-founder", quote: "If there's a shortcut through the mountains, I've probably walked it twice.",     bio: "Tùng doesn't plan routes on a map. He plans them on foot — every trail tested, every homestay vetted, every sunrise confirmed worth waking up for." },
-  { initials: "TA", image: "/team/the-anh.png",  archetype: "The Culture Curator",  name: "Thế Anh",  role: "Co-founder", quote: "The best stories aren't in guidebooks. They're at the dinner table.",              bio: "10 years in marketing and event production. Thế Anh designs the emotional arc of your journey — every challenge, every surprise, every moment you'll remember." },
-  { initials: "SN", image: "/team/son.png",       archetype: "The Detail Whisperer", name: "Sơn",      role: "",           quote: "You won't notice the little things I prepare. But you'll feel them.",              bio: "The person who makes sure your water bottle is full, your room is ready, and that 'random' beautiful viewpoint wasn't random at all." },
-  { initials: "HA", image: "/team/ha.png",        archetype: "The Energy Spark",     name: "Hà",       role: "",           quote: "If you're not smiling yet, give me five minutes.",                               bio: "Hà is the reason your group goes from polite strangers to arm-in-arm friends by day two." },
-  { initials: "MY", image: "/team/my.png",        archetype: "The Joy Maker",        name: "My",       role: "",           quote: "Life's too short to be serious on an adventure. Let's play.",                    bio: "My turns every challenge into a game and every game into a memory. She's the one you'll quote when you tell friends about this trip." },
+  { initials: "TG", image: "/team/tung.png",     archetype: "The Local Compass",    name: "Tùng",     role: "Co-founder", wa: "https://wa.me/84968495956",  quote: "If there's a shortcut through the mountains, I've probably walked it twice.",     bio: "Tùng doesn't plan routes on a map. He plans them on foot — every trail tested, every homestay vetted, every sunrise confirmed worth waking up for." },
+  { initials: "TA", image: "/team/the-anh.png",  archetype: "The Culture Curator",  name: "Thế Anh",  role: "Co-founder", wa: "https://wa.me/84961836611",  quote: "The best stories aren't in guidebooks. They're at the dinner table.",              bio: "10 years in marketing and event production. Thế Anh designs the emotional arc of your journey — every challenge, every surprise, every moment you'll remember." },
+  { initials: "SN", image: "/team/son.png",       archetype: "The Detail Whisperer", name: "Sơn",      role: "",           wa: "https://wa.me/84987408150",  quote: "You won't notice the little things I prepare. But you'll feel them.",              bio: "The person who makes sure your water bottle is full, your room is ready, and that 'random' beautiful viewpoint wasn't random at all." },
+  { initials: "HA", image: "/team/ha.png",        archetype: "The Energy Spark",     name: "Hà",       role: "",           wa: "https://wa.me/84867564675",  quote: "If you're not smiling yet, give me five minutes.",                               bio: "Hà is the reason your group goes from polite strangers to arm-in-arm friends by day two." },
+  { initials: "MY", image: "/team/my.png",        archetype: "The Joy Maker",        name: "My",       role: "",           wa: "https://wa.me/84969776359",  quote: "Life's too short to be serious on an adventure. Let's play.",                    bio: "My turns every challenge into a game and every game into a memory. She's the one you'll quote when you tell friends about this trip." },
 ];
 ---
 
@@ -121,9 +121,9 @@ const team = [
       <div class="au-crew__grid">
         {team.map(member => (
           <div class="au-crew__card">
-            <a class="au-crew__avatar" href="https://facebook.com/morningvietnam.local" target="_blank" rel="noopener noreferrer">
+            <a class="au-crew__avatar" href={member.wa} target="_blank" rel="noopener noreferrer">
               <img class="au-crew__photo" src={member.image} alt={member.name} />
-              <div class="au-crew__tooltip">Morning! ☀️</div>
+              <div class="au-crew__tooltip">Chat with me →</div>
             </a>
             <p class="au-crew__name">
               {member.name}{member.role ? <span class="au-crew__role"> · {member.role}</span> : ''}
@@ -135,6 +135,52 @@ const team = [
       </div>
       <p class="au-crew__hint">Click on the picture to say Morning!</p>
     </div>
+  </section>
+
+  <!-- ═══ S5.5 · NEW TO MORNING VIETNAM? ══════════════════════════════ -->
+  <section class="b-ctaimages" id="new-to-mv">
+
+    <div class="b-ctaimages__images">
+      <!-- Top 4: fan above heading -->
+      <div class="b-ctaimages__image b-ctaimages__image--t1" data-rotate="-12">
+        <picture><img src="/mv-3.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--t2" data-rotate="8">
+        <picture><img src="/mv-7.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--t3" data-rotate="-5">
+        <picture><img src="/mv-1.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--t4" data-rotate="14">
+        <picture><img src="/mv-5.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <!-- Bottom 4: fan below button -->
+      <div class="b-ctaimages__image b-ctaimages__image--b1" data-rotate="10">
+        <picture><img src="/mv-8.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--b2" data-rotate="-7">
+        <picture><img src="/mv-2.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--b3" data-rotate="5">
+        <picture><img src="/mv-6.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+      <div class="b-ctaimages__image b-ctaimages__image--b4" data-rotate="-12">
+        <picture><img src="/mv-4.jpg" alt="Morning Vietnam tour" loading="lazy" /></picture>
+      </div>
+    </div>
+
+    <div class="b-ctaimages__wrapper">
+      <h2 class="b-ctaimages__heading">New to<br />Morning Vietnam?</h2>
+      <p class="b-ctaimages__content">
+        We'll walk you through what makes our tours different:<br />
+        from Unlock challenges to real local immersion,<br />
+        and why small groups change everything.
+      </p>
+      <a href="/tours" class="c-button c-button--primary b-ctaimages__button">
+        Explore Our Tours →
+      </a>
+    </div>
+
   </section>
 
   <!-- ═══ S6 · CTA ══════════════════════════════════════════════════════ -->
@@ -189,6 +235,7 @@ const team = [
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 40%;
     display: block;
   }
 

@@ -1,0 +1,613 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const sections = [
+  { id: "who-we-are",               title: "Who We Are" },
+  { id: "what-we-collect",          title: "What Data We Collect" },
+  { id: "why-we-collect",           title: "Why We Collect It" },
+  { id: "how-we-share",             title: "How We Share Your Data" },
+  { id: "international-transfers",  title: "International Transfers" },
+  { id: "retention",                title: "How Long We Keep It" },
+  { id: "cookies",                  title: "Cookies" },
+  { id: "your-rights",              title: "Your Rights" },
+  { id: "security",                 title: "Data Security" },
+  { id: "childrens-privacy",        title: "Children's Privacy" },
+  { id: "third-party-links",        title: "Third-Party Links" },
+  { id: "changes",                  title: "Changes to This Policy" },
+  { id: "contact",                  title: "Contact Us" },
+];
+---
+
+<BaseLayout
+  title="Privacy Policy — Morning Vietnam"
+  description="How Morning Vietnam (Vietnam Rise Co., Ltd) collects, uses, and protects your personal data under Vietnamese PDPL and international standards."
+>
+
+  <!-- ═══ HERO ═══════════════════════════════════════════════════════ -->
+  <section class="lp-hero">
+    <div class="lp-hero__overlay"></div>
+    <div class="container lp-hero__content">
+      <nav class="lp-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <span>Privacy Policy</span>
+      </nav>
+      <h1>Privacy <span class="lp-hero__accent">Policy</span></h1>
+      <p class="lp-hero__meta">Effective: 9 June 2026 &nbsp;·&nbsp; Vietnam Rise Co., Ltd (Morning Vietnam)</p>
+    </div>
+  </section>
+
+
+  <!-- ═══ BODY ══════════════════════════════════════════════════════ -->
+  <section class="lp-body">
+    <div class="container lp-layout">
+
+      <!-- Sticky sidebar nav -->
+      <nav class="lp-nav" aria-label="Policy sections">
+        <ul class="lp-nav__list">
+          {sections.map(s => (
+            <li>
+              <a href={`#${s.id}`} class="lp-nav__link" data-target={s.id}>
+                {s.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Content -->
+      <div class="lp-content">
+
+        <!-- 1 -->
+        <div class="lp-section" id="who-we-are">
+          <h2>1. Who We Are</h2>
+          <p>Morning Vietnam is an inbound tour operator designed for travelers who want to experience Vietnam beyond the surface — through local immersion, nature, and team-based adventures. We are operated by <strong>Vietnam Rise Co., Ltd</strong>, a legally registered company under Vietnamese law.</p>
+          <p>When this policy refers to <strong>"Morning Vietnam," "we," "us," or "our,"</strong> it means Vietnam Rise Co., Ltd and the Morning Vietnam brand.</p>
+        </div>
+
+        <!-- 2 -->
+        <div class="lp-section" id="what-we-collect">
+          <h2>2. What Personal Data We Collect</h2>
+          <p>We collect personal data through three channels: our website (morningvietnam.co), our inquiry and booking forms, and direct communication (email, WhatsApp, social media DM).</p>
+          <h3>Information you provide to us</h3>
+          <ul>
+            <li>Full name, nationality, date of birth</li>
+            <li>Email address, phone number (including WhatsApp)</li>
+            <li>Passport number and expiry date (required for tour logistics and accommodation check-in under Vietnamese law)</li>
+            <li>Travel dates, number of travelers, group composition</li>
+            <li>Dietary requirements, fitness level, health conditions relevant to participation in active tours</li>
+            <li>Payment information (bank transfer records; we do not store credit card numbers)</li>
+            <li>Emergency contact details</li>
+          </ul>
+          <h3>Information we collect automatically</h3>
+          <ul>
+            <li>IP address, browser type, device type</li>
+            <li>Pages visited, time on site, referral source</li>
+            <li>Cookie data (see Section 7)</li>
+          </ul>
+          <h3>Information from third parties</h3>
+          <p>If you book through an OTA or travel agent, they may share your booking details with us to fulfill the tour.</p>
+        </div>
+
+        <!-- 3 -->
+        <div class="lp-section" id="why-we-collect">
+          <h2>3. Why We Collect Your Data</h2>
+          <p>We only collect data we genuinely need. Here is what we use your data for and the legal basis under Vietnam's Personal Data Protection Law (Law No. 91/2025/QH15):</p>
+          <div class="lp-table-wrap">
+            <table class="lp-table">
+              <thead>
+                <tr><th>Purpose</th><th>Legal Basis</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Processing your tour inquiry and booking</td><td>Contract performance</td></tr>
+                <tr><td>Communicating pre-trip logistics (meeting point, packing list, weather updates)</td><td>Contract performance</td></tr>
+                <tr><td>Sharing relevant personal data with local partners (homestays, transport providers, local guides)</td><td>Contract performance / Legal obligation</td></tr>
+                <tr><td>Processing bank transfer and payment records</td><td>Contract performance / Legal obligation</td></tr>
+                <tr><td>Sending post-trip follow-up or review requests</td><td>Legitimate interest (you may opt out at any time)</td></tr>
+                <tr><td>Marketing emails or newsletters</td><td>Consent (we will ask separately; you can withdraw at any time)</td></tr>
+                <tr><td>Improving our website and services</td><td>Legitimate interest</td></tr>
+                <tr><td>Complying with Vietnamese tourism regulations</td><td>Legal obligation</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="lp-note">We do <strong>not</strong> use your data for automated decision-making or profiling.</p>
+        </div>
+
+        <!-- 4 -->
+        <div class="lp-section" id="how-we-share">
+          <h2>4. How We Share Your Data</h2>
+          <p>We share your data only where necessary to deliver your tour. We never sell, rent, or trade your personal information.</p>
+          <p><strong>We may share your data with:</strong></p>
+          <ul>
+            <li><strong>Local operational partners</strong> — homestay hosts, local guides, transport providers who need your name, group size, dietary needs, and arrival details to deliver the service. All partners are vetted by Morning Vietnam and operate under confidentiality expectations.</li>
+            <li><strong>Accommodation providers</strong> — Vietnamese law requires guests' passport details to be registered with local authorities. We will share this data as legally required.</li>
+            <li><strong>Payment processors</strong> — bank transfer records may be retained by our bank under financial regulations.</li>
+            <li><strong>Government or legal authorities</strong> — only when legally required (e.g., in the event of an emergency or legal proceeding).</li>
+            <li><strong>Travel agents or OTAs</strong> — if you booked through a third party, we may communicate booking updates with them.</li>
+          </ul>
+          <p class="lp-note">We do <strong>not</strong> share your data with advertisers or data brokers.</p>
+        </div>
+
+        <!-- 5 -->
+        <div class="lp-section" id="international-transfers">
+          <h2>5. International Data Transfers</h2>
+          <p>Morning Vietnam serves travelers from across the world. If you are based in the EU, UK, Australia, or any country with data protection laws, please note:</p>
+          <ul>
+            <li>Your data is processed primarily in Vietnam.</li>
+            <li>When you submit a booking inquiry, you are transferring your data to Vietnam.</li>
+            <li>We take reasonable steps to protect your data in line with the standards required by your home country's regulations, including the EU GDPR, UK GDPR, and Vietnam's Personal Data Protection Law (Law No. 91/2025/QH15, effective 1 January 2026).</li>
+          </ul>
+        </div>
+
+        <!-- 6 -->
+        <div class="lp-section" id="retention">
+          <h2>6. How Long We Keep Your Data</h2>
+          <div class="lp-table-wrap">
+            <table class="lp-table">
+              <thead>
+                <tr><th>Data Type</th><th>Retention Period</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Booking and contact information</td><td>3 years after tour completion</td></tr>
+                <tr><td>Passport and travel document data</td><td>Deleted within 90 days after tour completion, unless legally required to retain</td></tr>
+                <tr><td>Payment records</td><td>5 years (Vietnamese accounting law)</td></tr>
+                <tr><td>Marketing consent records</td><td>Until you withdraw consent</td></tr>
+                <tr><td>Website analytics data</td><td>13 months (rolling)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 7 -->
+        <div class="lp-section" id="cookies">
+          <h2>7. Cookies</h2>
+          <p>Our website uses cookies to function properly and to understand how visitors use our site.</p>
+          <ul>
+            <li><strong>Essential cookies</strong> — required for the website to work (e.g., form submission, session management)</li>
+            <li><strong>Analytics cookies</strong> — help us understand traffic and improve our site (e.g., Google Analytics). These are anonymized where possible.</li>
+            <li><strong>Marketing cookies</strong> — only used if you opt in (e.g., Meta Pixel for retargeting ads)</li>
+          </ul>
+          <p>You can control cookies via your browser settings or our cookie consent banner. Disabling analytics or marketing cookies will not affect your ability to use the site or make a booking.</p>
+        </div>
+
+        <!-- 8 -->
+        <div class="lp-section" id="your-rights">
+          <h2>8. Your Rights</h2>
+          <p>Depending on where you are located, you may have the following rights over your personal data. We will respond to all requests within 30 days.</p>
+          <ul>
+            <li><strong>Access</strong> — request a copy of the data we hold about you</li>
+            <li><strong>Correction</strong> — ask us to update inaccurate or incomplete data</li>
+            <li><strong>Deletion</strong> — request that we delete your data, where we are not legally required to keep it</li>
+            <li><strong>Restriction</strong> — ask us to limit how we use your data</li>
+            <li><strong>Portability</strong> — request your data in a structured, machine-readable format</li>
+            <li><strong>Objection</strong> — object to processing based on legitimate interest (including marketing)</li>
+            <li><strong>Withdraw consent</strong> — at any time, for any processing based on consent</li>
+          </ul>
+          <p>To exercise any of these rights, email us at <a href="mailto:good@morningvietnam.co">good@morningvietnam.co</a> with the subject line <strong>"Data Request."</strong> We will verify your identity before processing the request.</p>
+          <p class="lp-note">If you are an EU/UK resident and believe we have not handled your data correctly, you have the right to lodge a complaint with your local data protection authority.</p>
+        </div>
+
+        <!-- 9 -->
+        <div class="lp-section" id="security">
+          <h2>9. Data Security</h2>
+          <p>We use the following measures to protect your data:</p>
+          <ul>
+            <li>All email communication is encrypted in transit (TLS)</li>
+            <li>Booking data is stored in password-protected systems with access limited to team members who need it</li>
+            <li>Passport data is shared only via secure channels (not via public social media DM)</li>
+            <li>We do not store full credit card numbers</li>
+          </ul>
+          <p>We cannot guarantee 100% security of data transmitted over the internet. If you have concerns about sharing sensitive information, please contact us to discuss alternatives.</p>
+          <p class="lp-note">In the event of a data breach affecting your personal data, we will notify you within <strong>72 hours</strong> of becoming aware, in compliance with Vietnam's PDPL (Law No. 91/2025/QH15).</p>
+        </div>
+
+        <!-- 10 -->
+        <div class="lp-section" id="childrens-privacy">
+          <h2>10. Children's Privacy</h2>
+          <p>Our tours are designed for adults (18+) unless specified as a private group booking. We do not knowingly collect personal data from children under 18 without verifiable parental consent. If a child is part of a group booking, the accompanying adult is responsible for providing consent on their behalf.</p>
+        </div>
+
+        <!-- 11 -->
+        <div class="lp-section" id="third-party-links">
+          <h2>11. Third-Party Links</h2>
+          <p>Our website or social media may link to external sites (OTA listings, partner websites, travel blogs). We are not responsible for the privacy practices of those sites. We encourage you to read their privacy policies before sharing any personal data with them.</p>
+        </div>
+
+        <!-- 12 -->
+        <div class="lp-section" id="changes">
+          <h2>12. Changes to This Policy</h2>
+          <p>We may update this Privacy Policy as our services evolve or as legal requirements change. When we make material changes, we will post the updated policy on this page with a new "Last Updated" date. For significant changes, we may notify active clients by email.</p>
+        </div>
+
+        <!-- 13 -->
+        <div class="lp-section" id="contact">
+          <h2>13. Contact Us</h2>
+          <p>For any questions about this Privacy Policy, or to exercise your data rights:</p>
+          <div class="lp-contact-card">
+            <p><strong>Morning Vietnam (Vietnam Rise Co., Ltd)</strong></p>
+            <p>No. 7/1, Alley 178, Thái Hà, Đống Đa, Hanoi, Vietnam</p>
+            <p>Email: <a href="mailto:good@morningvietnam.co">good@morningvietnam.co</a></p>
+            <p>WhatsApp: <a href="https://wa.me/84961836611" target="_blank" rel="noopener">+84 961 836 611</a></p>
+          </div>
+          <p class="lp-legal-note">This policy is governed by the laws of the Socialist Republic of Vietnam, including Law No. 91/2025/QH15 on Personal Data Protection (effective 1 January 2026) and the Law on Tourism No. 09/2017/QH14.</p>
+        </div>
+
+      </div><!-- /lp-content -->
+    </div><!-- /lp-layout -->
+  </section>
+
+
+  <!-- ═══ CTA ════════════════════════════════════════════════════════ -->
+  <section class="lp-cta">
+    <div class="container lp-cta__inner">
+      <div class="lp-cta__text">
+        <h2>Have a question about your data?</h2>
+        <p>We reply within 2 business days.</p>
+      </div>
+      <div class="lp-cta__btns">
+        <a
+          href="mailto:good@morningvietnam.co"
+          class="c-button c-button--primary"
+        >
+          Email us
+        </a>
+        <a
+          href="/terms-and-conditions"
+          class="c-button c-button--outline lp-cta__secondary"
+        >
+          Terms &amp; Conditions
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+
+<style>
+  /* ── Hero ──────────────────────────────────────────────────────── */
+  .lp-hero {
+    position: relative;
+    min-height: 38vh;
+    background: var(--color-nordic);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .lp-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-nordic) 60%, rgba(29, 160, 160, 0.25) 100%);
+  }
+
+  .lp-hero__content {
+    position: relative;
+    z-index: 1;
+    padding-top: calc(var(--site-header-h) + 48px);
+    padding-bottom: 60px;
+  }
+
+  .lp-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 24px;
+  }
+
+  .lp-breadcrumb a {
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .lp-breadcrumb a:hover {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .lp-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1.05;
+    color: white;
+    margin-bottom: 12px;
+  }
+
+  .lp-hero__accent {
+    color: var(--color-riptide);
+  }
+
+  .lp-hero__meta {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Body layout ───────────────────────────────────────────────── */
+  .lp-body {
+    padding-block: 80px;
+    background: white;
+  }
+
+  .lp-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  /* ── Sticky nav ────────────────────────────────────────────────── */
+  .lp-nav {
+    position: sticky;
+    top: calc(var(--site-header-h) + 32px);
+  }
+
+  .lp-nav__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .lp-nav__link {
+    display: block;
+    padding: 9px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-nordic);
+    opacity: 0.4;
+    border-left: 2px solid transparent;
+    border-radius: 0 4px 4px 0;
+    text-decoration: none;
+    transition: opacity 0.2s, border-color 0.2s, color 0.2s, background 0.2s;
+  }
+
+  .lp-nav__link:hover {
+    opacity: 0.7;
+  }
+
+  .lp-nav__link.is-active {
+    opacity: 1;
+    color: var(--color-java);
+    border-left-color: var(--color-java);
+    background: rgba(29, 160, 160, 0.06);
+  }
+
+  /* ── Content sections ──────────────────────────────────────────── */
+  .lp-section {
+    padding-bottom: 56px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--color-light-cyan);
+  }
+
+  .lp-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .lp-section h2 {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--color-light-cyan);
+    margin-bottom: 24px;
+  }
+
+  .lp-section h3 {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin: 20px 0 10px;
+  }
+
+  .lp-section p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--color-nordic);
+    opacity: 0.8;
+    margin-bottom: 16px;
+  }
+
+  .lp-section p:last-child {
+    margin-bottom: 0;
+  }
+
+  .lp-section ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+
+  .lp-section li {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--color-nordic);
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+
+  .lp-section a {
+    color: var(--color-java);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s;
+  }
+
+  .lp-section a:hover {
+    opacity: 0.7;
+  }
+
+  .lp-note {
+    background: rgba(29, 160, 160, 0.07);
+    border-left: 3px solid var(--color-java);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px !important;
+    font-size: 15px !important;
+    opacity: 1 !important;
+  }
+
+  .lp-contact-card {
+    background: #f7fdfd;
+    border: 1px solid var(--color-light-cyan);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+
+  .lp-contact-card p {
+    margin-bottom: 6px !important;
+    opacity: 1 !important;
+  }
+
+  .lp-legal-note {
+    font-size: 13px !important;
+    opacity: 0.5 !important;
+    font-style: italic;
+  }
+
+  /* ── Tables ────────────────────────────────────────────────────── */
+  .lp-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--color-light-cyan);
+  }
+
+  .lp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+
+  .lp-table thead tr {
+    background: var(--color-nordic);
+  }
+
+  .lp-table th {
+    text-align: left;
+    padding: 12px 18px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-light-cyan);
+  }
+
+  .lp-table td {
+    padding: 13px 18px;
+    border-top: 1px solid var(--color-light-cyan);
+    color: var(--color-nordic);
+    line-height: 1.6;
+  }
+
+  .lp-table tbody tr:nth-child(even) {
+    background: rgba(217, 247, 245, 0.25);
+  }
+
+  /* ── CTA ───────────────────────────────────────────────────────── */
+  .lp-cta {
+    background: var(--color-nordic);
+    padding-block: 80px;
+  }
+
+  .lp-cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .lp-cta h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 3.5vw, 40px);
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .lp-cta p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .lp-cta__btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .lp-cta__secondary {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .lp-cta__secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    color: white;
+  }
+
+  /* ── Responsive ────────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .lp-layout {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .lp-nav {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .lp-section p,
+    .lp-section li {
+      font-size: 15px;
+    }
+
+    .lp-cta__inner {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .lp-cta__btns {
+      justify-content: center;
+    }
+  }
+</style>
+
+
+<script>
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.lp-nav__link');
+  const sections = document.querySelectorAll<HTMLElement>('.lp-section');
+
+  if (navLinks.length && sections.length) {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navLinks.forEach(link => {
+              link.classList.toggle('is-active', link.dataset.target === id);
+            });
+          }
+        });
+      },
+      { rootMargin: '-15% 0px -65% 0px', threshold: 0 }
+    );
+    sections.forEach(s => observer.observe(s));
+  }
+</script>

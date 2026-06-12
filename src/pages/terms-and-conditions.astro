@@ -1,0 +1,768 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const sections = [
+  { id: "agreement",         title: "Agreement" },
+  { id: "tour-types",        title: "Tour Types" },
+  { id: "booking-process",   title: "Booking Process" },
+  { id: "pricing",           title: "Pricing & Inclusions" },
+  { id: "payment",           title: "Deposit & Payment" },
+  { id: "cancellation",      title: "Cancellation by Traveler" },
+  { id: "date-changes",      title: "Date Changes" },
+  { id: "tour-changes",      title: "Tour Changes" },
+  { id: "mv-cancellation",   title: "Cancellation by Morning Vietnam" },
+  { id: "group-size",        title: "Minimum Group Size" },
+  { id: "insurance",         title: "Travel Insurance" },
+  { id: "health-fitness",    title: "Health & Fitness" },
+  { id: "force-majeure",     title: "Force Majeure" },
+  { id: "conduct",           title: "Traveler Conduct" },
+  { id: "liability",         title: "Limitation of Liability" },
+  { id: "photography",       title: "Photography & Media" },
+  { id: "complaints",        title: "Complaints" },
+  { id: "ip",                title: "Intellectual Property" },
+  { id: "changes-terms",     title: "Changes to These Terms" },
+  { id: "governing-law",     title: "Governing Law" },
+  { id: "contact",           title: "Contact" },
+];
+---
+
+<BaseLayout
+  title="Terms & Conditions — Morning Vietnam"
+  description="Morning Vietnam booking terms: payment, cancellation, date changes, insurance, and traveler responsibilities. Operated by Vietnam Rise Co., Ltd."
+>
+
+  <!-- ═══ HERO ═══════════════════════════════════════════════════════ -->
+  <section class="lp-hero">
+    <div class="lp-hero__overlay"></div>
+    <div class="container lp-hero__content">
+      <nav class="lp-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <span>Terms &amp; Conditions</span>
+      </nav>
+      <h1>Terms &amp; <span class="lp-hero__accent">Conditions</span></h1>
+      <p class="lp-hero__meta">Effective: 9 June 2026 &nbsp;·&nbsp; Vietnam Rise Co., Ltd (Morning Vietnam)</p>
+    </div>
+  </section>
+
+
+  <!-- ═══ BODY ══════════════════════════════════════════════════════ -->
+  <section class="lp-body">
+    <div class="container lp-layout">
+
+      <!-- Sticky sidebar nav -->
+      <nav class="lp-nav" aria-label="Terms sections">
+        <ul class="lp-nav__list">
+          {sections.map(s => (
+            <li>
+              <a href={`#${s.id}`} class="lp-nav__link" data-target={s.id}>
+                {s.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Content -->
+      <div class="lp-content">
+
+        <!-- 1 -->
+        <div class="lp-section" id="agreement">
+          <h2>1. Agreement</h2>
+          <p>By submitting an inquiry, making a deposit, or confirming a booking with Morning Vietnam, you ("the traveler," "you") agree to be bound by these Terms &amp; Conditions. These Terms apply to all tours, experiences, and services offered by Morning Vietnam, whether booked directly through our website (morningvietnam.co), by email, WhatsApp, or through an authorized travel agent.</p>
+          <p>Please read these Terms carefully before booking. If you are booking on behalf of a group, you are responsible for ensuring all group members are aware of and agree to these Terms.</p>
+        </div>
+
+        <!-- 2 -->
+        <div class="lp-section" id="tour-types">
+          <h2>2. Tour Types</h2>
+          <p>Morning Vietnam offers two main booking formats, each with different payment terms:</p>
+          <ul>
+            <li><strong>Group Tour</strong> — scheduled departures open to individual travelers or small groups joining a shared tour</li>
+            <li><strong>Private Tour / Package</strong> — exclusive booking for a private group (families, friends, corporate), either on a fixed or customized itinerary</li>
+          </ul>
+          <p>Where terms differ between the two formats, this document specifies accordingly.</p>
+        </div>
+
+        <!-- 3 -->
+        <div class="lp-section" id="booking-process">
+          <h2>3. The Booking Process</h2>
+          <h3>3.1 Inquiry</h3>
+          <p>All bookings begin with an inquiry via our website form, email, or WhatsApp. We will respond within 2 business days with availability, pricing, and tour details.</p>
+          <h3>3.2 Confirmation</h3>
+          <p>A booking is confirmed only when Morning Vietnam has issued a written booking confirmation. Receipt of deposit (where applicable) is required to secure your place.</p>
+          <h3>3.3 Accuracy of Information</h3>
+          <p>You are responsible for providing accurate information at the time of booking: full name (as per passport), travel dates, number of travelers, dietary requirements, fitness level, and any relevant health conditions. Morning Vietnam is not liable for disruptions caused by inaccurate information provided by the traveler.</p>
+          <h3>3.4 Bookings via OTA</h3>
+          <p>If you book a Group Tour through a third-party platform (e.g., Airbnb Experiences, Klook, GetYourGuide), the cancellation and refund policy of that platform applies to your booking. Morning Vietnam's Terms apply to the tour experience itself, including conduct, health requirements, and liability.</p>
+        </div>
+
+        <!-- 4 -->
+        <div class="lp-section" id="pricing">
+          <h2>4. Pricing &amp; Inclusions</h2>
+          <h3>4.1 What's Included</h3>
+          <p>Unless otherwise stated in your tour itinerary, all Morning Vietnam tours include:</p>
+          <ul>
+            <li>Transport from Hanoi (or specified hub) to the tour destination and return</li>
+            <li>Accommodation as per itinerary (typically homestay)</li>
+            <li>Meals as specified in the itinerary (free-choice meals are noted)</li>
+            <li>All activities listed in the itinerary, including Unlock Challenge elements</li>
+            <li>Basic travel insurance for the duration of the tour (see Section 11)</li>
+            <li>Dedicated Morning Vietnam host / team leader</li>
+            <li>Emergency protocol support on trip</li>
+          </ul>
+          <h3>4.2 What's Not Included</h3>
+          <ul>
+            <li>International or domestic flights to/from Hanoi</li>
+            <li>Additional personal travel insurance beyond the basic policy included</li>
+            <li>Personal expenses (tips, laundry, additional food/drinks, souvenirs)</li>
+            <li>Visa fees</li>
+            <li>Activities marked as "optional" in the itinerary</li>
+            <li>Medical costs not covered by the included basic insurance</li>
+          </ul>
+          <h3>4.3 Pricing</h3>
+          <p>All prices are quoted in USD unless otherwise agreed in writing. Morning Vietnam reserves the right to adjust prices due to significant changes in fuel costs, accommodation costs, or exchange rates. If a price increase exceeds 10% of the confirmed booking amount, the traveler has the right to cancel without penalty.</p>
+        </div>
+
+        <!-- 5 -->
+        <div class="lp-section" id="payment">
+          <h2>5. Deposit &amp; Payment</h2>
+          <h3>5.1 Private Tour / Package</h3>
+          <p>A deposit of <strong>30% of the total tour price</strong> per person is required immediately upon confirmation to secure your booking. This deposit is non-refundable except in cases where Morning Vietnam cancels the tour.</p>
+          <p>The remaining balance (70%) is due at least <strong>30 days before the departure date</strong>. For bookings made within 30 days of departure, full payment is required at time of booking.</p>
+
+          <h3>5.2 Group Tour</h3>
+          <p>Travelers booking a Group Tour may choose one of two payment options:</p>
+          <div class="lp-option-block">
+            <p class="lp-option-label">Option A — Deposit now</p>
+            <p>Pay a <strong>30% deposit</strong> at time of booking to confirm your place. The remaining 70% is due at least <strong>5 days before the departure date</strong>.</p>
+          </div>
+          <div class="lp-option-block">
+            <p class="lp-option-label">Option B — Pay in full on arrival</p>
+            <p>No deposit required. Pay <strong>100% of the tour price</strong> upon arriving in Vietnam, at least <strong>5 days before the departure date</strong>. Your place is reserved but not guaranteed until payment is received — if minimum group size is not met before your payment arrives, Morning Vietnam will notify you.</p>
+          </div>
+          <p class="lp-note">Regardless of which option you choose, the cancellation policy in Section 6 applies from the moment your booking is confirmed in writing by Morning Vietnam.</p>
+
+          <h3>5.3 Payment Method</h3>
+          <p>Payment is accepted via bank transfer. Details are provided in the booking confirmation email. Morning Vietnam does not store credit card information.</p>
+          <h3>5.4 Late Payment</h3>
+          <p>Morning Vietnam reserves the right to release your booking if payment is not received by the agreed due date without prior written agreement.</p>
+        </div>
+
+        <!-- 6 -->
+        <div class="lp-section" id="cancellation">
+          <h2>6. Cancellation by the Traveler</h2>
+          <p>All cancellation requests must be submitted in <strong>writing</strong> to <a href="mailto:good@morningvietnam.co">good@morningvietnam.co</a>. The cancellation date is the date Morning Vietnam receives your written notice.</p>
+
+          <h3>6.1 Cancellation — Private Tour / Package</h3>
+          <div class="lp-table-wrap">
+            <table class="lp-table">
+              <thead>
+                <tr><th>Notice Before Departure</th><th>Cancellation Charge</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>60+ days</td><td>Loss of deposit (30%) only</td></tr>
+                <tr><td>30–59 days</td><td>50% of total tour price</td></tr>
+                <tr><td>15–29 days</td><td>75% of total tour price</td></tr>
+                <tr><td>0–14 days</td><td>100% of total tour price (no refund)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>6.2 Cancellation — Group Tour</h3>
+          <div class="lp-table-wrap">
+            <table class="lp-table">
+              <thead>
+                <tr><th>Notice Before Departure</th><th>Cancellation Charge</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>30+ days</td><td>No charge (deposit refunded if paid, or no invoice issued)</td></tr>
+                <tr><td>15–29 days</td><td>Loss of deposit (30%); if no deposit was paid, a 30% invoice will be issued</td></tr>
+                <tr><td>0–14 days</td><td>100% of total tour price</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><strong>No-show</strong> (failure to arrive on departure day without prior written notice) is treated as a 0–14 day cancellation. No refund will be issued and, if no deposit was paid, a 100% invoice will be issued.</p>
+          <p>Partial cancellations (one person withdrawing from a group booking) are subject to the same schedule above for that person's share and may affect group pricing for remaining travelers.</p>
+        </div>
+
+        <!-- 7 -->
+        <div class="lp-section" id="date-changes">
+          <h2>7. Date Changes &amp; Rescheduling</h2>
+          <p>Travelers may request to change their tour departure date, subject to availability. Date change requests must be submitted in writing to <a href="mailto:good@morningvietnam.co">good@morningvietnam.co</a>.</p>
+          <div class="lp-table-wrap">
+            <table class="lp-table">
+              <thead>
+                <tr><th>Notice Before Original Departure</th><th>Rescheduling Fee</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>15+ days</td><td>Free — 1 complimentary date change per booking</td></tr>
+                <tr><td>5–14 days</td><td>USD $10 per person</td></tr>
+                <tr><td>Under 5 days</td><td>Treated as cancellation — 30% of total tour price forfeited</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>A second date change request (if the first was free) will be charged at $10 per person regardless of timing.</p>
+          <p>Date changes are subject to availability. Morning Vietnam will make reasonable efforts to accommodate your request but cannot guarantee the same tour format, group composition, or pricing on the new date if costs have changed.</p>
+        </div>
+
+        <!-- 8 -->
+        <div class="lp-section" id="tour-changes">
+          <h2>8. Tour Changes (Switching to a Different Tour)</h2>
+          <p>Requests to switch to a different tour must be made in writing at least <strong>15 days before the original departure date.</strong> Tour changes within 14 days of departure are not supported — please use the cancellation policy and book fresh.</p>
+          <p>If the new tour has a higher price, you pay the difference. If the new tour has a lower or equal price, no refund is issued for the difference.</p>
+        </div>
+
+        <!-- 9 -->
+        <div class="lp-section" id="mv-cancellation">
+          <h2>9. Cancellation or Changes by Morning Vietnam</h2>
+          <h3>9.1 Cancellation by Morning Vietnam</h3>
+          <p>Morning Vietnam reserves the right to cancel a tour due to:</p>
+          <ul>
+            <li>Insufficient bookings (minimum group size not met)</li>
+            <li>Force majeure events (see Section 13)</li>
+            <li>Safety concerns assessed by our team or local authorities</li>
+            <li>Government directive affecting tour operations</li>
+          </ul>
+          <p>In the event of cancellation by Morning Vietnam, we will offer a full refund of all amounts paid, or transfer of your booking to an alternative date or tour of equal value.</p>
+          <p>Morning Vietnam is not liable for costs incurred by the traveler as a result of our cancellation (e.g., international flights, visas, pre-booked accommodation outside the tour) beyond the refund of the tour price itself.</p>
+          <h3>9.2 Itinerary Changes</h3>
+          <p>Morning Vietnam reserves the right to modify itineraries where necessary due to weather, road conditions, safety considerations, or local circumstances beyond our control. We will always endeavor to provide an experience of equal quality and will communicate changes as early as possible.</p>
+          <p>Minor changes (meal timing, activity order, accommodation within same standard) do not entitle the traveler to a refund. Significant changes (removal of a core destination or main activity with no suitable alternative) will be discussed with the traveler and may result in a partial refund at Morning Vietnam's reasonable discretion.</p>
+        </div>
+
+        <!-- 10 -->
+        <div class="lp-section" id="group-size">
+          <h2>10. Minimum Group Size</h2>
+          <p>Most Morning Vietnam Group Tours operate with a minimum of 4 travelers and a maximum of 8. If minimum numbers are not met 21 days before departure, we may:</p>
+          <ul>
+            <li>Offer to merge your booking with another scheduled group (with your agreement)</li>
+            <li>Offer a private tour at a price adjustment to be agreed</li>
+            <li>Cancel the tour and issue a full refund</li>
+          </ul>
+          <p>Private Tour / Package bookings are not subject to minimum group sizes.</p>
+        </div>
+
+        <!-- 11 -->
+        <div class="lp-section" id="insurance">
+          <h2>11. Travel Insurance</h2>
+          <p>Basic travel insurance is included in the tour price for all Morning Vietnam bookings, covering the duration of the tour activities (provider: to be confirmed).</p>
+          <p>This basic coverage does not include:</p>
+          <ul>
+            <li>Trip cancellation or curtailment before departure</li>
+            <li>Medical evacuation from remote areas beyond the basic limit</li>
+            <li>Loss, theft, or damage to personal belongings</li>
+            <li>Activities undertaken independently outside the tour program</li>
+          </ul>
+          <p class="lp-note">We strongly recommend that all travelers purchase <strong>comprehensive personal travel insurance</strong> before departure, covering medical evacuation, trip cancellation, personal liability, and belongings. This is especially important for travelers with pre-existing medical conditions or those booking international flights around the tour dates.</p>
+        </div>
+
+        <!-- 12 -->
+        <div class="lp-section" id="health-fitness">
+          <h2>12. Health, Fitness &amp; Physical Requirements</h2>
+          <p>Morning Vietnam tours involve active elements including trekking, walking on uneven terrain, and outdoor activities. Travelers should be in reasonable physical health and capable of the activities described in their chosen tour.</p>
+          <h3>12.1 Health Declaration</h3>
+          <p>By booking, you confirm that you are not aware of any physical or medical condition that would prevent safe participation in the activities in your itinerary. If you have concerns, please contact us before booking.</p>
+          <h3>12.2 Medical Conditions</h3>
+          <p>If you have a medical condition relevant to participation (e.g., heart conditions, severe allergies, recent surgery, significant mobility limitations), you must inform us in writing at the time of booking. We will assess suitability and advise on adjustments where possible.</p>
+          <p>Morning Vietnam reserves the right to exclude a traveler from specific activities or from the tour itself if, in the reasonable judgment of our team leader, participation poses a safety risk to that person or others. No refund will be given for activities missed due to health or fitness issues not disclosed at booking.</p>
+          <h3>12.3 Dietary Requirements</h3>
+          <p>Most dietary requirements (vegetarian, vegan, gluten-free) can be accommodated with advance notice at the time of booking. We cannot guarantee allergen-free environments at all local homestays and restaurants.</p>
+        </div>
+
+        <!-- 13 -->
+        <div class="lp-section" id="force-majeure">
+          <h2>13. Force Majeure</h2>
+          <p>Morning Vietnam is not liable for any failure to perform its obligations where such failure results from circumstances beyond our reasonable control, including:</p>
+          <ul>
+            <li>Natural disasters (floods, earthquakes, typhoons, landslides)</li>
+            <li>Extreme weather that makes travel unsafe</li>
+            <li>Government actions, border closures, or travel bans</li>
+            <li>Pandemics or public health emergencies declared by authorities</li>
+            <li>Civil unrest or security incidents</li>
+            <li>Infrastructure failure (roads, bridges, communication outages)</li>
+          </ul>
+          <p>In force majeure events, Morning Vietnam will communicate with affected travelers promptly and make reasonable efforts to find alternatives. Where a full alternative cannot be provided, Morning Vietnam will offer a credit or refund, less any non-recoverable costs already incurred. Neither party may claim penalties or compensation from the other in a genuine force majeure situation.</p>
+        </div>
+
+        <!-- 14 -->
+        <div class="lp-section" id="conduct">
+          <h2>14. Traveler Conduct &amp; Responsibility</h2>
+          <h3>14.1 Respect</h3>
+          <p>Our tours involve interaction with local communities, including ethnic minority groups, and require access to natural and cultural sites. All travelers must conduct themselves with respect — toward fellow travelers, local hosts, Morning Vietnam staff, and the environments visited.</p>
+          <p>Behavior that is discriminatory, threatening, or harmful will result in removal from the tour. No refund will be provided.</p>
+          <h3>14.2 Local Laws &amp; Customs</h3>
+          <p>Travelers are responsible for complying with all local laws and customs, including regulations around photography, access to restricted areas, and behavior at cultural or religious sites.</p>
+          <h3>14.3 Alcohol &amp; Substances</h3>
+          <p>Responsible alcohol consumption is accepted. Morning Vietnam reserves the right to remove any traveler whose behavior due to alcohol or substances poses a safety or welfare concern.</p>
+          <h3>14.4 Damage</h3>
+          <p>Travelers are liable for any damage they cause to accommodation, vehicles, or equipment. Morning Vietnam may invoice the responsible party for repair or replacement costs.</p>
+          <h3>14.5 Compliance with Team Leader</h3>
+          <p>Our team leaders make safety decisions on the ground. Travelers must follow reasonable instructions from Morning Vietnam staff. Morning Vietnam is not liable for injury or loss arising from a traveler's failure to follow such instructions.</p>
+        </div>
+
+        <!-- 15 -->
+        <div class="lp-section" id="liability">
+          <h2>15. Limitation of Liability</h2>
+          <h3>15.1 Third-Party Providers</h3>
+          <p>Morning Vietnam organizes and coordinates services provided by third parties (local transport, homestay operators, local guides). While we vet all partners carefully, we are not directly liable for the acts or omissions of independent third-party service providers.</p>
+          <h3>15.2 Cap on Liability</h3>
+          <p>Morning Vietnam's maximum liability to any traveler, in any circumstance not excluded by these Terms, is limited to the total price paid by that traveler for the affected tour.</p>
+          <h3>15.3 Exclusions</h3>
+          <p>Morning Vietnam is not liable for:</p>
+          <ul>
+            <li>Loss or damage to personal baggage or belongings</li>
+            <li>Injury, illness, or death arising from activities where the traveler assumed inherent risk (e.g., trekking, adventure activities) and appropriate precautions were taken by Morning Vietnam</li>
+            <li>Costs, losses, or damages arising from inadequate personal travel insurance coverage</li>
+            <li>Indirect or consequential losses (e.g., missed connecting flights, loss of income)</li>
+          </ul>
+          <p>Nothing in these Terms limits Morning Vietnam's liability for death or personal injury caused by our proven negligence.</p>
+        </div>
+
+        <!-- 16 -->
+        <div class="lp-section" id="photography">
+          <h2>16. Photography &amp; Media</h2>
+          <p>Morning Vietnam may photograph or video travelers during tours for marketing materials, social media, and website content. By participating in a tour, you grant Morning Vietnam a non-exclusive, royalty-free license to use such images and footage for these purposes.</p>
+          <p>If you do not wish to appear in marketing content, please notify your team leader at the start of the tour. We will respect this request.</p>
+        </div>
+
+        <!-- 17 -->
+        <div class="lp-section" id="complaints">
+          <h2>17. Complaints</h2>
+          <p>If something goes wrong during your tour, please raise it with your team leader immediately. Most issues can be resolved on the ground.</p>
+          <p>If unresolved, submit a formal complaint in writing to <a href="mailto:good@morningvietnam.co">good@morningvietnam.co</a> <strong>within 7 days of the tour end date.</strong> Complaints received after this window cannot be considered. We will acknowledge within 3 business days and aim to resolve within 10 business days.</p>
+        </div>
+
+        <!-- 18 -->
+        <div class="lp-section" id="ip">
+          <h2>18. Intellectual Property</h2>
+          <p>All tour itineraries, challenge formats, program designs, and marketing materials are the intellectual property of Vietnam Rise Co., Ltd. Unauthorized reproduction or commercial use is prohibited.</p>
+        </div>
+
+        <!-- 19 -->
+        <div class="lp-section" id="changes-terms">
+          <h2>19. Changes to These Terms</h2>
+          <p>Morning Vietnam reserves the right to update these Terms &amp; Conditions. The version in effect at the time of your written booking confirmation governs your tour.</p>
+        </div>
+
+        <!-- 20 -->
+        <div class="lp-section" id="governing-law">
+          <h2>20. Governing Law &amp; Jurisdiction</h2>
+          <p>These Terms are governed by the laws of the Socialist Republic of Vietnam, including the Law on Tourism No. 09/2017/QH14 and applicable consumer protection legislation.</p>
+          <p>Any dispute that cannot be resolved amicably shall be submitted to the competent courts of Hanoi, Vietnam.</p>
+          <p class="lp-note">If you are an EU or UK consumer, nothing in these Terms affects your statutory rights under the law of your country of residence.</p>
+        </div>
+
+        <!-- 21 -->
+        <div class="lp-section" id="contact">
+          <h2>21. Contact</h2>
+          <div class="lp-contact-card">
+            <p><strong>Morning Vietnam (Vietnam Rise Co., Ltd)</strong></p>
+            <p>No. 7/1, Alley 178, Thái Hà, Đống Đa, Hanoi, Vietnam</p>
+            <p>Email: <a href="mailto:good@morningvietnam.co">good@morningvietnam.co</a></p>
+            <p>WhatsApp: <a href="https://wa.me/84961836611" target="_blank" rel="noopener">+84 961 836 611</a></p>
+            <p>Website: <a href="https://www.morningvietnam.co">morningvietnam.co</a></p>
+          </div>
+          <p class="lp-legal-note">These Terms &amp; Conditions were last reviewed and updated on 9 June 2026.</p>
+        </div>
+
+      </div><!-- /lp-content -->
+    </div><!-- /lp-layout -->
+  </section>
+
+
+  <!-- ═══ CTA ════════════════════════════════════════════════════════ -->
+  <section class="lp-cta">
+    <div class="container lp-cta__inner">
+      <div class="lp-cta__text">
+        <h2>Ready to book?</h2>
+        <p>Questions about our terms? We'll answer before you commit.</p>
+      </div>
+      <div class="lp-cta__btns">
+        <a
+          href="https://wa.me/84961836611"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="c-button c-button--primary"
+        >
+          WhatsApp us
+        </a>
+        <a
+          href="/privacy-policy"
+          class="c-button c-button--outline lp-cta__secondary"
+        >
+          Privacy Policy
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+
+<style>
+  /* ── Hero ──────────────────────────────────────────────────────── */
+  .lp-hero {
+    position: relative;
+    min-height: 38vh;
+    background: var(--color-nordic);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .lp-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-nordic) 60%, rgba(234, 103, 57, 0.18) 100%);
+  }
+
+  .lp-hero__content {
+    position: relative;
+    z-index: 1;
+    padding-top: calc(var(--site-header-h) + 48px);
+    padding-bottom: 60px;
+  }
+
+  .lp-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 24px;
+  }
+
+  .lp-breadcrumb a {
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .lp-breadcrumb a:hover {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .lp-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1.05;
+    color: white;
+    margin-bottom: 12px;
+  }
+
+  .lp-hero__accent {
+    color: var(--color-sorbus);
+  }
+
+  .lp-hero__meta {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Body layout ───────────────────────────────────────────────── */
+  .lp-body {
+    padding-block: 80px;
+    background: white;
+  }
+
+  .lp-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  /* ── Sticky nav ────────────────────────────────────────────────── */
+  .lp-nav {
+    position: sticky;
+    top: calc(var(--site-header-h) + 32px);
+  }
+
+  .lp-nav__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .lp-nav__link {
+    display: block;
+    padding: 9px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-nordic);
+    opacity: 0.4;
+    border-left: 2px solid transparent;
+    border-radius: 0 4px 4px 0;
+    text-decoration: none;
+    transition: opacity 0.2s, border-color 0.2s, color 0.2s, background 0.2s;
+  }
+
+  .lp-nav__link:hover {
+    opacity: 0.7;
+  }
+
+  .lp-nav__link.is-active {
+    opacity: 1;
+    color: var(--color-java);
+    border-left-color: var(--color-java);
+    background: rgba(29, 160, 160, 0.06);
+  }
+
+  /* ── Content sections ──────────────────────────────────────────── */
+  .lp-section {
+    padding-bottom: 56px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--color-light-cyan);
+  }
+
+  .lp-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .lp-section h2 {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--color-light-cyan);
+    margin-bottom: 24px;
+  }
+
+  .lp-section h3 {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin: 20px 0 10px;
+  }
+
+  .lp-section p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--color-nordic);
+    opacity: 0.8;
+    margin-bottom: 16px;
+  }
+
+  .lp-section p:last-child {
+    margin-bottom: 0;
+  }
+
+  .lp-section ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+
+  .lp-section li {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--color-nordic);
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+
+  .lp-section a {
+    color: var(--color-java);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s;
+  }
+
+  .lp-section a:hover {
+    opacity: 0.7;
+  }
+
+  .lp-note {
+    background: rgba(29, 160, 160, 0.07);
+    border-left: 3px solid var(--color-java);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px !important;
+    font-size: 15px !important;
+    opacity: 1 !important;
+  }
+
+  .lp-option-block {
+    background: rgba(217, 247, 245, 0.35);
+    border: 1px solid var(--color-light-cyan);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
+  }
+
+  .lp-option-label {
+    font-family: var(--font-heading);
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-java) !important;
+    opacity: 1 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .lp-contact-card {
+    background: #f7fdfd;
+    border: 1px solid var(--color-light-cyan);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+
+  .lp-contact-card p {
+    margin-bottom: 6px !important;
+    opacity: 1 !important;
+  }
+
+  .lp-legal-note {
+    font-size: 13px !important;
+    opacity: 0.5 !important;
+    font-style: italic;
+  }
+
+  /* ── Tables ────────────────────────────────────────────────────── */
+  .lp-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--color-light-cyan);
+  }
+
+  .lp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+
+  .lp-table thead tr {
+    background: var(--color-nordic);
+  }
+
+  .lp-table th {
+    text-align: left;
+    padding: 12px 18px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-light-cyan);
+  }
+
+  .lp-table td {
+    padding: 13px 18px;
+    border-top: 1px solid var(--color-light-cyan);
+    color: var(--color-nordic);
+    line-height: 1.6;
+  }
+
+  .lp-table tbody tr:nth-child(even) {
+    background: rgba(217, 247, 245, 0.25);
+  }
+
+  /* ── CTA ───────────────────────────────────────────────────────── */
+  .lp-cta {
+    background: var(--color-nordic);
+    padding-block: 80px;
+  }
+
+  .lp-cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .lp-cta h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 3.5vw, 40px);
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .lp-cta p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .lp-cta__btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .lp-cta__secondary {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .lp-cta__secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    color: white;
+  }
+
+  /* ── Responsive ────────────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .lp-layout {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .lp-nav {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .lp-section p,
+    .lp-section li {
+      font-size: 15px;
+    }
+
+    .lp-cta__inner {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .lp-cta__btns {
+      justify-content: center;
+    }
+  }
+</style>
+
+
+<script>
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.lp-nav__link');
+  const sections = document.querySelectorAll<HTMLElement>('.lp-section');
+
+  if (navLinks.length && sections.length) {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navLinks.forEach(link => {
+              link.classList.toggle('is-active', link.dataset.target === id);
+            });
+          }
+        });
+      },
+      { rootMargin: '-15% 0px -65% 0px', threshold: 0 }
+    );
+    sections.forEach(s => observer.observe(s));
+  }
+</script>

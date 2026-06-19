@@ -7,11 +7,11 @@ import { tours } from '../data/tours.ts';
 const featuredTours = tours.filter(t => !t.comingSoon).slice(0, 3);
 
 const team = [
-  { image: "/team/tung.png",    name: "Tùng",     role: "Co-founder", quote: "If there's a shortcut through the mountains, I've probably walked it twice." },
-  { image: "/team/the-anh.png", name: "Thế Anh",  role: "Co-founder", quote: "The best stories aren't in guidebooks. They're at the dinner table." },
-  { image: "/team/son.png",     name: "Sơn",      role: "",           quote: "You won't notice the little things I prepare. But you'll feel them." },
-  { image: "/team/ha.png",      name: "Hà",       role: "",           quote: "If you're not smiling yet, give me five minutes." },
-  { image: "/team/my.png",      name: "My",       role: "",           quote: "Life's too short to be serious on an adventure. Let's play." },
+  { image: "/team/tung.png",    name: "Tùng",     role: "Co-founder", quote: "If there's a shortcut through the mountains, I've probably walked it twice.", wa: "https://wa.me/84968495956" },
+  { image: "/team/the-anh.png", name: "Thế Anh",  role: "Co-founder", quote: "The best stories aren't in guidebooks. They're at the dinner table.",          wa: "https://wa.me/84961836611" },
+  { image: "/team/son.png",     name: "Sơn",      role: "",           quote: "You won't notice the little things I prepare. But you'll feel them.",            wa: "https://wa.me/84987408150" },
+  { image: "/team/ha.png",      name: "Hà",       role: "",           quote: "If you're not smiling yet, give me five minutes.",                               wa: "https://wa.me/84867564675" },
+  { image: "/team/my.png",      name: "My",       role: "",           quote: "Life's too short to be serious on an adventure. Let's play.",                    wa: "https://wa.me/84969776359" },
 ];
 
 const regions = [
@@ -236,9 +236,9 @@ const regions = [
       <div class="hp-crew__grid">
         {team.map(member => (
           <div class="hp-crew__card">
-            <a class="hp-crew__avatar" href="https://facebook.com/morningvietnam.local" target="_blank" rel="noopener noreferrer">
+            <a class="hp-crew__avatar" href={member.wa} target="_blank" rel="noopener noreferrer">
               <img class="hp-crew__photo" src={member.image} alt={member.name} />
-              <div class="hp-crew__tooltip">Morning! ☀️</div>
+              <div class="hp-crew__tooltip">Chat with me →</div>
             </a>
             <p class="hp-crew__name">
               {member.name}{member.role ? <span class="hp-crew__role"> · {member.role}</span> : ''}
@@ -301,7 +301,7 @@ const regions = [
       <div class="hp-testi__ctas">
         <a href="/tours/unlock-mai-chau"    class="hp-testi__cta active" data-idx="0">See this tour →</a>
         <a href="/tours/ho-chi-minh-a-life" class="hp-testi__cta"        data-idx="1">See this tour →</a>
-        <a href="/tours/lai-chau-motortour" class="hp-testi__cta"        data-idx="2">See this tour →</a>
+        <a href="/tours/sa-pa-lai-chau" class="hp-testi__cta"        data-idx="2">See this tour →</a>
       </div>
       <div class="hp-testi__dots" role="tablist">
         <button class="hp-testi__dot active" data-target="0" aria-label="Testimonial 1"></button>

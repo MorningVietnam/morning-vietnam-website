@@ -1,0 +1,843 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { tours } from '../../data/tours.ts';
+
+const SAPA_SLUGS = [
+  'sapa-trekking-classic',
+  'sapa-nam-cang',
+  'sa-pa-lai-chau',
+  'into-nam-luc',
+  'unlock-lai-chau',
+];
+
+const sapaTours = SAPA_SLUGS
+  .map(slug => tours.find(t => t.slug === slug))
+  .filter(Boolean) as typeof tours;
+
+// Brand guide combinations (logo colour guide V1.0):
+// c1: Light Cyan text on Java bg
+// c2: Nordic text on Riptide bg
+// c3: Java text on Light Cyan bg
+// c4: Riptide text on Nordic bg
+// c5: Lucky text on White Nectar bg
+const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
+---
+
+<BaseLayout
+  title="Sa Pa · Lai Châu Tours — Morning Vietnam"
+  description="Five ways into Vietnam's highest mountains. Small group, max 12. From 1 day to 2D1N."
+>
+
+  <!-- ══════════════════════════════════════════════════════
+       HERO — compact
+  ══════════════════════════════════════════════════════ -->
+  <section class="hub-hero">
+    <div class="hub-hero__bg"></div>
+    <div class="container hub-hero__content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>›</span>
+        <a href="/tours">Tours</a>
+        <span>›</span>
+        <span>Sa Pa · Lai Châu</span>
+      </nav>
+      <div class="hub-hero__region">North Vietnam · Mountain Region</div>
+      <h1>Sa Pa · Lai Châu</h1>
+      <p class="hub-hero__sub">Vietnam's highest pass. Five routes in. Choose yours below.</p>
+      <div class="hub-hero__stats">
+        <div class="hub-stat">
+          <span class="hub-stat__num">2,050m</span>
+          <span class="hub-stat__label">O Quy Hồ Pass</span>
+        </div>
+        <div class="hub-stat">
+          <span class="hub-stat__num">5</span>
+          <span class="hub-stat__label">Routes · 1 day → 2D1N</span>
+        </div>
+        <div class="hub-stat">
+          <span class="hub-stat__num">Max 12</span>
+          <span class="hub-stat__label">People per group</span>
+        </div>
+      </div>
+    </div>
+    <div class="hub-hero__scroll" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 4v12M4 11l6 5 6-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       TOUR CARDS — primary content, right after hero
+  ══════════════════════════════════════════════════════ -->
+  <section class="hub-tours" id="routes">
+    <div class="container">
+      <div class="hub-tours__header">
+        <span class="section-eyebrow">Choose your route</span>
+        <h2>Five ways into the northwest.</h2>
+        <p class="hub-tours__sub">Different depths, different paces. All for small group.</p>
+      </div>
+
+      <div class="hub-grid">
+        {sapaTours.map((tour, i) => {
+          const bgtype = CARD_BGTYPES[i];
+          const href = `/tours/${tour.slug}`;
+          const durationLabel = tour.duration.join(' / ');
+
+          return (
+            <article class={`hub-card hub-card--${bgtype} reveal`}>
+              <a href={href} class="hub-card__inner">
+
+                <!-- Image -->
+                <div class="hub-card__image">
+                  <img src={tour.image} alt={tour.name} loading={i < 2 ? 'eager' : 'lazy'} />
+                  <!-- Duration badge — top left, prominent -->
+                  <span class="hub-card__duration">{durationLabel}</span>
+                  <!-- Departs badge — top right -->
+                  <span class="hub-card__departs">
+                    {tour.hub === 'Sa Pa' ? '📍 From Sa Pa' : '📍 From Hanoi'}
+                  </span>
+                </div>
+
+                <!-- Body -->
+                <div class="hub-card__body">
+                  <h3 class="hub-card__name">{tour.name}</h3>
+                  <p class="hub-card__tagline">{tour.tagline}</p>
+
+                  {tour.highlights && tour.highlights.length > 0 && (
+                    <ul class="hub-card__highlights">
+                      {tour.highlights.slice(0, 3).map(h => (
+                        <li>{h}</li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <div class="hub-card__footer">
+                    {tour.price
+                      ? <span class="hub-card__price">{tour.price}</span>
+                      : <span class="hub-card__price hub-card__price--tbd">Price on request</span>
+                    }
+                    <span class="hub-card__cta">View tour →</span>
+                  </div>
+                </div>
+
+              </a>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       REGION CONTEXT — compact, after cards
+  ══════════════════════════════════════════════════════ -->
+  <section class="region-strip">
+    <div class="container region-strip__inner">
+      <div class="region-strip__text">
+        <span class="section-eyebrow">The region</span>
+        <h2>Sa Pa vs Lai Châu — what's the difference?</h2>
+        <p>
+          <strong>Sa Pa</strong> sits at 1,600m — rice terraces, H'Mông and Dao villages, beautiful but increasingly visited.
+          We go to the parts that aren't on the standard circuit.
+        </p>
+        <p>
+          Cross <strong>O Quy Hồ Pass</strong> into Lai Châu and the crowds disappear entirely.
+          No cable car. No pedestrian street. Villages that have never appeared on a booking platform.
+          A glass bridge that opened in 2023 with no English-language operator running it properly — until now.
+        </p>
+      </div>
+      <div class="region-strip__facts">
+        <div class="rfact">
+          <div class="rfact__num">2,050m</div>
+          <div class="rfact__label">O Quy Hồ — Vietnam's highest pass</div>
+        </div>
+        <div class="rfact">
+          <div class="rfact__num">Trek in</div>
+          <div class="rfact__label">Nậm Lúc Waterfall — no road access</div>
+        </div>
+        <div class="rfact">
+          <div class="rfact__num">900m</div>
+          <div class="rfact__label">Rồng Mây Glass Bridge — opened 2023</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SHARED DNA
+  ══════════════════════════════════════════════════════ -->
+  <section class="dna-section">
+    <div class="container">
+      <span class="section-eyebrow" style="color:var(--color-riptide)">Every route includes</span>
+      <h2>Different itineraries. Same standard.</h2>
+      <div class="dna-grid">
+        <div class="dna-item">
+          <span class="dna-icon">👥</span>
+          <h4>Max 8 people</h4>
+          <p>We don't combine groups. Your host knows your name, your pace, and when you need five minutes.</p>
+        </div>
+        <div class="dna-item">
+          <span class="dna-icon">🎯</span>
+          <h4>Unlock Challenge</h4>
+          <p>Every Morning Vietnam tour has one. A moment that turns strangers into something else. We won't spoil it.</p>
+        </div>
+        <div class="dna-item">
+          <span class="dna-icon">🏡</span>
+          <h4>Real village access</h4>
+          <p>H'Mông and Dao communities we know personally — not demonstration villages with gift shops at the exit.</p>
+        </div>
+        <div class="dna-item">
+          <span class="dna-icon">🎁</span>
+          <h4>Welcome pack</h4>
+          <p>Curated for what that specific day asks of you. Every item has a reason.</p>
+        </div>
+        <div class="dna-item">
+          <span class="dna-icon">🌧️</span>
+          <h4>Rain plan included</h4>
+          <p>Mountain weather changes fast. Every route has a wet-weather alternative built in. No day is ever cancelled.</p>
+        </div>
+        <div class="dna-item">
+          <span class="dna-icon">💳</span>
+          <h4>No payment upfront</h4>
+          <p>Reserve first. Pay 14 days before departure. Free cancellation until then — no questions asked.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       SEASON — compact bar
+  ══════════════════════════════════════════════════════ -->
+  <section class="season-section">
+    <div class="container">
+      <span class="section-eyebrow">When to go</span>
+      <h2>Best season: Oct – Apr.</h2>
+      <div class="season-bar">
+        {[
+          {m:'Jan',l:'best'},{m:'Feb',l:'best'},{m:'Mar',l:'best'},
+          {m:'Apr',l:'good'},{m:'May',l:'wet'}, {m:'Jun',l:'wet'},
+          {m:'Jul',l:'wet'}, {m:'Aug',l:'wet'}, {m:'Sep',l:'good'},
+          {m:'Oct',l:'best'},{m:'Nov',l:'best'},{m:'Dec',l:'best'},
+        ].map(({m,l}) => (
+          <div class={`smonth smonth--${l}`}>
+            <span class="smonth__m">{m}</span>
+            <span class="smonth__dot"></span>
+          </div>
+        ))}
+      </div>
+      <div class="season-legend">
+        <span><i class="leg leg--best"></i>Best</span>
+        <span><i class="leg leg--good"></i>Good</span>
+        <span><i class="leg leg--wet"></i>Wet season</span>
+      </div>
+      <p class="season-note">Rice terraces turn gold Oct–Nov. Cloud inversion over Mường Hoa valley most Jan–Feb mornings. Wet season (May–Aug) the pass can be slippery but the jungle is vivid — we check conditions every morning and always have an alternative plan.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       FINAL CTA
+  ══════════════════════════════════════════════════════ -->
+  <section class="hub-cta">
+    <div class="container hub-cta__inner">
+      <h2>Not sure which route fits?</h2>
+      <p>Tell us your dates, group size, and how many days you have — we'll give you an honest answer. No sales pitch.</p>
+      <div class="hub-cta__btns">
+        <a
+          href={`https://wa.me/84961836611?text=${encodeURIComponent("Hi Morning Vietnam — I'm looking at the Sa Pa · Lai Châu routes. Can you help me choose?")}`}
+          class="btn-cta"
+          target="_blank"
+          rel="noopener"
+        >
+          💬 Ask on WhatsApp
+        </a>
+        <a href="/contact" class="btn-ghost">Send a message →</a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+/* ─── Base ──────────────────────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-java);
+  margin-bottom: 10px;
+}
+
+/* ─── Hero ──────────────────────────────────────────────── */
+.hub-hero {
+  position: relative;
+  background: var(--color-nordic);
+  min-height: 56vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding-bottom: 60px;
+}
+
+.hub-hero__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(4,51,65,0.15) 0%, rgba(4,51,65,0.72) 60%, rgba(4,51,65,0.97) 100%),
+    url('/tours/lai-chau-motortour/17.webp') center/cover no-repeat;
+}
+
+.hub-hero__content {
+  position: relative;
+  z-index: 2;
+  padding-top: calc(var(--site-header-h, 72px) + 40px);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 20px;
+}
+.breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; }
+.breadcrumb a:hover { color: var(--color-riptide); }
+
+.hub-hero__region {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-riptide);
+  margin-bottom: 12px;
+}
+
+.hub-hero h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(44px, 7vw, 88px);
+  font-weight: 700;
+  color: white;
+  line-height: 1.0;
+  margin-bottom: 14px;
+}
+
+.hub-hero__sub {
+  font-size: clamp(15px, 1.8vw, 18px);
+  color: rgba(255,255,255,0.68);
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+
+.hub-hero__stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.hub-stat__num {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-riptide);
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.hub-stat__label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.48);
+  letter-spacing: 0.03em;
+}
+
+.hub-hero__scroll {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: rgba(255,255,255,0.3);
+  animation: bob 2.2s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(6px); }
+}
+
+/* ─── Tour Cards ────────────────────────────────────────── */
+.hub-tours {
+  background: var(--color-white);
+  padding: 72px 0 80px;
+}
+
+.hub-tours__header {
+  margin-bottom: 44px;
+}
+
+.hub-tours__header h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3.5vw, 44px);
+  font-weight: 700;
+  color: var(--color-nordic);
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+
+.hub-tours__sub {
+  font-size: 16px;
+  color: rgba(4,51,65,0.55);
+}
+
+/* Grid: 3 cols top, 2 centred bottom */
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.hub-grid > *:nth-child(4) { grid-column: 1; }
+.hub-grid > *:nth-child(5) { grid-column: 2; }
+
+/* Card shell */
+.hub-card {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(4,51,65,0.09);
+  transition: transform 0.32s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.32s ease;
+}
+.hub-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 44px rgba(4,51,65,0.16);
+}
+
+.hub-card__inner {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+/* Image */
+.hub-card__image {
+  position: relative;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hub-card__image img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.hub-card:hover .hub-card__image img { transform: scale(1.06); }
+
+/* Duration badge — top left, big & readable */
+.hub-card__duration {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--color-nordic);
+  color: white;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 5px 14px;
+  border-radius: 100px;
+  z-index: 2;
+}
+
+/* Departs badge — top right */
+.hub-card__departs {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255,255,255,0.88);
+  color: var(--color-nordic);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+}
+
+/* Body themes — brand guide combinations V1.0 */
+.hub-card__body {
+  padding: 22px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* c1: Light Cyan text / Java bg */
+.hub-card--c1 .hub-card__body { background: var(--color-java); color: var(--color-light-cyan); }
+/* c2: Nordic text / Riptide bg */
+.hub-card--c2 .hub-card__body { background: var(--color-riptide); color: var(--color-nordic); }
+/* c3: Nordic text / Light Cyan bg */
+.hub-card--c3 .hub-card__body { background: var(--color-light-cyan); color: var(--color-nordic); }
+/* c4: Light Cyan text / Nordic bg */
+.hub-card--c4 .hub-card__body { background: var(--color-nordic); color: var(--color-light-cyan); }
+/* c5: Light Cyan text / Java bg — same as c1 (Sa Pa Day) */
+.hub-card--c5 .hub-card__body { background: var(--color-java); color: var(--color-light-cyan); }
+
+.hub-card__name {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: inherit;
+}
+
+/* Per-combo explicit name colours */
+.hub-card--c1 .hub-card__name { color: var(--color-light-cyan); }
+.hub-card--c2 .hub-card__name { color: var(--color-nordic); }
+.hub-card--c3 .hub-card__name { color: var(--color-nordic); }
+.hub-card--c4 .hub-card__name { color: var(--color-light-cyan); }
+.hub-card--c5 .hub-card__name { color: var(--color-light-cyan); }
+
+.hub-card__tagline {
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.78;
+  flex: 1;
+}
+
+.hub-card__highlights {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hub-card__highlights li {
+  font-size: 12px;
+  opacity: 0.7;
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.4;
+}
+.hub-card__highlights li::before { content: '→'; position: absolute; left: 0; }
+
+.hub-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 12px;
+  gap: 8px;
+}
+
+/* Footer separators */
+.hub-card--c1 .hub-card__footer { border-top: 1px solid rgba(217,247,245,0.25); }
+.hub-card--c2 .hub-card__footer { border-top: 1px solid rgba(4,51,65,0.15); }
+.hub-card--c3 .hub-card__footer { border-top: 1px solid rgba(29,160,160,0.2); }
+.hub-card--c4 .hub-card__footer { border-top: 1px solid rgba(125,226,209,0.18); }
+.hub-card--c5 .hub-card__footer { border-top: 1px solid rgba(160,143,29,0.2); }
+
+/* Footer separator for c3 — dark-on-light needs darker border */
+.hub-card--c3 .hub-card__footer { border-top: 1px solid rgba(4,51,65,0.15); }
+
+.hub-card__price {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+}
+.hub-card__price--tbd { font-size: 12px; opacity: 0.6; font-weight: 500; }
+
+.hub-card__cta {
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+/* ─── Region Strip ──────────────────────────────────────── */
+.region-strip {
+  background: white;
+  padding: 72px 0;
+}
+
+.region-strip__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.region-strip__text h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(22px, 2.8vw, 36px);
+  font-weight: 700;
+  color: var(--color-nordic);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.region-strip__text p {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+.region-strip__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rfact {
+  background: var(--color-light-cyan);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.rfact__num {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-nordic);
+  margin-bottom: 4px;
+}
+
+.rfact__label {
+  font-size: 13px;
+  color: var(--color-java);
+  font-weight: 600;
+}
+
+/* ─── DNA ───────────────────────────────────────────────── */
+.dna-section {
+  background: var(--color-nordic);
+  padding: 72px 0;
+  color: white;
+}
+
+.dna-section h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 44px;
+  line-height: 1.2;
+}
+
+.dna-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.dna-item {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(125,226,209,0.12);
+  border-radius: 14px;
+  padding: 24px 20px;
+}
+
+.dna-icon { font-size: 22px; margin-bottom: 12px; display: block; }
+
+.dna-item h4 {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-riptide);
+  margin-bottom: 8px;
+}
+
+.dna-item p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.65;
+}
+
+/* ─── Season ────────────────────────────────────────────── */
+.season-section {
+  background: var(--color-light-cyan);
+  padding: 64px 0;
+}
+
+.season-section h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(22px, 2.8vw, 36px);
+  font-weight: 700;
+  color: var(--color-nordic);
+  margin-bottom: 28px;
+}
+
+.season-bar {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.smonth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 2px 8px;
+  border-radius: 8px;
+}
+
+.smonth__m {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.smonth__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.smonth--best { background: var(--color-java);    color: white; }
+.smonth--best .smonth__dot { background: var(--color-riptide); }
+
+.smonth--good { background: var(--color-riptide); color: var(--color-nordic); }
+.smonth--good .smonth__dot { background: var(--color-java); }
+
+.smonth--wet  { background: #c2e4e2;              color: #2a5a5a; }
+.smonth--wet .smonth__dot { background: #82b8b5; }
+
+.season-legend {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: #2a5a5a;
+  margin-bottom: 20px;
+}
+
+.leg {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.leg--best { background: var(--color-java); }
+.leg--good { background: var(--color-riptide); }
+.leg--wet  { background: #c2e4e2; border: 1px solid #82b8b5; }
+
+.season-note {
+  font-size: 14px;
+  color: #2a5a5a;
+  line-height: 1.7;
+  max-width: 720px;
+}
+
+/* ─── Final CTA ─────────────────────────────────────────── */
+.hub-cta {
+  background: linear-gradient(135deg, var(--color-java) 0%, var(--color-nordic) 100%);
+  padding: 72px 0;
+  text-align: center;
+}
+
+.hub-cta__inner h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 3.5vw, 42px);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 14px;
+}
+
+.hub-cta__inner > p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.72);
+  max-width: 500px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+}
+
+.hub-cta__btns {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: var(--color-nordic);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 13px 26px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.btn-cta:hover { opacity: 0.88; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 13px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  transition: border-color 0.2s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.65); }
+
+/* ─── Responsive ────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hub-grid { grid-template-columns: repeat(2, 1fr); }
+  .hub-grid > *:nth-child(4),
+  .hub-grid > *:nth-child(5) { grid-column: auto; }
+  .region-strip__inner { grid-template-columns: 1fr; gap: 40px; }
+  .dna-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .hub-grid { grid-template-columns: 1fr; }
+  .hub-hero__stats { gap: 24px; }
+  .dna-grid { grid-template-columns: 1fr; }
+  .season-bar { gap: 2px; }
+}
+</style>
+
+<script>
+  // Reveal on scroll
+  const io = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (e.isIntersecting) {
+        (e.target as HTMLElement).style.opacity = '1';
+        (e.target as HTMLElement).style.transform = 'translateY(0)';
+      }
+    }),
+    { threshold: 0.06 }
+  );
+
+  document.querySelectorAll<HTMLElement>('.reveal').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity 0.45s ease ${i * 0.06}s, transform 0.45s ease ${i * 0.06}s`;
+    io.observe(el);
+  });
+</script>

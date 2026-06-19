@@ -28,8 +28,8 @@ export interface SeasonNote      { title: string; desc: string }
 export interface Seasonality     { intro: string; months: SeasonMonth[]; notes: SeasonNote[] }
 export interface UnlockStep      { num: number; title: string; desc: string }
 export interface UnlockChallenge { sectionLabel: string; headline: string; intro: string; steps: UnlockStep[]; note: string; teaser: string }
-export interface DurationOption  { id: string; label: string; price: number | null; tagline: string; ctaLabel: string; ctaNote: string; waText: string }
-export interface ElevationPoint  { time: string; label: string; elevation: number; icon?: string; highlight?: boolean; durationOnly?: string }
+export interface DurationOption  { id: string; label: string; price: number | null; priceVND?: number | null; tagline: string; ctaLabel: string; ctaNote: string; waText: string }
+export interface ElevationPoint  { time: string; label: string; elevation: number; icon?: string; highlight?: boolean; durationOnly?: string; day?: number }
 export interface TripInfoItem    { icon: string; label: string; value: string }
 export interface ActivityCard    { badges?: string[]; badge?: string; badgeLabel?: string; time: string; title: string; desc: string; highlight: boolean; durationOnly?: string }
 export interface PitchBlock      { headline: string; paragraphs?: string[]; bullets?: string[]; closingLine?: string }
@@ -52,14 +52,20 @@ export interface Tour {
   comingSoon:        boolean;
   image:             string;
   priceUSD?:         number | null;
+  priceVND?:         number | null;   // lowest option, VNĐ (no formatting — display layer adds separator)
+  hubUrl?:           string;
+  cabinUpgrade?:     { labelOn: string; labelOff: string; surchargeVND: number; surchargeUSD: number; surchargeNote: string };
+  discountPolicy?:   { rules: { label: string; value: string }[] };
   gallery?:          GalleryItem[];
   durationOptions?:  DurationOption[];
+  selectorMode?:     'pickup-vehicle' | 'vehicle-only' | 'duration-tabs'; // default: pickup-vehicle when durationOptions present
   itinerary?:        ItineraryDay[];
   pitch?:            PitchBlock | Record<string, PitchBlock>;
   valueAnchor?:      ValueAnchorBlock | Record<string, ValueAnchorBlock> | null;
   storytelling?:     Storytelling;
   elevationProfile?: ElevationPoint[];
   elevationMax?:     number;
+  panoramicImage?:   string;  // 3:1 ratio, 2400×800px min, placed after elevation chart
   activityCards?:    ActivityCard[];
   tripInfo?:         Record<string, TripInfoItem[]>;
   welcomePack?:      WelcomePack;
@@ -71,7 +77,7 @@ export interface Tour {
 // ── Shared defaults ────────────────────────────────────────────────────────
 
 const DEFAULT_FAQS: FAQ[] = [
-  { q: "What's the maximum group size?",  a: "Max 8 people. We never combine groups. Sometimes we run with 4–5 if that's the booking." },
+  { q: "What's the maximum group size?",  a: "Max 12 people. We never combine groups. Sometimes we run with 4–5 if that's the booking." },
   { q: "What happens if it rains?",        a: "Our routes have rain-friendly alternatives built in. We adjust on the fly — no day is cancelled." },
   { q: "Do I need to be fit?",             a: "Moderate fitness recommended. Most activities are walking/cycling at a relaxed pace, but some sections may include 30–60 min of uphill." },
   { q: "What's included in the price?",   a: "All transport, all meals, accommodation (if multi-day), all activity fees, dedicated host. You only need spending money." },
@@ -172,6 +178,8 @@ export const tours: Tour[] = [
     comingSoon:  false,
     image:       "/tours/hcm-a-life/2.webp",
 
+    selectorMode: 'duration-tabs',
+
     // Duration-based pricing — used by duration switcher in [slug].astro
     durationOptions: [
       {
@@ -179,7 +187,7 @@ export const tours: Tour[] = [
         label:    "1 Day",
         price:    63,
         tagline:  "Hanoi → Ba Vì → back by 20:00",
-        ctaLabel: "I'm doing the 1-day  →",
+        ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
         waText:   "Hi Morning Vietnam — I'd like to book Ho Chi Minh: A Life (1 Day, $63)",
       },
@@ -188,7 +196,7 @@ export const tours: Tour[] = [
         label:    "2 Days 1 Night",
         price:    152,
         tagline:  "Add a night in Ba Vì forest + hiking morning",
-        ctaLabel: "I want the full 2 days  →",
+        ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
         waText:   "Hi Morning Vietnam — I'd like to book Ho Chi Minh: A Life (2 Days 1 Night, $152)",
       },
@@ -226,6 +234,7 @@ export const tours: Tour[] = [
 
     // ── Extended ──
     priceUSD: 63,
+    priceVND: 1600000,
     gallery: [
       { src: "/tours/hcm-a-life/2.webp",  alt: "Ho Chi Minh Mausoleum at Ba Đình Square — honor guard marching in formation" },
       { src: "/tours/hcm-a-life/4.webp",  alt: "Ho Chi Minh Stilt House (Nhà sàn) — traditional red wooden architecture with guards" },
@@ -290,7 +299,7 @@ export const tours: Tour[] = [
       { time: "07:30", label: "Mausoleum · Stilt House",  elevation: 14,  icon: "landmark", highlight: true  },
       { time: "12:10", label: "Bình Hoa Quán",             elevation: 20,  icon: "food",     highlight: false },
       { time: "13:50", label: "K9 · Unlock Challenge",     elevation: 80,  icon: "unlock",   highlight: true  },
-      { time: "16:05", label: "Đền Thờ Bác · Sunset",     elevation: 1296, icon: "temple",   highlight: true  },
+      { time: "16:05", label: "Ho Chi Minh's Temple - Sunset from the peak of Ba Vi Mountain", elevation: 1296, icon: "temple",   highlight: true  },
       { time: "20:05", label: "Back to Hanoi",             elevation: 14,  icon: "return",   highlight: false, durationOnly: "1day" },
       { time: "18:30", label: "Amour Resort",              elevation: 300, icon: "resort",   highlight: false, durationOnly: "2d1n" },
       { time: "08:30", label: "Forest Hike · Ba Vì NP",   elevation: 900, icon: "hike",     highlight: false, durationOnly: "2d1n" },
@@ -384,17 +393,19 @@ export const tours: Tour[] = [
 
   // ── Sa Pa · Lai Châu ──────────────────────────────────────────────────────
   {
-    slug:        "lai-chau-motortour",
+    slug:        "sa-pa-lai-chau",
     name:        "Sa Pa · Lai Châu",
     region:      "north",
     duration:    ["2D1N"],
-    price:       "from $193",
+    price:       "from $123",
+    priceUSD:    52,
+    priceVND:    4760000,
     tagline:     "Overnight sleeper bus, motorbike or car, ethnic minority villages, a tropical forest trek, and a glass bridge at sunset.",
     description: "Leave Hanoi at night. Wake up in the mist of Sa Pa. Spend two days riding through Vietnam's highest mountain pass into Lai Châu — a valley most travelers never find — then back through jungle trails and a glass bridge at 900m. Home by sunrise.",
     highlights: [
       "O Quy Hồ Pass — Vietnam's highest at 2,050m",
-      "Tiên Sơn Cave · Bình Lư, Lai Châu",
-      "Lao Chải Hmong village + traditional blacksmith forge",
+      "Tiên Sơn Cave",
+      "Lao Chải 1 Hmong village + traditional blacksmith forge",
       "Waterfall swim at Thác Tác Tình",
       "Overnight homestay at Sì Thâu Chải — Dao village",
       "Tropical forest trek + lunch in the jungle",
@@ -411,30 +422,89 @@ export const tours: Tour[] = [
       "Welcome pack",
     ],
     hub:         "Hanoi",
+    hubUrl:      "/tours/sapa-lai-chau",
+    cabinUpgrade: {
+      labelOn:       "Private cabin (upgraded)",
+      labelOff:      "Standard sleeper bus",
+      surchargeVND:  200000,
+      surchargeUSD:  8,        // $4/person/way × 2 ways = $8 total
+      surchargeNote: "+$4/person/way · Your own private sleeping cabin",
+    },
+    discountPolicy: {
+      rules: [
+        { label: "Group 10+",          value: "10% off per person" },
+        { label: "Children under 1m",  value: "30% off" },
+      ],
+    },
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     image:       "/tours/lai-chau-motortour/17.webp",
 
-    elevationMax: 2050,
+    elevationMax: 2000,
 
     durationOptions: [
+      // ── Departs Hanoi ──────────────────────────────────────────
       {
-        id:       "car",
-        label:    "Car Tour",
-        price:    193,
-        tagline:  "Private car + driver. Sit back, watch the pass unfold through the window.",
-        ctaLabel: "Book Car Tour →",
-        ctaNote:  "No payment now. Spot held, pay 14 days before. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (Car Tour, $193/person)",
+        id:       "hanoi-car",
+        label:    "Hanoi · Car",
+        price:    189,
+        priceVND: 4980000,
+        tagline:  "Night bus Hanoi → Sa Pa, then private car all day. Departs Sun & Thu nights.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (From Hanoi, Car Tour, $189/person)",
       },
       {
-        id:       "motor",
-        label:    "Motor Tour",
-        price:    211,
-        tagline:  "Self-ride or backseat on our semi-auto 125cc. The pass earns the view.",
-        ctaLabel: "Book Motor Tour →",
-        ctaNote:  "Valid motorbike licence required for self-ride. No payment now. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (Motor Tour, $211/person)",
+        id:       "hanoi-motor",
+        label:    "Hanoi · Motorbike",
+        price:    163,
+        priceVND: 4260000,
+        tagline:  "Night bus Hanoi → Sa Pa, then self-ride or backseat on a 125cc. Departs Sun & Thu nights.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "Valid motorbike licence required for self-ride · No payment now · Free cancellation",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (From Hanoi, Motor Tour, $163/person)",
+      },
+      // ── Departs Hanoi · Single cabin sleeper bus ───────────────
+      {
+        id:       "hanoi-cabin-car",
+        label:    "Hanoi · Cabin · Car",
+        price:    197,
+        priceVND: 5160000,
+        tagline:  "Private single cabin on the sleeper bus Hanoi → Sa Pa, then private car all day. Departs Sun & Thu nights.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (From Hanoi, Single Cabin + Car, $197/person)",
+      },
+      {
+        id:       "hanoi-cabin-motor",
+        label:    "Hanoi · Cabin · Motorbike",
+        price:    171,
+        priceVND: 4480000,
+        tagline:  "Private single cabin on the sleeper bus Hanoi → Sa Pa, then self-ride or backseat on a 125cc. Departs Sun & Thu nights.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "Valid motorbike licence required for self-ride · No payment now · Free cancellation",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (From Hanoi, Single Cabin + Motorbike, $171/person)",
+      },
+      // ── Departs Sa Pa ──────────────────────────────────────────
+      {
+        id:       "sapa-car",
+        label:    "Sa Pa · Car",
+        price:    147,
+        priceVND: 3850000,
+        tagline:  "Start from Sa Pa — private car all day. Mon & Fri departures, or any day for groups of 3+.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (From Sa Pa, Car Tour, $147/person)",
+      },
+      {
+        id:       "sapa-motor",
+        label:    "Sa Pa · Motorbike",
+        price:    123,
+        priceVND: 3230000,
+        tagline:  "Start from Sa Pa — self-ride or backseat. Mon & Fri departures, or any day for groups of 3+.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "Valid motorbike licence required for self-ride · No payment now · Free cancellation",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Lai Châu (From Sa Pa, Motor Tour, $123/person)",
       },
     ],
 
@@ -443,8 +513,7 @@ export const tours: Tour[] = [
         day: 0,
         title: "Night — Hanoi → Sa Pa",
         slots: [
-          "21:30 Meet at Old Quarter, Hanoi",
-          "22:00 Board sleeper bus to Sa Pa — sleep your way north",
+          "22:00 Board sleeper bus at Old Quarter, Hanoi — sleep your way north",
           "05:30 Arrive Sa Pa",
         ],
       },
@@ -452,19 +521,20 @@ export const tours: Tour[] = [
         day: 1,
         title: "Into the Northwest",
         slots: [
-          "05:30 Breakfast — chicken phở at Sơn Râu",
-          "06:00 Pick up vehicles (motorbike: Mr Cò · car: private)",
+          "05:30 Freshen up · change & stow your bag (motorbike guests: drop luggage here — your car won't be following)",
+          "05:45 Breakfast — chicken phở at Sơn Râu",
+          "06:15 Pick up vehicles · motorbike guests: inspect, sign waiver (Mr Cò) · car guests: meet your driver",
           "06:30 Coffee overlooking Mường Hoa Valley",
           "07:30 Depart — cross O Quy Hồ Pass at 2,050m",
-          "09:15 Tiên Sơn Cave · Bình Lư, Lai Châu",
-          "10:15 Lao Chải Village — Homestay Cứ A Lồng",
+          "09:15 Tiên Sơn Cave",
+          "10:15 Lao Chải 1 Village — Homestay Cứ A Lồng",
           "11:00 Explore the village with a local guide",
           "12:00 Lunch & afternoon rest",
           "13:30 Hmong blacksmith forge — watch it, then try it",
           "14:45 Ride to Thác Tác Tình waterfall",
           "16:15 Swim. It's cold. Worth it.",
           "17:45 Sunset at Sì Thâu Chải",
-          "18:00 Dinner · Homestay A Pao",
+          "19:00 Dinner · Homestay A Pao",
         ],
       },
       {
@@ -484,32 +554,69 @@ export const tours: Tour[] = [
     ],
 
     // ── Extended ──
-    priceUSD: 193,
     tripInfo: {
-      "car": [
-        { icon: "map-pin",         label: "Meeting point",     value: "Old Quarter, Hanoi · 21:30" },
+      "hanoi-car": [
+        { icon: "map-pin",         label: "Pickup",            value: "Old Quarter, Hanoi · Sun & Thu · 22:00" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "car",             label: "Vehicle",           value: "Sleeper bus (HN↔SaPa) + private car" },
         { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast, lunch, dinner × 2 days" },
-        { icon: "car",             label: "Transportation",    value: "Sleeper bus + private car" },
         { icon: "home",            label: "Accommodation",     value: "Homestay A Pao · Sì Thâu Chải" },
-        { icon: "user-check",      label: "Guide",             value: "Dedicated host, full trip" },
-        { icon: "mountain",        label: "Maximum altitude",  value: "2,050m · Đèo O Quy Hồ" },
-        { icon: "map-2",           label: "Elevation gained",  value: "~450m (jungle trek, Day 2)" },
-        { icon: "sun",             label: "Best season",       value: "Oct – Apr" },
-        { icon: "calendar-check",  label: "Free cancellation", value: "Up to 7 days before" },
+        { icon: "mountain",        label: "Max altitude",      value: "2,050m · O Quy Hồ Pass" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Sun & Thu nights · Flexible for groups of 3+" },
         { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
       ],
-      "motor": [
-        { icon: "map-pin",         label: "Meeting point",     value: "Old Quarter, Hanoi · 21:30" },
+      "hanoi-motor": [
+        { icon: "map-pin",         label: "Pickup",            value: "Old Quarter, Hanoi · Sun & Thu · 22:00" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "motorbike",       label: "Vehicle",           value: "Sleeper bus (HN↔SaPa) + semi-auto 125cc" },
         { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast, lunch, dinner × 2 days" },
-        { icon: "motorbike",       label: "Transportation",    value: "Sleeper bus + semi-auto 125cc Honda" },
         { icon: "home",            label: "Accommodation",     value: "Homestay A Pao · Sì Thâu Chải" },
-        { icon: "user-check",      label: "Guide",             value: "Dedicated host, full trip" },
-        { icon: "mountain",        label: "Maximum altitude",  value: "2,050m · Đèo O Quy Hồ" },
-        { icon: "map-2",           label: "Elevation gained",  value: "~450m (jungle trek, Day 2)" },
-        { icon: "sun",             label: "Best season",       value: "Oct – Apr" },
-        { icon: "calendar-check",  label: "Free cancellation", value: "Up to 7 days before" },
+        { icon: "mountain",        label: "Max altitude",      value: "2,050m · O Quy Hồ Pass" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Tue & Wed nights · Flexible for groups of 3+" },
+        { icon: "license",         label: "Licence",           value: "Required for self-ride · backseat available" },
         { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
-        { icon: "license",         label: "Licence required",  value: "Valid motorcycle licence for self-ride" },
+      ],
+      "hanoi-cabin-car": [
+        { icon: "map-pin",         label: "Pickup",            value: "Old Quarter, Hanoi · Sun & Thu · 22:00" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "car",             label: "Vehicle",           value: "Private single cabin (HN↔SaPa) + private car" },
+        { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast, lunch, dinner × 2 days" },
+        { icon: "home",            label: "Accommodation",     value: "Homestay A Pao · Sì Thâu Chải" },
+        { icon: "mountain",        label: "Max altitude",      value: "2,050m · O Quy Hồ Pass" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Sun & Thu nights · Flexible for groups of 3+" },
+        { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
+      ],
+      "hanoi-cabin-motor": [
+        { icon: "map-pin",         label: "Pickup",            value: "Old Quarter, Hanoi · Sun & Thu · 22:00" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "motorbike",       label: "Vehicle",           value: "Private single cabin (HN↔SaPa) + semi-auto 125cc" },
+        { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast, lunch, dinner × 2 days" },
+        { icon: "home",            label: "Accommodation",     value: "Homestay A Pao · Sì Thâu Chải" },
+        { icon: "mountain",        label: "Max altitude",      value: "2,050m · O Quy Hồ Pass" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Tue & Wed nights · Flexible for groups of 3+" },
+        { icon: "license",         label: "Licence",           value: "Required for self-ride · backseat available" },
+        { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
+      ],
+      "sapa-car": [
+        { icon: "map-pin",         label: "Pickup",            value: "Sa Pa town · Mon & Fri mornings" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "car",             label: "Vehicle",           value: "Private car, full day" },
+        { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast, lunch, dinner" },
+        { icon: "home",            label: "Accommodation",     value: "Homestay A Pao · Sì Thâu Chải" },
+        { icon: "mountain",        label: "Max altitude",      value: "2,050m · O Quy Hồ Pass" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Mon & Fri · Flexible for groups of 3+" },
+        { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
+      ],
+      "sapa-motor": [
+        { icon: "map-pin",         label: "Pickup",            value: "Sa Pa town · Mon & Fri mornings" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "motorbike",       label: "Vehicle",           value: "Semi-auto 125cc Honda, full day" },
+        { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast, lunch, dinner" },
+        { icon: "home",            label: "Accommodation",     value: "Homestay A Pao · Sì Thâu Chải" },
+        { icon: "mountain",        label: "Max altitude",      value: "2,050m · O Quy Hồ Pass" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Mon & Fri · Flexible for groups of 3+" },
+        { icon: "license",         label: "Licence",           value: "Required for self-ride · backseat available" },
+        { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
       ],
     },
     gallery: [
@@ -544,7 +651,7 @@ export const tours: Tour[] = [
       closingLine: "Two days. One mountain pass. A valley most tourists will never find.",
     },
     valueAnchor: {
-      headline: "From $193. For a route that exists outside the tourist circuit entirely.",
+      headline: "From $118. For a route that exists outside the tourist circuit entirely.",
       paragraphs: [
         "There is no Klook listing for O Quy Hồ. No GetYourGuide page for Sì Thâu Chải. The glass bridge at Rồng Mây only opened in 2023 and still has no English-language operator running it properly. We built this route because the northwest deserves better than what the standard Sapa circuit offers.",
         "The price covers sleeper bus both ways, transport all day, all meals, a fully-hosted village homestay, jungle trek with trail lunch, glass bridge entry, Unlock Challenge, and a dedicated host for 48 hours. The only thing not included is whatever you buy at the Sa Pa night market on Day 2.",
@@ -568,20 +675,20 @@ export const tours: Tour[] = [
       pullImage: "/tours/lai-chau-motortour/5.webp",
     },
     elevationProfile: [
-      { time: "22:00", label: "Depart Hanoi",            elevation: 20,   icon: "van",      highlight: false },
-      { time: "05:30", label: "Arrive Sa Pa",             elevation: 1600, icon: "resort",   highlight: false },
-      { time: "06:30", label: "Mường Hoa Valley Café",   elevation: 900,  icon: "food",     highlight: false },
-      { time: "07:30", label: "O Quy Hồ Pass · 2,050m",  elevation: 2050, icon: "peak",     highlight: true  },
-      { time: "09:15", label: "Tiên Sơn Cave · Bình Lư", elevation: 560,  icon: "cave",     highlight: true  },
-      { time: "10:15", label: "Lao Chải Village",         elevation: 1380, icon: "village",  highlight: false },
-      { time: "13:30", label: "Hmong Blacksmith Forge",   elevation: 1380, icon: "culture",  highlight: false },
-      { time: "16:15", label: "Thác Tác Tình",            elevation: 620,  icon: "water",    highlight: true  },
-      { time: "17:45", label: "Sì Thâu Chải · Sunset",   elevation: 800,  icon: "hike",     highlight: true  },
-      { time: "07:00", label: "Dao Village · explore",    elevation: 800,  icon: "landmark", highlight: false },
-      { time: "08:00", label: "Jungle Trek begins",       elevation: 800,  icon: "hike",     highlight: true  },
-      { time: "14:15", label: "Trail ends · valley",      elevation: 420,  icon: "hike",     highlight: false },
-      { time: "15:30", label: "Rồng Mây Glass Bridge",    elevation: 900,  icon: "landmark", highlight: true  },
-      { time: "23:00", label: "Sleeper bus to Hanoi",     elevation: 1600, icon: "return",   highlight: false },
+      { time: "22:00", label: "Depart Hanoi",            elevation: 20,   icon: "van",      highlight: false, day: 0 },
+      { time: "05:30", label: "Arrive Sa Pa",             elevation: 1500, icon: "resort",   highlight: false, day: 1 },
+      { time: "06:30", label: "Mường Hoa Valley Café",   elevation: 1050, icon: "food",     highlight: false, day: 1 },
+      { time: "07:30", label: "O Quy Hồ Pass · 2,050m",  elevation: 2000, icon: "peak",     highlight: true,  day: 1 },
+      { time: "09:15", label: "Tiên Sơn Cave", elevation: 700,  icon: "cave",     highlight: true,  day: 1 },
+      { time: "10:15", label: "Lao Chải 1 Village",         elevation: 1160, icon: "village",  highlight: false, day: 1 },
+      { time: "13:30", label: "Hmong Blacksmith Forge",   elevation: 1160, icon: "culture",  highlight: false, day: 1 },
+      { time: "16:15", label: "Thác Tác Tình",            elevation: 1000, icon: "water",    highlight: true,  day: 1 },
+      { time: "17:45", label: "Sì Thâu Chải · Sunset",   elevation: 1450, icon: "hike",     highlight: true,  day: 1 },
+      { time: "07:00", label: "Dao Village · explore",    elevation: 1450, icon: "landmark", highlight: false, day: 2 },
+      { time: "08:00", label: "Jungle Trek begins",       elevation: 1450, icon: "hike",     highlight: true,  day: 2 },
+      { time: "14:15", label: "Trail ends · valley",      elevation: 1200, icon: "hike",     highlight: false, day: 2 },
+      { time: "15:30", label: "Rồng Mây Glass Bridge",    elevation: 1770, icon: "landmark", highlight: true,  day: 2 },
+      { time: "23:00", label: "Sleeper bus to Hanoi",     elevation: 1500, icon: "return",   highlight: false, day: 2 },
     ],
     activityCards: [
       {
@@ -594,14 +701,14 @@ export const tours: Tour[] = [
       {
         badge: "culture", badgeLabel: "Cave",
         time: "09:15 – 10:15",
-        title: "Tiên Sơn Cave · Bình Lư, Lai Châu",
+        title: "Tiên Sơn Cave",
         desc: "A limestone cave system in Tam Đường district, Lai Châu — stalactites, stalagmites, and an underground stream. On the Lai Châu side of the pass, off every standard Sapa tour.",
         highlight: false,
       },
       {
         badge: "culture", badgeLabel: "Village",
         time: "10:15 – 14:45",
-        title: "Lao Chải Hmong Village + Blacksmith Forge",
+        title: "Lao Chải 1 Hmong Village + Blacksmith Forge",
         desc: "A working H'Mông community, not a demonstration village. Explore with a local guide, then watch (and try) the traditional blacksmith forge — tools still made the same way they've been made for generations. The forge runs whether we visit or not.",
         highlight: false,
       },
@@ -660,7 +767,7 @@ export const tours: Tour[] = [
       ],
     },
     faqs: [
-      { q: "Car or motorbike — which should I choose?", a: "Car if you want to focus on scenery, villages, and people without managing a vehicle. Motorbike if you want to feel the altitude physically — the pass at 2,050m on two wheels is a different experience entirely. Same itinerary either way." },
+      { q: "Car or motorbike — which should I choose?", a: "Car if you want to focus on scenery, villages, and people without managing a vehicle. Motorbike if you want to feel the altitude physically — the pass at 2,000m on two wheels is a different experience entirely. Same itinerary either way." },
       { q: "Do I need a motorbike licence?", a: "Yes for self-ride — a valid licence with motorcycle endorsement is required. If you want to ride pillion (backseat with our guide), no licence needed. Let us know when booking." },
       { q: "What type of bikes do you use?",  a: "Semi-automatic 125–150cc Hondas, well-maintained and suitable for mountain roads. The same bikes locals use on these roads every day." },
       { q: "How hard is the jungle trek on Day 2?", a: "Moderate. 6 hours on uneven forest trail with ~450m elevation gain. No technical sections — just long. Good footwear matters. If you can walk 3 hours comfortably, you can do this." },
@@ -677,36 +784,37 @@ export const tours: Tour[] = [
     tagline:     "The valley that rewards those who stay.",
     description: "Rice terraces, White Thai families, and challenges you won't find in any guidebook. One day minimum. Three days maximum. The valley decides.",
     duration:    ["1 Day", "2D1N", "3D2N"],
-    price:       "From $89/person",
-    priceUSD:    89,
+    price:       "From $81/person",
+    priceUSD:    81,
+    priceVND:    2030000,
 
     durationOptions: [
       {
         id:       "1day",
         label:    "1 Day",
-        price:    89,
+        price:    81,
         tagline:  "Hanoi → Thung Khe → Mai Châu → back by 10:30 PM",
-        ctaLabel: "I'm doing the 1-day →",
+        ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (1 Day, $89)",
+        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (1 Day, $81)",
       },
       {
         id:       "2d1n",
         label:    "2 Days 1 Night",
-        price:    151,
+        price:    134,
         tagline:  "Hanoi → Thung Khe → Mai Châu → overnight → back Day 2",
-        ctaLabel: "I'm doing the 2-day →",
+        ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (2 Days 1 Night, $151)",
+        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (2 Days 1 Night, $134)",
       },
       {
         id:       "3d2n",
         label:    "3 Days 2 Nights",
-        price:    233,
+        price:    211,
         tagline:  "Hanoi → Mai Châu → Pà Cò → Cao Phong → back Day 3",
-        ctaLabel: "I'm doing the 3-day →",
+        ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
-        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (3 Days 2 Nights, $233)",
+        waText:   "Hi Morning Vietnam — I'd like to book Unlock Mai Châu (3 Days 2 Nights, $211)",
       },
     ],
 
@@ -716,10 +824,9 @@ export const tours: Tour[] = [
         { icon: "tools-kitchen-2", label: "Meals",             value: "Included" },
         { icon: "bus",             label: "Transportation",    value: "Private van, round trip" },
         { icon: "user-check",      label: "Guide",             value: "Dedicated host, full day" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Mon & Fri · Flexible for groups of 3+" },
         { icon: "sun",             label: "Best season",       value: "Oct – Apr" },
-        { icon: "calendar-check",  label: "Free cancellation", value: "Up to 7 days before" },
         { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
-        { icon: "credit-card",     label: "Payment method",    value: "Cash" },
         { icon: "tag",             label: "Admission fee",     value: "Included" },
         { icon: "mountain",        label: "Maximum altitude",  value: "1,000m · Thung Khe Pass" },
       ],
@@ -729,10 +836,9 @@ export const tours: Tour[] = [
         { icon: "bus",             label: "Transportation",    value: "Private van, round trip" },
         { icon: "home",            label: "Accommodation",     value: "Homestay Trường Huy" },
         { icon: "user-check",      label: "Guide",             value: "Dedicated host, full trip" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Tue · Flexible for groups of 3+" },
         { icon: "sun",             label: "Best season",       value: "Oct – Apr" },
-        { icon: "calendar-check",  label: "Free cancellation", value: "Up to 7 days before" },
         { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
-        { icon: "credit-card",     label: "Payment method",    value: "Cash" },
         { icon: "tag",             label: "Admission fee",     value: "Included" },
         { icon: "mountain",        label: "Maximum altitude",  value: "1,200m · Chiều Cave area" },
       ],
@@ -742,10 +848,9 @@ export const tours: Tour[] = [
         { icon: "bus",             label: "Transportation",    value: "Private van, round trip" },
         { icon: "home",            label: "Accommodation",     value: "Night 1: Homestay Trường Huy · Night 2: A La Homestay" },
         { icon: "user-check",      label: "Guide",             value: "Dedicated host, full trip" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Tue · Flexible for groups of 3+" },
         { icon: "sun",             label: "Best season",       value: "Oct – Apr" },
-        { icon: "calendar-check",  label: "Free cancellation", value: "Up to 7 days before" },
         { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
-        { icon: "credit-card",     label: "Payment method",    value: "Cash" },
         { icon: "tag",             label: "Admission fee",     value: "Included" },
         { icon: "mountain",        label: "Maximum altitude",  value: "1,200m · Pà Cò" },
       ],
@@ -754,6 +859,7 @@ export const tours: Tour[] = [
     hub:         "Hanoi",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
+    selectorMode: 'duration-tabs',
     image:       "/tours/unlock-mai-chau/6.webp",
     gallery: [
       { src: "/tours/unlock-mai-chau/1.webp",  alt: "Unlock Mai Châu tour" },
@@ -1014,7 +1120,7 @@ export const tours: Tour[] = [
     name:        "Mai – Mộc in 1 Trip",
     region:      "north",
     duration:    ["3D2N"],
-    price:       "",
+    price:       "from $216",
     tagline:     "Two valleys, two ethnic groups, one trek most people never find.",
     description: "Mai Châu to Mộc Châu in three days. White Thai villages, a cave most tours don't climb to, natural hot springs, a night with a Hmong family at 1,200m, cloud hunting at dawn, and a forest trek connecting two villages that doesn't appear on any standard itinerary.",
     highlights: [
@@ -1041,15 +1147,17 @@ export const tours: Tour[] = [
       {
         id:       "3d2n",
         label:    "3 Days 2 Nights",
-        price:    null,
+        price:    216,
+        priceVND: 5660000,
         tagline:  "Hanoi → Mai Châu → Pà Cò → Hang Táu → back Day 3",
-        ctaLabel: "Send My Inquiry →",
+        ctaLabel: "I'm in →",
         ctaNote:  "Tell us your travel dates and group size — we'll get back to you within 24 hours.",
         waText:   "Hi Morning Vietnam — I'd like to inquire about Mai – Mộc in 1 Trip (3 Days 2 Nights)",
       },
     ],
 
-    priceUSD: null,
+    priceUSD: 216,
+    priceVND: 5660000,
 
     gallery: [
       { src: "/tours/mai-moc-in-1-trip/1.webp",  alt: "Mai – Mộc in 1 Trip" },
@@ -1204,6 +1312,7 @@ export const tours: Tour[] = [
     tripInfo: {
       "3d2n": [
         { icon: "map-pin",         label: "Meeting point",     value: "Old Quarter, 06:00" },
+        { icon: "calendar",        label: "Departure",         value: "Mon · Groups of 3+ can choose any day" },
         { icon: "tools-kitchen-2", label: "Meals",             value: "Included" },
         { icon: "bus",             label: "Transportation",    value: "Private van, round trip" },
         { icon: "home",            label: "Accommodation",     value: "Trường Huy + A La, Pà Cò" },
@@ -1540,6 +1649,1135 @@ export const tours: Tour[] = [
     seasonality: DEFAULT_SEASONALITY_NORTH,
     faqs:        DEFAULT_FAQS,
     unlockChallenge: null,
+  },
+
+  // ── Sa Pa Trekking Classic ───────────────────────────────────────────────
+  {
+    slug:        "sapa-trekking-classic",
+    name:        "Sa Pa Trekking Classic",
+    region:      "north",
+    duration:    ["2D1N"],
+    price:       "from $67",
+    priceUSD:    67,
+    priceVND:    1700000,
+    tagline:     "Two days through the Mường Hoa valley — Black H'Mông villages, rice terraces, and a night in Tả Van.",
+    description: "Hanoi sleeper bus to Sa Pa, then two days on foot through the Mường Hoa valley. Day 1 follows the classic route: Ý Linh Hồ, Lao Chải, Tả Van — Black H'Mông villages strung along the valley's terrace edges, ending with a night at a local H'Mông homestay. Day 2 continues to Giàng Tả Chải, explores the village, eats lunch in the bản, then returns to Sa Pa by car and back to Hanoi by evening bus. The most-trekked route in Sa Pa — done the right way.",
+    highlights: [
+      "Ý Linh Hồ, Lao Chải, Tả Van — three Black H'Mông villages in the Mường Hoa valley",
+      "Night in a local H'Mông homestay at Tả Van — dinner and breakfast with the family",
+      "Day 2: Giàng Tả Chải — bamboo forest, valley views, lunch in the village",
+      "Full circuit: Hanoi → Sa Pa → valley trek → homestay → Giàng Tả Chải → Hanoi",
+      "Unlock Challenge somewhere in the valley",
+      "Max 8 people — no joined groups",
+    ],
+    included: [
+      "Sleeper bus Hanoi ↔ Sa Pa (both ways)",
+      "Private car Sa Pa ↔ villages as needed",
+      "All meals: lunch + dinner Day 1 · breakfast + lunch Day 2",
+      "1 night H'Mông homestay · Tả Van village",
+      "Dedicated Morning Vietnam host, both days",
+      "All entrance & activity fees",
+      "Unlock Challenge",
+      "Welcome pack",
+    ],
+    hub:         "Hanoi",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-1.webp",
+
+    panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
+
+    gallery: [
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-1.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-2.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-3.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-4.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-5.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-6.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-7.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-8.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-9.webp",  alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-11.webp", alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-12.webp", alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-13.webp", alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-14.webp", alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-15.webp", alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-16.webp", alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-17.webp", alt: "Sa Pa Trekking Classic" },
+      { src: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-18.webp", alt: "Sa Pa Trekking Classic" },
+    ],
+
+    cabinUpgrade: {
+      labelOn:       "Private cabin (upgraded)",
+      labelOff:      "Standard sleeper bus",
+      surchargeVND:  200000,
+      surchargeUSD:  8,
+      surchargeNote: "+$4/person/way · Your own private sleeping cabin",
+    },
+
+    selectorMode: 'vehicle-only',
+    durationOptions: [
+      {
+        id:       "2d1n",
+        label:    "2D1N",
+        price:    67,
+        priceVND: 1700000,
+        tagline:  "Hanoi → Sa Pa · Ý Linh Hồ → Lao Chải → Tả Van homestay · Giàng Tả Chải → Hanoi.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa Trekking Classic (2D1N, $67/person)",
+      },
+    ],
+
+    tripInfo: {
+      "2d1n": [
+        { icon: "map-pin",         label: "Pickup",           value: "Old Quarter, Hanoi · 06:30 sleeper bus" },
+        { icon: "users",           label: "Group size",       value: "3 – 12 people" },
+        { icon: "car",             label: "Vehicle",          value: "Sleeper bus (HN ↔ Sa Pa) + private car + trekking" },
+        { icon: "tools-kitchen-2", label: "Meals",            value: "Lunch + dinner Day 1 · breakfast + lunch Day 2" },
+        { icon: "home",            label: "Accommodation",    value: "H'Mông local homestay · Tả Van village" },
+        { icon: "mountain",        label: "Max altitude",     value: "~1,500m · Sa Pa area" },
+        { icon: "calendar-check",  label: "Departure days",   value: "Mon · Flexible for groups of 3+" },
+        { icon: "lock-open",       label: "Unlock Challenge", value: "Included" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Day 1 — Hanoi → Sa Pa → Mường Hoa Valley → Tả Van",
+        slots: [
+          "06:30  Board sleeper bus · Old Quarter, Hanoi",
+          "13:30  Arrive Sa Pa · lunch at a local restaurant",
+          "14:30  Meet your Morning Vietnam host · Sa Pa town centre",
+          "14:45  Drive to Ý Linh Hồ trailhead",
+          "15:15  Trek begins — through Ý Linh Hồ (Black H'Mông) · terraced hillsides above Mường Hoa valley",
+          "16:00  Continue to Lao Chải — Black H'Mông village on the valley floor",
+          "17:00  Trek through rice terraces toward Tả Van",
+          "18:30  Arrive Tả Van · check in to H'Mông homestay",
+          "18:30 – 20:30  Dinner cooked by the host family · Tây Bắc style",
+          "Overnight · Tả Van homestay",
+        ],
+      },
+      {
+        day: 2,
+        title: "Day 2 — Tả Van → Giàng Tả Chải → Sa Pa → Hanoi",
+        slots: [
+          "08:00 – 08:45  Breakfast at the homestay",
+          "08:45 – 10:00  Trek from Tả Van to Giàng Tả Chải — bamboo forest, hillside path",
+          "10:00 – 12:00  Explore Giàng Tả Chải village · local life",
+          "12:00 – 13:00  Lunch at the village",
+          "13:00 – 15:15  Car back to Sa Pa town · free time",
+          "15:30  Board bus back to Hanoi",
+          "21:30 – 22:30  Arrive Hanoi Old Quarter · end of tour",
+        ],
+      },
+    ],
+
+    pitch: {
+      headline: "The Mường Hoa valley is Sa Pa's signature landscape. Most people see it from a minibus window. This is two days inside it.",
+      paragraphs: [
+        "The standard Sa Pa day tour goes roughly like this: minibus, viewpoint, one village loop, cable car optional. You cover ground quickly, you photograph a lot, and by evening you're back in town with a sense that you saw Sa Pa without quite having been in it.",
+        "The Trekking Classic runs a different logic. Day 1 starts late afternoon — you arrive from Hanoi, eat in town, then the walking begins at 14:45. Three villages in sequence: Ý Linh Hồ on the terraced hillside, Lao Chải in the valley, Tả Van where the path ends and the homestay begins. Dinner is cooked by the family. You sleep in the village.",
+        "Day 2 starts at 08:00 and goes deeper — through the bamboo forest to Giàng Tả Chải, a smaller, quieter settlement most tour groups don't reach. Lunch in the bản, then car back to Sa Pa and the evening bus to Hanoi. Two days, one valley, the full ground-level picture.",
+      ],
+      closingLine: "The Mường Hoa valley is exactly as good as people say. The trick is being in it, not above it.",
+    },
+
+    valueAnchor: {
+      "2d1n": {
+        headline: "$67. Two days in the Mường Hoa valley — Hanoi, three villages, homestay, all meals included.",
+        paragraphs: [
+          "Included: sleeper bus Hanoi ↔ Sa Pa (both ways), private car where needed, all meals from Day 1 lunch through Day 2 lunch, H'Mông homestay at Tả Van, dedicated host both days, Unlock Challenge, welcome pack. No hidden fees.",
+          "The standard market for this format — 2 days, Hanoi bus, homestay, guide — runs $56–89 depending on operator and group size. Morning Vietnam runs max 8 people, no joined groups, local host (not a hired agency guide). The price sits in the middle of the market for a product that's built differently.",
+        ],
+        compareTable: [
+          { metric: "Group size",       typical: "Up to 20+ (joined groups)", us: "Max 12 · no joined groups" },
+          { metric: "Guide",            typical: "Agency guide",              us: "Morning Vietnam local host" },
+          { metric: "Villages",         typical: "2 (Y Linh Ho + Ta Van)",    us: "3 + Giàng Tả Chải Day 2" },
+          { metric: "Homestay",         typical: "Basic bungalow or guesthouse", us: "H'Mông family homestay · Tả Van" },
+          { metric: "Meals",            typical: "Lunch only",                us: "Lunch + dinner + breakfast + lunch" },
+          { metric: "Unlock Challenge", typical: "Not available",             us: "Included" },
+        ],
+      },
+    },
+
+    storytelling: {
+      headline: "The Mường Hoa valley is where Sa Pa's landscape becomes something you walk through, not look at.",
+      paragraphs: [
+        "Sa Pa sits at 1,500m on the edge of the Hoàng Liên Sơn range. Below it, the Mường Hoa valley drops in a series of terraced steps — rice fields stacked against hillsides, cultivated by Black H'Mông families who have farmed this land for generations. The valley is about 20km long and 300m lower than the town above it. Most visitors see it from the top.",
+        "Ý Linh Hồ is the first village south of Sa Pa on the valley's eastern ridge — a Black H'Mông settlement at about 1,330m, perched where the terraces begin their descent. The path from here follows the terrace edges down through Lao Chải, another H'Mông village in the valley centre, and then across the valley floor to Tả Van at 1,070m. The entire descent covers roughly 8–10km on foot.",
+        "Tả Van is where the night is. The village sits at the meeting point of the Mường Hoa River and several smaller streams — a flat pocket of valley floor surrounded by terraces on three sides. The homestay is a working family home, not a guesthouse. Dinner is northwestern Vietnamese cooking: rice, vegetables, pork or chicken from the yard, rice wine if you want it.",
+        "Giàng Tả Chải on Day 2 is the furthest point into the valley on this route — a small H'Mông settlement across a bamboo-forested hillside from Tả Van. The path cuts through the forest before opening out onto views across the full width of the valley. Lunch is cooked in the village. The car back to Sa Pa takes 30–45 minutes from the main road. By late afternoon you're on the bus back to Hanoi.",
+      ],
+      pullImage: "/tours/lai-chau-motortour/1.webp",
+    },
+
+    elevationProfile: [
+      { time: "06:30", label: "Depart Hanoi",         elevation: 20,   icon: "van",     highlight: false, day: 1 },
+      { time: "13:30", label: "Sa Pa · lunch",         elevation: 1500, icon: "food",    highlight: false, day: 1 },
+      { time: "15:15", label: "Ý Linh Hồ · trek",    elevation: 1330, icon: "hike",    highlight: false, day: 1 },
+      { time: "16:00", label: "Lao Chải Village",       elevation: 1020, icon: "village", highlight: false, day: 1 },
+      { time: "17:00", label: "Rice terraces",         elevation: 1000, icon: "hike",    highlight: false, day: 1 },
+      { time: "18:30", label: "Tả Van · homestay",   elevation: 1070, icon: "resort",  highlight: true,  day: 1 },
+
+      { time: "08:45", label: "Bamboo forest trek",   elevation: 1000, icon: "hike",    highlight: false, day: 2 },
+      { time: "10:00", label: "Giàng Tả Chải Village", elevation: 990, icon: "village", highlight: true,  day: 2 },
+      { time: "12:00", label: "Lunch with locals",    elevation: 990,  icon: "food",    highlight: false, day: 2 },
+      { time: "13:30", label: "Car to Sa Pa",         elevation: 1500, icon: "van",     highlight: false, day: 2 },
+      { time: "15:30", label: "Hanoi",                elevation: 10,   icon: "return",  highlight: false, day: 2 },
+    ],
+    elevationMax: 1600,
+
+    activityCards: [
+      {
+        badge: "van", badgeLabel: "Night Bus",
+        time: "06:30 – 13:30 · Day 1",
+        title: "Hanoi to Sa Pa — Sleeper Bus",
+        desc: "The journey starts with a high-quality sleeper bus from Hanoi's Old Quarter at 06:30 — lie-flat berths, air conditioning, roughly 7 hours to Sa Pa. You arrive in time for a late lunch before meeting your host and starting the afternoon trek. The same bus brings you back on Day 2 evening, departing Sa Pa at 15:30 and arriving Hanoi by 21:30.",
+        highlight: false,
+      },
+      {
+        badge: "hike", badgeLabel: "Trek",
+        time: "15:15 – 18:30 · Day 1",
+        title: "Ý Linh Hồ → Lao Chải → Tả Van",
+        desc: "The main trek of Day 1 covers three villages in sequence, descending roughly 430m through the Mường Hoa valley. Starting at Ý Linh Hồ (1,330m) — a Black H'Mông settlement on the terrace hillside — the path drops through open rice fields to Lao Chải (1,100m), another H'Mông village in the valley centre. From there it follows the valley floor through terraced paddies to Tả Van (1,070m). About 8–10km on foot, 3 hours including rests. The classic Sa Pa trekking route — walked by locals for generations, not built for tourism.",
+        highlight: true,
+      },
+      {
+        badge: "resort", badgeLabel: "Homestay",
+        time: "18:30 – 08:00 · Night",
+        title: "Tả Van — H'Mông Homestay",
+        desc: "The night is at a local H'Mông family homestay in Tả Van village. Dinner is cooked by the host: rice, vegetables from the garden, pork or chicken, northwestern Vietnamese dishes. The house is a working family home — wooden construction, communal dining, shared sleeping arrangements in the traditional style. Breakfast in the morning before the Day 2 trek departs. Tả Van sits at 1,070m at the valley floor — in clear weather, the terrace hillsides above the village are visible from the front of the house.",
+        highlight: true,
+      },
+      {
+        badge: "hike", badgeLabel: "Trek",
+        time: "08:45 – 10:00 · Day 2",
+        title: "Tả Van to Giàng Tả Chải — Through the Bamboo Forest",
+        desc: "Day 2's trek is shorter and quieter than Day 1's. The path from Tả Van climbs slightly before entering a section of dense bamboo forest — cool, canopied, a different texture from the open terrace walking of the previous afternoon. After the forest the route opens onto a hillside with views across the full width of the Mường Hoa valley before descending to Giàng Tả Chải at 990m. About 75 minutes of walking.",
+        highlight: false,
+      },
+      {
+        badge: "village", badgeLabel: "Village",
+        time: "10:00 – 13:00 · Day 2",
+        title: "Giàng Tả Chải — The End of the Valley",
+        desc: "Giàng Tả Chải is a Black H'Mông village at the far end of the valley circuit — smaller and less visited than Tả Van or Lao Chải. The path into the village crosses a small bridge over the Mường Hoa River. Time here is unstructured: walking through the village, talking to the families through your host, watching what's happening at the time of year you arrive. Lunch is cooked in the bản — rice, local vegetables, whatever's in season. The Unlock Challenge runs somewhere in this window.",
+        highlight: true,
+      },
+      {
+        badge: "van", badgeLabel: "Return",
+        time: "13:00 – 15:30 · Day 2",
+        title: "Back to Sa Pa — Free Time Before Bus",
+        desc: "The car picks up at the main road above Giàng Tả Chải and takes 30–45 minutes to reach Sa Pa town. From 13:00 to 15:30 is free time — use it however you want: coffee at a local café, walking the Sa Pa market, or just sitting at the viewpoint before the bus south. The evening bus departs at 15:30 and arrives in Hanoi Old Quarter by 21:30.",
+        highlight: false,
+      },
+    ],
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "Your host hands you a Morning Vietnam pack at the start of the trek. One item was chosen specifically for a day that ends in someone else's house.",
+    },
+
+    seasonality: {
+      intro: "The Mường Hoa valley is walkable year-round. What changes is what the terraces look like and how the path feels underfoot.",
+      months: [
+        { name: "Jan", level: "good" },
+        { name: "Feb", level: "good" },
+        { name: "Mar", level: "good" },
+        { name: "Apr", level: "good" },
+        { name: "May", level: "best" },
+        { name: "Jun", level: "best" },
+        { name: "Jul", level: "best" },
+        { name: "Aug", level: "best" },
+        { name: "Sep", level: "best" },
+        { name: "Oct", level: "best" },
+        { name: "Nov", level: "good" },
+        { name: "Dec", level: "good" },
+      ],
+      notes: [
+        { title: "Rice season (May – Oct)", desc: "May–Jun: flooded terraces, mirror reflections, transplanting season. Jul–Aug: full green growth, mist and cloud. Sep–Oct: golden harvest — the most photographed period in Sa Pa, for good reason. The trail is muddier after rain but the valley is at its most alive." },
+        { title: "Dry season (Nov – Apr)", desc: "Drier, clearer, easier underfoot. Jan–Feb brings cold and occasional frost at altitude — the homestay is warmer than it looks. Mar–Apr: plum and peach blossom season, the terraces start to green up. Fewer tourists than peak season." },
+      ],
+    },
+
+    faqs: [
+      { q: "How difficult is the trekking?", a: "Moderate. Day 1 is roughly 8–10km downhill through the Mường Hoa valley — 3 hours of walking with elevation loss of about 430m. Day 2 is shorter (5–6km, 75 min to Giàng Tả Chải). Paths are mostly dirt and uneven in places, particularly after rain. Suitable for anyone with normal fitness. Not recommended for people with knee issues (Day 1 descent). Trekking poles are useful but not required." },
+      { q: "What is the homestay like?", a: "A local H'Mông family home in Tả Van village — wooden construction, basic facilities, communal sleeping area. Not a guesthouse or bungalow. You eat with the family, sleep under the same roof, and leave in the morning. If you're expecting hotel-style amenities, this isn't the right tour. If you want to understand what Tả Van actually is, this is the only way to do it." },
+      { q: "What's included in the price?", a: "Sleeper bus Hanoi ↔ Sa Pa (both ways), private car where needed, all meals from Day 1 lunch through Day 2 lunch (4 meals total), H'Mông homestay at Tả Van, dedicated Morning Vietnam host for both days, all entrance and activity fees, Unlock Challenge, welcome pack. The only extras are personal spending and tips." },
+      { q: "Can I join this tour solo?", a: "Yes — we run joined groups of up to 8 people, so solo travelers book the same way as groups. Minimum 3 people to confirm departure. If you're traveling alone and want to guarantee a specific date, contact us and we'll confirm availability." },
+      { q: "What's the best time of year?", a: "Sep–Oct for golden rice terraces. May–Jun for flooded mirror fields. Mar–Apr for blossom season and clear skies. The route is walkable year-round — Dec–Feb is cold (3–7°C at night in the valley) but doable with layers." },
+    ],
+
+    unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+  },
+
+  // ── Sa Pa · Nậm Cang ─────────────────────────────────────────────────────
+  {
+    slug:        "sapa-nam-cang",
+    name:        "Sa Pa · Nậm Cang",
+    region:      "north",
+    duration:    ["1 Day", "2D1N"],
+    price:       "from $52",
+    priceUSD:    52,
+    priceVND:    1310000,
+    tagline:     "Terraced rice fields, a Red Dao village, and a valley most Sa Pa visitors never reach — one day or two.",
+    description: "Leave Sa Pa and trek into Nậm Cang — a Red Dao village 30km south, deep in the Hoàng Liên Sơn range, sitting at the edge of terraced fields that drop in layers toward the valley floor. One day covers the route from Nậm Sài through the rice terraces to the village. Two days starts from Hanoi, adds a night in a Black H'Mông homestay at Tả Van, and approaches Nậm Cang from Giàng Tả Chải across a longer trekking route.",
+    highlights: [
+      "Nậm Cang — Red Dao village in the Hoàng Liên Sơn, 30km from Sa Pa town",
+      "Terraced rice fields: trekking through the paddies, not photographing them from a viewpoint",
+      "1 Day: trek from Nậm Sài through rice terraces direct to Nậm Cang",
+      "2D1N: Hanoi → Ý Linh Hồ → Tả Van (Black H'Mông homestay) → Giàng Tả Chải → Nậm Cang",
+      "Red Dao culture: traditional dress, embroidery, medicinal herb knowledge",
+      "Herb bath (Red Dao herbal soak) — included on 2D1N return to Sa Pa",
+      "Unlock Challenge in the valley",
+    ],
+    included: [
+      "Transport Sa Pa ↔ Nậm Cang (1 Day) / Hanoi ↔ Sa Pa sleeper bus + private car (2D1N)",
+      "All meals: lunch (1 Day) · lunch + dinner + breakfast (2D1N)",
+      "Homestay at Tả Van (2D1N only)",
+      "Red Dao herbal bath in Sa Pa (2D1N only)",
+      "Dedicated Morning Vietnam host, full day",
+      "All activity & entrance fees",
+      "Unlock Challenge",
+      "Welcome pack",
+    ],
+    hub:         "Sa Pa",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/lai-chau-motortour/3.webp",
+    selectorMode: 'duration-tabs',
+
+    durationOptions: [
+      {
+        id:       "1day",
+        label:    "1 Day",
+        price:    52,
+        tagline:  "Sa Pa → Nậm Sài → rice terrace trek → Nậm Cang Red Dao village → back to Sa Pa by 17:30.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Nậm Cang (1 Day, $52/person)",
+      },
+      {
+        id:       "2d1n",
+        label:    "2D1N",
+        price:    111,
+        tagline:  "Hanoi → Sa Pa · Ý Linh Hồ trek → Tả Van homestay · Giàng Tả Chải → Nậm Cang · Red Dao herb bath → Sa Pa.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Sa Pa · Nậm Cang (2D1N, $111/person)",
+      },
+    ],
+
+    tripInfo: {
+      "1day": [
+        { icon: "map-pin",         label: "Meeting point",    value: "Sa Pa town centre · 08:30" },
+        { icon: "users",           label: "Group size",       value: "3 – 12 people" },
+        { icon: "car",             label: "Vehicle",          value: "Private car to Nậm Sài · trekking from there" },
+        { icon: "tools-kitchen-2", label: "Meals",            value: "Lunch at Nậm Cang included" },
+        { icon: "mountain",        label: "Max altitude",     value: "~1,500m · Sa Pa area" },
+        { icon: "calendar-check",  label: "Departure days",   value: "Thu & Sat · Flexible for groups of 3+" },
+        { icon: "lock-open",       label: "Unlock Challenge", value: "Included" },
+      ],
+      "2d1n": [
+        { icon: "map-pin",         label: "Pickup",           value: "Old Quarter, Hanoi · 06:30 sleeper bus" },
+        { icon: "users",           label: "Group size",       value: "3 – 12 people" },
+        { icon: "car",             label: "Vehicle",          value: "Sleeper bus (HN ↔ Sa Pa) + private car + trekking" },
+        { icon: "tools-kitchen-2", label: "Meals",            value: "Lunch Day 1 + dinner + breakfast + lunch Day 2" },
+        { icon: "home",            label: "Accommodation",    value: "Local H'Mông homestay · Tả Van village" },
+        { icon: "leaf",            label: "Herb bath",        value: "Red Dao herbal bath in Sa Pa (Day 2)" },
+        { icon: "mountain",        label: "Max altitude",     value: "~1,500m · Sa Pa area" },
+        { icon: "calendar-check",  label: "Departure days",   value: "Tue · Flexible for groups of 3+" },
+        { icon: "lock-open",       label: "Unlock Challenge", value: "Included" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "1 Day — Nậm Sài to Nậm Cang",
+        slots: [
+          "08:30  Meet at Sa Pa town centre · vehicle check",
+          "08:30 – 10:00  Drive to Nậm Sài (1h30)",
+          "10:00  Trek begins — through rice terraces toward Nậm Cang",
+          "12:00  Arrive Nậm Cang · lunch at a local family",
+          "13:30 – 15:00  Explore the village · Red Dao culture and daily life",
+          "15:00 – 16:00  Deep into the terraced fields at Nậm Cang · photography",
+          "16:00 – 17:30  Drive back to Sa Pa town centre",
+        ],
+      },
+      {
+        day: 0,
+        title: "2D1N · Day 0 — Hanoi → Sa Pa",
+        slots: [
+          "06:30  Board high-quality sleeper bus · Old Quarter, Hanoi",
+          "13:00  Arrive Sa Pa · lunch at a local restaurant",
+          "14:30  Meet your Morning Vietnam host · Sa Pa town centre",
+          "14:45  Drive to Ý Linh Hồ trailhead",
+          "15:15  Trek begins — through Ý Linh Hồ (Black H'Mông village) · wild terraced hillsides",
+          "18:30  Arrive Tả Van village · rest and dinner at homestay",
+          "20:30  Sleep at local H'Mông homestay · Tả Van",
+        ],
+      },
+      {
+        day: 2,
+        title: "2D1N · Day 2 — Tả Van to Nậm Cang",
+        slots: [
+          "08:00 – 08:30  Breakfast at the homestay",
+          "08:30 – 10:30  Trek from Tả Van to Giàng Tả Chải",
+          "10:30 – 11:30  Drive from Giàng Tả Chải to Nậm Sài",
+          "11:30 – 13:30  Trek through Nậm Cang rice terraces",
+          "13:30 – 14:30  Lunch at Nậm Cang · rest",
+          "14:30 – 16:00  Explore Nậm Cang village · Red Dao culture",
+          "16:00 – 16:45  Photography in the terraced fields",
+          "16:45 – 17:45  Drive back to Sa Pa town centre",
+          "17:45 – 18:45  Red Dao herbal bath in Sa Pa",
+          "18:45 – 22:00  Free time in Sa Pa · explore the night market",
+        ],
+      },
+    ],
+
+    pitch: {
+      "1day": {
+        headline: "Sa Pa has a hundred trekking routes. Nậm Cang is the one the coach tours don't reach.",
+        paragraphs: [
+          "The standard Sa Pa day involves a minibus, a viewpoint, Cat Cat Village, and a cable car queue. Nậm Cang is 30km further south — past the road the coaches take — in a valley where the rice terraces are still farmed by Red Dao families who have lived here for generations. No gift shops at the trailhead. No entrance gate. Just the fields, the village, and a morning's walk to get there.",
+          "The 1-day route starts at Nậm Sài and follows the terrace edges all the way to Nậm Cang. Two hours of walking that covers more actual Sa Pa landscape than most visitors see in a week. Lunch is cooked at the village. The Unlock Challenge runs in the afternoon, in the fields.",
+        ],
+        closingLine: "One day. The valley without the crowds.",
+      },
+      "2d1n": {
+        headline: "Two days. Hanoi to three villages, two ethnic groups, and a valley most Sa Pa itineraries miss entirely.",
+        paragraphs: [
+          "The 2D1N starts in Hanoi — sleeper bus north, arrive in Sa Pa by early afternoon. From the town centre you trek straight into the Mường Hoa valley via Ý Linh Hồ, a Black H'Mông settlement on the hillside above the rice terraces. By sunset you're at Tả Van: dinner cooked at the homestay, rice wine, and a morning that comes with cloud on the peaks.",
+          "Day 2 moves further. Trek from Tả Van across to Giàng Tả Chải, then car to Nậm Sài, then on foot into Nậm Cang. The Red Dao community here is distinct from anything in the Mường Hoa valley — different dress, different crafts, different relationship with the mountain. Lunch in the village, time in the fields, back to Sa Pa by late afternoon. The day ends with a Red Dao herbal bath — a ritual the local women have been practising for centuries, and one of the genuinely good ways to end two days of walking.",
+        ],
+        closingLine: "Three villages. Two nights. The Sa Pa most visitors go home having missed.",
+      },
+    },
+
+    valueAnchor: {
+      "1day": {
+        headline: "$52. A full day in Nậm Cang — the valley the coach tours don't reach.",
+        paragraphs: [
+          "Included: private car Sa Pa ↔ Nậm Sài, full trekking route through the terraces, lunch at the village, dedicated Morning Vietnam host, Unlock Challenge, welcome pack. Min group 3, max 12.",
+          "Standard Sa Pa day tours charge $20–35 for Cat Cat Village + a viewpoint stop. This covers a route those operators don't run — because they don't have the local contacts to run it.",
+        ],
+        compareTable: [
+          { metric: "Route",             typical: "Cat Cat / Fansipan circuit",        us: "Nậm Sài → Nậm Cang terraces" },
+          { metric: "Village access",    typical: "Tourist village with gift shops",   us: "Working Red Dao community" },
+          { metric: "Trekking",          typical: "30–60 min paved path",             us: "2h+ through rice terrace edges" },
+          { metric: "Lunch",             typical: "Restaurant in Sa Pa town",         us: "Cooked in the village" },
+          { metric: "Unlock Challenge",  typical: "Not available",                    us: "Included" },
+        ],
+      },
+      "2d1n": {
+        headline: "$111. Two full days — Hanoi, three villages, two ethnic groups, everything included.",
+        paragraphs: [
+          "Included: sleeper bus Hanoi ↔ Sa Pa (both ways), private car on both days, all meals from Day 1 lunch through Day 2 dinner, H'Mông homestay at Tả Van, Red Dao herbal bath in Sa Pa, all activity fees, dedicated host, Unlock Challenge, welcome pack.",
+          "The comparable product elsewhere — bus + basic homestay + one guided walk — costs $80–100 and covers a fraction of the ground.",
+        ],
+        compareTable: [
+          { metric: "Villages visited",  typical: "1 (usually Cat Cat)",              us: "3 — Ý Linh Hồ, Tả Van, Nậm Cang" },
+          { metric: "Ethnic groups",     typical: "H'Mông (tourist circuit)",         us: "Black H'Mông + Red Dao" },
+          { metric: "Trekking",          typical: "Paved loop, 1–2h",                us: "Full day each day, proper trail" },
+          { metric: "Homestay",          typical: "Tourist homestay near Sa Pa town", us: "Local family · Tả Van village" },
+          { metric: "Herb bath",         typical: "Extra cost, tourist spa",          us: "Included · Red Dao practitioner" },
+          { metric: "Unlock Challenge",  typical: "Not available",                    us: "Included" },
+        ],
+      },
+    },
+
+    storytelling: {
+      headline: "Nậm Cang is where the Sa Pa tourist circuit ends and the real valley begins.",
+      paragraphs: [
+        "Most of the trekking routes out of Sa Pa converge on the same few villages within a few kilometres of town — places that have adjusted to tourism so thoroughly that the experience of 'local life' is largely a performance. Nậm Cang sits 30km further south, past the road the minibuses use, in a section of the Hoàng Liên Sơn range where the Red Dao community has had very little reason to rearrange itself for visitors.",
+        "The Red Dao are distinct from the H'Mông communities closer to Sa Pa town. The women's embroidery is more intricate, the headwear more elaborate, the knowledge of medicinal herbs deeper and more practically alive — the herbal bath tradition isn't a wellness product here, it's a functional practice that's been passed down for generations. You encounter all of this in the context of working village life, not a demonstration staged for tour groups.",
+        "The 2D1N route adds the Mường Hoa valley approach — through Ý Linh Hồ, a Black H'Mông settlement on the terrace edges above the valley floor, down to Tả Van for the night. Day 2 crosses from Tả Van to Giàng Tả Chải on foot, then connects to Nậm Cang by road and trail. Two days of walking that cover the full range of what the Sa Pa area actually contains, before most visitors have made it past the cable car.",
+      ],
+      pullImage: "/tours/lai-chau-motortour/3.webp",
+    },
+
+    elevationProfile: [
+      // ── 1 Day ────────────────────────────────────────────────────────────
+      { time: "08:30", label: "Sa Pa · meet",          elevation: 1500, icon: "resort",  highlight: false, durationOnly: "1day" },
+      { time: "10:00", label: "Nậm Sài · trek start", elevation: 868,  icon: "hike",    highlight: false, durationOnly: "1day" },
+      { time: "12:00", label: "Nậm Cang · lunch",     elevation: 660,  icon: "food",    highlight: true,  durationOnly: "1day" },
+      { time: "14:30", label: "Red Dao village",       elevation: 800,  icon: "village", highlight: true,  durationOnly: "1day" },
+      { time: "16:00", label: "Terraced fields",       elevation: 760,  icon: "free",    highlight: false, durationOnly: "1day" },
+      { time: "17:30", label: "Back in Sa Pa",         elevation: 1500, icon: "resort",  highlight: false, durationOnly: "1day" },
+
+      // ── 2D1N · Day 1 ─────────────────────────────────────────────────────
+      { time: "06:30", label: "Depart Hanoi",          elevation: 20,   icon: "van",     highlight: false, durationOnly: "2d1n", day: 1 },
+      { time: "13:30", label: "Arrive Sa Pa · lunch",  elevation: 1500, icon: "food",    highlight: false, durationOnly: "2d1n", day: 1 },
+      { time: "15:15", label: "Ý Linh Hồ · trek",    elevation: 1330, icon: "hike",    highlight: false, durationOnly: "2d1n", day: 1 },
+      { time: "17:00", label: "Mường Hoa valley",     elevation: 1050, icon: "hike",    highlight: false, durationOnly: "2d1n", day: 1 },
+      { time: "18:30", label: "Tả Van · homestay",    elevation: 1070, icon: "resort",  highlight: true,  durationOnly: "2d1n", day: 1 },
+
+      // ── 2D1N · Day 2 ─────────────────────────────────────────────────────
+      { time: "08:30", label: "Giàng Tả Chải · trek", elevation: 990,  icon: "hike",    highlight: false, durationOnly: "2d1n", day: 2 },
+      { time: "10:30", label: "Drive to Nậm Sài",     elevation: 868,  icon: "van",     highlight: false, durationOnly: "2d1n", day: 2 },
+      { time: "11:30", label: "Rice terrace trek",     elevation: 780,  icon: "hike",    highlight: false, durationOnly: "2d1n", day: 2 },
+      { time: "13:30", label: "Nậm Cang · lunch",     elevation: 660,  icon: "food",    highlight: true,  durationOnly: "2d1n", day: 2 },
+      { time: "15:00", label: "Red Dao village",       elevation: 800,  icon: "village", highlight: true,  durationOnly: "2d1n", day: 2 },
+      { time: "16:00", label: "Terraced fields",       elevation: 760,  icon: "free",    highlight: false, durationOnly: "2d1n", day: 2 },
+      { time: "17:45", label: "Sa Pa · herb bath",    elevation: 1500, icon: "free",    highlight: true,  durationOnly: "2d1n", day: 2 },
+    ],
+    elevationMax: 1600,
+
+    activityCards: [
+      // ── 1 Day ─────────────────────────────────────────────────────────────
+      {
+        badge: "van", badgeLabel: "Drive",
+        time: "08:30 – 10:00 · 1 Day",
+        title: "Sa Pa to Nậm Sài — The Road South",
+        desc: "The drive from Sa Pa toward Nậm Sài takes 90 minutes along mountain roads that most tour vehicles never use. The route drops out of the Sa Pa plateau and into a lower valley system — the air changes, the vegetation changes, and the tourist circuit falls away behind you. Nậm Sài is a small H'Mông settlement at 868m, at the edge of the terrace system that connects down to Nậm Cang. This is where you leave the car and start walking.",
+        highlight: false,
+        durationOnly: "1day",
+      },
+      {
+        badge: "trek", badgeLabel: "Trek",
+        time: "10:00 – 12:00 · 1 Day",
+        title: "Nậm Sài to Nậm Cang — Through the Terraces",
+        desc: "Two hours on foot through working rice terraces — not a loop trail, not a viewpoint path. The route descends from Nậm Sài at 868m to the Nậm Cang valley at 660m, following the edges of paddy fields that are actively farmed. The landscape is season-dependent: mirror-flat flooded fields in May, vivid green in July and August, deep gold in September and October. The trail is narrow in places and uneven underfoot — this is not a paved circuit. No other tour groups use this route.",
+        highlight: true,
+        durationOnly: "1day",
+      },
+      {
+        badge: "food", badgeLabel: "Lunch",
+        time: "12:00 – 13:30 · 1 Day",
+        title: "Lunch at Nậm Cang — Cooked in the Village",
+        desc: "Lunch is prepared by a Red Dao family in Nậm Cang — rice, local vegetables, whatever the season offers. Not a restaurant, not a tourist set menu. You eat in or around the family home, with time to sit and recover from the walk before the afternoon in the village. The food is simple and good. The setting is the point.",
+        highlight: false,
+        durationOnly: "1day",
+      },
+      {
+        badge: "village", badgeLabel: "Village",
+        time: "13:30 – 16:00 · 1 Day",
+        title: "Nậm Cang — Red Dao Village",
+        desc: "The Red Dao in Nậm Cang are one of the few communities in the Sa Pa region that have had limited exposure to organised tourism. The women's hand-embroidered indigo garments and layered headdresses are worn daily — not for visitors. The community maintains traditional herb gardens, practices indigo dyeing, and passes down medicinal knowledge through the women's line. Your host walks you through the village with introductions to the families, not a guided tour of crafts for sale.",
+        highlight: true,
+        durationOnly: "1day",
+      },
+      {
+        badge: "free", badgeLabel: "Fields",
+        time: "16:00 – 17:30 · 1 Day",
+        title: "Terraced Fields — Last Light",
+        desc: "The final stretch before the drive back is unstructured time in the terraced fields above the village — the best light of the day, no schedule pressure, and the Unlock Challenge running somewhere in this window. The terraces at Nậm Cang are less photographed than those in the Mường Hoa valley, which means you have them to yourself. The drive back to Sa Pa takes about an hour from here.",
+        highlight: false,
+        durationOnly: "1day",
+      },
+
+      // ── 2D1N ──────────────────────────────────────────────────────────────
+      {
+        badge: "van", badgeLabel: "Night Bus",
+        time: "06:30 – 13:30 · Day 1 (2D1N)",
+        title: "Hanoi to Sa Pa — Sleeper Bus Overnight",
+        desc: "The 2D1N starts with a high-quality sleeper bus from Hanoi's Old Quarter at 06:30 — not the cheapest option on the road, and worth it. Lie-flat berths, air conditioning, roughly 7 hours. You arrive in Sa Pa by early afternoon, eat lunch, and meet your host before the afternoon trek begins. It's a long travel day compressed into a window that leaves both days free for walking.",
+        highlight: false,
+        durationOnly: "2d1n",
+      },
+      {
+        badge: "hike", badgeLabel: "Trek",
+        time: "15:15 – 18:30 · Day 1 (2D1N)",
+        title: "Ý Linh Hồ to Tả Van — Mường Hoa Valley Descent",
+        desc: "The afternoon of Day 1 is the full Mường Hoa valley descent — starting at Ý Linh Hồ (1,330m), a Black H'Mông settlement on the terrace hillside, and ending at Tả Van on the valley floor (1,070m). Three hours of walking through wild rice terraces, bamboo forest, and open hillside with the Hoàng Liên Sơn peaks above. This is the classic Sa Pa trekking landscape — unmodified and mostly free of tourist infrastructure. You arrive at the homestay as the light leaves the mountains.",
+        highlight: true,
+        durationOnly: "2d1n",
+      },
+      {
+        badge: "resort", badgeLabel: "Homestay",
+        time: "18:30 – 08:00 · Night (2D1N)",
+        title: "Tả Van Homestay — H'Mông Family",
+        desc: "The night is spent at a local H'Mông family homestay in Tả Van — a village at the bottom of the Mường Hoa valley. Dinner is cooked by the family: rice, vegetables grown in the valley, occasionally chicken or pork. The house is traditional in structure. The experience is not curated — you sleep in a family home in a working village, not a boutique property. In the morning you eat breakfast with the family and set out on foot toward Giàng Tả Chải.",
+        highlight: true,
+        durationOnly: "2d1n",
+      },
+      {
+        badge: "hike", badgeLabel: "Trek",
+        time: "08:30 – 10:30 · Day 2 (2D1N)",
+        title: "Tả Van to Giàng Tả Chải — Morning Trek",
+        desc: "Day 2 starts on foot from the homestay. The route crosses from Tả Van to Giàng Tả Chải — two hours through the lower valley, rice fields, and a section of forested hillside. At 990m, Giàng Tả Chải sits slightly above Tả Van. The morning light on the terraces is the best of the day. From Giàng Tả Chải you board a vehicle for the drive to Nậm Sài, where the second major trek begins.",
+        highlight: false,
+        durationOnly: "2d1n",
+      },
+      {
+        badge: "trek", badgeLabel: "Trek",
+        time: "11:30 – 13:30 · Day 2 (2D1N)",
+        title: "Nậm Sài to Nậm Cang — The Terrace Route",
+        desc: "The same route the 1 Day option uses — from Nậm Sài at 868m down through the rice terraces to Nậm Cang at 660m. After a morning of walking from the homestay, this is the second half of a full day on foot. The Nậm Cang terraces are quieter and less visited than those in the Mường Hoa valley. The route is narrow, uneven, and passes through working paddy fields. No other tour groups are on it.",
+        highlight: true,
+        durationOnly: "2d1n",
+      },
+      {
+        badge: "village", badgeLabel: "Village",
+        time: "13:30 – 16:45 · Day 2 (2D1N)",
+        title: "Nậm Cang — Red Dao Community & Terraced Fields",
+        desc: "Lunch in the village, then time with the Red Dao community — the same cultural experience as the 1 Day option, but arrived at after two days of walking through three distinct ethnic communities: Black H'Mông at Ý Linh Hồ, H'Mông at Tả Van, and Red Dao here. The contrast is the point. The Unlock Challenge runs in the terraced fields in the afternoon before the drive back to Sa Pa.",
+        highlight: true,
+        durationOnly: "2d1n",
+      },
+      {
+        badge: "free", badgeLabel: "Herb Bath",
+        time: "17:45 – 18:45 · Day 2 (2D1N)",
+        title: "Red Dao Herbal Bath — Sa Pa",
+        desc: "The day ends with a Red Dao herbal bath in Sa Pa — a blend of 10–12 mountain herbs prepared by Red Dao women, used for centuries to treat muscle fatigue and joint pain after fieldwork. The preparation is authentic: the herbs are the same ones used in the villages, sourced from the hills above Sa Pa, not a commercial formula. About 45 minutes in a wooden tub. After two full days of trekking through the valley, the timing makes sense.",
+        highlight: true,
+        durationOnly: "2d1n",
+      },
+    ],
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "At the start of the day, your host hands you a Morning Vietnam pack. One item earns its place on the terrace walk.",
+    },
+
+    seasonality: {
+      intro: "Nậm Cang's rice terraces change dramatically by season. The route is walkable year-round — what you see changes everything.",
+      months: [
+        { name: "Jan", level: "good" },
+        { name: "Feb", level: "good" },
+        { name: "Mar", level: "good" },
+        { name: "Apr", level: "good" },
+        { name: "May", level: "best" },
+        { name: "Jun", level: "best" },
+        { name: "Jul", level: "best" },
+        { name: "Aug", level: "best" },
+        { name: "Sep", level: "best" },
+        { name: "Oct", level: "best" },
+        { name: "Nov", level: "good" },
+        { name: "Dec", level: "good" },
+      ],
+      notes: [
+        { title: "Rice season peak (May – Oct)", desc: "May–Jun: flooded fields, mirror reflections, transplanting season — the terraces are at their most alive. Jul–Aug: vivid green, full growth, cloud season (expect mist — it adds to the atmosphere). Sep–Oct: golden harvest, the most photographed landscape in northern Vietnam. This is the window most people come for." },
+        { title: "Dry season (Nov – Apr)", desc: "The terraces are quieter and drier. Jan–Feb can bring cold fog and occasional frost at altitude — bring layers. Mar–Apr: plum and peach blossoms in the valley. The trek is easier underfoot, the light is cleaner, and the village is calmer. A different experience, not a worse one." },
+      ],
+    },
+
+    faqs: [
+      { q: "Which option should I choose — 1 Day or 2D1N?", a: "1 Day is right if you're based in Sa Pa and want a full day in the Nậm Cang valley without the overnight. 2D1N is the fuller picture: it starts from Hanoi, adds the Mường Hoa valley approach via Ý Linh Hồ and Tả Van, and covers two different ethnic communities (Black H'Mông + Red Dao) across two days of proper trekking. The herb bath on Day 2 is a good reason to choose it on its own." },
+      { q: "How hard is the trekking?", a: "Moderate — suitable for anyone with reasonable fitness. The 1 Day route is 2–3 hours of walking on uneven terrace paths with some elevation change. The 2D1N adds a longer Day 1 descent (3h+) through the Mường Hoa valley. No technical sections. Trekking poles are useful but not required. Minimum age 12." },
+      { q: "What is the Red Dao herbal bath?", a: "A medicinal bath using a blend of 10–12 mountain herbs traditionally prepared by Red Dao women — used for centuries to treat fatigue and sore muscles after fieldwork. On the 2D1N, it's included at the end of Day 2 in Sa Pa. About 45 minutes of soaking in a wooden tub. You'll want it after two days of walking." },
+      { q: "What is the best time of year for the rice terraces?", a: "Sep–Oct for golden harvest colour. May–Jun for flooded mirror-field reflections during transplanting season. Jul–Aug for vivid green and moody cloud conditions. The route is walkable year-round — what changes is what the terraces look like." },
+      ...DEFAULT_FAQS.slice(2),
+    ],
+
+    unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+  },
+
+  // ── Into Nậm Lúc Waterfall ───────────────────────────────────────────────
+  {
+    slug:        "into-nam-luc",
+    name:        "Into Nậm Lúc Waterfall",
+    region:      "north",
+    duration:    ["1 Day"],
+    price:       "from $63",
+    priceUSD:    63,
+    priceVND:    1600000,
+    tagline:     "A limestone cave, a jungle trek to an untouched waterfall, and the highest viewpoint in Lai Châu — all in one day from Sa Pa.",
+    description: "Leave Sa Pa at dawn. Visit Tiên Sơn Cave, then ride motorbike taxis deep into the jungle to the trailhead at 430m. Trek up through primary forest — gaining 470 metres of altitude — to Nậm Lúc Waterfall, swim, eat lunch among the trees, then push to the summit at 900m. Car option ends at Linh Ứng Temple (1,250m) — the best sunset view in all of Lai Châu. Back in Sa Pa by evening.",
+    highlights: [
+      "Tiên Sơn Cave — limestone cave system",
+      "Motorbike taxi into jungle — trailhead at 430m, arranged by Morning Vietnam",
+      "Full trek: 430m (trailhead) → 900m (summit) through primary forest",
+      "Swim at Nậm Lúc Waterfall — jungle lunch at the falls",
+      "Car option: Linh Ứng Temple at 1,250m — sunset over Lai Châu city",
+      "Day trip from Sa Pa, back by evening",
+    ],
+    included: [
+      "Transport Sa Pa → Lai Châu → Sa Pa",
+      "Motorbike taxi to & from waterfall trailhead (arranged, included)",
+      "Cave entrance fee",
+      "Jungle lunch at the waterfall",
+      "Dedicated Morning Vietnam host, full day",
+      "Unlock Challenge",
+      "Welcome pack",
+    ],
+    hub:         "Sa Pa",
+    hubUrl:      "/tours/sapa-lai-chau",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/lai-chau-motortour/8.webp",
+    selectorMode: 'vehicle-only',
+
+    durationOptions: [
+      {
+        id:       "car",
+        label:    "By car",
+        price:    81,
+        tagline:  "Private car Sa Pa → cave → jungle → waterfall → Linh Ứng Temple sunset. Back by 20:15. Mon departures.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Into Nậm Lúc Waterfall (By Car, $81/person)",
+      },
+      {
+        id:       "motor",
+        label:    "By motorbike",
+        price:    63,
+        tagline:  "Motorbike Sa Pa → cave → jungle → waterfall. No Linh Ứng Temple — back in Sa Pa by 19:30. Thu departures.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "Valid motorbike licence required for self-ride · No payment now · Free cancellation",
+        waText:   "Hi Morning Vietnam — I'd like to book Into Nậm Lúc Waterfall (By Motorbike, $63/person)",
+      },
+    ],
+
+    tripInfo: {
+      "car": [
+        { icon: "map-pin",         label: "Meeting point",     value: "Sa Pa town · Mon · 06:00" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "car",             label: "Vehicle",           value: "Private car, full day" },
+        { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast + jungle lunch included" },
+        { icon: "mountain",        label: "Max altitude",      value: "1,250m · Linh Ứng Temple" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Mon · Flexible for groups of 3+" },
+        { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
+      ],
+      "motor": [
+        { icon: "map-pin",         label: "Meeting point",     value: "Sa Pa town · Thu · 06:00" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "motorbike",       label: "Vehicle",           value: "Semi-auto 125cc Honda, full day" },
+        { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast + jungle lunch included" },
+        { icon: "mountain",        label: "Max altitude",      value: "900m · Nậm Lúc Waterfall summit" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Thu · Flexible for groups of 3+" },
+        { icon: "license",         label: "Licence",           value: "Required for self-ride · backseat available" },
+        { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
+      ],
+    },
+
+    discountPolicy: {
+      rules: [
+        { label: "Group 10+",      value: "20% off per person" },
+        { label: "Min age",        value: "15 years old (fitness & safety requirement)" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Cave, Jungle & Waterfall",
+        slots: [
+          "06:00 Breakfast — chicken phở at Sơn Râu, Sa Pa",
+          "06:30 Car: depart Sa Pa · drive to Bình Lư, Lai Châu (1h15)",
+          "06:20 Motor: vehicle check, waiver sign · 06:30 depart Sa Pa (1h30 to cave)",
+          "07:45 Car: Tiên Sơn Cave · 08:00 Motor: Tiên Sơn Cave",
+          "08:45 Car: depart for Nậm Lúc trailhead (2h15) · 09:00 Motor: depart (2h30)",
+          "11:00 Car: arrive trailhead (430m) · 11:30 Motor: arrive trailhead (430m)",
+          "11:00 Car / 11:30 Motor: trek begins — primary forest, gaining altitude",
+          "13:00 Car / 13:30 Motor: lunch at the waterfall",
+          "13:30 Car / 14:00 Motor: summit push to 900m",
+          "14:30 Car / 15:00 Motor: play, swim, explore at the waterfall",
+          "15:00 Car / 15:30 Motor: descend to 500m · motorbike taxi picks up",
+          "15:30 Car / 16:00 Motor: xe ôm back to trailhead (430m)",
+          "16:00 Car: depart for Linh Ứng Temple (1h30) · 16:30 Motor: depart for Sa Pa (3h)",
+          "17:30 Car only: Linh Ứng Temple (1,250m) — sunset over Lai Châu city",
+          "18:15 Car only: depart for Sa Pa",
+          "19:30 Motor: arrive Sa Pa",
+          "20:15 Car: arrive Sa Pa",
+        ],
+      },
+    ],
+
+    pitch: {
+      headline: "Nậm Lúc doesn't appear on maps that tourists use. That's why it's worth going.",
+      paragraphs: [
+        "Most day trips from Sa Pa run the same circuit: Cat Cat Village, Fansipan cable car, back by 5pm. Nậm Lúc is 80 kilometres deeper into Lai Châu province — past the cave systems, past the road that coaches use, into a section of jungle that has no tourism infrastructure at all. The 'trailhead' is a clearing at 430 metres where motorbike taxi drivers wait.",
+        "The trek gains 470 metres through primary forest to the waterfall base, then pushes higher to the summit at 900m. The forest is dense enough that you lose the sound of vehicles within ten minutes. Lunch is cooked on site and eaten at the water's edge.",
+        "Car option adds Linh Ứng Temple on the way back — a monastery at 1,250m with an unobstructed view over Lai Châu city. One of the genuinely great sunset spots in the northwest, and almost no one knows it's there.",
+      ],
+      closingLine: "One day. One waterfall. Nothing packaged about it.",
+    },
+
+    valueAnchor: {
+      headline: "From $61. For a waterfall most northwest travellers walk past without knowing exists.",
+      paragraphs: [
+        "Nậm Lúc is not on any standard tour operator's menu because getting there requires: a driver who knows the road, motorbike taxi contacts at the trailhead, and a guide who's done the forest route before. We have all three, built into the price.",
+        "Included: private transport Sa Pa ↔ Lai Châu all day, motorbike taxi in and out of the jungle, cave entrance, jungle lunch, full-day host, Unlock Challenge, welcome pack. Min group 3, max 12 — this never runs as a coach tour.",
+      ],
+      compareTable: [
+        { metric: "Waterfall access",     typical: "No equivalent for foreign tourists — we pioneered this",  us: "5-hour jungle trek, no road" },
+        { metric: "Other tourists",       typical: "No equivalent for foreign tourists — we pioneered this",  us: "Likely just your group" },
+        { metric: "Altitude range",       typical: "No equivalent for foreign tourists — we pioneered this",  us: "430m → 900m trek + 1,250m sunset" },
+        { metric: "Lunch",                typical: "No equivalent for foreign tourists — we pioneered this",  us: "Cooked & eaten in the forest" },
+        { metric: "Sunset (Car option)",  typical: "No equivalent for foreign tourists — we pioneered this",  us: "Linh Ứng Temple · 1,250m" },
+        { metric: "Unlock Challenge",     typical: "No equivalent for foreign tourists — we pioneered this",  us: "Included" },
+      ],
+    },
+
+    storytelling: {
+      headline: "The waterfall has no gift shop. That's the whole point.",
+      paragraphs: [
+        "Nậm Lúc is not easy to find. It doesn't appear on Google Maps with a pin. The road to the trailhead exists because locals built it — not because tour operators needed it. The motorbike taxi drivers at the clearing at 430 metres are the same men who take villagers in and out when the forest road allows it.",
+        "The trek goes through primary tropical forest — not the kind that's been cleared and planted back, but the kind that closes in around you within five minutes of starting. The canopy is thick enough that heavy rain barely reaches the trail. When the waterfall appears after the final climb, there is no viewing platform, no railing, no food stall. Just water, rock, and the sound of the jungle.",
+        "The car option ends the day at Linh Ứng Temple, a Buddhist monastery at 1,250m on the ridge above Lai Châu city. The monks built it for prayer, not for tourism. The view over the valley from the terrace is the kind that makes you stop talking. We get there for the last hour of light.",
+      ],
+      pullImage: "/tours/lai-chau-motortour/8.webp",
+    },
+
+    elevationProfile: [
+      { time: "06:00", label: "Sa Pa · Meet & phở",        elevation: 1500, icon: "food",     highlight: false },
+      { time: "07:45", label: "Tiên Sơn Cave",             elevation: 700,  icon: "cave",     highlight: true  },
+      { time: "11:00", label: "Trek begins",               elevation: 430,  icon: "hike",     highlight: false },
+      { time: "13:00", label: "Lunch in the jungle",       elevation: 700,  icon: "food",     highlight: false },
+      { time: "14:30", label: "Nậm Lúc Summit",           elevation: 900,  icon: "peak",     highlight: true  },
+      { time: "15:00", label: "Trekking out",              elevation: 900,  icon: "hike",     highlight: false },
+      { time: "15:30", label: "Motorbike taxi",            elevation: 500,  icon: "van",      highlight: false },
+      { time: "16:00", label: "To Linh Ứng Temple",       elevation: 430,  icon: "van",      highlight: false },
+      { time: "17:30", label: "Sunset · Linh Ứng",        elevation: 1250, icon: "landmark", highlight: true  },
+      { time: "20:15", label: "Back in Sa Pa",             elevation: 1500, icon: "resort",   highlight: false },
+    ],
+    elevationMax: 1500,
+
+    activityCards: [
+      {
+        badge: "cave", badgeLabel: "Cave",
+        time: "07:45 – 08:45",
+        title: "Tiên Sơn Cave",
+        desc: "A limestone cave system on the Lai Châu side of O Quy Hồ — stalactites, stalagmites, and an underground stream. Not on the Sa Pa tourist circuit. The cave sits at 750m in Tam Đường district, where the valley opens wide before the jungle starts.",
+        highlight: false,
+      },
+      {
+        badge: "trek", badgeLabel: "Motorbike taxi",
+        time: "11:00 – 11:30",
+        title: "Into the Jungle — Motorbike Taxi to the Trailhead",
+        desc: "The car stops at 430m. From here, the only way in is motorbike taxis that thread through the final stretch of jungle track. Morning Vietnam arranges this. The 30-minute ride is itself an introduction to the forest before the trek begins.",
+        highlight: false,
+      },
+      {
+        badge: "trek", badgeLabel: "Trek",
+        time: "11:30 – 14:30",
+        title: "Nậm Lúc Waterfall Trek — Primary Forest to 900m",
+        desc: "The full route gains 470 metres from the trailhead at 430m to the summit at 900m through primary tropical forest. No trail markers — that's what the guide is for. The waterfall base sits at 500m; the return route dips to 350m on a rough jungle track before xe ôm back to 430m. The forest is dense, the trail is real, and there's nothing touristy about any of it.",
+        highlight: true,
+      },
+      {
+        badge: "free", badgeLabel: "Waterfall",
+        time: "13:00 – 15:00",
+        title: "Nậm Lúc Waterfall — Swim & Explore",
+        desc: "At the base: a pool fed by highland streams running off the ridge above. The water is cold and clear. Time here is unstructured — eat, swim, photograph, rest. No timetable on this section. The return motorbike taxi picks you up when you're ready.",
+        highlight: true,
+      },
+      {
+        badge: "landmark", badgeLabel: "Sunset",
+        time: "17:30 – 18:15 · Car only",
+        title: "Linh Ứng Temple — Sunset at 1,250m",
+        desc: "A Buddhist monastery on the ridge at 1,250m above Lai Châu city. Built by monks, not for tourists — but the terrace has an unobstructed view over the entire valley. One of the best sunset positions in the northwest. Car option only: motorbike guests return directly to Sa Pa.",
+        highlight: true,
+      },
+    ],
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "At the start of the day, your host hands you a Morning Vietnam pack. One item in particular earns its place on the trek.",
+    },
+
+    seasonality: {
+      intro: "The forest is always there. The trail has a season.",
+      months: [
+        { name: "Jan", level: "best" },
+        { name: "Feb", level: "best" },
+        { name: "Mar", level: "best" },
+        { name: "Apr", level: "good" },
+        { name: "May", level: "wet"  },
+        { name: "Jun", level: "wet"  },
+        { name: "Jul", level: "wet"  },
+        { name: "Aug", level: "wet"  },
+        { name: "Sep", level: "good" },
+        { name: "Oct", level: "best" },
+        { name: "Nov", level: "best" },
+        { name: "Dec", level: "best" },
+      ],
+      notes: [
+        { title: "Best conditions (Oct – Apr)", desc: "Dry trail, clear forest, maximum visibility at Linh Ứng Temple. October–November gives you rice terraces in the valley and sharp afternoon light on the ridge. January–February the mornings are cool and crisp — perfect for a long forest climb." },
+        { title: "Wet season (May – Sep)",      desc: "The jungle section is wetter and muddier. The waterfall runs higher and louder — more dramatic, more slippery on the rocks. We check trail conditions each morning and adjust the route if needed. The cave visit is unaffected either way." },
+      ],
+    },
+
+    faqs: [
+      { q: "Car or motorbike — which should I choose?", a: "Car includes Linh Ứng Temple at sunset — a monastery at 1,250m with one of the best views in Lai Châu. Motorbike skips the sunset but costs less and ends earlier (Sa Pa by 19:30). The waterfall trek is the same either way." },
+      { q: "Do I need to be fit for the trek?", a: "Yes — moderate fitness required. The trek gains 470m of altitude (430m → 900m) over roughly 3 hours, on uneven forest trail with no technical sections. Minimum age 15. If you can walk comfortably uphill for 90 minutes, you can do this." },
+      { q: "Do I need a motorbike licence?", a: "Yes for self-ride — valid licence with motorcycle endorsement required. Backseat (pillion) is available without a licence. Let us know when booking." },
+      { q: "What is the motorbike taxi and is it safe?", a: "Motorbike taxis are the standard way locals travel into areas where cars can't go. Morning Vietnam arranges them directly; the drivers know the jungle track. It's a 30-minute ride each way on a narrow forest road." },
+      ...DEFAULT_FAQS.slice(2),
+    ],
+
+    unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+  },
+
+  // ── Unlock Lai Châu ──────────────────────────────────────────────────────
+  {
+    slug:        "unlock-lai-chau",
+    name:        "Unlock Lai Châu",
+    region:      "north",
+    duration:    ["2D1N"],
+    price:       "from $160",
+    priceUSD:    160,
+    priceVND:    3990000,
+    tagline:     "Hanoi to Lai Châu direct — caves, villages, a waterfall, and a sunset monastery. No Sa Pa required.",
+    description: "Skip Sa Pa entirely. Take the overnight bus from Hanoi straight into Lai Châu city — then spend two full days in a valley most northwest travellers never reach. Day 1: Động PuSamCap, Lao Chải 1 village, Thác Tác Tình waterfall, sunset and homestay at Sì Thâu Chải. Day 2: full jungle trek to Nậm Lúc Waterfall, then Chùa Linh Ứng at dusk — the highest viewpoint in Lai Châu. Sleeper bus back to Hanoi overnight. Car or motorbike — same two days, different way of taking them in.",
+    highlights: [
+      "Động PuSamCap — one of the largest cave systems in Lai Châu province",
+      "Lao Chải 1 village — H'Mông community, local host, no tourist infrastructure",
+      "Thác Tác Tình — waterfall swim in the valley",
+      "Overnight at Sì Thâu Chải — Dao village homestay above the clouds",
+      "Day 2: full Nậm Lúc Waterfall trek — 430m → 900m through primary forest",
+      "Chùa Linh Ứng at 1,250m — the best sunset viewpoint in Lai Châu",
+      "Sleeper bus both ways — zero overlap with the standard Sa Pa circuit",
+    ],
+    included: [
+      "Overnight sleeper bus Hanoi ↔ Lai Châu (both ways)",
+      "Private car / motorbike, full 2 days",
+      "All meals: Day 1 breakfast → Day 2 dinner",
+      "Homestay at Sì Thâu Chải (Local Dao homestay)",
+      "Hotel (brief stay on arrival morning & departure night)",
+      "All activity & entrance fees",
+      "Motorbike taxi into Nậm Lúc jungle (Day 2)",
+      "Dedicated Morning Vietnam host",
+      "Unlock Challenge",
+      "Welcome pack",
+    ],
+    hub:         "Hanoi",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/lai-chau-motortour/15.webp",
+    selectorMode: 'vehicle-only',
+
+    durationOptions: [
+      {
+        id:       "car",
+        label:    "By car",
+        price:    184,
+        tagline:  "",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Unlock Lai Châu (By Car, $184/person)",
+      },
+      {
+        id:       "motor",
+        label:    "By motorbike",
+        price:    160,
+        tagline:  "Semi-auto 125cc · same two days, same route — felt through every curve. Licence required for self-ride. Mondays.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "Valid motorbike licence required for self-ride · backseat available · No payment now · Free cancellation",
+        waText:   "Hi Morning Vietnam — I'd like to book Unlock Lai Châu (By Motorbike, $160/person)",
+      },
+    ],
+
+    tripInfo: {
+      "car": [
+        { icon: "map-pin",         label: "Pickup",            value: "Old Quarter, Hanoi · Sun · 21:30" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "car",             label: "Vehicle",           value: "Sleeper bus (HN ↔ Lai Châu) + private car" },
+        { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast + lunch + dinner × 2 days" },
+        { icon: "home",            label: "Accommodation",     value: "Local Dao Homestay · Sì Thâu Chải" },
+        { icon: "mountain",        label: "Max altitude",      value: "1,250m · Linh Ứng Temple" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Sun nights · Flexible for groups of 3+" },
+        { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
+      ],
+      "motor": [
+        { icon: "map-pin",         label: "Pickup",            value: "Old Quarter, Hanoi · Mon · 21:30" },
+        { icon: "users",           label: "Group size",        value: "3 – 12 people" },
+        { icon: "motorbike",       label: "Vehicle",           value: "Sleeper bus (HN ↔ Lai Châu) + semi-auto 125cc Honda" },
+        { icon: "tools-kitchen-2", label: "Meals",             value: "Breakfast + lunch + dinner × 2 days" },
+        { icon: "home",            label: "Accommodation",     value: "Local Dao Homestay · Sì Thâu Chải" },
+        { icon: "mountain",        label: "Max altitude",      value: "1,250m · Linh Ứng Temple" },
+        { icon: "calendar-check",  label: "Departure days",    value: "Mon nights · Flexible for groups of 3+" },
+        { icon: "license",         label: "Licence",           value: "Required for self-ride · backseat available" },
+        { icon: "lock-open",       label: "Unlock Challenge",  value: "Included" },
+      ],
+    },
+
+    discountPolicy: {
+      rules: [
+        { label: "Group 10+",  value: "20% off per person" },
+        { label: "Min age",    value: "15 years old" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 0,
+        title: "Night — Hanoi → Lai Châu",
+        slots: [
+          "21:30  Board sleeper bus at Old Quarter, Hanoi",
+          "05:00  Arrive Lai Châu city — check in to hotel, freshen up",
+        ],
+      },
+      {
+        day: 1,
+        title: "Cave, Village & Waterfall",
+        slots: [
+          "06:15  Vehicle check · Car: meet your driver · Motor: inspect bike, sign waiver",
+          "06:45 – 07:30  Breakfast in Lai Châu city",
+          "07:30  Drive to Động PuSamCap (30 min)",
+          "08:00 – 09:30  Explore PuSamCap Cave — limestone galleries, stalactites, underground stream",
+          "09:30  Drive to Lao Chải 1 village (1h)",
+          "10:30 – 11:30  Explore the village with your local host",
+          "11:30 – 13:00  Lunch at Lao Chải 1 and afternoon rest",
+          "13:00  Drive to Thác Tác Tình (45 min)",
+          "13:45 – 15:00  Hike to the waterfall · swim",
+          "15:00  Drive to Sì Thâu Chải (15 min)",
+          "15:15 – 18:15  Explore the Dao village · sunset from the ridge",
+          "19:00 – 21:00  Dinner with happy water at the homestay",
+          "21:00  Rest",
+        ],
+      },
+      {
+        day: 2,
+        title: "Jungle, Summit & The Light",
+        slots: [
+          "07:30 – 08:15  Breakfast at the homestay — clouds still on the peaks",
+          "08:15  Drive to Nậm Lúc Waterfall trailhead (3h)",
+          "11:15 – 13:15  Trek begins at 430m — primary forest, gaining altitude",
+          "13:15 – 13:45  Lunch break on the trail",
+          "13:45 – 14:45  Summit push to 900m",
+          "14:45 – 15:15  Play, swim, explore at the waterfall",
+          "15:15  Descend · xe ôm picks up at 500m",
+          "15:45  Xe ôm back to trailhead (430m)",
+          "16:15  Drive to Linh Ứng Temple (1h30)",
+          "17:45 – 18:30  Sunset at Chùa Linh Ứng — 1,250m above Lai Châu city",
+          "18:30  Check in to hotel · rest",
+          "20:00 – 22:00  Dinner — Lai Châu specialities with happy water",
+          "22:00  Board sleeper bus back to Hanoi",
+        ],
+      },
+    ],
+
+    pitch: {
+      headline: "Lai Châu is northwest Vietnam without the tourist circuit. You get there overnight.",
+      paragraphs: [
+        "The standard northwest route goes: Hanoi → Sa Pa → cable car → Cat Cat Village → back. Lai Châu is 70 kilometres further, across Ô Quy Hồ Pass — the road coaches don't take. Most travellers who make it here come from Sa Pa. This tour cuts that step entirely: sleeper bus from Hanoi direct, arrive in Lai Châu city at dawn.",
+        "Two days cover more than most visitors see in a week. Day 1: a cave system that sits on no standard tour operator's menu, a real working H'Mông village, a waterfall swim, and a sunset at a Dao homestay above the valley. Day 2: a jungle trek to a waterfall that has no tourism infrastructure, then the highest viewpoint in Lai Châu at dusk.",
+        "Car or motorbike — the itinerary is the same. The difference is what it feels like to cover the ground.",
+      ],
+      closingLine: "Two nights on a sleeper bus. Two days in Lai Châu. Nothing wasted.",
+    },
+
+    valueAnchor: {
+      headline: "From $160. For two full days in the part of the northwest that doesn't get visited.",
+      paragraphs: [
+        "The price includes both sleeper buses, private car or motorbike for two full days, all meals from Day 1 breakfast through Day 2 dinner, homestay at Sì Thâu Chải, hotel (arrival morning and departure night), all entrance fees, motorbike taxi into the Nậm Lúc jungle, full-day host, Unlock Challenge, and welcome pack.",
+        "Min group 3, max 12. Departs Monday nights — flexible for private groups of 3 or more.",
+      ],
+      compareTable: [
+        { metric: "Departure point",    typical: "Sa Pa (requires prior travel)",       us: "Hanoi direct — no Sa Pa needed" },
+        { metric: "Cave",               typical: "None on standard circuits",           us: "Động PuSamCap — Lai Châu's largest" },
+        { metric: "Villages",           typical: "Tourist villages with gift shops",    us: "Lao Chải 1 + Sì Thâu Chải — no tourist infrastructure" },
+        { metric: "Overnight",          typical: "Hotel in Sa Pa",                      us: "Local Dao homestay · Sì Thâu Chải" },
+        { metric: "Day 2 waterfall",    typical: "Not available on standard tours",     us: "Full Nậm Lúc jungle trek · 430m → 900m" },
+        { metric: "Unlock Challenge",   typical: "Not available",                       us: "Included" },
+      ],
+    },
+
+    storytelling: {
+      headline: "The bus arrives before the city wakes up. That's exactly the point.",
+      paragraphs: [
+        "Lai Châu city at 5am is quiet in a way Sa Pa never is. The market vendors are setting up. The streets smell like woodsmoke and phở. The sleeper bus from Hanoi pulls in and the day begins before most tourists in the northwest have had breakfast.",
+        "Day 1 runs south through the valley. Động PuSamCap is a limestone cave system that sits an hour from Lai Châu city — galleries of stalactites, an underground stream, and almost no other visitors. From there, Lao Chải 1: a H'Mông village where the blacksmith forge is still the centre of the community. Lunch in the village. Then Thác Tác Tình — a waterfall in a narrow gorge where the water is cold and the afternoon light comes through the trees at an angle. By sunset, you're at Sì Thâu Chải, a Dao village on the ridge, watching the light leave the valley from the homestay terrace.",
+        "Day 2 goes deep. The drive to the Nậm Lúc trailhead takes three hours and ends at a clearing at 430m. From there, the forest closes in. The trek gains 470 metres through primary jungle to the waterfall base, then pushes to the summit at 900m. The water is loud, the pool is cold, and there is no one else here. The day ends at Linh Ứng Temple — a Buddhist monastery at 1,250m on the ridge above the city. The monks built it for prayer. The view is consequence, not intention.",
+      ],
+      pullImage: "/tours/lai-chau-motortour/15.webp",
+    },
+
+    elevationProfile: [
+      { time: "21:30", label: "Depart Hanoi",                    elevation: 20,   icon: "van",      highlight: false, day: 0 },
+      { time: "05:00", label: "Arrive Lai Châu, quick nap",      elevation: 900,  icon: "resort",   highlight: false, day: 1 },
+      { time: "08:00", label: "PuSamCap Cave",                   elevation: 1025, icon: "cave",     highlight: true,  day: 1 },
+      { time: "10:30", label: "Lao Chải 1 Village",              elevation: 1160, icon: "village",  highlight: false, day: 1 },
+      { time: "11:30", label: "Local lunch with Mong People",    elevation: 1160, icon: "food",     highlight: false, day: 1 },
+      { time: "13:45", label: "Swim at Tác Tình Waterfall",      elevation: 1000, icon: "water",    highlight: true,  day: 1 },
+      { time: "15:15", label: "Sì Thâu Chải · Sunset",          elevation: 1450, icon: "hike",     highlight: true,  day: 1 },
+      { time: "07:30", label: "Breakfast in the middle of cloud",elevation: 1450, icon: "food",     highlight: false, day: 2 },
+      { time: "08:15", label: "To Nậm Lúc Waterfall",           elevation: 1250, icon: "van",      highlight: false, day: 2 },
+      { time: "11:15", label: "Trek begins · 430m",              elevation: 430,  icon: "hike",     highlight: false, day: 2 },
+      { time: "13:15", label: "Lunch on trail",                  elevation: 700,  icon: "food",     highlight: false, day: 2 },
+      { time: "14:45", label: "Nậm Lúc Waterfall Summit",       elevation: 900,  icon: "peak",     highlight: true,  day: 2 },
+      { time: "15:45", label: "Motorbike taxi out · 430m",       elevation: 430,  icon: "van",      highlight: false, day: 2 },
+      { time: "17:45", label: "Linh Ứng Temple · 1,250m",       elevation: 1250, icon: "landmark", highlight: true,  day: 2 },
+      { time: "18:30", label: "Private time",                    elevation: 900,  icon: "free",     highlight: false, day: 2 },
+      { time: "22:00", label: "Bus back to Hanoi",               elevation: 900,  icon: "return",   highlight: false, day: 2 },
+    ],
+    elevationMax: 1450,
+
+    activityCards: [
+      {
+        badge: "cave", badgeLabel: "Cave",
+        time: "08:00 – 09:30 · Day 1",
+        title: "Động PuSamCap",
+        desc: "One of the largest cave systems in Lai Châu province. Limestone galleries formed over millions of years, with stalactites, stalagmites, and an underground stream running through the lower chambers. The cave sits an hour south of Lai Châu city, in a karst ridge that most travellers drive past without stopping. No crowds, no light show — just the cave.",
+        highlight: true,
+      },
+      {
+        badge: "village", badgeLabel: "Village",
+        time: "10:30 – 13:00 · Day 1",
+        title: "Lao Chải 1 — H'Mông Village",
+        desc: "A working H'Mông community in the valley below Sì Thâu Chải — not a display village, not on any coach tour route. Your local host walks you through the rhythms of daily life: the forge, the fields, the weavers. Lunch is cooked in the village and eaten with the family.",
+        highlight: false,
+      },
+      {
+        badge: "water", badgeLabel: "Waterfall",
+        time: "13:45 – 15:00 · Day 1",
+        title: "Thác Tác Tình",
+        desc: "A waterfall in a narrow valley gorge at 1,000m — the water comes off the ridge above Sì Thâu Chải and drops into a pool cold enough to stop conversation. The hike in is 30 minutes through scrub forest. The swim is the reward.",
+        highlight: false,
+      },
+      {
+        badge: "village", badgeLabel: "Homestay",
+        time: "15:15 – overnight · Day 1",
+        title: "Sì Thâu Chải — Dao Village Overnight",
+        desc: "A Dao village at 1,450m on the ridge above the valley. Your host family has been running the homestay for years — dinner is local, the happy water is local, and the view at sunset is the kind that takes a while to leave. Morning comes with cloud on the peaks and coffee that makes you stay at the table longer than you planned.",
+        highlight: true,
+      },
+      {
+        badge: "trek", badgeLabel: "Trek",
+        time: "11:15 – 15:15 · Day 2",
+        title: "Nậm Lúc Waterfall — Full Jungle Trek",
+        desc: "The trailhead is a clearing at 430m where the road ends. From there: primary tropical forest, no trail markers, and 470 metres of altitude gain to the summit at 900m. The route passes the waterfall base at 500m before pushing to the top. Return is by xe ôm from 500m back to 430m — the trail is too steep and rough to walk out. Two hours up, two hours down, lunch on the trail. Nothing packaged about it.",
+        highlight: true,
+      },
+      {
+        badge: "landmark", badgeLabel: "Sunset",
+        time: "17:45 – 18:30 · Day 2",
+        title: "Chùa Linh Ứng — 1,250m above Lai Châu",
+        desc: "A Buddhist monastery on the ridge above Lai Châu city, at 1,250m. The monks built it for practice; the terrace happened to become the best sunset viewpoint in the entire province. The valley spreads out below, the city lights come on as the light leaves the peaks. We arrive for the last hour before dark.",
+        highlight: true,
+      },
+    ],
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "On the night bus from Hanoi, your host hands you a Morning Vietnam pack. Each item was chosen for what two days in Lai Châu will ask of you.",
+    },
+
+    seasonality: {
+      intro: "Lai Châu has weather of its own — drier and clearer than Sa Pa in most seasons.",
+      months: [
+        { name: "Jan", level: "best" },
+        { name: "Feb", level: "best" },
+        { name: "Mar", level: "best" },
+        { name: "Apr", level: "good" },
+        { name: "May", level: "wet"  },
+        { name: "Jun", level: "wet"  },
+        { name: "Jul", level: "wet"  },
+        { name: "Aug", level: "wet"  },
+        { name: "Sep", level: "good" },
+        { name: "Oct", level: "best" },
+        { name: "Nov", level: "best" },
+        { name: "Dec", level: "best" },
+      ],
+      notes: [
+        { title: "Best conditions (Oct – Apr)", desc: "Dry trails, clear skies, and the best light for the homestay sunrise at Sì Thâu Chải. October–November the rice terraces in the valley are golden. January–February the air is crisp and the cave system is at its most atmospheric." },
+        { title: "Wet season (May – Sep)",      desc: "The Nậm Lúc jungle trek gets muddier and the trail is more demanding. The waterfall runs higher and louder. We monitor trail conditions daily and adjust if needed. PuSamCap Cave and the village visits are unaffected." },
+      ],
+    },
+
+    faqs: [
+      { q: "Car or motorbike — which should I choose?", a: "Both options run the same itinerary across both days. Car is more comfortable for the long drives and easier for those who prefer to focus on the scenery and the people rather than the road. Motorbike gives you the physical experience of the altitude and the valley — every kilometre is felt differently on two wheels. The trek, homestay, and cave are identical either way." },
+      { q: "Do I need a motorbike licence?", a: "Yes for self-ride — a valid licence with motorcycle endorsement is required. Backseat (pillion) is available without a licence. Let us know when booking and we'll arrange accordingly." },
+      { q: "Do I need to be fit for the Day 2 trek?", a: "Moderate fitness required for Day 2. The Nậm Lúc trek gains 470m of altitude (430m → 900m) over roughly 3 hours on uneven jungle trail. No technical climbing. Minimum age 15. Day 1 is lighter — cave, village, a short waterfall hike." },
+      { q: "What is the homestay like at Sì Thâu Chải?", a: "A Local Dao family homestay — traditional house, communal dinner, shared sleeping area (mattresses on platform beds with blankets). No luxury. Running water and a basic bathroom. The dinner, the happy water, and the sunrise from the terrace are the experience." },
+      ...DEFAULT_FAQS.slice(2),
+    ],
+
+    unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
   },
 ];
 

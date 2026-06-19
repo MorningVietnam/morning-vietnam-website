@@ -17,7 +17,8 @@ const galleryItems = tour.gallery && tour.gallery.length > 0
   ? tour.gallery
   : [{ src: tour.image, alt: tour.name }];
 
-const hasDurationOptions = tour.durationOptions && tour.durationOptions.length > 1;
+const hasDurationOptions = tour.durationOptions && tour.durationOptions.length >= 1;
+const selectorMode: string = (tour as any).selectorMode ?? 'pickup-vehicle';
 
 const pitch = tour.pitch;
 const hasDurationPitch = pitch && typeof pitch === 'object' && !('headline' in (pitch as any)) && !Array.isArray(pitch);
@@ -31,6 +32,10 @@ const valueAnchorObj: any = hasDurationValue
   ? ((tour.valueAnchor as any)[firstDurKey] ?? Object.values(tour.valueAnchor as any)[0])
   : tour.valueAnchor;
 const valueAnchor: any = valueAnchorObj?.headline ? valueAnchorObj : null;
+
+const compareRows: any[] = valueAnchor?.compareTable || [];
+const allTypicalSame = compareRows.length > 1 && compareRows.every((r: any) => r.typical === compareRows[0].typical);
+const mergedTypical: string = allTypicalSame ? compareRows[0].typical : '';
 
 const overview     = tour.storytelling;
 const elevation    = tour.elevationProfile;
@@ -47,6 +52,17 @@ const defaultTripKey = (tour.durationOptions as any)?.[0]?.id || 'default';
 const defaultTripItems: any[] = hasTripInfo
   ? (tripInfoData[defaultTripKey] || tripInfoData['default'] || [])
   : [];
+
+const cabinUpgrade    = (tour as any).cabinUpgrade || null;
+const discountPolicy  = (tour as any).discountPolicy || null;
+const panoramicImage  = (tour as any).panoramicImage || null;
+
+// Sticky CTA data
+const ctaPrice     = tour.durationOptions ? tour.durationOptions[0].price : (tour as any).priceUSD;
+const ctaPriceVND  = tour.durationOptions ? (tour.durationOptions[0] as any).priceVND ?? null : (tour as any).priceVND ?? null;
+const ctaWaText    = tour.durationOptions ? tour.durationOptions[0].waText : '';
+const firstOptionId  = tour.durationOptions?.[0]?.id ?? '';
+const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOptionId ? `&option=${firstOptionId}` : ''}`;
 ---
 
 <BaseLayout title={tour.name} description={tour.tagline}>
@@ -99,7 +115,7 @@ const defaultTripItems: any[] = hasTripInfo
       </div>
 
       <!-- Right: Purchase panel -->
-      <div class="td-product__panel" id="td-product-panel" data-duration-options={hasDurationOptions ? JSON.stringify(tour.durationOptions) : ''}>
+      <div class="td-product__panel" id="td-product-panel" data-duration-options={hasDurationOptions ? JSON.stringify(tour.durationOptions) : ''} data-tour-name={tour.name}>
         <p class="td-product__eyebrow">
           {tour.region === 'north' ? 'NORTH VIETNAM' : tour.region === 'soon' ? 'Coming soon' : tour.region}
           &nbsp;·&nbsp;{tour.duration.join(' / ')}
@@ -108,24 +124,120 @@ const defaultTripItems: any[] = hasTripInfo
 
         {hasDurationOptions ? (
           <>
-            <!-- Duration toggle buttons -->
-            <div class="td-duration__tabs" id="td-duration-tabs">
-              {tour.durationOptions.map((opt: {id: string; label: string}, i: number) => (
-                <button
-                  class={`td-duration__tab${i === 0 ? ' is-active' : ''}`}
-                  data-duration={opt.id}
-                  type="button"
-                >
-                  {opt.label}
-                </button>
-              ))}
+            <!-- Selector: duration-tabs OR vehicle-only (1 dropdown) OR pickup-vehicle (2 dropdowns) -->
+            <div class="td-selector" id="td-selector"
+              data-selector-mode={selectorMode}
+              data-duration-options={JSON.stringify(tour.durationOptions)}>
+
+              {selectorMode === 'duration-tabs' ? (
+                /* ── Duration tabs: 1 Day / 2D1N / 3D2N ── */
+                <div class="td-dur-tabs" id="td-dur-tabs">
+                  {tour.durationOptions.map((opt: {id: string; label: string}, i: number) => (
+                    <button
+                      class={`td-dur-tab${i === 0 ? ' is-active' : ''}`}
+                      data-dur-id={opt.id}
+                      type="button"
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              ) : selectorMode === 'vehicle-only' ? (
+                /* ── Single dropdown: choose vehicle (hidden if only 1 option) ── */
+                <div class="td-selector__q" style={tour.durationOptions.length <= 1 ? 'display:none' : ''}>
+                  <label class="td-selector__label" for="td-sel-vehicle-only">
+                    How do you want to explore?
+                  </label>
+                  <div class="td-selector__wrap">
+                    <select id="td-sel-vehicle-only" class="td-selector__select">
+                      {tour.durationOptions.map((opt: {id: string; label: string}) => (
+                        <option value={opt.id}>{opt.label}</option>
+                      ))}
+                    </select>
+                    <svg class="td-selector__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              ) : (
+                /* ── Two dropdowns: pickup × vehicle ── */
+                <>
+                  <div class="td-selector__q">
+                    <label class="td-selector__label" for="td-sel-pickup">
+                      Where are you joining us from?
+                    </label>
+                    <div class="td-selector__wrap">
+                      <select id="td-sel-pickup" class="td-selector__select">
+                        <option value="hanoi">Hanoi — Economy overnight bus included</option>
+                        <option value="sapa">Sa Pa — already there</option>
+                      </select>
+                      <svg class="td-selector__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Cabin upgrade toggle — shown inline after Q1, only for Hanoi -->
+                  {cabinUpgrade && (
+                    <div class="td-cabin td-cabin--inline" id="td-cabin-section" style="display:none"
+                      data-surcharge-vnd={cabinUpgrade.surchargeVND}
+                      data-surcharge-usd={cabinUpgrade.surchargeUSD ?? 8}>
+                      <p class="td-tripinfo__section-label">Sleeper bus upgrade</p>
+                      <label class="td-cabin__toggle">
+                        <input type="checkbox" id="td-cabin-check" />
+                        <span class="td-cabin__slider"></span>
+                        <span class="td-cabin__label" id="td-cabin-label">{cabinUpgrade.labelOff}</span>
+                      </label>
+                      <p class="td-cabin__note" id="td-cabin-note">{cabinUpgrade.surchargeNote}</p>
+                    </div>
+                  )}
+
+                  <div class="td-selector__q">
+                    <label class="td-selector__label" for="td-sel-vehicle">
+                      How do you want to take the pass?
+                    </label>
+                    <div class="td-selector__wrap">
+                      <select id="td-sel-vehicle" class="td-selector__select">
+                        <option value="car">By car — sit back, watch it unfold</option>
+                        <option value="motor">By motorbike — earn the view</option>
+                      </select>
+                      <svg class="td-selector__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             <!-- Dynamic price -->
             {tour.durationOptions[0].price != null && (
               <div class="td-product__price" id="td-price-display">
-                <span id="td-price-amount">${tour.durationOptions[0].price}</span>
+                <span class="td-product__price-row">
+                  <span id="td-price-amount">${tour.durationOptions[0].price}</span>
+                  {(tour as any).priceVND && (
+                    <>
+                      <span class="td-product__price-sep"> / </span>
+                      <span class="td-product__price-vnd" id="td-price-vnd">{((tour as any).priceVND as number).toLocaleString('vi-VN')} VND</span>
+                    </>
+                  )}
+                </span>
                 <span class="td-product__price-unit">/person</span>
+              </div>
+            )}
+
+            <!-- Cabin upgrade — vehicle-only mode (always visible, no pickup condition) -->
+            {cabinUpgrade && selectorMode === 'vehicle-only' && (
+              <div class="td-cabin td-cabin--inline" id="td-cabin-section"
+                data-surcharge-vnd={cabinUpgrade.surchargeVND}
+                data-surcharge-usd={cabinUpgrade.surchargeUSD ?? 8}>
+                <p class="td-tripinfo__section-label">Sleeper bus upgrade</p>
+                <label class="td-cabin__toggle">
+                  <input type="checkbox" id="td-cabin-check" />
+                  <span class="td-cabin__slider"></span>
+                  <span class="td-cabin__label" id="td-cabin-label">{cabinUpgrade.labelOff}</span>
+                </label>
+                <p class="td-cabin__note" id="td-cabin-note">{cabinUpgrade.surchargeNote}</p>
               </div>
             )}
 
@@ -135,9 +247,7 @@ const defaultTripItems: any[] = hasTripInfo
             {!tour.comingSoon ? (
               <div class="td-product__cta" id="td-cta-display">
                 <a
-                  href={`https://wa.me/84961836611?text=${encodeURIComponent(tour.durationOptions[0].waText)}`}
-                  target="_blank"
-                  rel="noopener"
+                  href={`/contact?tour=${encodeURIComponent(tour.name)}`}
                   class="c-button c-button--primary td-product__book"
                   id="td-cta-btn"
                 >
@@ -174,11 +284,36 @@ const defaultTripItems: any[] = hasTripInfo
                 </div>
               </div>
             )}
+
+            <!-- Cabin upgrade is now rendered inside .td-selector above -->
+
+            <!-- Discount policy -->
+            {discountPolicy && (
+              <div class="td-discount">
+                <p class="td-tripinfo__section-label">Discounts</p>
+                <ul class="td-discount__list">
+                  {discountPolicy.rules.map((r: {label: string; value: string}) => (
+                    <li>
+                      <span class="td-discount__label">{r.label}</span>
+                      <span class="td-discount__value">{r.value}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </>
         ) : (
           <>
             <div class="td-product__price">
-              {tour.priceUSD ? `$${tour.priceUSD}` : 'TBA'}
+              <span class="td-product__price-row">
+                <span>{tour.priceUSD ? `$${tour.priceUSD}` : 'TBA'}</span>
+                {(tour as any).priceVND && (
+                  <>
+                    <span class="td-product__price-sep"> / </span>
+                    <span class="td-product__price-vnd">{((tour as any).priceVND as number).toLocaleString('vi-VN')} VND</span>
+                  </>
+                )}
+              </span>
               <span class="td-product__price-unit">/person</span>
             </div>
             <p class="td-product__tagline">{tour.tagline}</p>
@@ -186,12 +321,10 @@ const defaultTripItems: any[] = hasTripInfo
             {!tour.comingSoon ? (
               <div class="td-product__cta">
                 <a
-                  href={`https://wa.me/84961836611?text=Hi%20Morning%20Vietnam%20-%20I'd%20like%20to%20book%20${encodeURIComponent(tour.name)}`}
-                  target="_blank"
-                  rel="noopener"
+                  href={`/contact?tour=${encodeURIComponent(tour.name)}`}
                   class="c-button c-button--primary td-product__book"
                 >
-                  Reserve my spot →
+                  I'm in →
                 </a>
                 <p class="td-product__cta-note">No payment now. We hold your spot, you pay 14 days before. Free cancellation.</p>
               </div>
@@ -282,10 +415,13 @@ const defaultTripItems: any[] = hasTripInfo
               </tr>
             </thead>
             <tbody id="td-value-table-body">
-              {(valueAnchor.compareTable || []).map((row: {metric: string; typical: string; us: string}) => (
+              {compareRows.map((row: {metric: string; typical: string; us: string}, i: number) => (
                 <tr>
                   <td class="td-value__metric">{row.metric}</td>
-                  <td class="td-value__bad">{row.typical}</td>
+                  {allTypicalSame
+                    ? (i === 0 ? <td class="td-value__bad td-value__bad--merged" rowspan={compareRows.length}>{mergedTypical}</td> : null)
+                    : <td class="td-value__bad">{row.typical}</td>
+                  }
                   <td class="td-value__good">{row.us}</td>
                 </tr>
               ))}
@@ -331,32 +467,187 @@ const defaultTripItems: any[] = hasTripInfo
         <div class="td-timeline__chart-wrap">
           <svg
             class="td-timeline__svg"
-            viewBox="0 0 1200 450"
+            viewBox="0 0 1200 500"
             preserveAspectRatio="xMidYMid meet"
             role="img"
             aria-label={`Elevation timeline for ${tour.name}`}
           >
             <defs>
-              <linearGradient id="elevationGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="var(--color-java)" stop-opacity="0.6" />
-                <stop offset="100%" stop-color="var(--color-java)" stop-opacity="0" />
+              <linearGradient id="elevGradTeal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--color-java)" stop-opacity="0.45" />
+                <stop offset="100%" stop-color="var(--color-java)" stop-opacity="0.04" />
+              </linearGradient>
+              <linearGradient id="elevGradOrange" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--color-sorbus)" stop-opacity="0.55" />
+                <stop offset="100%" stop-color="var(--color-sorbus)" stop-opacity="0.06" />
               </linearGradient>
             </defs>
 
-            {/* Y-axis gridlines + labels — scale to elevMax */}
+            {/* Y-axis gridlines + labels */}
             {Array.from({ length: Math.floor(elevMax / 300) + 1 }, (_, i) => i * 300).map((elev) => {
-              const yPos = 340 - (elev / elevMax) * 280;
+              const yPos = 320 - (elev / elevMax) * 270;
               return (
                 <>
-                  <line x1="60" y1={yPos} x2="1160" y2={yPos} stroke="rgba(4,51,65,0.08)" stroke-width="1" />
-                  <text x="50" y={yPos + 4} text-anchor="end" font-size="11" fill="rgba(4,51,65,0.5)" font-family="Commissioner, sans-serif">{elev}m</text>
+                  <line x1="60" y1={yPos} x2="1160" y2={yPos} stroke="rgba(4,51,65,0.07)" stroke-width="1" />
+                  <text x="52" y={yPos + 4} text-anchor="end" font-size="11" fill="rgba(4,51,65,0.4)" font-family="Commissioner, sans-serif">{elev}m</text>
                 </>
               );
             })}
 
-            {/* Paths: per-duration, built generically from durationOnly field */}
+            {/* Main chart rendering — supports day-coloring and duration splits */}
             {(() => {
               const allPts = elevation!;
+              const hasDays = allPts.some((p: any) => p.day != null);
+              const hasDurationSplit = allPts.some((p: any) => p.durationOnly);
+
+              // --- helper: x/y from index within a flat array ---
+              function ptX(i: number, total: number) { return 60 + i * (1100 / Math.max(1, total - 1)); }
+              function ptY(elev: number) { return 320 - (elev / elevMax) * 270; }
+
+              // --- build label lines ---
+              function labelLines(label: string): [string, string] {
+                if (label.includes(' · ')) {
+                  const idx = label.indexOf(' · ');
+                  return [label.substring(0, idx), label.substring(idx + 3)];
+                }
+                if (label.includes(' — ')) {
+                  const idx = label.indexOf(' — ');
+                  return [label.substring(0, idx), label.substring(idx + 3)];
+                }
+                if (label.length > 14) {
+                  const mid = Math.floor(label.length / 2);
+                  const spaceIdx = label.lastIndexOf(' ', mid + 4);
+                  if (spaceIdx > 0) return [label.substring(0, spaceIdx), label.substring(spaceIdx + 1)];
+                }
+                return [label, ''];
+              }
+
+              // ── CASE A: day-colored segments (lai-chau-motortour style) ──
+              // Also handles CASE A+B: hasDays + hasDurationSplit (e.g. sapa-nam-cang)
+              // In that case we render one day-coloured chart per duration, toggle via CSS
+              if (hasDays) {
+                type DivInfo = { x: number; y: number };
+                type Seg = { day: number; pathPts: DivInfo[] };
+
+                function buildDayChart(pts: any[]) {
+                  const total = pts.length;
+                  const coords = pts.map((p: any, i: number) => ({
+                    x: ptX(i, total), y: ptY(p.elevation), ...p,
+                  }));
+
+                  const dividers: DivInfo[] = [];
+                  for (let i = 1; i < coords.length; i++) {
+                    if ((coords[i].day ?? 1) !== (coords[i-1].day ?? 1)) {
+                      const t = 0.5;
+                      const x = coords[i-1].x + t * (coords[i].x - coords[i-1].x);
+                      const y = coords[i-1].y + t * (coords[i].y - coords[i-1].y);
+                      dividers.push({ x, y });
+                    }
+                  }
+
+                  const segments: Seg[] = [];
+                  {
+                    let segDay = coords[0].day ?? 1;
+                    let segPts: DivInfo[] = [{ x: coords[0].x, y: coords[0].y }];
+                    let divIdx = 0;
+                    for (let i = 1; i < coords.length; i++) {
+                      const d = coords[i].day ?? 1;
+                      if (d !== segDay) {
+                        segPts.push({ x: dividers[divIdx].x, y: dividers[divIdx].y });
+                        segments.push({ day: segDay, pathPts: segPts });
+                        segDay = d;
+                        segPts = [{ x: dividers[divIdx].x, y: dividers[divIdx].y }, { x: coords[i].x, y: coords[i].y }];
+                        divIdx++;
+                      } else {
+                        segPts.push({ x: coords[i].x, y: coords[i].y });
+                      }
+                    }
+                    segments.push({ day: segDay, pathPts: segPts });
+                  }
+
+                  function segPath(pts: DivInfo[], close: boolean) {
+                    let d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+                    if (close) d += ` L ${pts[pts.length-1].x} 320 L ${pts[0].x} 320 Z`;
+                    return d;
+                  }
+
+                  const dayColor = (day: number) => day === 2 ? 'var(--color-sorbus)' : 'var(--color-java)';
+                  const dayGrad  = (day: number) => day === 2 ? 'url(#elevGradOrange)' : 'url(#elevGradTeal)';
+                  const dayLabel = (day: number) => day === 0 ? 'NIGHT' : `DAY ${day}`;
+
+                  return (
+                    <>
+                      {segments.map((seg: Seg) => {
+                        const x0 = seg.pathPts[0].x;
+                        const x1 = seg.pathPts[seg.pathPts.length - 1].x;
+                        const bgColor = seg.day === 2 ? 'rgba(234,103,57,0.07)' : seg.day === 0 ? 'rgba(29,160,160,0.05)' : 'rgba(29,160,160,0.08)';
+                        return <rect x={x0} y={30} width={x1 - x0} height={290} fill={bgColor} rx="0" />;
+                      })}
+                      {dividers.map((div: DivInfo) => (
+                        <line x1={div.x} y1={30} x2={div.x} y2={370} stroke="rgba(4,51,65,0.25)" stroke-width="1.5" stroke-dasharray="6 4" />
+                      ))}
+                      {segments.map((seg: Seg) => (
+                        <path d={segPath(seg.pathPts, true)} fill={dayGrad(seg.day)} />
+                      ))}
+                      {segments.map((seg: Seg) => (
+                        <path d={segPath(seg.pathPts, false)} fill="none" stroke={dayColor(seg.day)} stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                      ))}
+                      {segments.map((seg: Seg) => {
+                        const midX = (seg.pathPts[0].x + seg.pathPts[seg.pathPts.length-1].x) / 2;
+                        const col = seg.day === 2 ? 'var(--color-sorbus)' : 'var(--color-java)';
+                        return (
+                          <text x={midX} y={395} text-anchor="middle" font-size="11" font-weight="700" letter-spacing="0.08em" fill={col} font-family="Commissioner, sans-serif" opacity="0.7">
+                            {dayLabel(seg.day)}
+                          </text>
+                        );
+                      })}
+                      {coords.map((p: any) => {
+                        const isDay2 = (p.day ?? 1) === 2;
+                        const dotColor = isDay2 ? 'var(--color-sorbus)' : 'var(--color-java)';
+                        const dotR = p.highlight ? 10 : 7;
+                        const [line1, line2] = labelLines(p.label);
+                        const fw = p.highlight ? '700' : '500';
+                        const baseY = 340;
+                        return (
+                          <g class={`td-timeline__point${p.highlight ? ' is-highlight' : ''}`}>
+                            <circle cx={p.x} cy={p.y} r={dotR} fill={dotColor} stroke="white" stroke-width="2.5" />
+                            <text x={p.x} y={p.y - 18} text-anchor="middle" font-size="10" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>
+                            <text x={p.x} y={baseY} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>
+                            {line2 && <text x={p.x} y={baseY + 13} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
+                            <text x={p.x} y={baseY + (line2 ? 26 : 13)} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>
+                          </g>
+                        );
+                      })}
+                    </>
+                  );
+                }
+
+                // CASE A+B: has both day-coloring AND duration split — render per-duration charts
+                if (hasDurationSplit) {
+                  const sharedPts = allPts.filter((p: any) => !p.durationOnly);
+                  const pts1day = [...sharedPts, ...allPts.filter((p: any) => p.durationOnly === '1day')];
+                  const pts2d1n = [...sharedPts, ...allPts.filter((p: any) => p.durationOnly === '2d1n')];
+                  const pts3d2n = [...sharedPts, ...allPts.filter((p: any) => p.durationOnly === '3d2n')];
+                  return (
+                    <>
+                      {pts1day.length > 0 && (
+                        <g class="svg-path-1day">{buildDayChart(pts1day)}</g>
+                      )}
+                      {pts2d1n.length > 0 && (
+                        <g class="svg-path-2d1n">{buildDayChart(pts2d1n)}</g>
+                      )}
+                      {pts3d2n.length > 0 && (
+                        <g class="svg-path-3d2n">{buildDayChart(pts3d2n)}</g>
+                      )}
+                    </>
+                  );
+                }
+
+                // CASE A pure: no durationOnly, just day-coloring
+                return buildDayChart(allPts);
+              }
+
+              // ── CASE B: duration-split (1day / 2d1n / 3d2n) — original logic ──
               const sharedPts = allPts.filter((p: any) => !p.durationOnly);
               const pts1day = [...sharedPts, ...allPts.filter((p: any) => p.durationOnly === '1day')];
               const pts2d1n = [...sharedPts, ...allPts.filter((p: any) => p.durationOnly === '2d1n')];
@@ -365,56 +656,31 @@ const defaultTripItems: any[] = hasTripInfo
               function makePath(pts: any[], close: boolean) {
                 const step = 1100 / Math.max(1, pts.length - 1);
                 let d = pts.map((p: any, i: number) => {
-                  const x = 60 + i * step;
-                  const y = 340 - (p.elevation / elevMax) * 280;
+                  const x = ptX(i, pts.length);
+                  const y = ptY(p.elevation);
                   return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
                 }).join(' ');
                 if (close) {
-                  const lastX = 60 + (pts.length - 1) * step;
-                  d += ` L ${lastX} 340 L 60 340 Z`;
+                  const lastX = ptX(pts.length - 1, pts.length);
+                  d += ` L ${lastX} 320 L 60 320 Z`;
                 }
                 return d;
               }
 
-              const step1day = 1100 / Math.max(1, pts1day.length - 1);
-              const step2d1n = 1100 / Math.max(1, pts2d1n.length - 1);
-              const step3d2n = 1100 / Math.max(1, pts3d2n.length - 1);
-
-              function renderDots(pts: any[], durClass: string, step: number) {
+              function renderDots(pts: any[], durClass: string) {
                 return pts.map((p: any, i: number) => {
-                  const x = 60 + i * step;
-                  const y = 340 - (p.elevation / elevMax) * 280;
+                  const x = ptX(i, pts.length);
+                  const y = ptY(p.elevation);
+                  const [line1, line2] = labelLines(p.label);
+                  const fw = p.highlight ? '700' : '500';
+                  const baseY = 340;
                   return (
                     <g class={`td-timeline__point ${durClass}${p.highlight ? ' is-highlight' : ''}`} data-duration={p.durationOnly || 'all'}>
-                      <circle cx={x} cy={y} r={p.highlight ? 12 : 8} fill={p.highlight ? 'var(--color-sorbus)' : 'var(--color-java)'} stroke="white" stroke-width="3" />
-                      <text x={x} y={y - 22} text-anchor="middle" font-size="11" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>
-                      {(() => {
-                        const label = p.label as string;
-                        let line1 = label;
-                        let line2 = '';
-                        if (label.includes(' · ')) {
-                          const idx = label.indexOf(' · ');
-                          line1 = label.substring(0, idx);
-                          line2 = label.substring(idx + 3);
-                        } else if (label.includes(' — ')) {
-                          const idx = label.indexOf(' — ');
-                          line1 = label.substring(0, idx);
-                          line2 = label.substring(idx + 3);
-                        } else if (label.length > 14) {
-                          const mid = Math.floor(label.length / 2);
-                          const spaceIdx = label.lastIndexOf(' ', mid + 4);
-                          if (spaceIdx > 0) { line1 = label.substring(0, spaceIdx); line2 = label.substring(spaceIdx + 1); }
-                        }
-                        const fw = p.highlight ? '700' : '500';
-                        const baseY = 370;
-                        return (
-                          <>
-                            <text x={x} y={baseY} text-anchor="middle" font-size="11" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>
-                            {line2 && <text x={x} y={baseY + 14} text-anchor="middle" font-size="11" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
-                            <text x={x} y={baseY + (line2 ? 28 : 14)} text-anchor="middle" font-size="10" fill="rgba(4,51,65,0.5)" font-family="Commissioner, sans-serif">{p.elevation}m</text>
-                          </>
-                        );
-                      })()}
+                      <circle cx={x} cy={y} r={p.highlight ? 10 : 7} fill={p.highlight ? 'var(--color-sorbus)' : 'var(--color-java)'} stroke="white" stroke-width="2.5" />
+                      <text x={x} y={y - 18} text-anchor="middle" font-size="10" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>
+                      <text x={x} y={baseY} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>
+                      {line2 && <text x={x} y={baseY + 13} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
+                      <text x={x} y={baseY + (line2 ? 26 : 13)} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>
                     </g>
                   );
                 });
@@ -422,24 +688,21 @@ const defaultTripItems: any[] = hasTripInfo
 
               return (
                 <>
-                  {/* fills */}
-                  <path class="svg-path-1day" d={makePath(pts1day, true)} fill="url(#elevationGradient)" opacity="0.25" />
-                  {pts2d1n.length > 0 && <path class="svg-path-2d1n" d={makePath(pts2d1n, true)} fill="url(#elevationGradient)" opacity="0.25" />}
-                  {pts3d2n.length > 0 && <path class="svg-path-3d2n" d={makePath(pts3d2n, true)} fill="url(#elevationGradient)" opacity="0.25" />}
-                  {/* lines */}
-                  <path class="svg-path-1day" d={makePath(pts1day, false)} fill="none" stroke="var(--color-java)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                  {pts2d1n.length > 0 && <path class="svg-path-2d1n" d={makePath(pts2d1n, false)} fill="none" stroke="var(--color-java)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />}
-                  {pts3d2n.length > 0 && <path class="svg-path-3d2n" d={makePath(pts3d2n, false)} fill="none" stroke="var(--color-java)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />}
-                  {/* dots */}
-                  {renderDots(pts1day, 'svg-path-1day', step1day)}
-                  {pts2d1n.length > 0 && renderDots(pts2d1n, 'svg-path-2d1n', step2d1n)}
-                  {pts3d2n.length > 0 && renderDots(pts3d2n, 'svg-path-3d2n', step3d2n)}
+                  <path class="svg-path-1day" d={makePath(pts1day, true)} fill="url(#elevGradTeal)" />
+                  {pts2d1n.length > 0 && <path class="svg-path-2d1n" d={makePath(pts2d1n, true)} fill="url(#elevGradTeal)" />}
+                  {pts3d2n.length > 0 && <path class="svg-path-3d2n" d={makePath(pts3d2n, true)} fill="url(#elevGradTeal)" />}
+                  <path class="svg-path-1day" d={makePath(pts1day, false)} fill="none" stroke="var(--color-java)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                  {pts2d1n.length > 0 && <path class="svg-path-2d1n" d={makePath(pts2d1n, false)} fill="none" stroke="var(--color-java)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />}
+                  {pts3d2n.length > 0 && <path class="svg-path-3d2n" d={makePath(pts3d2n, false)} fill="none" stroke="var(--color-java)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />}
+                  {renderDots(pts1day, 'svg-path-1day')}
+                  {pts2d1n.length > 0 && renderDots(pts2d1n, 'svg-path-2d1n')}
+                  {pts3d2n.length > 0 && renderDots(pts3d2n, 'svg-path-3d2n')}
                 </>
               );
             })()}
 
             {/* X-axis baseline */}
-            <line x1="60" y1="340" x2="1160" y2="340" stroke="var(--color-nordic)" stroke-width="1.5" opacity="0.3" />
+            <line x1="60" y1="320" x2="1160" y2="320" stroke="var(--color-nordic)" stroke-width="1" opacity="0.2" />
           </svg>
         </div>
       ) : (
@@ -470,6 +733,13 @@ const defaultTripItems: any[] = hasTripInfo
     </div>
   </section>
 
+
+  <!-- ═══ S-pan · panoramic image break ══════════════════════════ -->
+  {panoramicImage && (
+    <div class="td-panoramic">
+      <img src={panoramicImage} alt={`${tour.name} — landscape`} loading="lazy" />
+    </div>
+  )}
 
   <!-- ═══ S7 · b-welcome (Welcome pack) ════════════════════════ -->
   <section class="td-welcome">
@@ -574,7 +844,6 @@ const defaultTripItems: any[] = hasTripInfo
           <div class="td-reviews__row"><span>2★</span><div class="td-reviews__bar"><div class="td-reviews__bar-fill" style="width:0%"></div></div><span>0</span></div>
           <div class="td-reviews__row"><span>1★</span><div class="td-reviews__bar"><div class="td-reviews__bar-fill" style="width:0%"></div></div><span>0</span></div>
         </div>
-        <p class="td-reviews__placeholder-note">⚠ Placeholder data — swap when real reviews available.</p>
       </div>
       <div class="td-reviews__right">
         <article class="td-review">
@@ -610,6 +879,30 @@ const defaultTripItems: any[] = hasTripInfo
       <a href="/tours" class="c-button c-button--light">See all tours →</a>
     </div>
   </section>
+
+  <!-- ═══ S-cta-bottom · inline CTA before FAQ ════════════════════ -->
+  {!tour.comingSoon && ctaPrice && (
+    <section class="td-cta-bottom">
+      <div class="td-cta-bottom__inner">
+        <div class="td-cta-bottom__text">
+          <p class="td-cta-bottom__eyebrow">Ready to go?</p>
+          <h2 class="td-cta-bottom__heading">{tour.name}</h2>
+          <p class="td-cta-bottom__price">
+            from ${ctaPrice}
+            {ctaPriceVND && <span class="td-cta-bottom__vnd"> / {ctaPriceVND.toLocaleString('vi-VN')} VND</span>}
+            <span class="td-cta-bottom__unit"> /person</span>
+          </p>
+          <p class="td-cta-bottom__note">No payment now — reserve your spot, pay 14 days before. Free cancellation.</p>
+        </div>
+        <div class="td-cta-bottom__actions">
+          <a href={ctaContactLink} class="c-button c-button--primary">
+            I'm in →
+          </a>
+          <a href="/contact" class="c-button c-button--ghost">Send an inquiry</a>
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- ═══ S9 · b-faq ════════════════════════════════════════════ -->
   <section class="td-faq">
@@ -657,6 +950,25 @@ const defaultTripItems: any[] = hasTripInfo
   </section>
 
   <NotifyPopup />
+
+  <!-- ═══ Sticky bottom bar ════════════════════════════════════════ -->
+  {!tour.comingSoon && ctaPrice && (
+    <div class="td-sticky-bar" id="td-sticky-bar" aria-hidden="true">
+      <div class="td-sticky-bar__inner">
+        <div class="td-sticky-bar__info">
+          <span class="td-sticky-bar__name">{tour.name}</span>
+          <span class="td-sticky-bar__price">
+            from ${ctaPrice}
+            {ctaPriceVND && <span class="td-sticky-bar__vnd"> / {ctaPriceVND.toLocaleString('vi-VN')} VND</span>}
+            <span class="td-sticky-bar__unit"> /person</span>
+          </span>
+        </div>
+        <a href={ctaContactLink} class="td-sticky-bar__btn">
+          I'm in →
+        </a>
+      </div>
+    </div>
+  )}
 </BaseLayout>
 
 <style>
@@ -829,6 +1141,21 @@ const defaultTripItems: any[] = hasTripInfo
     margin-left: 4px;
   }
 
+  .td-product__price-row {
+    display: block;
+    line-height: 1;
+  }
+
+  .td-product__price-sep {
+    opacity: 0.35;
+  }
+
+  .td-product__price-vnd {
+    /* same font/size as $ amount — inherits from .td-product__price */
+    color: var(--color-nordic);
+    opacity: 0.55;
+  }
+
   .td-product__tagline {
     font-size: 16px;
     line-height: 1.6;
@@ -895,40 +1222,105 @@ const defaultTripItems: any[] = hasTripInfo
     pointer-events: auto;
   }
 
-  /* ── Duration tabs ──────────────────────────────── */
-  .td-duration__tabs {
-    display: flex;
-    gap: 8px;
-    background: rgba(4, 51, 65, 0.06);
-    border-radius: 12px;
-    padding: 4px;
+  /* ── Pickup + vehicle selector ──────────────────── */
+  /*
+   * Both selects must be the same width = the wider of the two.
+   * Strategy: constrain .td-selector to fit-content so it shrinks
+   * to its content, then stretch each child .td-selector__q to 100%
+   * of that container. The browser automatically uses the widest
+   * <select> as the reference, so both rows are equal width.
+   */
+  .td-selector {
+    display: inline-flex;      /* shrink-wraps to widest child */
+    flex-direction: column;
+    gap: 14px;
+    width: fit-content;        /* don't stretch across full panel */
+    max-width: 100%;           /* never overflow the panel on small screens */
   }
 
-  .td-duration__tab {
-    flex: 1;
-    padding: 10px 16px;
-    border-radius: 9px;
-    border: none;
-    background: transparent;
-    font-family: var(--font-heading);
+  .td-selector__q {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;               /* fills .td-selector's shrunk width */
+  }
+
+  .td-selector__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-nordic);
+    opacity: 0.55;
+  }
+
+  .td-selector__wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .td-selector__select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--color-white, #fff);
+    border: 1.5px solid rgba(4, 51, 65, 0.18);
+    border-radius: 10px;
+    padding: 11px 44px 11px 16px;  /* extra right room for arrow */
+    font-family: var(--font-body);
     font-size: 14px;
     font-weight: 600;
     color: var(--color-nordic);
-    opacity: 0.5;
     cursor: pointer;
-    transition: background 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    width: 100%;               /* fill the .td-selector__wrap = same for both */
+    min-width: 0;
+  }
+
+  .td-selector__select:focus {
+    outline: none;
+    border-color: var(--color-java);
+    box-shadow: 0 0 0 3px rgba(29, 160, 160, 0.15);
+  }
+
+  .td-selector__arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-java);
+    pointer-events: none;
+  }
+
+  /* ── Duration tabs (1 Day / 2D1N / 3D2N) ─────────── */
+  .td-dur-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .td-dur-tab {
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(4, 51, 65, 0.18);
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
     white-space: nowrap;
   }
 
-  .td-duration__tab.is-active {
-    background: white;
-    opacity: 1;
-    box-shadow: 0 2px 8px rgba(4, 51, 65, 0.14);
+  .td-dur-tab:hover {
+    border-color: var(--color-java);
     color: var(--color-java);
   }
 
-  .td-duration__tab:hover:not(.is-active) {
-    opacity: 0.75;
+  .td-dur-tab.is-active {
+    background: var(--color-java);
+    border-color: var(--color-java);
+    color: #fff;
   }
 
   /* ── Trip Info cards ─────────────────────────────── */
@@ -1077,7 +1469,7 @@ const defaultTripItems: any[] = hasTripInfo
 
   /* ── S4 td-value ────────────────────────────────── */
   .td-value {
-    background: var(--color-white-nectar);
+    background: var(--color-light-cyan);
     padding: 120px 0;
   }
 
@@ -1158,6 +1550,18 @@ const defaultTripItems: any[] = hasTripInfo
     text-decoration-color: rgba(234,103,57,0.4);
   }
 
+  :global(.td-value__bad--merged) {
+    text-decoration: none;
+    vertical-align: middle;
+    text-align: center;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(4,51,65,0.45);
+    background: rgba(4,51,65,0.02);
+    border-left: 2px solid rgba(234,103,57,0.2);
+  }
+
   :global(.td-value__good) {
     font-weight: 700;
     color: var(--color-java);
@@ -1183,7 +1587,7 @@ const defaultTripItems: any[] = hasTripInfo
 
   /* ── S5 td-overview ─────────────────────────────── */
   .td-overview {
-    background: var(--color-white-nectar);
+    background: var(--color-white, #fff);
     padding: 120px 0 80px;
   }
 
@@ -1358,7 +1762,7 @@ const defaultTripItems: any[] = hasTripInfo
   }
 
   /* Badge color per type */
-  .td-timeline__act-badge--history       { background: var(--color-white-nectar); color: #413d04; }
+  .td-timeline__act-badge--history       { background: rgba(4,51,65,0.08); color: var(--color-nordic); }
   .td-timeline__act-badge--meal          { background: #fde8d8; color: #8b3a10; }
   .td-timeline__act-badge--challenge     { background: #e8f5e9; color: #2e7d32; }
   .td-timeline__act-badge--hiking        { background: var(--color-light-cyan); color: var(--color-nordic); }
@@ -1366,7 +1770,7 @@ const defaultTripItems: any[] = hasTripInfo
   /* Fallbacks for old data */
   .td-timeline__act-badge--trek    { background: var(--color-light-cyan); color: var(--color-nordic); }
   .td-timeline__act-badge--food    { background: #fde8d8; color: #8b3a10; }
-  .td-timeline__act-badge--culture { background: var(--color-white-nectar); color: #413d04; }
+  .td-timeline__act-badge--culture { background: rgba(4,51,65,0.08); color: var(--color-nordic); }
   .td-timeline__act-badge--free    { background: #e8f5e9; color: #2e7d32; }
 
   .td-timeline__act-time {
@@ -1491,12 +1895,12 @@ const defaultTripItems: any[] = hasTripInfo
     .td-tripinfo__grid { grid-template-columns: 1fr; }
     :global(.td-tripinfo__icon-wrap) { width: 36px; height: 36px; }
     :global(.td-tripinfo__icon-wrap i) { font-size: 17px; }
-    .td-duration__tab  { font-size: 13px; padding: 9px 12px; }
+    .td-selector__select { font-size: 14px; padding: 11px 38px 11px 14px; }
   }
 
   /* ── S7 td-welcome ─────────────────────────────── */
   .td-welcome {
-    background: var(--color-light-cyan);
+    background: #ffffff;
     padding: 120px 0;
   }
 
@@ -1532,7 +1936,7 @@ const defaultTripItems: any[] = hasTripInfo
   }
 
   .td-welcome__card {
-    background: var(--color-white-nectar);
+    background: var(--color-light-cyan);
     border-radius: 16px;
     padding: 24px 20px;
     text-align: center;
@@ -1918,7 +2322,7 @@ const defaultTripItems: any[] = hasTripInfo
   }
 
   /* ── S9 td-faq ──────────────────────────────────── */
-  .td-faq { background: var(--color-white-nectar); padding: 120px 0; }
+  .td-faq { background: var(--color-white, #fff); padding: 120px 0; }
 
   .td-faq__inner {
     max-width: var(--max-width);
@@ -2074,6 +2478,338 @@ const defaultTripItems: any[] = hasTripInfo
     .td-faq            { padding: 80px 0; }
     .td-related        { padding: 80px 0; }
   }
+
+  /* ── Cabin upgrade toggle ───────────────────────────── */
+  .td-cabin {
+    border-top: 1px solid rgba(4,51,65,0.12);
+    padding-top: 14px;
+    margin-top: 4px;
+    width: 100%;
+  }
+
+  /* When inside .td-selector, no border needed — it flows between Q1 and Q2 */
+  .td-cabin--inline {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+    background: rgba(29,160,160,0.06);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .td-cabin__toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+
+  .td-cabin__toggle input { display: none; }
+
+  .td-cabin__slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: rgba(4,51,65,0.18);
+    border-radius: 12px;
+    flex-shrink: 0;
+    transition: background 0.25s ease;
+  }
+
+  .td-cabin__slider::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.25s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .td-cabin__toggle input:checked ~ .td-cabin__slider {
+    background: var(--color-java);
+  }
+
+  .td-cabin__toggle input:checked ~ .td-cabin__slider::after {
+    transform: translateX(20px);
+  }
+
+  .td-cabin__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-nordic);
+  }
+
+  .td-cabin__note {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ── Discount policy ────────────────────────────────── */
+  .td-discount {
+    border-top: 1px solid rgba(4,51,65,0.12);
+    padding-top: 18px;
+    margin-top: 4px;
+  }
+
+  .td-discount__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .td-discount__list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    gap: 12px;
+  }
+
+  .td-discount__label {
+    color: var(--color-nordic);
+    opacity: 0.75;
+  }
+
+  .td-discount__value {
+    font-weight: 700;
+    color: var(--color-java);
+    white-space: nowrap;
+  }
+
+  /* ── Panoramic image break ─────────────────────────────────── */
+  .td-panoramic {
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    overflow: hidden;
+  }
+
+  .td-panoramic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* ── CTA bottom section ────────────────────────────────────── */
+  .td-cta-bottom {
+    background: var(--color-nordic);
+    padding: 64px 24px;
+  }
+
+  .td-cta-bottom__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .td-cta-bottom__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-riptide);
+    margin-bottom: 8px;
+  }
+
+  .td-cta-bottom__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    color: white;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  .td-cta-bottom__price {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+  }
+
+  .td-cta-bottom__vnd {
+    font-size: 15px;
+    font-weight: 400;
+    opacity: 0.55;
+  }
+
+  .td-cta-bottom__unit {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.45;
+  }
+
+  .td-cta-bottom__note {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    max-width: 380px;
+  }
+
+  .td-cta-bottom__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .c-button--ghost {
+    display: inline-block;
+    padding: 13px 28px;
+    border-radius: 100px;
+    border: 2px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.75);
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .c-button--ghost:hover {
+    border-color: rgba(255,255,255,0.6);
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .td-cta-bottom__inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .td-cta-bottom__actions {
+      width: 100%;
+    }
+
+    .td-cta-bottom__actions .c-button--primary,
+    .td-cta-bottom__actions .c-button--ghost {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  /* ── Sticky bottom bar ─────────────────────────────────────── */
+  .td-sticky-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: white;
+    border-top: 1px solid var(--color-light-cyan);
+    box-shadow: 0 -4px 24px rgba(4, 51, 65, 0.10);
+    padding: 12px 24px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .td-sticky-bar.is-visible {
+    transform: translateY(0);
+  }
+
+  .td-sticky-bar__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .td-sticky-bar__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .td-sticky-bar__name {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+  }
+
+  .td-sticky-bar__price {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-nordic);
+  }
+
+  .td-sticky-bar__vnd {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.5;
+  }
+
+  .td-sticky-bar__unit {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.4;
+  }
+
+  .td-sticky-bar__btn {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    padding: 11px 24px;
+    background: var(--color-sorbus);
+    color: white;
+    border-radius: 100px;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
+  }
+
+  .td-sticky-bar__btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.35) 50%,
+      transparent 100%
+    );
+    animation: btn-shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes btn-shimmer {
+    0%   { left: -75%; }
+    40%  { left: 125%; }
+    100% { left: 125%; }
+  }
+
+  .td-sticky-bar__btn:hover { opacity: 0.88; }
+
+  @media (max-width: 480px) {
+    .td-sticky-bar__name { max-width: 160px; }
+    .td-sticky-bar__vnd  { display: none; }
+  }
 </style>
 
 <script>
@@ -2142,20 +2878,40 @@ const defaultTripItems: any[] = hasTripInfo
     const rawOptions = panel.dataset.durationOptions;
     if (!rawOptions) return;
 
+    const tourName = panel.dataset.tourName || '';
     const durationOptions = JSON.parse(rawOptions);
 
-    const tabs = document.querySelectorAll<HTMLButtonElement>('.td-duration__tab');
+    const selectorEl   = document.getElementById('td-selector');
+    const selectorMode = selectorEl?.dataset.selectorMode ?? 'pickup-vehicle';
+    const selPickup    = document.getElementById('td-sel-pickup')       as HTMLSelectElement | null;
+    const selVehicle   = document.getElementById('td-sel-vehicle')      as HTMLSelectElement | null;
+    const selVehicleOnly = document.getElementById('td-sel-vehicle-only') as HTMLSelectElement | null;
     const priceAmountEl = document.getElementById('td-price-amount');
     const taglineEl = document.getElementById('td-tagline-display');
     const ctaBtn = document.getElementById('td-cta-btn') as HTMLAnchorElement | null;
     const ctaNote = document.getElementById('td-cta-note');
 
+    function resolveId(): string {
+      if (selectorMode === 'duration-tabs') {
+        // Tab buttons — read active tab's data-dur-id
+        const activeTab = document.querySelector('.td-dur-tab.is-active') as HTMLElement | null;
+        return activeTab?.dataset.durId || durationOptions[0]?.id || '1day';
+      }
+      if (selectorMode === 'vehicle-only') {
+        // Single dropdown — value IS the option id (e.g. "car" or "motor")
+        return selVehicleOnly?.value || durationOptions[0]?.id || 'car';
+      }
+      // Two dropdowns — combine pickup + vehicle
+      const pickup  = selPickup?.value  || 'hanoi';
+      const vehicle = selVehicle?.value || 'car';
+      return `${pickup}-${vehicle}`;
+    }
+
     function switchDuration(id: string) {
       const opt = durationOptions.find((o: any) => o.id === id);
       if (!opt) return;
 
-      // 1. Active tab
-      tabs.forEach(t => t.classList.toggle('is-active', t.dataset.duration === id));
+      // 1. (no tabs to toggle)
 
       // 2. Price
       const priceDisplay = document.getElementById('td-price-display');
@@ -2165,13 +2921,27 @@ const defaultTripItems: any[] = hasTripInfo
       } else {
         if (priceDisplay) priceDisplay.style.display = 'none';
       }
+      // 2b. VND price
+      const priceVndEl = document.getElementById('td-price-vnd');
+      if (priceVndEl) {
+        if (opt.priceVND != null) {
+          priceVndEl.textContent = `${opt.priceVND.toLocaleString('vi-VN')} VND`;
+          priceVndEl.style.display = '';
+          const sep = priceVndEl.previousElementSibling as HTMLElement | null;
+          if (sep) sep.style.display = '';
+        } else {
+          priceVndEl.style.display = 'none';
+          const sep = priceVndEl.previousElementSibling as HTMLElement | null;
+          if (sep) sep.style.display = 'none';
+        }
+      }
 
       // 3. Tagline
       if (taglineEl) taglineEl.textContent = opt.tagline;
 
       // 4. CTA
       if (ctaBtn) {
-        ctaBtn.href = `https://wa.me/84961836611?text=${encodeURIComponent(opt.waText)}`;
+        ctaBtn.href = `/contact?tour=${encodeURIComponent(tourName)}&option=${encodeURIComponent(opt.id)}`;
         ctaBtn.textContent = opt.ctaLabel;
       }
       if (ctaNote) ctaNote.textContent = opt.ctaNote;
@@ -2221,13 +2991,21 @@ const defaultTripItems: any[] = hasTripInfo
           const tableBody   = document.getElementById('td-value-table-body');
           if (headlineEl) headlineEl.textContent = valueData[id].headline || '';
           if (bodyEl)     bodyEl.innerHTML = (valueData[id].paragraphs || []).map((p: string) => `<p>${p}</p>`).join('');
-          if (tableBody)  tableBody.innerHTML = (valueData[id].compareTable || []).map((row: any) => `
-            <tr>
-              <td class="td-value__metric">${row.metric}</td>
-              <td class="td-value__bad">${row.typical}</td>
-              <td class="td-value__good">${row.us}</td>
-            </tr>
-          `).join('');
+          if (tableBody) {
+            const rows: any[] = valueData[id].compareTable || [];
+            const allSame = rows.length > 1 && rows.every((r: any) => r.typical === rows[0].typical);
+            const merged = allSame ? rows[0].typical : '';
+            tableBody.innerHTML = rows.map((row: any, i: number) => `
+              <tr>
+                <td class="td-value__metric">${row.metric}</td>
+                ${allSame
+                  ? (i === 0 ? `<td class="td-value__bad td-value__bad--merged" rowspan="${rows.length}">${merged}</td>` : '')
+                  : `<td class="td-value__bad">${row.typical}</td>`
+                }
+                <td class="td-value__good">${row.us}</td>
+              </tr>
+            `).join('');
+          }
         }
       }
 
@@ -2235,13 +3013,105 @@ const defaultTripItems: any[] = hasTripInfo
       document.body.classList.remove('dur-2d1n', 'dur-3d2n');
       if (id === '2d1n') document.body.classList.add('dur-2d1n');
       if (id === '3d2n') document.body.classList.add('dur-3d2n');
+
+      // 9. Cabin upgrade — only show for Hanoi options (pickup-vehicle mode)
+      //    vehicle-only mode always shows cabin block (never hide/show here)
+      const cabinSection = document.getElementById('td-cabin-section');
+      if (cabinSection && selectorMode !== 'vehicle-only') {
+        const isHanoiOption = (id === 'hanoi-car' || id === 'hanoi-motor');
+        cabinSection.style.display = isHanoiOption ? '' : 'none';
+        if (!isHanoiOption) {
+          // Switching away from Hanoi — uncheck cabin, show base price
+          const check = document.getElementById('td-cabin-check') as HTMLInputElement | null;
+          if (check) check.checked = false;
+          updatePriceDisplay(opt.price, opt.priceVND ?? null, false, 0, 0);
+        } else {
+          // Switching between hanoi-car ↔ hanoi-motor while cabin may be checked
+          const check = document.getElementById('td-cabin-check') as HTMLInputElement | null;
+          const surchargeUSD = Number(cabinSection.dataset.surchargeUsd || 8);
+          const surchargeVND = Number(cabinSection.dataset.surchargeVnd || 0);
+          updatePriceDisplay(opt.price, opt.priceVND ?? null, check?.checked ?? false, surchargeUSD, surchargeVND);
+        }
+      }
     }
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const id = tab.dataset.duration;
-        if (id) switchDuration(id);
+    // ── Price display helper ────────────────────────────
+    function updatePriceDisplay(baseUSD: number | null, baseVND: number | null, cabinOn: boolean, surchargeUSD: number, surchargeVND: number) {
+      const priceEl      = document.getElementById('td-price-amount');
+      const priceVndEl   = document.getElementById('td-price-vnd');
+      const priceDisplay = document.getElementById('td-price-display');
+      if (baseUSD == null) { if (priceDisplay) priceDisplay.style.display = 'none'; return; }
+      if (priceDisplay) priceDisplay.style.display = '';
+      const totalUSD = baseUSD + (cabinOn ? surchargeUSD : 0);
+      if (priceEl) priceEl.textContent = `$${totalUSD}`;
+      if (priceVndEl && baseVND != null) {
+        const totalVND = baseVND + (cabinOn ? surchargeVND : 0);
+        priceVndEl.textContent = `${totalVND.toLocaleString('vi-VN')} VND`;
+      }
+    }
+
+    // ── Cabin checkbox listener ─────────────────────────
+    (() => {
+      const cabinCheck   = document.getElementById('td-cabin-check') as HTMLInputElement | null;
+      const cabinLabel   = document.getElementById('td-cabin-label');
+      const cabinSection = document.getElementById('td-cabin-section');
+      if (!cabinCheck || !cabinSection) return;
+
+      const surchargeUSD = Number(cabinSection.dataset.surchargeUsd || 8);
+      const surchargeVND = Number(cabinSection.dataset.surchargeVnd || 0);
+
+      cabinCheck.addEventListener('change', () => {
+        const isOn = cabinCheck.checked;
+        if (cabinLabel) cabinLabel.textContent = isOn ? 'Private cabin (upgraded)' : 'Standard sleeper bus';
+
+        const activeId   = resolveId();
+        const rawOptions = document.getElementById('td-product-panel')?.dataset.durationOptions;
+        if (!rawOptions) return;
+        const opts = JSON.parse(rawOptions);
+        const opt  = opts.find((o: any) => o.id === activeId);
+        if (opt) updatePriceDisplay(opt.price, opt.priceVND ?? null, isOn, surchargeUSD, surchargeVND);
       });
-    });
+    })();
+
+    // Duration tab listeners
+    if (selectorMode === 'duration-tabs') {
+      document.querySelectorAll('.td-dur-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.td-dur-tab').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          switchDuration(resolveId());
+        });
+      });
+    }
+
+    // Dropdown listeners — re-selectable at any time
+    selVehicleOnly?.addEventListener('change', () => switchDuration(resolveId()));
+    selPickup?.addEventListener('change',      () => switchDuration(resolveId()));
+    selVehicle?.addEventListener('change',     () => switchDuration(resolveId()));
+
+    // Init on page load — sync UI state to default dropdown values
+    switchDuration(resolveId());
+  })();
+
+  // ── Sticky bar: show after hero CTA scrolls out of view ──────────
+  (() => {
+    const stickyBar = document.getElementById('td-sticky-bar');
+    const heroCta   = document.getElementById('td-cta-btn') || document.querySelector('.td-product__cta');
+    if (!stickyBar || !heroCta) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          stickyBar.classList.remove('is-visible');
+          stickyBar.setAttribute('aria-hidden', 'true');
+        } else {
+          stickyBar.classList.add('is-visible');
+          stickyBar.setAttribute('aria-hidden', 'false');
+        }
+      },
+      { threshold: 0, rootMargin: '0px 0px -20px 0px' }
+    );
+
+    observer.observe(heroCta);
   })();
 </script>

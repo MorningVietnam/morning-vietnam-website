@@ -1,14 +1,69 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { tours } from '../data/tours.ts';
+
+// Build a map from tour name → selector config (for JS pre-fill)
+type TourOptionEntry = {
+  mode: string;
+  pickupLabels?: { id: string; label: string }[];
+  vehicleLabels?: { id: string; label: string }[];
+  durationLabels?: { id: string; label: string }[];
+};
+
+const tourOptionMap: Record<string, TourOptionEntry> = {};
+
+for (const t of tours) {
+  if (!t.durationOptions || t.durationOptions.length <= 1) continue;
+  const mode = (t as any).selectorMode ?? 'pickup-vehicle';
+  const entry: TourOptionEntry = { mode };
+
+  if (mode === 'duration-tabs') {
+    entry.durationLabels = t.durationOptions.map(o => ({ id: o.id, label: o.label }));
+  } else if (mode === 'vehicle-only') {
+    entry.vehicleLabels = t.durationOptions.map(o => ({ id: o.id, label: o.label }));
+  } else {
+    // pickup-vehicle: pickup = unique first-word grouping, vehicle = car/motor
+    const pickupSeen = new Set<string>();
+    const vehicleSeen = new Set<string>();
+    entry.pickupLabels = [];
+    entry.vehicleLabels = [];
+    for (const o of t.durationOptions) {
+      const parts = o.id.split('-');        // hanoi-car, sapa-motor, hanoi-cabin-car …
+      // pickup key = everything except last segment
+      const pickupId = parts.slice(0, -1).join('-');
+      const vehicleId = parts[parts.length - 1];
+      // label extraction: "Hanoi · Car" → pickup "Hanoi", vehicle "Car"
+      const labelParts = o.label.split(' · ');
+      if (!pickupSeen.has(pickupId)) {
+        pickupSeen.add(pickupId);
+        entry.pickupLabels.push({ id: pickupId, label: labelParts[0] });
+      }
+      if (!vehicleSeen.has(vehicleId)) {
+        vehicleSeen.add(vehicleId);
+        entry.vehicleLabels!.push({ id: vehicleId, label: labelParts[labelParts.length - 1] });
+      }
+    }
+  }
+  tourOptionMap[t.name] = entry;
+}
+
+const tourOptionMapJSON = JSON.stringify(tourOptionMap);
 
 const tourOptions = [
   "Not sure yet — help me choose",
   "Ho Chi Minh: A Life",
-  "Sa Pa - Lai Chau",
+  "Sa Pa · Lai Châu",
+  "Sa Pa Trekking Classic",
+  "Sa Pa · Nậm Cang",
+  "Into Nậm Lúc Waterfall",
+  "Unlock Lai Châu",
   "Unlock Mai Châu",
-  "Mai - Mộc In 1 Trip",
+  "Mai – Mộc in 1 Trip",
   "Ninh Bình In A New Way",
   "Cát Bà: Not Just About Sea",
+  "Central Vietnam",
+  "Central Highlands",
+  "Mekong Delta",
   "Private / custom tour",
 ];
 
@@ -95,6 +150,9 @@ const faqItems = [
               {tourOptions.map(opt => <option value={opt}>{opt}</option>)}
             </select>
           </div>
+
+          <!-- Dynamic option fields — injected by JS based on selected tour -->
+          <div id="cf-option-wrap" style="display:none"></div>
 
           <div class="field">
             <label for="cf-message">Message / special requests</label>
@@ -250,6 +308,9 @@ const faqItems = [
       </p>
     </div>
   </section>
+
+  <!-- Tour option map for JS pre-fill -->
+  <div id="tour-option-map" data-map={tourOptionMapJSON} style="display:none"></div>
 
 </BaseLayout>
 
@@ -664,8 +725,153 @@ const faqItems = [
   }
 </style>
 
+<style is:global>
+  /* Dynamic option fields injected by JS — must be global to apply to runtime elements */
+  #cf-option-wrap .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 640px) {
+    #cf-option-wrap .field-row { grid-template-columns: 1fr; }
+  }
+
+  #cf-option-wrap label {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  #cf-option-wrap .field {
+    margin-bottom: 20px;
+  }
+
+  #cf-option-wrap select {
+    width: 100%;
+    padding: 14px 40px 14px 16px;
+    border: 2px solid var(--color-light-cyan);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: var(--font-body);
+    color: var(--color-nordic);
+    background: white;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23043341' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  #cf-option-wrap select:focus {
+    outline: none;
+    border-color: var(--color-java);
+    box-shadow: 0 0 0 4px rgba(29, 160, 160, 0.1);
+  }
+</style>
+
 
 <script>
+  // ── Tour option pre-fill from ?tour=&option= ──────────────────
+  (() => {
+    const params     = new URLSearchParams(window.location.search);
+    const tourParam  = params.get('tour') ?? '';
+    const optParam   = params.get('option') ?? '';
+
+    const tourSel  = document.getElementById('cf-tour') as HTMLSelectElement | null;
+    const optWrap  = document.getElementById('cf-option-wrap') as HTMLElement | null;
+    const mapEl    = document.getElementById('tour-option-map') as HTMLElement | null;
+    if (!tourSel || !optWrap || !mapEl) return;
+
+    const tourMap: Record<string, {
+      mode: string;
+      durationLabels?: { id: string; label: string }[];
+      pickupLabels?:   { id: string; label: string }[];
+      vehicleLabels?:  { id: string; label: string }[];
+    }> = JSON.parse(mapEl.dataset.map || '{}');
+
+    function buildSelect(id: string, name: string, label: string, options: { id: string; label: string }[], preselect: string) {
+      const wrap = document.createElement('div');
+      wrap.className = 'contact-form field';
+
+      const lbl = document.createElement('label');
+      lbl.htmlFor = id;
+      lbl.textContent = label;
+
+      // Wrapper to replicate the custom-arrow pattern used by .contact-form select
+      const selWrap = document.createElement('div');
+      selWrap.style.cssText = 'position:relative';
+
+      const sel = document.createElement('select');
+      sel.id = id; sel.name = name;
+      options.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.id; opt.textContent = o.label;
+        if (o.id === preselect) opt.selected = true;
+        sel.appendChild(opt);
+      });
+
+      selWrap.appendChild(sel);
+      wrap.appendChild(lbl);
+      wrap.appendChild(selWrap);
+      return wrap;
+    }
+
+    function renderOptionFields(tourName: string, preselectedOption: string) {
+      optWrap!.innerHTML = '';
+      optWrap!.style.display = 'none';
+
+      const entry = tourMap[tourName];
+      if (!entry) return;
+
+      // Parse preselected option to pick pickup / vehicle segments
+      const parts = preselectedOption.split('-');
+
+      if (entry.mode === 'duration-tabs' && entry.durationLabels) {
+        optWrap!.appendChild(
+          buildSelect('cf-duration', 'duration', 'Duration', entry.durationLabels, preselectedOption)
+        );
+        optWrap!.style.display = '';
+      } else if (entry.mode === 'vehicle-only' && entry.vehicleLabels) {
+        optWrap!.appendChild(
+          buildSelect('cf-vehicle', 'vehicle', 'Transport', entry.vehicleLabels, preselectedOption)
+        );
+        optWrap!.style.display = '';
+      } else if (entry.mode === 'pickup-vehicle' && entry.pickupLabels && entry.vehicleLabels) {
+        const pickupPre = parts.length > 1 ? parts.slice(0, -1).join('-') : '';
+        const vehiclePre = parts.length > 0 ? parts[parts.length - 1] : '';
+        // Put both in a field-row so they sit side by side like "date + group size"
+        const row = document.createElement('div');
+        row.className = 'field-row';
+        row.appendChild(buildSelect('cf-pickup',  'pickup',  'Joining from', entry.pickupLabels,  pickupPre));
+        row.appendChild(buildSelect('cf-vehicle', 'vehicle', 'Transport',    entry.vehicleLabels, vehiclePre));
+        optWrap!.appendChild(row);
+        optWrap!.style.display = '';
+      }
+    }
+
+    // Pre-fill tour dropdown
+    if (tourParam) {
+      const match = Array.from(tourSel.options).find(
+        o => o.value.toLowerCase() === tourParam.toLowerCase()
+      );
+      if (match) {
+        tourSel.value = match.value;
+        renderOptionFields(match.value, optParam);
+      }
+    }
+
+    // Re-render when tour changes
+    tourSel.addEventListener('change', () => {
+      renderOptionFields(tourSel.value, '');
+    });
+  })();
+
   // ── Form submit ────────────────────────────────────────────────
   const form = document.getElementById('contact-form') as HTMLElement;
   const success = document.getElementById('form-success') as HTMLElement;

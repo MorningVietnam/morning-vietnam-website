@@ -11,6 +11,7 @@ interface Tour {
   languages?: string[];
   comingSoon: boolean;
   image: string;
+  hubUrl?: string;
 }
 
 interface Props {
@@ -52,7 +53,7 @@ const regionLabel: Record<string, string> = {
       </div>
     </div>
   ) : (
-    <a href={`/tours/${tour.slug}`} class="tour-card__inner">
+    <a href={tour.hubUrl ?? `/tours/${tour.slug}`} class="tour-card__inner">
       <div class="tour-card__image">
         <img src={tour.image} alt={tour.name} loading="lazy" />
         <div class="tour-card__badge">{tour.duration.join(' / ')}</div>

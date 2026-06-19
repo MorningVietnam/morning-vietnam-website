@@ -4,7 +4,14 @@ import TourCard from '../../components/TourCard.astro';
 import NotifyPopup from '../../components/NotifyPopup.astro';
 import { tours } from '../../data/tours.ts';
 
-const catBaIdx = tours.findIndex(t => t.slug === 'mai-moc-in-1-trip');
+const SAPA_HUB_ONLY = new Set([
+  'sapa-trekking-classic',
+  'sapa-nam-cang',
+  'into-nam-luc',
+  'unlock-lai-chau',
+]);
+const visibleTours = tours.filter((t: any) => !SAPA_HUB_ONLY.has(t.slug));
+const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-trip');
 ---
 
 <BaseLayout
@@ -37,7 +44,7 @@ const catBaIdx = tours.findIndex(t => t.slug === 'mai-moc-in-1-trip');
   <!-- Grid -->
   <section class="tours-section">
     <div class="tours-grid">
-      {tours.map((tour: any, i: number) => (
+      {visibleTours.map((tour: any, i: number) => (
         <>
           <TourCard tour={tour} index={i} />
           {i === catBaIdx && (

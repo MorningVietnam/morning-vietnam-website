@@ -2293,7 +2293,7 @@ export const tours: Tour[] = [
     duration:    ["1 Day"],
     price:       "from $63",
     priceUSD:    63,
-    priceVND:    1600000,
+    priceVND:    1650000,
     tagline:     "A limestone cave, a jungle trek to an untouched waterfall, and the highest viewpoint in Lai Châu — all in one day from Sa Pa.",
     description: "Leave Sa Pa at dawn. Visit Tiên Sơn Cave, then ride motorbike taxis deep into the jungle to the trailhead at 430m. Trek up through primary forest — gaining 470 metres of altitude — to Nậm Lúc Waterfall, swim, eat lunch among the trees, then push to the summit at 900m. Car option ends at Linh Ứng Temple (1,250m) — the best sunset view in all of Lai Châu. Back in Sa Pa by evening.",
     highlights: [
@@ -2317,14 +2317,28 @@ export const tours: Tour[] = [
     hubUrl:      "/tours/sapa-lai-chau",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
-    image:       "/tours/lai-chau-motortour/8.webp",
+    image:       "/tours/into-nam-luc/1.webp",
     selectorMode: 'vehicle-only',
+
+    gallery: [
+      { src: "/tours/into-nam-luc/1.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/2.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/3.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/4.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/5.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/6.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/7.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/8.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/9.webp",  alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/10.webp", alt: "Into Nậm Lúc Waterfall" },
+    ],
 
     durationOptions: [
       {
         id:       "car",
         label:    "By car",
         price:    81,
+        priceVND: 2130000,
         tagline:  "Private car Sa Pa → cave → jungle → waterfall → Linh Ứng Temple sunset. Back by 20:15. Mon departures.",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
@@ -2334,6 +2348,7 @@ export const tours: Tour[] = [
         id:       "motor",
         label:    "By motorbike",
         price:    63,
+        priceVND: 1650000,
         tagline:  "Motorbike Sa Pa → cave → jungle → waterfall. No Linh Ứng Temple — back in Sa Pa by 19:30. Thu departures.",
         ctaLabel: "I'm in →",
         ctaNote:  "Valid motorbike licence required for self-ride · No payment now · Free cancellation",
@@ -2429,7 +2444,7 @@ export const tours: Tour[] = [
         "The trek goes through primary tropical forest — not the kind that's been cleared and planted back, but the kind that closes in around you within five minutes of starting. The canopy is thick enough that heavy rain barely reaches the trail. When the waterfall appears after the final climb, there is no viewing platform, no railing, no food stall. Just water, rock, and the sound of the jungle.",
         "The car option ends the day at Linh Ứng Temple, a Buddhist monastery at 1,250m on the ridge above Lai Châu city. The monks built it for prayer, not for tourism. The view over the valley from the terrace is the kind that makes you stop talking. We get there for the last hour of light.",
       ],
-      pullImage: "/tours/lai-chau-motortour/8.webp",
+      pullImage: "/tours/into-nam-luc/pull.webp",
     },
 
     elevationProfile: [

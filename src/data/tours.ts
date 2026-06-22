@@ -1683,7 +1683,7 @@ export const tours: Tour[] = [
     hub:         "Hanoi",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
-    image:       "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-1.webp",
+    image:       "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-3.webp",
 
     panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
 
@@ -1945,7 +1945,7 @@ export const tours: Tour[] = [
     hub:         "Sa Pa",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
-    image:       "/tours/sapa-nam-cang/1.webp",
+    image:       "/tours/sapa-nam-cang/5.webp",
     selectorMode: 'duration-tabs',
 
     gallery: [

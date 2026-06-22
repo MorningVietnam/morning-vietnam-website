@@ -438,7 +438,7 @@ export const tours: Tour[] = [
     },
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
-    image:       "/tours/lai-chau-motortour/17.webp",
+    image:       "/tours/lai-chau-motortour/4.webp",
 
     elevationMax: 2000,
 

@@ -76,7 +76,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
         {tour.gallery && tour.gallery.length > 0 ? (
           <>
             <div class="td-product__main-image">
-              <img id="td-main-img" src={galleryItems[0].src} alt={galleryItems[0].alt} fetchpriority="high" />
+              <img id="td-main-img" class="td-main-img is-active" src={galleryItems[0].src} alt={galleryItems[0].alt} fetchpriority="high" />
+              <img id="td-main-img-b" class="td-main-img" src={galleryItems[0].src} alt="" aria-hidden="true" />
               {galleryItems.length > 1 && (
                 <div class="td-gallery__nav">
                   <button id="td-prev" class="td-gallery__arrow" aria-label="Previous image">
@@ -1003,11 +1004,18 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     position: relative;
   }
 
-  .td-product__main-image img {
+  .td-product__main-image .td-main-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.3s ease;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .td-product__main-image .td-main-img.is-active {
+    opacity: 1;
   }
 
   .td-gallery__nav {
@@ -2814,54 +2822,93 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
 
 <script>
   (() => {
-    const mainImg = document.getElementById('td-main-img') as HTMLImageElement | null;
-    const thumbs  = document.querySelectorAll<HTMLButtonElement>('.td-product__thumb');
+    const imgA   = document.getElementById('td-main-img')   as HTMLImageElement | null;
+    const imgB   = document.getElementById('td-main-img-b') as HTMLImageElement | null;
+    const thumbs = document.querySelectorAll<HTMLButtonElement>('.td-product__thumb');
     const prevBtn = document.getElementById('td-prev') as HTMLButtonElement | null;
     const nextBtn = document.getElementById('td-next') as HTMLButtonElement | null;
     const gallery = document.querySelector('.td-product__gallery') as HTMLElement | null;
 
-    if (!mainImg || thumbs.length === 0) return;
+    if (!imgA || !imgB || thumbs.length === 0) return;
+
+    const sources = Array.from(thumbs).map(t => ({
+      src: t.dataset.src ?? '',
+      alt: t.dataset.alt ?? '',
+    }));
 
     let current = 0;
+    let activeLayer: HTMLImageElement = imgA;
+    let nextLayer:   HTMLImageElement = imgB;
     let timer: ReturnType<typeof setInterval> | null = null;
+    let isTransitioning = false;
 
-    function goTo(idx: number) {
-      current = (idx + thumbs.length) % thumbs.length;
-      const t = thumbs[current];
-      mainImg!.style.opacity = '0';
-      setTimeout(() => {
-        mainImg!.src = t.dataset.src ?? '';
-        mainImg!.alt = t.dataset.alt ?? '';
-        mainImg!.style.opacity = '1';
-      }, 200);
+    // Preload toàn bộ gallery (chạy sau khi page idle) để swap không trắng ảnh
+    function preloadAll() {
+      sources.forEach(s => { const i = new Image(); i.src = s.src; });
+    }
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(preloadAll, { timeout: 2000 });
+    } else {
+      setTimeout(preloadAll, 800);
+    }
+
+    function showSlide(idx: number) {
+      if (isTransitioning) return;
+      const next = ((idx % sources.length) + sources.length) % sources.length;
+      if (next === current) return;
+
+      const target = sources[next];
+      isTransitioning = true;
+
+      // Load ảnh mới vào layer ẩn TRƯỚC khi fade
+      const onReady = () => {
+        nextLayer.classList.add('is-active');
+        activeLayer.classList.remove('is-active');
+        // Sau khi fade xong, hoán đổi vai trò 2 layer
+        window.setTimeout(() => {
+          const tmp = activeLayer;
+          activeLayer = nextLayer;
+          nextLayer = tmp;
+          current = next;
+          isTransitioning = false;
+        }, 600); // khớp transition 0.6s
+      };
+
+      nextLayer.alt = target.alt;
+      if (nextLayer.src === target.src && nextLayer.complete && nextLayer.naturalWidth > 0) {
+        onReady();
+      } else {
+        nextLayer.onload = onReady;
+        nextLayer.onerror = () => { isTransitioning = false; };
+        nextLayer.src = target.src;
+        // Nếu đã có trong cache, onload có thể không fire kịp — chốt bằng complete
+        if (nextLayer.complete && nextLayer.naturalWidth > 0) onReady();
+      }
+
+      // Cập nhật trạng thái thumb ngay (không đợi fade)
       thumbs.forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
+      thumbs[next].classList.add('active');
     }
 
     function startTimer() {
-      timer = setInterval(() => goTo(current + 1), 5000);
+      if (timer) return;
+      timer = setInterval(() => showSlide(current + 1), 5000);
     }
-
     function stopTimer() {
       if (timer) { clearInterval(timer); timer = null; }
     }
-
     function resetTimer() { stopTimer(); startTimer(); }
 
-    // Thumb clicks
     thumbs.forEach((t, i) => {
-      t.addEventListener('click', () => { goTo(i); resetTimer(); });
+      t.addEventListener('click', () => { showSlide(i); resetTimer(); });
     });
+    prevBtn?.addEventListener('click', () => { showSlide(current - 1); resetTimer(); });
+    nextBtn?.addEventListener('click', () => { showSlide(current + 1); resetTimer(); });
 
-    // Arrow buttons
-    prevBtn?.addEventListener('click', () => { goTo(current - 1); resetTimer(); });
-    nextBtn?.addEventListener('click', () => { goTo(current + 1); resetTimer(); });
-
-    // Pause on hover, resume on leave
     gallery?.addEventListener('mouseenter', stopTimer);
     gallery?.addEventListener('mouseleave', startTimer);
 
-    if (thumbs.length > 1) startTimer();
+    if (sources.length > 1) startTimer();
   })();
 
   /* ── Duration switcher ─────────────────────────────── */

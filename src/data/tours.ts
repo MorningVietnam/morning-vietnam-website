@@ -396,7 +396,7 @@ export const tours: Tour[] = [
     slug:        "sa-pa-lai-chau",
     name:        "Sa Pa · Lai Châu",
     region:      "north",
-    duration:    ["2D1N"],
+    duration:    ["1D", "2D1N", "3D2N"],
     price:       "from $123",
     priceUSD:    52,
     priceVND:    4760000,
@@ -2331,6 +2331,7 @@ export const tours: Tour[] = [
       { src: "/tours/into-nam-luc/8.webp",  alt: "Into Nậm Lúc Waterfall" },
       { src: "/tours/into-nam-luc/9.webp",  alt: "Into Nậm Lúc Waterfall" },
       { src: "/tours/into-nam-luc/10.webp", alt: "Into Nậm Lúc Waterfall" },
+      { src: "/tours/into-nam-luc/11.webp", alt: "Into Nậm Lúc Waterfall" },
     ],
 
     durationOptions: [

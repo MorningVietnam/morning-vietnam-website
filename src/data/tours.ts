@@ -1945,8 +1945,28 @@ export const tours: Tour[] = [
     hub:         "Sa Pa",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
-    image:       "/tours/lai-chau-motortour/3.webp",
+    image:       "/tours/sapa-nam-cang/1.webp",
     selectorMode: 'duration-tabs',
+
+    gallery: [
+      { src: "/tours/sapa-nam-cang/1.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/2.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/3.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/4.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/5.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/6.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/7.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/8.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/9.webp",  alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/10.webp", alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/11.webp", alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/12.webp", alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/13.webp", alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/14.webp", alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/15.webp", alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/16.webp", alt: "Sa Pa · Nậm Cang" },
+      { src: "/tours/sapa-nam-cang/17.webp", alt: "Sa Pa · Nậm Cang" },
+    ],
 
     durationOptions: [
       {

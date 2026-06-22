@@ -2921,19 +2921,14 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       } else {
         if (priceDisplay) priceDisplay.style.display = 'none';
       }
-      // 2b. VND price
+      // 2b. VND price — only update if this option explicitly carries priceVND;
+      //     if not, leave the static tour-level VND visible as-is.
       const priceVndEl = document.getElementById('td-price-vnd');
-      if (priceVndEl) {
-        if (opt.priceVND != null) {
-          priceVndEl.textContent = `${opt.priceVND.toLocaleString('vi-VN')} VND`;
-          priceVndEl.style.display = '';
-          const sep = priceVndEl.previousElementSibling as HTMLElement | null;
-          if (sep) sep.style.display = '';
-        } else {
-          priceVndEl.style.display = 'none';
-          const sep = priceVndEl.previousElementSibling as HTMLElement | null;
-          if (sep) sep.style.display = 'none';
-        }
+      if (priceVndEl && opt.priceVND != null) {
+        priceVndEl.textContent = `${opt.priceVND.toLocaleString('vi-VN')} VND`;
+        priceVndEl.style.display = '';
+        const sep = priceVndEl.previousElementSibling as HTMLElement | null;
+        if (sep) sep.style.display = '';
       }
 
       // 3. Tagline

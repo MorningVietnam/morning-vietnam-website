@@ -2574,6 +2574,21 @@ export const tours: Tour[] = [
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     image:       "/tours/lai-chau-motortour/15.webp",
+    gallery: [
+      { src: "/tours/unlock-lai-chau/1.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/2.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/3.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/4.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/5.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/6.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/7.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/8.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/9.webp",  alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/10.webp", alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/11.webp", alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/12.webp", alt: "Unlock Lai Châu" },
+      { src: "/tours/unlock-lai-chau/13.webp", alt: "Unlock Lai Châu" },
+    ],
     selectorMode: 'vehicle-only',
 
     durationOptions: [

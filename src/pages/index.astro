@@ -69,7 +69,7 @@ const regions = [
       </p>
     </div>
     <div class="hp-hero__actions">
-      <a href="/tours" class="c-button c-button--primary hp-hero__btn-explore">EXPLORE OUR CURRATED TOURS</a>
+      <a href="/tours" class="c-button c-button--primary hp-hero__btn-explore">EXPLORE OUR CURATED TOURS</a>
       <a href="/explore/about" class="c-button c-button--light hp-hero__btn-story">Our story</a>
     </div>
     <div class="hp-hero__scroll-hint" aria-hidden="true">
@@ -1179,13 +1179,62 @@ const regions = [
   }
 
   @media (max-width: 768px) {
-    .hp-hero__content { bottom: 80px; }
+    .hp-hero__content { bottom: 140px; }
     .hp-hero__brand { font-size: clamp(80px, 26vw, 180px); top: calc(var(--site-header-h, 100px) - 10px); }
     .hp-why__grid { grid-template-columns: 1fr; }
     .hp-why__card { padding: 28px 24px; }
-    .hp-hero__actions { right: 24px; bottom: 96px; }
+
+    /* ── 70% downsize toàn bộ khối text hero ───────────────────────── */
+    .hp-hero__eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      margin-bottom: 12px;
+    }
+    .hp-hero__h1 {
+      font-size: 31px;
+      margin-bottom: 12px;
+    }
+    .hp-hero__sub {
+      font-size: 12px;
+      line-height: 1.55;
+      margin-bottom: 20px;
+      max-width: 280px;
+    }
+    .hp-hero__manifesto { font-size: 9px; }
+
+    /* ── Buttons xuống đáy, full-width, không đè text ──────────────── */
+    /* bottom = scroll-hint + ~1/2 button height để không che chữ SCROLL */
+    .hp-hero__actions {
+      position: absolute;
+      right: 24px;
+      left: 24px;
+      bottom: 76px;
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .hp-hero__btn-explore {
+      font-size: 13px;
+      padding: 12px 18px;
+      letter-spacing: 0.06em;
+    }
+    .hp-hero__btn-story {
+      font-size: 11px;
+      padding: 10px 18px;
+    }
+
     .hp-cta__heading { font-size: clamp(44px, 10vw, 80px); }
     .hp-cta__inner { padding-bottom: 80px; }
+  }
+
+  /* ── Mobile rất nhỏ: gọn thêm 1 nấc ───────────────────────────────── */
+  @media (max-width: 420px) {
+    .hp-hero__h1   { font-size: 28px; }
+    .hp-hero__sub  { font-size: 11.5px; }
+    .hp-hero__btn-explore { font-size: 12px; padding: 11px 14px; letter-spacing: 0.04em; }
+    .hp-hero__btn-story   { font-size: 10.5px; padding: 9px 14px; }
+    .hp-hero__actions { gap: 8px; bottom: 68px; }
   }
 
   @media (max-width: 560px) {

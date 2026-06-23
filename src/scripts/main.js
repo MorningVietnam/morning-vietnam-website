@@ -220,36 +220,11 @@ function initCart() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 8. MOBILE HAMBURGER MENU
+//    Quản lý trong Header.astro (line ~183) — KHÔNG attach ở đây nữa để tránh
+//    duplicate listener (gây click 1 lần = open + close → menu không ra).
 // ─────────────────────────────────────────────────────────────────────────────
 
-function initMobileMenu() {
-  const hamburger = document.querySelector('.hamburger');
-  const mobileNav = document.querySelector('.mobile-nav');
-  if (!hamburger || !mobileNav) return;
-
-  function toggle() {
-    const isOpen = mobileNav.classList.toggle('open');
-    hamburger.classList.toggle('open', isOpen);
-    hamburger.setAttribute('aria-expanded', String(isOpen));
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-  }
-
-  hamburger.addEventListener('click', toggle);
-
-  // Close on nav link click (SPA-style navigation)
-  mobileNav.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      mobileNav.classList.remove('open');
-      hamburger.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-    });
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mobileNav.classList.contains('open')) toggle();
-  });
-}
+function initMobileMenu() { /* no-op: handled in Header.astro */ }
 
 
 // ─────────────────────────────────────────────────────────────────────────────

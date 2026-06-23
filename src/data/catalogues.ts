@@ -49,7 +49,7 @@ export const catalogues: Catalogue[] = [
     region: 'Southern Vietnam',
     tagline: 'A walking biography through the city that shaped a nation.',
     totalPages: 20,
-    coverImage: '/catalogue/hcm-a-life/page-01.jpg',
+    coverImage: '/catalogue/hcm-a-life/cover.jpg',
     cutoutPages: [1, 2], // trang 1 + 2 có hiệu ứng cut-out layered (PNG có alpha)
     /**
      * Map trang cut-out → trang hiển thị PHÍA SAU lúc still (chưa flip).

@@ -394,6 +394,10 @@ function initCtaImages() {
     return Math.max(0, Math.min(1, 1 - r.top / startTop));
   }
 
+  // Rotate xuất phát (mid-scroll): mỗi card 1 góc lệch riêng, chéo lộn xộn.
+  // Ending: về 0° (thẳng) — bất kể data-rotate là gì trong HTML.
+  const startRotate = [-28, 22, -18, 30, 24, -26, 20, -32];
+
   function render() {
     rafId = null;
     const r = section.getBoundingClientRect();
@@ -402,11 +406,13 @@ function initCtaImages() {
     const past = Math.max(0, -r.top);
 
     allCards.forEach((card, i) => {
-      const { dx, dy, rotate } = cardData[i];
+      const { dx, dy } = cardData[i];
       const tx    = lerp(dx, 0, p) + past * (driftX[i] ?? 0);
       const ty    = lerp(dy, 0, p) + past * (driftY[i] ?? 0);
       const scale = lerp(1.6, 1.0, p);
-      card.style.transform = `translate(${tx}px, ${ty}px) rotate(${rotate}deg) scale(${scale})`;
+      // p=0 → xoay mạnh (chéo lộn xộn), p=1 → 0° (thẳng)
+      const rot   = lerp(startRotate[i] ?? 0, 0, p);
+      card.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(${scale})`;
     });
   }
 

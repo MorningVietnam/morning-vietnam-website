@@ -607,8 +607,12 @@
    ========================================================================== */
 
 .b-ctaimages {
-  height: 100vh;
-  margin: 4rem 0;
+  /* dvh = dynamic viewport height: tính chính xác trên iOS Safari
+     (loại trừ address bar). Bỏ margin để section gói trọn 1 màn hình. */
+  height: 100dvh;
+  min-height: 600px;
+  max-height: 900px;
+  margin: 0;
   overflow: hidden;
   position: relative;
   z-index: 1;
@@ -619,7 +623,7 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;            /* khớp section, không lock 100vh */
   justify-content: center;
   position: relative;
   z-index: 2;
@@ -673,28 +677,52 @@
   display: block;
 }
 
-/* ── Top 4: fan above heading ─────────────────────────────────── */
-.b-ctaimages__image--t1 { top: 3%;   left: 2%;   width: 17%; aspect-ratio: 3/4; z-index: 1; }
-.b-ctaimages__image--t2 { top: 13%;  left: 19%;  width: 15%; aspect-ratio: 3/4; z-index: 1; }
-.b-ctaimages__image--t3 { top: 2%;   left: 37%;  width: 9%;  aspect-ratio: 1;   z-index: 3; }
-.b-ctaimages__image--t4 { top: 3%;   right: 2%;  width: 16%; aspect-ratio: 3/4; z-index: 3; }
+/* ── Layout 8 ảnh theo mockup ──────────────────────────────────
+   Mọi ảnh tránh vùng giữa (heading + sub + button)
+   Vùng giữa khoảng x: 30-70%, y: 25-75% được CHỪA HOÀN TOÀN.
+   Top 16% để không bị header fixed che. */
 
-/* ── Bottom 4: fan below button ───────────────────────────────── */
-.b-ctaimages__image--b1 { bottom: 4%;  left: 2%;   width: 18%; aspect-ratio: 4/3; z-index: 1; }
-.b-ctaimages__image--b2 { bottom: 12%; left: 21%;  width: 13%; aspect-ratio: 1;   z-index: 1; }
-.b-ctaimages__image--b3 { bottom: 4%;  right: 21%; width: 15%; aspect-ratio: 3/4; z-index: 3; }
-.b-ctaimages__image--b4 { bottom: 7%;  right: 2%;  width: 14%; aspect-ratio: 4/3; z-index: 3; }
+/* Layer rule:
+   - Wrapper text z=2 (set ở .b-ctaimages__wrapper)
+   - 5 ảnh z=5 → ĐÈ TEXT (reveal effect)
+   - 3 ảnh z=1 → DƯỚI TEXT (background)
+*/
+
+/* Top row — cluster trái-trên (2 ảnh) + cluster phải-trên (2 ảnh) */
+.b-ctaimages__image--t1 { top: 16%; left:   3%; width: 14%; aspect-ratio: 3/4; z-index: 5; }
+.b-ctaimages__image--t2 { top: 28%; left:  15%; width: 10%; aspect-ratio: 3/4; z-index: 5; }
+.b-ctaimages__image--t3 { top: 28%; right: 15%; width: 10%; aspect-ratio: 3/4; z-index: 1; }
+.b-ctaimages__image--t4 { top: 16%; right:  3%; width: 14%; aspect-ratio: 1;   z-index: 1; }
+
+/* Bottom row — cluster trái-dưới + cluster phải-dưới */
+.b-ctaimages__image--b1 { bottom: 16%; left:   3%; width: 14%; aspect-ratio: 1;   z-index: 1; }
+.b-ctaimages__image--b2 { bottom:  5%; left:  15%; width: 10%; aspect-ratio: 3/4; z-index: 5; }
+.b-ctaimages__image--b3 { bottom:  5%; right: 15%; width: 10%; aspect-ratio: 3/4; z-index: 5; }
+.b-ctaimages__image--b4 { bottom: 16%; right:  3%; width: 14%; aspect-ratio: 1;   z-index: 1; }
 
 @media (max-width: 575px) {
+  /* Trên mobile, section thấp hơn để gói trọn 1 màn hình */
+  .b-ctaimages {
+    min-height: 560px;
+    max-height: 760px;
+  }
+
+  /* Ẩn 4 ảnh phụ — chỉ giữ 4 ảnh chính ở 4 góc */
   .b-ctaimages__image--t2,
   .b-ctaimages__image--t3,
   .b-ctaimages__image--b2,
   .b-ctaimages__image--b3 { display: none; }
 
-  .b-ctaimages__image--t1 { width: 29%; }
-  .b-ctaimages__image--t4 { width: 24%; }
-  .b-ctaimages__image--b1 { width: 31%; }
-  .b-ctaimages__image--b4 { width: 25%; }
+  /* Ảnh ở 4 góc — pad inward 6% + top 14% để không bị header che */
+  .b-ctaimages__image--t1 { width: 26%; top: 14%; left: 6%; }
+  .b-ctaimages__image--t4 { width: 22%; top: 14%; right: 6%; }
+  .b-ctaimages__image--b1 { width: 28%; bottom: 6%; left: 6%; }
+  .b-ctaimages__image--b4 { width: 23%; bottom: 6%; right: 6%; }
+
+  /* Heading + content gọn lại để không bị tràn xuống ảnh */
+  .b-ctaimages__heading { font-size: 36px; margin-bottom: 18px; }
+  .b-ctaimages__content { font-size: 13px; margin-bottom: 22px; }
+  .b-ctaimages__button { font-size: 13px; padding: 12px 22px; }
 }
 
 

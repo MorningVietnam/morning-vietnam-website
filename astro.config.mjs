@@ -23,9 +23,11 @@ export default defineConfig({
         }
         return true;
       },
-      // Ưu tiên trang chủ + tours cao hơn trang phụ
+      // Ưu tiên trang chủ + tours cao hơn trang phụ.
+      // Astro sinh URL với trailing slash → strip để compare nhất quán.
       serialize(item) {
-        const path = new URL(item.url).pathname;
+        const raw = new URL(item.url).pathname;
+        const path = raw === '/' ? '/' : raw.replace(/\/$/, '');
         if (path === '/') {
           item.priority = 1.0;
           item.changefreq = 'weekly';

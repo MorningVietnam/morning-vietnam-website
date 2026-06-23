@@ -186,6 +186,7 @@ export const tours: Tour[] = [
         id:       "1day",
         label:    "1 Day",
         price:    63,
+        priceVND: 1650000,
         tagline:  "Hanoi → Ba Vì → back by 20:00",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
@@ -195,6 +196,7 @@ export const tours: Tour[] = [
         id:       "2d1n",
         label:    "2 Days 1 Night",
         price:    152,
+        priceVND: 3980000,
         tagline:  "Add a night in Ba Vì forest + hiking morning",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
@@ -234,7 +236,7 @@ export const tours: Tour[] = [
 
     // ── Extended ──
     priceUSD: 63,
-    priceVND: 1600000,
+    priceVND: 1650000,
     gallery: [
       { src: "/tours/hcm-a-life/2.webp",  alt: "Ho Chi Minh Mausoleum at Ba Đình Square — honor guard marching in formation" },
       { src: "/tours/hcm-a-life/4.webp",  alt: "Ho Chi Minh Stilt House (Nhà sàn) — traditional red wooden architecture with guards" },
@@ -786,13 +788,14 @@ export const tours: Tour[] = [
     duration:    ["1 Day", "2D1N", "3D2N"],
     price:       "From $81/person",
     priceUSD:    81,
-    priceVND:    2030000,
+    priceVND:    2120000,
 
     durationOptions: [
       {
         id:       "1day",
         label:    "1 Day",
         price:    81,
+        priceVND: 2120000,
         tagline:  "Hanoi → Thung Khe → Mai Châu → back by 10:30 PM",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
@@ -802,6 +805,7 @@ export const tours: Tour[] = [
         id:       "2d1n",
         label:    "2 Days 1 Night",
         price:    134,
+        priceVND: 3510000,
         tagline:  "Hanoi → Thung Khe → Mai Châu → overnight → back Day 2",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
@@ -811,6 +815,7 @@ export const tours: Tour[] = [
         id:       "3d2n",
         label:    "3 Days 2 Nights",
         price:    211,
+        priceVND: 5520000,
         tagline:  "Hanoi → Mai Châu → Pà Cò → Cao Phong → back Day 3",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now. We hold your spot, you pay 14 days before departure. Free cancellation up to 7 days out.",
@@ -1141,6 +1146,7 @@ export const tours: Tour[] = [
     hub:        "Hanoi",
     languages:  ["EN", "FR", "DE"],
     comingSoon: false,
+    selectorMode: 'vehicle-only',
     image:      "/tours/mai-moc-in-1-trip/6.webp",
 
     durationOptions: [
@@ -1659,7 +1665,7 @@ export const tours: Tour[] = [
     duration:    ["2D1N"],
     price:       "from $67",
     priceUSD:    67,
-    priceVND:    1700000,
+    priceVND:    1750000,
     tagline:     "Two days through the Mường Hoa valley — Black H'Mông villages, rice terraces, and a night in Tả Van.",
     description: "Hanoi sleeper bus to Sa Pa, then two days on foot through the Mường Hoa valley. Day 1 follows the classic route: Ý Linh Hồ, Lao Chải, Tả Van — Black H'Mông villages strung along the valley's terrace edges, ending with a night at a local H'Mông homestay. Day 2 continues to Giàng Tả Chải, explores the village, eats lunch in the bản, then returns to Sa Pa by car and back to Hanoi by evening bus. The most-trekked route in Sa Pa — done the right way.",
     highlights: [
@@ -1721,7 +1727,7 @@ export const tours: Tour[] = [
         id:       "2d1n",
         label:    "2D1N",
         price:    67,
-        priceVND: 1700000,
+        priceVND: 1750000,
         tagline:  "Hanoi → Sa Pa · Ý Linh Hồ → Lao Chải → Tả Van homestay · Giàng Tả Chải → Hanoi.",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
@@ -1920,7 +1926,7 @@ export const tours: Tour[] = [
     duration:    ["1 Day", "2D1N"],
     price:       "from $52",
     priceUSD:    52,
-    priceVND:    1310000,
+    priceVND:    1360000,
     tagline:     "Terraced rice fields, a Red Dao village, and a valley most Sa Pa visitors never reach — one day or two.",
     description: "Leave Sa Pa and trek into Nậm Cang — a Red Dao village 30km south, deep in the Hoàng Liên Sơn range, sitting at the edge of terraced fields that drop in layers toward the valley floor. One day covers the route from Nậm Sài through the rice terraces to the village. Two days starts from Hanoi, adds a night in a Black H'Mông homestay at Tả Van, and approaches Nậm Cang from Giàng Tả Chải across a longer trekking route.",
     highlights: [
@@ -1973,6 +1979,7 @@ export const tours: Tour[] = [
         id:       "1day",
         label:    "1 Day",
         price:    52,
+        priceVND: 1360000,
         tagline:  "Sa Pa → Nậm Sài → rice terrace trek → Nậm Cang Red Dao village → back to Sa Pa by 17:30.",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
@@ -1982,6 +1989,7 @@ export const tours: Tour[] = [
         id:       "2d1n",
         label:    "2D1N",
         price:    111,
+        priceVND: 2900000,
         tagline:  "Hanoi → Sa Pa · Ý Linh Hồ trek → Tả Van homestay · Giàng Tả Chải → Nậm Cang · Red Dao herb bath → Sa Pa.",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
@@ -2546,7 +2554,7 @@ export const tours: Tour[] = [
     duration:    ["2D1N"],
     price:       "from $160",
     priceUSD:    160,
-    priceVND:    3990000,
+    priceVND:    4190000,
     tagline:     "Hanoi to Lai Châu direct — caves, villages, a waterfall, and a sunset monastery. No Sa Pa required.",
     description: "Skip Sa Pa entirely. Take the overnight bus from Hanoi straight into Lai Châu city — then spend two full days in a valley most northwest travellers never reach. Day 1: Động PuSamCap, Lao Chải 1 village, Thác Tác Tình waterfall, sunset and homestay at Sì Thâu Chải. Day 2: full jungle trek to Nậm Lúc Waterfall, then Chùa Linh Ứng at dusk — the highest viewpoint in Lai Châu. Sleeper bus back to Hanoi overnight. Car or motorbike — same two days, different way of taking them in.",
     highlights: [
@@ -2596,6 +2604,7 @@ export const tours: Tour[] = [
         id:       "car",
         label:    "By car",
         price:    184,
+        priceVND: 4820000,
         tagline:  "",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
@@ -2605,6 +2614,7 @@ export const tours: Tour[] = [
         id:       "motor",
         label:    "By motorbike",
         price:    160,
+        priceVND: 4190000,
         tagline:  "Semi-auto 125cc · same two days, same route — felt through every curve. Licence required for self-ride. Mondays.",
         ctaLabel: "I'm in →",
         ctaNote:  "Valid motorbike licence required for self-ride · backseat available · No payment now · Free cancellation",

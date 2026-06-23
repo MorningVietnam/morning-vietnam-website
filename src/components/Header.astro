@@ -1,8 +1,9 @@
 ---
 const path = Astro.url.pathname;
-const isExplore = path.startsWith('/explore');
-const isTours   = path === '/tours' || path.startsWith('/tours/');
-const isContact = path === '/contact';
+const isExplore  = path.startsWith('/explore');
+const isTours    = path === '/tours' || path.startsWith('/tours/');
+const isContact  = path === '/contact';
+const isPartners = path.startsWith('/catalogue');
 
 const marqueeItems = [
   "Vietnam deeper. Horizons wider.",
@@ -74,6 +75,26 @@ const marqueeItems = [
             >Tours</a>
           </li>
 
+          <!-- For Partners (dropdown — B2B) -->
+          <li class="nav-item nav-item--dropdown">
+            <span class:list={["nav-link", "nav-link--trigger", { "nav-link--active": isPartners }]}>
+              For Partners
+              <svg class="nav-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <div class="nav-dropdown" role="menu">
+              <a href="/catalogue" class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">Catalogue</span>
+                <span class="nav-dropdown__desc">Destination brochures for agents</span>
+              </a>
+              <a href="/contact" class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">Partner with us</span>
+                <span class="nav-dropdown__desc">Pricing &amp; commission — get in touch</span>
+              </a>
+            </div>
+          </li>
+
           <!-- Contact (direct link) -->
           <li class="nav-item">
             <a
@@ -133,6 +154,13 @@ const marqueeItems = [
       </ul>
     </li>
     <li><a href="/tours">Tours</a></li>
+    <li class="mobile-nav__group">
+      <span>For Partners</span>
+      <ul class="mobile-nav__sub">
+        <li><a href="/catalogue">Catalogue</a></li>
+        <li><a href="/contact">Partner with us</a></li>
+      </ul>
+    </li>
     <li><a href="/contact">Contact</a></li>
   </ul>
 

@@ -1,0 +1,261 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { catalogues } from '../../data/catalogues.ts';
+---
+
+<BaseLayout
+  title="B2B Catalogue — For Travel Partners"
+  description="Destination brochures for travel agents and tour operators. Browse Morning Vietnam catalogues online."
+>
+  <!-- Hero -->
+  <section class="cat-hero">
+    <div class="container cat-hero__content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <span>Catalogue</span>
+      </nav>
+      <p class="cat-hero__kicker">For Travel Partners</p>
+      <h1>Destination Catalogues</h1>
+      <p class="cat-hero__sub">
+        Flip-through brochures for each Morning Vietnam destination — built for
+        agents and tour operators planning trips with their clients.
+      </p>
+    </div>
+  </section>
+
+  <!-- Grid -->
+  <section class="cat-section">
+    <div class="container">
+      <div class="cat-grid">
+        {catalogues.map((c) => (
+          <a href={`/catalogue/${c.slug}`} class="cat-card" aria-label={`Open ${c.title} catalogue`}>
+            <div class="cat-card__cover">
+              <img
+                src={c.coverImage}
+                alt={`${c.title} catalogue cover`}
+                loading="lazy"
+                draggable="false"
+              />
+              <div class="cat-card__overlay">
+                <span class="cat-card__cta">Open catalogue →</span>
+              </div>
+            </div>
+            <div class="cat-card__body">
+              <div class="cat-card__region">{c.region}</div>
+              <h3 class="cat-card__title">{c.title}</h3>
+              <p class="cat-card__tagline">{c.tagline}</p>
+              <div class="cat-card__meta">
+                <span>{c.totalPages} pages</span>
+                <span aria-hidden="true">·</span>
+                <span>Online view only</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <p class="cat-note">
+        These catalogues are for online viewing only. For pricing, commission
+        structure, or full partnership materials, please
+        <a href="/contact">contact us</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .cat-hero {
+    background: var(--color-nordic);
+    min-height: 44vh;
+    display: flex;
+    align-items: flex-end;
+    padding: var(--site-header-h) 0 64px;
+    color: white;
+  }
+  .cat-hero__content { width: 100%; }
+  .cat-hero__kicker {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-riptide);
+    margin-bottom: 12px;
+  }
+  .cat-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    color: white;
+  }
+  .cat-hero__sub {
+    font-size: 17px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 560px;
+  }
+  .breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 24px;
+  }
+  .breadcrumb a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover { color: var(--color-riptide); }
+
+  /* Grid */
+  .cat-section { padding: 80px 0 120px; }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+
+  /* Card */
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(4, 51, 65, 0.08);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s ease;
+  }
+  .cat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(4, 51, 65, 0.16);
+  }
+
+  .cat-card__cover {
+    position: relative;
+    aspect-ratio: 1400 / 1980;
+    background: var(--color-light-cyan);
+    overflow: hidden;
+  }
+  .cat-card__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .cat-card:hover .cat-card__cover img { transform: scale(1.04); }
+
+  .cat-card__overlay {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 20px;
+    background: linear-gradient(180deg, transparent, rgba(4, 51, 65, 0.85));
+    display: flex;
+    justify-content: flex-end;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .cat-card:hover .cat-card__overlay { opacity: 1; }
+  .cat-card__cta {
+    color: white;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .cat-card__body {
+    padding: 24px 28px 28px;
+  }
+  .cat-card__region {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    margin-bottom: 10px;
+  }
+  .cat-card__title {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-nordic);
+    margin: 0 0 10px;
+  }
+  .cat-card__tagline {
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(4, 51, 65, 0.7);
+    margin: 0 0 18px;
+  }
+  .cat-card__meta {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(4, 51, 65, 0.55);
+  }
+
+  .cat-note {
+    margin-top: 56px;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(4, 51, 65, 0.6);
+  }
+  .cat-note a {
+    color: var(--color-java);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+  }
+
+  /* Responsive */
+  @media (max-width: 760px) {
+    /* Grid: 2 cuốn/hàng để dễ theo dõi & lựa chọn */
+    .cat-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    /* Background light-cyan cho section grid */
+    .cat-section {
+      padding: 40px 0 64px;
+      background: var(--color-light-cyan);
+    }
+    /* Card thu nhỏ phù hợp 2 cột mobile */
+    .cat-card { border-radius: 14px; }
+    .cat-card__body { padding: 14px 14px 16px; }
+    .cat-card__region { font-size: 9px; letter-spacing: 0.12em; margin-bottom: 6px; }
+    .cat-card__title { font-size: 15px; line-height: 1.15; margin-bottom: 6px; }
+    .cat-card__tagline { font-size: 12px; line-height: 1.4; margin-bottom: 10px; }
+    .cat-card__meta { font-size: 11px; gap: 6px; }
+    .cat-card__cta { font-size: 12px; }
+
+    /* Padding-top buffer 56px trên header để kicker không đè logo
+       (logo cao ~65px, header bar 60px → cần >=120px) */
+    .cat-hero {
+      padding-top: calc(var(--site-header-h, 84px) + 56px);
+      padding-bottom: 40px;
+      min-height: 38vh;
+    }
+    /* Ẩn breadcrumb mobile — đè logo, ít giá trị khi nav chỉ 2 cấp.
+       Giữ ở desktop cho SEO/schema. */
+    .breadcrumb { display: none; }
+  }
+
+  /* Background của section grid khi nền sáng — đổi màu meta để vẫn đọc rõ */
+  @media (max-width: 760px) {
+    .cat-note { color: rgba(4, 51, 65, 0.75); }
+  }
+</style>

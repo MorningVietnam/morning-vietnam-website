@@ -3,5 +3,7 @@ dist/
 .env
 .DS_Store
 
-# Catalogue PDFs gốc (nặng, chỉ ảnh JPG trong public/catalogue/ được serve)
-catalogue/
+# Catalogue PDFs gốc (nặng) — CHỈ ignore thư mục /catalogue/ ở ROOT repo.
+# Dấu `/` đầu = anchor to repo root → không match src/pages/catalogue/ hay
+# public/catalogue/. Không bỏ dấu `/` đầu — match mọi nơi sẽ làm deploy 404.
+/catalogue/

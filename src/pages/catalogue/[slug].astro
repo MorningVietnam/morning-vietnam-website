@@ -1,0 +1,591 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { catalogues, getPageUrls } from '../../data/catalogues.ts';
+
+export function getStaticPaths() {
+  return catalogues.map((c) => ({ params: { slug: c.slug } }));
+}
+
+const { slug } = Astro.params;
+const cat = catalogues.find((c) => c.slug === slug)!;
+const pageUrls = getPageUrls(cat);
+const cutoutSet = new Set(cat.cutoutPages ?? []);
+const peekMap = cat.peekBehind ?? {};
+---
+
+<BaseLayout
+  title={`${cat.title} — Catalogue`}
+  description={`${cat.title} destination brochure for travel partners.`}
+>
+  <div class="flip-page">
+
+    <!-- Top bar: back + title -->
+    <header class="flip-bar">
+      <div class="container flip-bar__inner">
+        <a href="/catalogue" class="flip-back" aria-label="Back to catalogue list">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span>All catalogues</span>
+        </a>
+        <div class="flip-bar__title">
+          <span class="flip-bar__region">{cat.region}</span>
+          <h1>{cat.title}</h1>
+        </div>
+        <div class="flip-bar__spacer" aria-hidden="true"></div>
+      </div>
+    </header>
+
+    <!-- Flipbook stage -->
+    <div class="flip-stage" id="flip-stage">
+      <div id="flipbook" class="flipbook">
+        {pageUrls.map((url, i) => {
+          const pageNum = i + 1;
+          const isCoverPosition = i === 0 || i === pageUrls.length - 1;
+          const isCutout = cutoutSet.has(pageNum);
+          // Trang cut-out PHẢI là soft, nếu không bìa cứng sẽ chặn render
+          // alpha xuyên qua trang sau.
+          const isHard = isCoverPosition && !isCutout;
+          // Stack các trang đặt phía sau lúc still (giả lập layered).
+          // peekMap[pageNum] = [đáy, ..., ngay dưới].
+          const peekStack = peekMap[pageNum] ?? [];
+          const hasPeek = peekStack.length > 0;
+          return (
+            <div
+              class:list={["flip-page-leaf", { "is-cutout": isCutout, "has-peek": hasPeek }]}
+              data-density={isHard ? 'hard' : 'soft'}
+            >
+              {peekStack.map((peekNum, layerIdx) => (
+                <img
+                  src={pageUrls[peekNum - 1]}
+                  alt=""
+                  class="flip-page-peek"
+                  style={`z-index: ${layerIdx};`}
+                  draggable="false"
+                  loading={i < 4 ? 'eager' : 'lazy'}
+                  aria-hidden="true"
+                />
+              ))}
+              <img
+                src={url}
+                alt={`${cat.title} page ${pageNum}`}
+                class="flip-page-front"
+                style={`z-index: ${peekStack.length};`}
+                draggable="false"
+                loading={i < 4 ? 'eager' : 'lazy'}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Loading state -->
+      <div id="flip-loading" class="flip-loading" aria-live="polite">
+        <div class="flip-spinner" aria-hidden="true"></div>
+        <p>Loading catalogue…</p>
+      </div>
+
+      <!-- End-of-book overlay -->
+      <div id="flip-end" class="flip-end" aria-hidden="true">
+        <div class="flip-end__inner">
+          <span class="flip-end__kicker">That's the end of this catalogue</span>
+          <h2 class="flip-end__title">Thanks for reading.</h2>
+          <p class="flip-end__sub">
+            Want to revisit, or explore another destination?
+          </p>
+          <div class="flip-end__actions">
+            <button id="flip-restart" class="flip-end__btn flip-end__btn--ghost" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+                <path d="M3 3v5h5"/>
+              </svg>
+              Read again
+            </button>
+            <a href="/catalogue" class="flip-end__btn flip-end__btn--primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="7" height="16" rx="1.5"/>
+                <rect x="14" y="4" width="7" height="16" rx="1.5"/>
+              </svg>
+              Browse other catalogues
+            </a>
+            <!-- Mobile-only: cho phép tạm ẩn overlay để xem lại trang cuối -->
+            <button id="flip-peek-last" class="flip-end__btn flip-end__btn--ghost flip-end__btn--mobile" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              View last page
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flip-controls">
+      <button id="flip-prev" class="flip-btn" aria-label="Previous page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <div class="flip-counter">
+        <span id="flip-current">1</span>
+        <span class="flip-counter__sep">/</span>
+        <span id="flip-total">{cat.totalPages}</span>
+      </div>
+      <button id="flip-next" class="flip-btn" aria-label="Next page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="flip-hint">
+      Tip — drag a page edge, use the arrows, or press ← → on your keyboard.
+    </p>
+  </div>
+</BaseLayout>
+
+<!-- ─────────────── Flipbook script ─────────────── -->
+<script>
+  import { PageFlip } from 'page-flip';
+
+  const stage = document.getElementById('flip-stage')!;
+  const container = document.getElementById('flipbook') as HTMLElement;
+  const loading = document.getElementById('flip-loading')!;
+  const endOverlay = document.getElementById('flip-end')!;
+  const restartBtn = document.getElementById('flip-restart') as HTMLButtonElement;
+  const prevBtn = document.getElementById('flip-prev') as HTMLButtonElement;
+  const nextBtn = document.getElementById('flip-next') as HTMLButtonElement;
+  const currentEl = document.getElementById('flip-current')!;
+  const totalEl = document.getElementById('flip-total')!;
+
+  // Tỉ lệ trang khớp với ảnh nguồn (A4-ish portrait)
+  const PAGE_W = 500;
+  const PAGE_H = 707;
+
+  // @ts-ignore
+  const pf = new PageFlip(container, {
+    width: PAGE_W,
+    height: PAGE_H,
+    size: 'stretch',
+    minWidth: 280,
+    maxWidth: 700,
+    minHeight: 396,
+    maxHeight: 990,
+    drawShadow: true,
+    flippingTime: 700,
+    // Layout brochure chuẩn: trang 1 + trang cuối là trang ĐƠN (single),
+    // các trang giữa ghép spread đôi (2-3, 4-5, ...).
+    showCover: true,
+    mobileScrollSupport: true,
+    usePortrait: true,
+    maxShadowOpacity: 0.5,
+    swipeDistance: 30,
+    clickEventForward: false,
+    useMouseEvents: true,
+    // ⇩ QUAN TRỌNG: tắt auto-lift góc khi hover. Chỉ flip khi user thực sự
+    // mousedown + drag (hoặc nhấn nút / phím mũi tên).
+    showPageCorners: false,
+  });
+
+  const leaves = container.querySelectorAll('.flip-page-leaf');
+  pf.loadFromHTML(leaves);
+
+  const totalPages = pf.getPageCount();
+  const lastIndex = totalPages - 1;
+
+  pf.on('init', () => {
+    loading.classList.add('is-hidden');
+    container.classList.add('is-ready');
+    totalEl.textContent = String(totalPages);
+  });
+
+  // ─── Counter + end-overlay logic ───────────────
+  function updateForPage(idx: number) {
+    currentEl.textContent = String(idx + 1);
+    // Trang cuối = bìa sau (single). Hiện overlay.
+    if (idx >= lastIndex) {
+      endOverlay.classList.add('is-visible');
+      endOverlay.setAttribute('aria-hidden', 'false');
+    } else {
+      endOverlay.classList.remove('is-visible');
+      endOverlay.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  pf.on('flip', (e: any) => {
+    updateForPage(Number(e.data));
+  });
+
+  // ─── Controls ─────────────────────────────────
+  prevBtn.addEventListener('click', () => pf.flipPrev());
+  nextBtn.addEventListener('click', () => pf.flipNext());
+
+  restartBtn.addEventListener('click', () => {
+    pf.turnToPage(0);
+    endOverlay.classList.remove('is-visible');
+    endOverlay.setAttribute('aria-hidden', 'true');
+  });
+
+  // Mobile: "View last page" — tạm ẩn overlay để xem bìa cuối,
+  // tap vào bìa hoặc đợi 5s thì overlay tự hiện lại.
+  const peekLastBtn = document.getElementById('flip-peek-last') as HTMLButtonElement;
+  let peekTimer: number | null = null;
+  peekLastBtn?.addEventListener('click', () => {
+    endOverlay.classList.add('is-peeking');
+    // Click vào trang (hoặc bất cứ đâu trên stage) → bring overlay back
+    const restore = () => {
+      endOverlay.classList.remove('is-peeking');
+      stage.removeEventListener('click', restore);
+      if (peekTimer) window.clearTimeout(peekTimer);
+    };
+    stage.addEventListener('click', restore, { once: true });
+    // Fallback auto-restore sau 5s
+    if (peekTimer) window.clearTimeout(peekTimer);
+    peekTimer = window.setTimeout(restore, 5000);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') pf.flipPrev();
+    else if (e.key === 'ArrowRight') pf.flipNext();
+  });
+
+  // ─── Chống copy cơ bản ─────────────────────────
+  stage.addEventListener('contextmenu', (e) => e.preventDefault());
+  stage.addEventListener('dragstart', (e) => e.preventDefault());
+  stage.addEventListener('selectstart', (e) => e.preventDefault());
+</script>
+
+<style>
+  .flip-page {
+    background: var(--color-java);
+    min-height: 100vh;
+    padding-top: var(--site-header-h);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top bar */
+  .flip-bar {
+    padding: 20px 0 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .flip-bar__inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .flip-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.12);
+    transition: background 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .flip-back:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: white;
+  }
+  .flip-bar__title {
+    flex: 1;
+    text-align: center;
+    color: white;
+  }
+  .flip-bar__region {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-light-cyan);
+    margin-bottom: 4px;
+  }
+  .flip-bar__title h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.1;
+  }
+  .flip-bar__spacer { width: 140px; flex-shrink: 0; }
+
+  /* Stage */
+  .flip-stage {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    min-height: 70vh;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .flipbook {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    max-width: 100%;
+  }
+  .flipbook.is-ready { opacity: 1; }
+
+  .flip-page-leaf img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  /* ── Cut-out page (PNG alpha) ──────────
+     Trang PNG có alpha. Để khi user nhìn còn chưa flip, các "lỗ"
+     cut-out lộ ra ảnh trang phía sau (không phải Nordic background):
+     render 2 ảnh chồng nhau bên trong leaf.
+       - .flip-page-peek = ảnh "trang sau" (đáy, z-index thấp)
+       - .flip-page-front = chính trang đang xem (PNG alpha, z-index cao)
+     Khi user bắt đầu lật, StPageFlip áp clip-path vào leaf — clip-path
+     chỉ ảnh hưởng đến element leaf nói chung; cả 2 img bên trong đều
+     bị clip cùng nhau, không gây nhảy ảnh. */
+  .flip-page-leaf.is-cutout {
+    overflow: hidden;
+  }
+  .flip-page-leaf.is-cutout img {
+    object-fit: fill;
+    position: absolute;
+    inset: 0;
+  }
+  /* z-index của peek và front được set inline theo thứ tự stack
+     (đáy = 0, các lớp trên tăng dần, trang đang xem cao nhất) */
+
+  /* Loading */
+  .flip-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: rgba(217, 247, 245, 0.7);
+    font-size: 14px;
+    transition: opacity 0.3s ease;
+  }
+  .flip-loading.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .flip-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(217, 247, 245, 0.15);
+    border-top-color: var(--color-riptide);
+    border-radius: 50%;
+    animation: flip-spin 0.9s linear infinite;
+  }
+  @keyframes flip-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── End-of-book overlay ──────────────────────────────────
+     Khi đến trang cuối: bìa cuối hiện ở NỬA TRÁI của spread,
+     nửa phải trống → đặt khung "Thanks for reading" ở đó.
+     Không phủ blur/màu, không che bìa cuối — user vẫn đọc được. */
+  .flip-end {
+    position: absolute;
+    /* Chỉ chiếm nửa phải của flip-stage */
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 32px 80px;
+    opacity: 0;
+    pointer-events: none;
+    /* Trễ 1s để animation flip kịp hoàn thành + user có thời gian
+       nhìn bìa cuối trước khi overlay hiện */
+    transition: opacity 0.5s ease 1s;
+    z-index: 30;
+  }
+  .flip-end.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Tap "View last page" trên mobile: ẩn overlay tạm thời */
+  .flip-end.is-peeking {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease 0s;
+  }
+
+  /* Button "View last page" — chỉ hiện trên mobile (xem media query bên dưới) */
+  .flip-end__btn--mobile {
+    display: none !important;
+  }
+  .flip-end__inner {
+    text-align: center;
+    max-width: 380px;
+    color: white;
+    transform: translateY(12px);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1s;
+  }
+  .flip-end.is-visible .flip-end__inner {
+    transform: translateY(0);
+  }
+  .flip-end__kicker {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-light-cyan);
+    margin-bottom: 14px;
+  }
+  .flip-end__title {
+    font-family: var(--font-heading);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.05;
+    margin: 0 0 12px;
+    color: white;
+  }
+  .flip-end__sub {
+    font-size: 15px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 24px;
+  }
+  .flip-end__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .flip-end__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 100px;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease;
+    border: 1.5px solid transparent;
+  }
+  .flip-end__btn--ghost {
+    background: transparent;
+    color: var(--color-light-cyan);
+    border-color: rgba(217, 247, 245, 0.35);
+  }
+  .flip-end__btn--ghost:hover {
+    background: rgba(217, 247, 245, 0.12);
+    border-color: rgba(217, 247, 245, 0.55);
+  }
+  .flip-end__btn--primary {
+    background: var(--color-sorbus);
+    color: white;
+    border-color: var(--color-sorbus);
+  }
+  .flip-end__btn--primary:hover {
+    background: #d8552c;
+    border-color: #d8552c;
+    transform: translateY(-2px);
+  }
+
+  /* Controls */
+  .flip-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 16px 0 8px;
+  }
+  .flip-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+  .flip-btn:hover {
+    background: white;
+    color: var(--color-java);
+    border-color: white;
+    transform: scale(1.05);
+  }
+  .flip-btn:active { transform: scale(0.96); }
+
+  .flip-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    min-width: 80px;
+    justify-content: center;
+    letter-spacing: 0.04em;
+  }
+  .flip-counter__sep { opacity: 0.5; }
+
+  .flip-hint {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0 16px 32px;
+    margin: 0;
+  }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    .flip-bar__spacer { display: none; }
+    .flip-bar__inner { gap: 12px; }
+    .flip-back span { display: none; }
+    .flip-back {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      justify-content: center;
+    }
+    .flip-stage { padding: 12px 8px; min-height: 60vh; }
+    .flip-bar__title h1 { font-size: 16px; }
+    /* Mobile: flipbook chuyển sang single page → bìa cuối chiếm full.
+       Overlay phủ toàn bộ với nền teal đậm bán trong để user vẫn thấy
+       trang sau lưng, không che hoàn toàn. */
+    .flip-end {
+      left: 0;
+      padding: 24px 16px 60px;
+      background: rgba(29, 160, 160, 0.88);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .flip-end__actions { flex-direction: column; }
+    .flip-end__btn { width: 100%; justify-content: center; }
+    /* Mobile: hiện button "View last page" */
+    .flip-end__btn--mobile { display: inline-flex !important; }
+  }
+</style>

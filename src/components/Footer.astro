@@ -83,11 +83,13 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: same form ID as NotifyPopup, 
       />
     </div>
     <div class="container site-footer2__bottom-row">
-      <p class="site-footer2__copy">© {year} Morning Vietnam Co. Ltd. All rights reserved.</p>
-      <p class="site-footer2__copy">Travel agency business license number:<br/>01-3135/2026/CDLQGVN-GP LHQT</p>
-      <div class="site-footer2__legal">
-        <a href="/privacy-policy">Privacy policy</a>
-        <a href="/terms-and-conditions">Terms &amp; conditions</a>
+      <p class="site-footer2__copy site-footer2__license"><strong>Travel agency business license number:<br/>01-3135/2026/CDLQGVN-GP LHQT</strong></p>
+      <div class="site-footer2__copy-legal">
+        <p class="site-footer2__copy">© {year} Morning Vietnam Co. Ltd. All rights reserved.</p>
+        <div class="site-footer2__legal">
+          <a href="/privacy-policy">Privacy policy</a>
+          <a href="/terms-and-conditions">Terms &amp; conditions</a>
+        </div>
       </div>
     </div>
   </div>
@@ -295,12 +297,21 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: same form ID as NotifyPopup, 
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 24px;
     padding: 24px 0 36px;
   }
 
   .site-footer2__copy {
     font-size: 16px;
     color: rgba(217, 247, 245, 0.65);
+  }
+
+  .site-footer2__copy-legal {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
   }
 
   .site-footer2__legal {
@@ -337,8 +348,14 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: same form ID as NotifyPopup, 
     .site-footer2__logo-zone { padding-top: 24px; }
     .site-footer2__bottom-row {
       flex-direction: column;
+      align-items: center;
       gap: 12px;
       text-align: center;
+    }
+    .site-footer2__copy-legal {
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
     }
     .site-footer2__legal { justify-content: center; }
     .site-footer2__copy { font-size: 12.8px; }

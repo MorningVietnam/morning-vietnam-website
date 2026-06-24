@@ -3141,19 +3141,43 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     const heroCta   = document.getElementById('td-cta-btn') || document.querySelector('.td-product__cta');
     if (!stickyBar || !heroCta) return;
 
+    let footerVisible  = false;
+    let heroCtaHidden  = false;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
+        heroCtaHidden = !entry.isIntersecting;
         if (entry.isIntersecting) {
           stickyBar.classList.remove('is-visible');
           stickyBar.setAttribute('aria-hidden', 'true');
         } else {
-          stickyBar.classList.add('is-visible');
-          stickyBar.setAttribute('aria-hidden', 'false');
+          if (!footerVisible) {
+            stickyBar.classList.add('is-visible');
+            stickyBar.setAttribute('aria-hidden', 'false');
+          }
         }
       },
       { threshold: 0, rootMargin: '0px 0px -20px 0px' }
     );
 
     observer.observe(heroCta);
+
+    const footer = document.querySelector('.site-footer2') as Element | null;
+    if (footer) {
+      const footerObserver = new IntersectionObserver(
+        ([entry]) => {
+          footerVisible = entry.isIntersecting;
+          if (footerVisible) {
+            stickyBar.classList.remove('is-visible');
+            stickyBar.setAttribute('aria-hidden', 'true');
+          } else if (heroCtaHidden) {
+            stickyBar.classList.add('is-visible');
+            stickyBar.setAttribute('aria-hidden', 'false');
+          }
+        },
+        { threshold: 0 }
+      );
+      footerObserver.observe(footer);
+    }
   })();
 </script>

@@ -876,13 +876,31 @@ const faqItems = [
   const form = document.getElementById('contact-form') as HTMLElement;
   const success = document.getElementById('form-success') as HTMLElement;
 
-  form?.addEventListener('submit', e => {
-    e.preventDefault();
+  form?.addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+  const fd = new FormData(form as HTMLFormElement);
+  const body: Record<string, string> = {};
+  fd.forEach((v, k) => { if (v) body[k] = v.toString(); });
+
+  try {
+    const res = await fetch('/api/submit-contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error('Server error');
     form.style.display = 'none';
     success.style.display = 'block';
-    // Scroll to success message
     success.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
+  } catch (err) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Send message'; }
+    alert('Something went wrong. Please try again or email us at good@morningvietnam.co');
+  }
+});
 
   // ── Mini FAQ accordion ─────────────────────────────────────────
   document.querySelectorAll<HTMLElement>('.faq-item').forEach(item => {

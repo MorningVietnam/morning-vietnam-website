@@ -886,6 +886,13 @@ const faqItems = [
   const body: Record<string, string> = {};
   fd.forEach((v, k) => { if (v) body[k] = v.toString(); });
 
+  const pickup = (form.querySelector('#cf-pickup') as HTMLSelectElement)?.value;
+  const vehicle = (form.querySelector('#cf-vehicle') as HTMLSelectElement)?.value;
+  const duration = (form.querySelector('#cf-duration') as HTMLSelectElement)?.value;
+  if (pickup) body['pickup'] = pickup;
+  if (vehicle) body['vehicle'] = vehicle;
+  if (duration) body['duration'] = duration;
+
   try {
     const res = await fetch('/api/submit-contact', {
       method: 'POST',

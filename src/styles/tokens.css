@@ -1,0 +1,50 @@
+/* =========================================================
+   Morning Vietnam — Design System Tokens
+   Dùng cho itinerary design project.
+   Import sau variables.css để có thể override nếu cần.
+   ========================================================= */
+
+:root {
+  /* === COLORS (mirrors variables.css — dùng trực tiếp từ đây trong itinerary) === */
+  --color-java:         #1da0a0;
+  --color-riptide:      #7de2d1;
+  --color-light-cyan:   #d9f7f5;
+  --color-nordic:       #043341;
+  --color-sorbus:       #ea6739;
+  --color-white-nectar: #f7f3d9;
+  --color-lucky:        #a08f1d;
+  --color-madras:       #413d04;
+
+  /* === TYPOGRAPHY === */
+  --font-heading: 'Commissioner', sans-serif;
+  --font-body:    'Google Sans', 'Product Sans', sans-serif;
+
+  --font-weight-bold:    700;
+  --font-weight-medium:  500;
+  --font-weight-regular: 400;
+
+  /* === TYPE SCALE (fixed px — dùng cho print / PDF itinerary) === */
+  --text-display:  84px;
+  --text-h1:       56px;
+  --text-h2:       36px;
+  --text-body-lg:  20px;
+  --text-body:     16px;
+
+  /* === LINE HEIGHT === */
+  --leading-display: 92px;
+  --leading-h1:      70px;
+  --leading-h2:      44px;
+  --leading-body-lg: 28px;
+  --leading-body:    20px;
+
+  /* === SPACING === */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+}

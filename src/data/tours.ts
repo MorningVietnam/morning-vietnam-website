@@ -72,6 +72,7 @@ export interface Tour {
   seasonality?:      Seasonality;
   faqs?:             FAQ[];
   unlockChallenge?:  UnlockChallenge | null;
+  upcomingDates?:    string[];   // e.g. ["Wed 22 Jul", "Sun 26 Jul"] — displayed on tour detail
 }
 
 // ── Shared defaults ────────────────────────────────────────────────────────
@@ -391,6 +392,7 @@ export const tours: Tour[] = [
       ...DEFAULT_FAQS.slice(0, 2),
     ],
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+    upcomingDates: ["Tue 21 Jul", "Tue 28 Jul"],
   },
 
   // ── Sa Pa · Lai Châu ──────────────────────────────────────────────────────
@@ -1117,6 +1119,7 @@ export const tours: Tour[] = [
     seasonality: DEFAULT_SEASONALITY_NORTH,
     faqs: DEFAULT_FAQS,
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+    upcomingDates: ["Sat 25 Jul", "Thu 30 Jul", "Sun 2 Aug"],
   },
 
   // ── Mai – Mộc in 1 Trip ──────────────────────────────────────────────────
@@ -2291,6 +2294,7 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+    upcomingDates: ["Wed 22 Jul", "Sun 26 Jul", "Mon 27 Jul", "Sun 2 Aug"],
   },
 
   // ── Into Nậm Lúc Waterfall ───────────────────────────────────────────────
@@ -2544,6 +2548,7 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+    upcomingDates: ["Wed 22 Jul", "Thu 23 Jul"],
   },
 
   // ── Unlock Lai Châu ──────────────────────────────────────────────────────

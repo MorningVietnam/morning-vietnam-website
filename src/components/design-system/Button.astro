@@ -1,0 +1,66 @@
+---
+interface Props {
+  variant?: 'primary' | 'secondary';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  href,
+  type = 'button',
+  class: className = '',
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  href={href}
+  type={href ? undefined : type}
+  class:list={['btn', `btn--${variant}`, className]}
+>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    font-family: var(--font-heading);
+    font-size: var(--text-body);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--leading-body);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    border: 2px solid transparent;
+    white-space: nowrap;
+  }
+
+  /* Primary — Sorbus (CTA) */
+  .btn--primary {
+    background: var(--color-sorbus);
+    color: var(--color-white-nectar);
+    border-color: var(--color-sorbus);
+  }
+  .btn--primary:hover {
+    background: #c55228;
+    border-color: #c55228;
+  }
+
+  /* Secondary — Java outline */
+  .btn--secondary {
+    background: transparent;
+    color: var(--color-java);
+    border-color: var(--color-java);
+  }
+  .btn--secondary:hover {
+    background: var(--color-java);
+    color: var(--color-white-nectar);
+  }
+</style>

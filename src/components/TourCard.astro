@@ -12,6 +12,7 @@ interface Tour {
   comingSoon: boolean;
   image: string;
   hubUrl?: string;
+  upcomingDates?: string[];
 }
 
 interface Props {
@@ -62,6 +63,16 @@ const regionLabel: Record<string, string> = {
         <div class="tour-card__region-tag">{regionLabel[tour.region] ?? tour.region}</div>
         <h3 class="tour-card__name">{tour.name}</h3>
         <p class="tour-card__tagline">{tour.tagline}</p>
+        {tour.upcomingDates && tour.upcomingDates.length > 0 && (
+          <div class="tour-card__dates">
+            <span class="tour-card__dates-label">Next departures</span>
+            <div class="tour-card__dates-list">
+              {tour.upcomingDates.map((d: string) => (
+                <span class="tour-card__date-pill">{d}</span>
+              ))}
+            </div>
+          </div>
+        )}
         <div class="tour-card__footer">
           {tour.priceUSD && <span class="tour-card__price">From ${tour.priceUSD}</span>}
           <span class="tour-card__cta">View tour →</span>
@@ -208,6 +219,38 @@ const regionLabel: Record<string, string> = {
     font-weight: 700;
     padding: 0;
     letter-spacing: 0.02em;
+  }
+
+  /* ── Dates ─────────────────────────────────── */
+  .tour-card__dates {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .tour-card__dates-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .tour-card__dates-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tour-card__date-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid currentColor;
+    opacity: 0.75;
+    white-space: nowrap;
   }
 
   /* ── Theme: java ───────────────────────────── */

@@ -45,6 +45,7 @@ const welcomePack  = tour.welcomePack;
 const unlock       = tour.unlockChallenge;
 const season       = tour.seasonality;
 const faqs         = tour.faqs;
+const upcomingDates = (tour as any).upcomingDates as string[] | undefined;
 
 const tripInfoData   = (tour.tripInfo as any) || null;
 const hasTripInfo    = !!tripInfoData;
@@ -265,6 +266,18 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               </div>
             )}
 
+            <!-- Upcoming dates (compact strip) -->
+            {upcomingDates && upcomingDates.length > 0 && (
+              <div class="td-upcoming">
+                <p class="td-upcoming__label">Next departures</p>
+                <div class="td-upcoming__pills">
+                  {upcomingDates.map((d: string) => (
+                    <a href="/contact" class="td-upcoming__pill">{d}</a>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <!-- Trip Info cards -->
             {hasTripInfo && (
               <div class="td-tripinfo" id="td-tripinfo-section"
@@ -335,6 +348,18 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                   Notify me when live
                 </button>
                 <p class="td-product__cta-note">{tour.price}</p>
+              </div>
+            )}
+
+            <!-- Upcoming dates (compact strip) -->
+            {upcomingDates && upcomingDates.length > 0 && (
+              <div class="td-upcoming">
+                <p class="td-upcoming__label">Next departures</p>
+                <div class="td-upcoming__pills">
+                  {upcomingDates.map((d: string) => (
+                    <a href="/contact" class="td-upcoming__pill">{d}</a>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -924,7 +949,29 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     </div>
   </section>
 
-  <!-- ═══ S10 · b-related ═══════════════════════════════════════ -->
+  <!-- ═══ S10 · b-departures ═══════════════════════════════════ -->
+  {upcomingDates && upcomingDates.length > 0 && (
+    <section class="td-departures">
+      <div class="td-departures__inner">
+        <div class="td-departures__left">
+          <p class="section-label">Upcoming Departures</p>
+          <h2 class="td-departures__heading">Next dates you can join.</h2>
+          <p class="td-departures__sub">Spots fill fast — reserve now, pay 14 days before. Free cancellation up to 7 days out.</p>
+          <a href="/contact" class="td-departures__cta">Reserve a spot →</a>
+        </div>
+        <div class="td-departures__list">
+          {upcomingDates.map((date: string) => (
+            <div class="td-departures__item">
+              <span class="td-departures__date">{date}</span>
+              <a href="/contact" class="td-departures__book">Reserve spot →</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ═══ S11 · b-related ═══════════════════════════════════════ -->
   <section class="td-related">
     <div class="td-related__inner">
       <p class="section-label">More journeys</p>
@@ -1391,6 +1438,49 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     color: #888780;
     margin: 0;
     line-height: 1.4;
+  }
+
+  /* ── td-upcoming (compact dates strip in hero) ──── */
+  .td-upcoming {
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    background: rgba(4, 51, 65, 0.05);
+    border-radius: 12px;
+    border-left: 3px solid var(--color-sorbus);
+  }
+
+  .td-upcoming__label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-nordic);
+    opacity: 0.5;
+    margin: 0 0 8px;
+  }
+
+  .td-upcoming__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .td-upcoming__pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+    border: 1.5px solid var(--color-nordic);
+    color: var(--color-nordic);
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s;
+    white-space: nowrap;
+  }
+
+  .td-upcoming__pill:hover {
+    background: var(--color-nordic);
+    color: var(--color-light-cyan);
   }
 
   /* ── S2 td-marquee ──────────────────────────────── */
@@ -2396,7 +2486,84 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     opacity: 0.8;
   }
 
-  /* ── S10 td-related ─────────────────────────────── */
+  /* ── S10 td-departures ──────────────────────────── */
+  .td-departures {
+    background: var(--color-nordic);
+    padding: 96px 0;
+  }
+  .td-departures__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .td-departures__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 700;
+    color: var(--color-light-cyan);
+    line-height: 1.15;
+    margin: 8px 0 16px;
+  }
+  .td-departures__sub {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(217,247,245,0.65);
+    margin-bottom: 28px;
+    max-width: 340px;
+  }
+  .td-departures__cta {
+    display: inline-block;
+    background: var(--color-sorbus);
+    color: #fff;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 100px;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s;
+  }
+  .td-departures__cta:hover { opacity: 0.88; }
+  .td-departures__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid rgba(217,247,245,0.15);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .td-departures__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(217,247,245,0.1);
+    transition: background 0.2s;
+  }
+  .td-departures__item:last-child { border-bottom: none; }
+  .td-departures__item:hover { background: rgba(217,247,245,0.06); }
+  .td-departures__date {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-light-cyan);
+  }
+  .td-departures__book {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-sorbus);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s;
+  }
+  .td-departures__book:hover { opacity: 0.75; }
+
+  /* ── S11 td-related ─────────────────────────────── */
   .td-related { background: var(--color-light-cyan); padding: 120px 0; }
 
   .td-related__inner {
@@ -2480,6 +2647,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   }
 
   @media (max-width: 960px) {
+    .td-departures__inner { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
+    .td-departures        { padding: 72px 0; }
     .td-faq__inner     { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
     .td-related__inner { padding: 0 24px; }
     .td-related__grid  { grid-template-columns: 1fr; gap: 32px; }

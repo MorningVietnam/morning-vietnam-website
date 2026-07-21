@@ -1919,6 +1919,7 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+    upcomingDates: ["Wed 22 Jul", "Sun 26 Jul", "Mon 27 Jul", "Sun 2 Aug"],
   },
 
   // ── Sa Pa · Nậm Cang ─────────────────────────────────────────────────────

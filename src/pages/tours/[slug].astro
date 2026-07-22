@@ -272,7 +272,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                 <p class="td-upcoming__label">Next departures</p>
                 <div class="td-upcoming__pills">
                   {upcomingDates.map((d: string) => (
-                    <a href="/contact" class="td-upcoming__pill">{d}</a>
+                    <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(d)}`} class="td-upcoming__pill">{d}</a>
                   ))}
                 </div>
               </div>
@@ -357,7 +357,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                 <p class="td-upcoming__label">Next departures</p>
                 <div class="td-upcoming__pills">
                   {upcomingDates.map((d: string) => (
-                    <a href="/contact" class="td-upcoming__pill">{d}</a>
+                    <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(d)}`} class="td-upcoming__pill">{d}</a>
                   ))}
                 </div>
               </div>
@@ -457,30 +457,6 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       </div>
     </section>
   )}
-
-  <!-- ═══ S5 · b-overview ════════════════════════════════════════ -->
-  <section class="td-overview">
-    <div class="td-overview__inner">
-      <div class="td-overview__left">
-        <p class="section-label">About this tour</p>
-        <h2 class="td-overview__headline">{overview?.headline || tour.tagline}</h2>
-        <div class="td-overview__body">
-          {(overview?.paragraphs?.length ? overview.paragraphs : [tour.description]).map((p: string | undefined) => p ? <p>{p}</p> : null)}
-        </div>
-      </div>
-      <div class="td-overview__right">
-        {overview?.pullImage ? (
-          <img src={overview.pullImage} alt={tour.name} loading="lazy" />
-        ) : (
-          <div class="td-overview__photo-pending">
-            <strong>PHOTO PENDING</strong>
-            <p>Wide environmental shot for {tour.name} — landscape or activity moment, vertical orientation preferred (3:4 or 4:5).</p>
-          </div>
-        )}
-      </div>
-    </div>
-
-  </section>
 
   <!-- ═══ S4 · b-timeline (SVG elevation chart) ═════════════════ -->
   <section class="td-timeline">
@@ -761,11 +737,40 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
 
 
   <!-- ═══ S-pan · panoramic image break ══════════════════════════ -->
-  {panoramicImage && (
-    <div class="td-panoramic">
+  <!-- ═══ S-pan · panoramic image break ══════════════════════════ -->
+  <div class="td-panoramic">
+    {panoramicImage ? (
       <img src={panoramicImage} alt={`${tour.name} — landscape`} loading="lazy" />
+    ) : (
+      <div class="td-panoramic__placeholder">
+        <strong>PANORAMIC PHOTO PENDING</strong>
+        <p>Ratio 3:1 — recommended 2400 × 800 px minimum · full-width landscape or atmosphere shot</p>
+      </div>
+    )}
+  </div>
+
+  <!-- ═══ S5 · b-overview (More about the destination) ══════════ -->
+  <section class="td-overview">
+    <div class="td-overview__inner">
+      <div class="td-overview__left">
+        <p class="section-label">More about the destination</p>
+        <h2 class="td-overview__headline">{overview?.headline || tour.tagline}</h2>
+        <div class="td-overview__body">
+          {(overview?.paragraphs?.length ? overview.paragraphs : [tour.description]).map((p: string | undefined) => p ? <p>{p}</p> : null)}
+        </div>
+      </div>
+      <div class="td-overview__right">
+        {overview?.pullImage ? (
+          <img src={overview.pullImage} alt={tour.name} loading="lazy" />
+        ) : (
+          <div class="td-overview__photo-pending">
+            <strong>PHOTO PENDING</strong>
+            <p>Wide environmental shot for {tour.name} — landscape or activity moment, vertical orientation preferred (3:4 or 4:5).</p>
+          </div>
+        )}
+      </div>
     </div>
-  )}
+  </section>
 
   <!-- ═══ S7 · b-welcome (Welcome pack) ════════════════════════ -->
   <section class="td-welcome">
@@ -787,6 +792,28 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       </div>
     </div>
   </section>
+
+  <!-- ═══ S10 · b-departures ═══════════════════════════════════ -->
+  {upcomingDates && upcomingDates.length > 0 && (
+    <section class="td-departures">
+      <div class="td-departures__inner">
+        <div class="td-departures__left">
+          <p class="section-label">Upcoming Departures</p>
+          <h2 class="td-departures__heading">Next dates you can join.</h2>
+          <p class="td-departures__sub">Spots fill fast — reserve now, pay 14 days before. Free cancellation up to 7 days out.</p>
+          <a href="/contact" class="td-departures__cta">Reserve a spot →</a>
+        </div>
+        <div class="td-departures__list">
+          {upcomingDates.map((date: string) => (
+            <div class="td-departures__item">
+              <span class="td-departures__date">{date}</span>
+              <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(date)}`} class="td-departures__book">Reserve spot →</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- ═══ S6 · b-unlock (the secret game) ═══════════════════════ -->
   {unlock && (
@@ -949,28 +976,6 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     </div>
   </section>
 
-  <!-- ═══ S10 · b-departures ═══════════════════════════════════ -->
-  {upcomingDates && upcomingDates.length > 0 && (
-    <section class="td-departures">
-      <div class="td-departures__inner">
-        <div class="td-departures__left">
-          <p class="section-label">Upcoming Departures</p>
-          <h2 class="td-departures__heading">Next dates you can join.</h2>
-          <p class="td-departures__sub">Spots fill fast — reserve now, pay 14 days before. Free cancellation up to 7 days out.</p>
-          <a href="/contact" class="td-departures__cta">Reserve a spot →</a>
-        </div>
-        <div class="td-departures__list">
-          {upcomingDates.map((date: string) => (
-            <div class="td-departures__item">
-              <span class="td-departures__date">{date}</span>
-              <a href="/contact" class="td-departures__book">Reserve spot →</a>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
   <!-- ═══ S11 · b-related ═══════════════════════════════════════ -->
   <section class="td-related">
     <div class="td-related__inner">
@@ -1035,20 +1040,21 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
 
   .td-product__gallery {
     position: relative;
-    min-height: 600px;
     padding: 48px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     background: var(--color-light-cyan);
   }
 
   .td-product__main-image {
-    flex: 1;
+    flex: none;
+    aspect-ratio: 1660 / 1480;
     border-radius: 20px;
     overflow: hidden;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     position: relative;
+    width: 100%;
   }
 
   .td-product__main-image .td-main-img {
@@ -1493,7 +1499,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── S3 td-pitch ────────────────────────────────── */
   .td-pitch {
     background: var(--color-light-cyan);
-    padding: 120px 0;
+    padding: 60px 0;
   }
 
   .td-pitch__inner {
@@ -1561,14 +1567,14 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   @media (max-width: 768px) {
     .td-pitch__inner    { padding: 0 24px; }
     .td-pitch__headline { padding-left: 16px; border-left-width: 4px; }
-    .td-pitch          { padding: 80px 0; }
+    .td-pitch          { padding: 40px 0; }
     .td-pitch__bullets li { font-size: 15px; }
   }
 
   /* ── S4 td-value ────────────────────────────────── */
   .td-value {
     background: var(--color-light-cyan);
-    padding: 120px 0;
+    padding: 60px 0;
   }
 
   .td-value__inner {
@@ -1675,7 +1681,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
 
   @media (max-width: 960px) {
     .td-value__inner { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
-    .td-value        { padding: 80px 0; }
+    .td-value        { padding: 40px 0; }
   }
 
   @media (max-width: 560px) {
@@ -1686,7 +1692,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── S5 td-overview ─────────────────────────────── */
   .td-overview {
     background: var(--color-white, #fff);
-    padding: 120px 0 80px;
+    padding: 60px 0 40px;
   }
 
   .td-overview__inner {
@@ -1759,7 +1765,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── S4 td-timeline ──────────────────────────────── */
   .td-timeline {
     background: var(--color-light-cyan);
-    padding: 120px 0;
+    padding: 60px 0;
   }
 
   .td-timeline__inner {
@@ -1901,7 +1907,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── S5 td-audience ──────────────────────────────── */
   .td-audience {
     background: var(--color-light-cyan);
-    padding: 120px 0;
+    padding: 60px 0;
   }
 
   .td-audience__inner {
@@ -1974,19 +1980,26 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── Responsive ─────────────────────────────────── */
   @media (max-width: 960px) {
     .td-product__inner         { grid-template-columns: 1fr; }
-    .td-product__gallery       { min-height: 480px; padding: 32px 24px 24px; }
+    .td-product__gallery       { min-height: unset; padding: 20px 0 0; }
+    .td-product__main-image    { flex: none; aspect-ratio: 1660/1480; margin: 0 auto; width: calc(100% - 40px); border-radius: 20px; }
+    .td-product__thumbs        { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 20px 0 16px; width: calc(100% - 40px); margin: 0 auto; flex-wrap: unset; }
+    .td-product__thumb         { width: 100%; height: auto; aspect-ratio: 1/1; }
+    .td-gallery__arrow         { width: 30px; height: 30px; }
     .td-product__panel         { padding: 40px 24px; }
     .td-overview__inner        { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
-    .td-overview               { padding: 80px 0 60px; }
+    .td-overview               { padding: 40px 0 30px; }
     .td-timeline__inner        { padding: 0 24px; }
-    .td-timeline               { padding: 80px 0; }
+    .td-timeline               { padding: 40px 0; }
     .td-audience__inner        { padding: 0 24px; }
-    .td-audience               { padding: 80px 0; }
+    .td-audience               { padding: 40px 0; }
     .td-audience__grid         { grid-template-columns: 1fr 1fr; }
   }
 
+  @media (max-width: 768px) {
+    .td-product__thumbs { display: none; }
+  }
+
   @media (max-width: 480px) {
-    .td-product__thumb { width: 60px; height: 60px; }
     .td-product__heading { font-size: 36px; }
     .td-product__price   { font-size: 28px; }
     .td-audience__grid { grid-template-columns: 1fr; }
@@ -1999,7 +2012,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── S7 td-welcome ─────────────────────────────── */
   .td-welcome {
     background: #ffffff;
-    padding: 120px 0;
+    padding: 60px 0;
   }
 
   .td-welcome__inner {
@@ -2079,13 +2092,13 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   @media (max-width: 768px) {
     .td-welcome__inner { padding: 0 24px; }
     .td-welcome__grid  { grid-template-columns: repeat(2, 1fr); }
-    .td-welcome        { padding: 80px 0; }
+    .td-welcome        { padding: 40px 0; }
   }
 
   /* ── S6 td-unlock ──────────────────────────────── */
   .td-unlock {
     background: var(--color-nordic);
-    padding: 120px 0;
+    padding: 60px 0;
   }
 
   .td-unlock__inner {
@@ -2188,14 +2201,14 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   }
 
   @media (max-width: 768px) {
-    .td-unlock        { padding: 80px 0; }
+    .td-unlock        { padding: 40px 0; }
     .td-unlock__inner { padding: 0 24px; }
   }
 
   /* ── S9 td-season ───────────────────────────────── */
   .td-season {
     background: var(--color-light-cyan);
-    padding: 120px 0;
+    padding: 60px 0;
   }
 
   .td-season__inner {
@@ -2306,11 +2319,11 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     .td-season__inner { padding: 0 24px; }
     .td-season__bar   { grid-template-columns: repeat(6, 1fr); }
     .td-season__notes { grid-template-columns: 1fr; }
-    .td-season        { padding: 80px 0; }
+    .td-season        { padding: 40px 0; }
   }
 
   /* ── S7 td-reviews ──────────────────────────────── */
-  .td-reviews { background: var(--color-light-cyan); padding: 120px 0; }
+  .td-reviews { display: none; }
 
   .td-reviews__inner {
     max-width: var(--max-width);
@@ -2420,7 +2433,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   }
 
   /* ── S9 td-faq ──────────────────────────────────── */
-  .td-faq { background: var(--color-white, #fff); padding: 120px 0; }
+  .td-faq { background: var(--color-white, #fff); padding: 60px 0; }
 
   .td-faq__inner {
     max-width: var(--max-width);
@@ -2489,7 +2502,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── S10 td-departures ──────────────────────────── */
   .td-departures {
     background: var(--color-nordic);
-    padding: 96px 0;
+    padding: 48px 0;
   }
   .td-departures__inner {
     max-width: 1200px;
@@ -2564,7 +2577,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   .td-departures__book:hover { opacity: 0.75; }
 
   /* ── S11 td-related ─────────────────────────────── */
-  .td-related { background: var(--color-light-cyan); padding: 120px 0; }
+  .td-related { background: var(--color-light-cyan); padding: 60px 0; }
 
   .td-related__inner {
     max-width: var(--max-width);
@@ -2648,12 +2661,12 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
 
   @media (max-width: 960px) {
     .td-departures__inner { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
-    .td-departures        { padding: 72px 0; }
+    .td-departures        { padding: 36px 0; }
     .td-faq__inner     { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
     .td-related__inner { padding: 0 24px; }
     .td-related__grid  { grid-template-columns: 1fr; gap: 32px; }
-    .td-faq            { padding: 80px 0; }
-    .td-related        { padding: 80px 0; }
+    .td-faq            { padding: 40px 0; }
+    .td-related        { padding: 40px 0; }
   }
 
   /* ── Cabin upgrade toggle ───────────────────────────── */
@@ -2778,10 +2791,36 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     display: block;
   }
 
+  .td-panoramic__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-light-cyan);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--color-nordic);
+    opacity: 0.5;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .td-panoramic__placeholder strong {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .td-panoramic__placeholder p {
+    font-size: 13px;
+  }
+
   /* ── CTA bottom section ────────────────────────────────────── */
   .td-cta-bottom {
     background: var(--color-nordic);
-    padding: 64px 24px;
+    padding: 32px 24px;
   }
 
   .td-cta-bottom__inner {

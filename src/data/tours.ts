@@ -251,11 +251,10 @@ export const tours: Tour[] = [
     ],
     pitch: {
       headline: "Most visitors photograph the Mausoleum from behind a rope. Walk away knowing they \"saw\" it.",
-      paragraphs: [
-        "You're going to spend real time here — not the polite 20 minutes of a standard city tour, but the kind of morning where a place stops being a monument and starts being a story. Ba Đình Square at 07:30, before the tour buses arrive. The stilt house he chose over the Presidential Palace next door. The pagoda two minutes from his desk. Three places. One man's deliberate, unhurried life.",
-        "Then the road out of Hanoi. Past the city edge, into Ba Vì — where the jungle starts and the city noise stops. K9 Đá Chông is where Hồ Chí Minh worked in secret during the American War — and where his body was preserved in the forest before being brought back to the Mausoleum. Not a famous site. Not on most itineraries. Exactly the kind of place where the real story lives.",
-        "The Unlock challenge happens here, in the forest. No phones for directions. No guidebook answers. Your group reads the place the way he had to — by paying attention.",
-        "The day ends at dusk inside Vườn Quốc Gia Ba Vì, at the temple the people built after his will.",
+      bullets: [
+        "Ba Đình Square at 07:30 — before the tour buses arrive",
+        "The stilt house he chose over the Presidential Palace next door",
+        "K9 Đá Chông — where his body was preserved in secret during the war. Not on most itineraries.",
       ],
       closingLine: "",
     },
@@ -443,6 +442,7 @@ export const tours: Tour[] = [
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     image:       "/tours/lai-chau-motortour/4.webp",
+    panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
 
     elevationMax: 2000,
 
@@ -646,16 +646,15 @@ export const tours: Tour[] = [
     ],
     pitch: {
       headline: "The road over Vietnam's highest mountain pass — into a valley most travellers have never heard of.",
-      paragraphs: [
-        "Sa Pa gets crowded. Mù Cang Chải gets Instagrammed. Lai Châu doesn't. Not because it's less spectacular — because the only way in crosses O Quy Hồ, Vietnam's highest mountain pass at 2,050 metres, and coaches can't make that run. We can.",
-        "Day 1 takes you over the pass, through a limestone cave, into a working Hmong village where the blacksmith still forges tools by hand, across a river gorge to a waterfall, and ends in a Dao village homestay that has never appeared on a hotel booking platform.",
-        "Day 2 starts in that same village — exploring its century-old wooden houses — before a 6-hour jungle trek through tropical forest with lunch cooked and eaten on the trail. The afternoon lands you on a glass bridge at 900m above the Lai Châu valley as the light turns gold.",
-        "Car or motorbike. The route is the same. The feeling is different. Choose accordingly.",
+      bullets: [
+        "O Quy Hồ at 2,050m — Vietnam's highest pass. Coaches can't make this run. We can.",
+        "Limestone cave, Hmong blacksmith village, waterfall, Dao homestay — none of it on Klook or GetYourGuide",
+        "Day 2: 6-hour jungle trek, lunch on the trail, glass bridge at 900m as the light turns gold",
       ],
       closingLine: "Two days. One mountain pass. A valley most tourists will never find.",
     },
     valueAnchor: {
-      headline: "From $118. For a route that exists outside the tourist circuit entirely.",
+      headline: "From $123. For a route that exists outside the tourist circuit entirely.",
       paragraphs: [
         "There is no Klook listing for O Quy Hồ. No GetYourGuide page for Sì Thâu Chải. The glass bridge at Rồng Mây only opened in 2023 and still has no English-language operator running it properly. We built this route because the northwest deserves better than what the standard Sapa circuit offers.",
         "The price covers sleeper bus both ways, transport all day, all meals, a fully-hosted village homestay, jungle trek with trail lunch, glass bridge entry, Unlock Challenge, and a dedicated host for 48 hours. The only thing not included is whatever you buy at the Sa Pa night market on Day 2.",
@@ -778,6 +777,7 @@ export const tours: Tour[] = [
       ...DEFAULT_FAQS.slice(2),
     ],
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+    upcomingDates: ["Fri 24 Jul"],
   },
 
   // ── Unlock Mai Châu ──────────────────────────────────────────────────────
@@ -1188,13 +1188,10 @@ export const tours: Tour[] = [
     pitch: {
       "3d2n": {
         headline: "The standard Mai Châu day tour shows you the valley from a distance. This one puts you in it for three days.",
-        paragraphs: [
-          "Most operators run Mai Châu as a loop: bus in, buffet lunch, one village, bus out. Some add a night. A few add cycling. Almost none go further than the valley floor — because going further requires knowing where to go.",
-          "The trek from Phiêng Cành to Hang Táu isn't on any operator's menu. It's a 4-hour route through primary forest connecting two Hmong villages, with no trail markers and no way to navigate it without a guide who's walked it before. Luckily, we have the best ones.",
-          "Day 1 is Mai Châu — White Thai villages, rice fields, the Unlock Challenge running at golden hour, and dinner with a family who cooks the kind of meal that makes you reconsider everything you thought you knew about homestay food in Vietnam.",
-          "Day 2, the road climbs. Pà Cò at 1,200m is not a better version of Mai Châu — it's a completely different place. Different ethnic group. Different food. Different language. Different everything. Most people don't get here because it requires an extra night and a reason to go. The spectacular trek is the reason.",
-          "Day 3 dawn: The valley below Hang Kia disappears into the clouds. You're standing above it.",
-          "Then the forest. Then Hang Táu — the most beautiful and peaceful isolated primitive village. Then home.",
+        bullets: [
+          "Two valleys, two ethnic groups: White Thai in Mai Châu, H'Mông in Pà Cò at 1,200m",
+          "The Phiêng Cành → Hang Táu trek: 4 hours through primary forest, no trail markers, not on any operator's menu",
+          "Day 3 dawn: Hang Kia valley disappears into the clouds. You're standing above it.",
         ],
         closingLine: "Two valleys. One trip. Nothing like it on the market.",
       },
@@ -1409,10 +1406,10 @@ export const tours: Tour[] = [
     ],
     pitch: {
       headline: "Ninh Bình gives you Hạ Long Bay — without the cruise ship, the noise, or the itinerary.",
-      paragraphs: [
-        "You'll row through Tràng An before 9 AM — before the day-trippers arrive — with a local oarswoman who steers with her feet and knows every cave by the sound it makes when the water rises. The karsts here are the same limestone formations as Hạ Long, but you're in a traditional wooden boat, in near-silence, not on a party cruise.",
-        "Hoa Lư was Vietnam's first imperial capital. Most guided tours give it 40 minutes. We stay two hours, with a host who knows the dynastic detail and an Unlock challenge that turns the ancient stone inscriptions into a problem your group has to solve before sundown.",
-        "Day two begins at 5:30 AM — optional, but almost everyone comes. 500 steps up Mua Cave to watch the sun spill across the valley below. Then Bích Động pagoda, carved directly into the limestone. Then a village walk that has no script, because the best part of it is always something we didn't plan.",
+      bullets: [
+        "Tràng An before 9 AM — wooden boat, near-silence, oarswoman who steers with her feet",
+        "Hoa Lư: Vietnam's first imperial capital. Most tours give it 40 minutes. We stay two hours.",
+        "Day 2 optional 5:30 AM: 500 steps up Mua Cave, sun spilling across the karst valley below",
       ],
       closingLine: "Vietnam's most dramatic landscape. Lived from inside it.",
     },
@@ -1522,10 +1519,10 @@ export const tours: Tour[] = [
     ],
     pitch: {
       headline: "Cát Bà is what Hạ Long Bay looks like when you step off the boat.",
-      paragraphs: [
-        "The cruise ships anchor offshore. The day-trippers stay on the beach strip. We go into Cát Bà National Park — 17,000 hectares of jungle that rises to 177 metres and contains some of the world's rarest primates. The trail your group walks that afternoon is not on any tour operator's standard route.",
-        "The fishing village in the late afternoon is not staged. The families there live by what they pull from the water every morning. Our host grew up on that water. You'll eat dinner at a table where the catch was still swimming two hours earlier, with people who have no reason to perform anything for you.",
-        "Day two is kayaking — but not in a line behind a guide. We find the quiet lagoons. The hidden beaches the crowd can't reach without 20 minutes of paddling. The Unlock challenge runs from water level — a navigation puzzle that ends at the best viewpoint on the island.",
+      bullets: [
+        "Cát Bà National Park: 17,000 hectares, world's rarest primates, trail not on any standard route",
+        "Fishing village dinner — catch still swimming two hours earlier, no performance, no staging",
+        "Day 2 kayaking: quiet lagoons, hidden beaches, Unlock Challenge from water level",
       ],
       closingLine: "The island most people only photograph from a boat deck. We go in.",
     },
@@ -1785,10 +1782,10 @@ export const tours: Tour[] = [
 
     pitch: {
       headline: "The Mường Hoa valley is Sa Pa's signature landscape. Most people see it from a minibus window. This is two days inside it.",
-      paragraphs: [
-        "The standard Sa Pa day tour goes roughly like this: minibus, viewpoint, one village loop, cable car optional. You cover ground quickly, you photograph a lot, and by evening you're back in town with a sense that you saw Sa Pa without quite having been in it.",
-        "The Trekking Classic runs a different logic. Day 1 starts late afternoon — you arrive from Hanoi, eat in town, then the walking begins at 14:45. Three villages in sequence: Ý Linh Hồ on the terraced hillside, Lao Chải in the valley, Tả Van where the path ends and the homestay begins. Dinner is cooked by the family. You sleep in the village.",
-        "Day 2 starts at 08:00 and goes deeper — through the bamboo forest to Giàng Tả Chải, a smaller, quieter settlement most tour groups don't reach. Lunch in the bản, then car back to Sa Pa and the evening bus to Hanoi. Two days, one valley, the full ground-level picture.",
+      bullets: [
+        "Three villages in sequence: Ý Linh Hồ → Lao Chải → Tả Van — on foot, not a minibus",
+        "Night in the valley: dinner cooked by an H'Mông family, sleep where the rice terraces begin",
+        "Day 2: Giàng Tả Chải — a smaller, quieter settlement most Sa Pa tour groups never reach",
       ],
       closingLine: "The Mường Hoa valley is exactly as good as people say. The trick is being in it, not above it.",
     },
@@ -1956,6 +1953,7 @@ export const tours: Tour[] = [
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     image:       "/tours/sapa-nam-cang/5.webp",
+    panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
     selectorMode: 'duration-tabs',
 
     gallery: [
@@ -2072,17 +2070,19 @@ export const tours: Tour[] = [
     pitch: {
       "1day": {
         headline: "Sa Pa has a hundred trekking routes. Nậm Cang is the one the coach tours don't reach.",
-        paragraphs: [
-          "The standard Sa Pa day involves a minibus, a viewpoint, Cat Cat Village, and a cable car queue. Nậm Cang is 30km further south — past the road the coaches take — in a valley where the rice terraces are still farmed by Red Dao families who have lived here for generations. No gift shops at the trailhead. No entrance gate. Just the fields, the village, and a morning's walk to get there.",
-          "The 1-day route starts at Nậm Sài and follows the terrace edges all the way to Nậm Cang. Two hours of walking that covers more actual Sa Pa landscape than most visitors see in a week. Lunch is cooked at the village. The Unlock Challenge runs in the afternoon, in the fields.",
+        bullets: [
+          "30km past the coach road — Red Dao families, no gift shops, no entrance gate",
+          "2 hours through rice terrace edges: more actual Sa Pa landscape than most visitors see in a week",
+          "Lunch cooked at the village. Unlock Challenge in the afternoon, in the fields.",
         ],
         closingLine: "One day. The valley without the crowds.",
       },
       "2d1n": {
         headline: "Two days. Hanoi to three villages, two ethnic groups, and a valley most Sa Pa itineraries miss entirely.",
-        paragraphs: [
-          "The 2D1N starts in Hanoi — sleeper bus north, arrive in Sa Pa by early afternoon. From the town centre you trek straight into the Mường Hoa valley via Ý Linh Hồ, a Black H'Mông settlement on the hillside above the rice terraces. By sunset you're at Tả Van: dinner cooked at the homestay, rice wine, and a morning that comes with cloud on the peaks.",
-          "Day 2 moves further. Trek from Tả Van across to Giàng Tả Chải, then car to Nậm Sài, then on foot into Nậm Cang. The Red Dao community here is distinct from anything in the Mường Hoa valley — different dress, different crafts, different relationship with the mountain. Lunch in the village, time in the fields, back to Sa Pa by late afternoon. The day ends with a Red Dao herbal bath — a ritual the local women have been practising for centuries, and one of the genuinely good ways to end two days of walking.",
+        bullets: [
+          "Sleeper bus north → Ý Linh Hồ → Tả Van homestay — trekking starts the moment you arrive",
+          "Day 2: Black H'Mông to Red Dao — two completely different communities, one valley apart",
+          "Ends with a Red Dao herbal bath in Sa Pa — a ritual women here have practiced for centuries",
         ],
         closingLine: "Three villages. Two nights. The Sa Pa most visitors go home having missed.",
       },
@@ -2331,6 +2331,7 @@ export const tours: Tour[] = [
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     image:       "/tours/into-nam-luc/1.webp",
+    panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
     selectorMode: 'vehicle-only',
 
     gallery: [
@@ -2427,10 +2428,10 @@ export const tours: Tour[] = [
 
     pitch: {
       headline: "Nậm Lúc doesn't appear on maps that tourists use. That's why it's worth going.",
-      paragraphs: [
-        "Most day trips from Sa Pa run the same circuit: Cat Cat Village, Fansipan cable car, back by 5pm. Nậm Lúc is 80 kilometres deeper into Lai Châu province — past the cave systems, past the road that coaches use, into a section of jungle that has no tourism infrastructure at all. The 'trailhead' is a clearing at 430 metres where motorbike taxi drivers wait.",
-        "The trek gains 470 metres through primary forest to the waterfall base, then pushes higher to the summit at 900m. The forest is dense enough that you lose the sound of vehicles within ten minutes. Lunch is cooked on site and eaten at the water's edge.",
-        "Car option adds Linh Ứng Temple on the way back — a monastery at 1,250m with an unobstructed view over Lai Châu city. One of the genuinely great sunset spots in the northwest, and almost no one knows it's there.",
+      bullets: [
+        "80km past the last coach road — trailhead is a jungle clearing at 430m, no tourism infrastructure",
+        "470m climb through primary forest, lunch cooked and eaten at the waterfall's edge",
+        "Car option: Linh Ứng Temple at 1,250m — one of the northwest's best sunsets, almost no one knows it",
       ],
       closingLine: "One day. One waterfall. Nothing packaged about it.",
     },
@@ -2588,6 +2589,7 @@ export const tours: Tour[] = [
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     image:       "/tours/lai-chau-motortour/15.webp",
+    panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
     gallery: [
       { src: "/tours/unlock-lai-chau/1.webp",  alt: "Unlock Lai Châu" },
       { src: "/tours/unlock-lai-chau/2.webp",  alt: "Unlock Lai Châu" },
@@ -2710,10 +2712,10 @@ export const tours: Tour[] = [
 
     pitch: {
       headline: "Lai Châu is northwest Vietnam without the tourist circuit. You get there overnight.",
-      paragraphs: [
-        "The standard northwest route goes: Hanoi → Sa Pa → cable car → Cat Cat Village → back. Lai Châu is 70 kilometres further, across Ô Quy Hồ Pass — the road coaches don't take. Most travellers who make it here come from Sa Pa. This tour cuts that step entirely: sleeper bus from Hanoi direct, arrive in Lai Châu city at dawn.",
-        "Two days cover more than most visitors see in a week. Day 1: a cave system that sits on no standard tour operator's menu, a real working H'Mông village, a waterfall swim, and a sunset at a Dao homestay above the valley. Day 2: a jungle trek to a waterfall that has no tourism infrastructure, then the highest viewpoint in Lai Châu at dusk.",
-        "Car or motorbike — the itinerary is the same. The difference is what it feels like to cover the ground.",
+      bullets: [
+        "Sleeper bus Hanoi → Lai Châu direct — no Sa Pa leg, no extra day, arrive at dawn",
+        "Day 1: cave, H'Mông village, waterfall, Dao homestay above the valley — none of it on a standard menu",
+        "Day 2: jungle trek to Nậm Lúc waterfall, then the highest viewpoint in Lai Châu at dusk",
       ],
       closingLine: "Two nights on a sleeper bus. Two days in Lai Châu. Nothing wasted.",
     },
@@ -2845,6 +2847,7 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+    upcomingDates: ["Fri 24 Jul"],
   },
 ];
 

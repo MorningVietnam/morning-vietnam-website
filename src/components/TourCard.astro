@@ -253,6 +253,10 @@ const regionLabel: Record<string, string> = {
     white-space: nowrap;
   }
 
+  /* ── Dates: màu chữ cho theme nền tối ─────── */
+  .tour-card[data-theme="java"]   .tour-card__dates { color: rgba(217, 247, 245, 0.85); }
+  .tour-card[data-theme="nordic"] .tour-card__dates { color: rgba(217, 247, 245, 0.85); }
+
   /* ── Theme: java ───────────────────────────── */
   .tour-card[data-theme="java"] .tour-card__body     { background: var(--color-java); }
   .tour-card[data-theme="java"] .tour-card__region-tag { color: var(--color-riptide); }

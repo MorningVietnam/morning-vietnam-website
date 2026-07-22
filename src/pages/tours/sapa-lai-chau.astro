@@ -111,6 +111,17 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
                     </ul>
                   )}
 
+                  {tour.upcomingDates && tour.upcomingDates.length > 0 && (
+                    <div class="hub-card__dates">
+                      <span class="hub-card__dates-label">Next departures</span>
+                      <div class="hub-card__dates-list">
+                        {tour.upcomingDates.map((d: string) => (
+                          <span class="hub-card__date-pill">{d}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div class="hub-card__footer">
                     {tour.price
                       ? <span class="hub-card__price">{tour.price}</span>
@@ -532,6 +543,37 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   line-height: 1.4;
 }
 .hub-card__highlights li::before { content: '→'; position: absolute; left: 0; }
+
+.hub-card__dates {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.hub-card__dates-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.hub-card__dates-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.hub-card__date-pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 100px;
+  border: 1px solid currentColor;
+  opacity: 0.75;
+  white-space: nowrap;
+}
 
 .hub-card__footer {
   display: flex;

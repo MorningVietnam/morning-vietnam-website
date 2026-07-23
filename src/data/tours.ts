@@ -73,6 +73,8 @@ export interface Tour {
   faqs?:             FAQ[];
   unlockChallenge?:  UnlockChallenge | null;
   upcomingDates?:    string[];   // e.g. ["Wed 22 Jul", "Sun 26 Jul"] — displayed on tour detail
+  subtitle?:         string;     // Secondary line shown under h1 on hero, smaller font
+  priceNote?:        string;     // Small note shown below price block on hero
 }
 
 // ── Shared defaults ────────────────────────────────────────────────────────
@@ -1336,6 +1338,289 @@ export const tours: Tour[] = [
     seasonality:     DEFAULT_SEASONALITY_NORTH,
     faqs:            DEFAULT_FAQS,
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+  },
+
+  // ── Mũi Đôi — First Sunrise ─────────────────────────────────────────────
+  {
+    slug:        "mui-doi-first-sunrise",
+    name:        "Vietnam's Easternmost Point",
+    subtitle:    "Trek & Camp to Vietnam's Easternmost Point — First Sunrise at Mũi Đôi",
+    region:      "central",
+    duration:    ["2D1N"],
+    price:       "From $134/person",
+    priceUSD:    134,
+    priceVND:    3500000,
+    priceNote:   "From $123 / 3,200,000 ₫ for groups of 5+",
+    tagline:     "Trek wild coastline, camp on a deserted beach, and watch the first sunrise to touch Vietnamese territory.",
+    description: "Two days on Vietnam's most remote coastal trail, ending at Mũi Đôi — the easternmost point of the Vietnamese mainland. No road reaches here. Trek from Đầm Môn fishing village through scrub forest and wild coast to Bãi Rạng beach camp on Day 1. Pre-dawn on Day 2, follow the cliff path 500m to the headland. Mũi Đôi is the first land in Vietnam to see the sun each morning. BBQ beach dinner, boat transfer to Bãi Thắm, and back to Nha Trang by afternoon.",
+    highlights: [
+      "Mũi Đôi — Vietnam's easternmost mainland point: the first sunrise in the country lands here",
+      "Pre-dawn cliff trek at 04:30 — 500m coastal trail in darkness to the headland",
+      "Wild beach camp at Bãi Rạng — BBQ seafood dinner by the South China Sea",
+      "Vân Phong Bay — one of Vietnam's 21 National Tourist Areas, pristine and without mass tourism",
+      "Bãi Thắm — one of Vietnam's most beautiful beaches, accessible only by boat or sand dune crossing",
+    ],
+    included: [
+      "Transport Nha Trang ↔ Đầm Môn (van both ways)",
+      "All meals: 2 breakfasts, 2 lunches, 1 BBQ beach dinner",
+      "Camping equipment: tents + sleeping mats (bring own sleeping bag or liner)",
+      "Boat transfer Bãi Rạng → Bãi Thắm",
+      "Local guide (Đầm Môn-based)",
+      "Dedicated Morning Vietnam host",
+      "Welcome pack",
+    ],
+    hub:        "Nha Trang",
+    languages:  ["EN", "FR", "DE"],
+    comingSoon: false,
+    image:      "/tours/mui-doi/1.webp",
+
+    selectorMode: 'vehicle-only',
+
+    discountPolicy: {
+      rules: [
+        { label: "1 – 4 people",  value: "$134 / 3,500,000 ₫ per person" },
+        { label: "5 – 12 people", value: "$123 / 3,200,000 ₫ per person" },
+      ],
+    },
+
+    panoramicImage: "/tours/mui-doi/panoramic.webp",
+
+    gallery: [
+      { src: "/tours/mui-doi/1.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/2.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/3.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/4.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/5.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/6.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/7.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/8.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/9.webp",  alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/10.webp", alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/11.webp", alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/12.webp", alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+      { src: "/tours/mui-doi/13.webp", alt: "Vietnam's Easternmost Point — Mũi Đôi" },
+    ],
+
+    durationOptions: [
+      {
+        id:       "2d1n",
+        label:    "2D1N",
+        price:    134,
+        priceVND: 3500000,
+        tagline:  "Nha Trang → Đầm Môn · coastal trek · wild beach camp · Mũi Đôi sunrise · Bãi Thắm → Nha Trang",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Vietnam's Easternmost Point — Mũi Đôi (2D1N, $134/person)",
+      },
+    ],
+
+    tripInfo: {
+      "2d1n": [
+        { icon: "map-pin",         label: "Pickup",       value: "Nha Trang hotel · Saturdays · 05:30" },
+        { icon: "users",           label: "Group size",   value: "3 – 12 people joined · 6+ for private departure" },
+        { icon: "car",             label: "Transport",    value: "Van Nha Trang ↔ Đầm Môn + boat transfer Day 2" },
+        { icon: "tools-kitchen-2", label: "Meals",        value: "2 breakfasts · 2 lunches · 1 BBQ beach dinner" },
+        { icon: "home",            label: "Camping",      value: "Wild beach camp · Bãi Rạng · tents + mats provided" },
+        { icon: "mountain",        label: "Trekking",     value: "~12km over 2 days · coastal + cliff section · moderate" },
+        { icon: "calendar-check",  label: "Departures",   value: "Every Saturday · private groups of 6+ flexible" },
+        { icon: "user-check",      label: "Min. age",     value: "Children 5+ welcome · must be with parent / guardian" },
+        { icon: "plane",           label: "Add-on",       value: "Nha Trang flight package available on request" },
+      ],
+    },
+
+    pitch: {
+      headline: "Vietnam's first sunrise lands here, on this headland, at the eastern edge of everything.",
+      bullets: [
+        "Mũi Đôi: Vietnam's easternmost mainland point — the first land in the country to see each day's light",
+        "4:30am departure in darkness — 500m cliff trail, the South China Sea dropping away on both sides",
+        "No road gets here. Two days of coastal trekking and one wild beach night to earn it.",
+      ],
+      closingLine: "Two days. One cliff. The first light in Vietnam.",
+    },
+
+    valueAnchor: {
+      "2d1n": {
+        headline: "From $134. Two days, a wild beach camp, and a sunrise at the easternmost point in Vietnam.",
+        paragraphs: [
+          "Included: van Nha Trang ↔ Đầm Môn, all meals (2 breakfasts, 2 lunches, 1 BBQ beach dinner), tents and sleeping mats, boat transfer to Bãi Thắm, local guide, Morning Vietnam host, welcome pack. Sleeping bag or liner recommended — not included.",
+          "There is no standard tour to Mũi Đôi. Day boat trips to Vân Phong Bay take you around the headland — you see it from the water. To stand at the tip at sunrise requires 2 days. This is the only packaged route that gets you there.",
+        ],
+        compareTable: [
+          { metric: "Getting to Mũi Đôi", typical: "Day boat · anchored offshore",    us: "2-day trek · standing on the headland" },
+          { metric: "The sunrise",         typical: "From water · looking at a cliff", us: "From the tip · first light in Vietnam" },
+          { metric: "Overnight",           typical: "Hotel in Nha Trang",              us: "Wild camp · Bãi Rạng · South China Sea" },
+          { metric: "Other tourists",      typical: "Nha Trang beach crowd",           us: "Likely just your group" },
+          { metric: "Seafood dinner",      typical: "Restaurant · Nha Trang",          us: "BBQ on the beach · at camp" },
+          { metric: "Group size",          typical: "Open groups · varies",            us: "3 – 12 people · your group only" },
+        ],
+      },
+    },
+
+    storytelling: {
+      headline: "Vân Phong Bay — one of Vietnam's last pristine bays, and the door to a coastline almost nobody reaches.",
+      paragraphs: [
+        "Vân Phong Bay sits on the northern coast of Khánh Hòa province, about 50km north of Nha Trang. It is one of Vietnam's 21 designated National Tourist Areas — selected for its deep, sheltered natural harbour and coral reef ecosystems that remain largely intact. The bay is known for lobster farming and fishing. What it isn't known for is resorts. There aren't any.",
+        "Đầm Môn is the fishing village at the base of the peninsula, in Vạn Ninh district. The road ends here. South of the village, the coast becomes scrub forest and wild trail — a narrow strip of land with the South China Sea on the east and the sheltered bay on the west. The trail to Mũi Đôi covers roughly 12km over 2 days, passing two remote beaches before reaching the headland.",
+        "Mũi Đôi is Vietnam's easternmost mainland point, at approximately 109°28'E longitude. Because of this, it receives the first sunlight of any point on the Vietnamese mainland each morning. The headland is a rocky cliff above the sea, accessible only on foot via the trail from Bãi Rạng camp. The final 500m of trail follows the cliff edge above open ocean.",
+        "Bãi Thắm — sometimes called Chú Năm beach — is reached by boat on Day 2 morning. It is a wide arc of white sand accessible only by water or by crossing the sand dunes from the road. No development, no facilities, no entrance gate. It is regularly described by those who've been there as one of the most beautiful beaches in Vietnam. Most people have never heard of it.",
+      ],
+      pullImage: "/tours/mui-doi/storytelling.webp",
+    },
+
+    elevationProfile: [
+      { time: "05:30", label: "Nha Trang pickup",      elevation: 5,  icon: "van",    highlight: false, day: 1 },
+      { time: "07:30", label: "Đầm Môn · breakfast",   elevation: 10, icon: "food",   highlight: false, day: 1 },
+      { time: "08:00", label: "Trek begins",            elevation: 10, icon: "hike",   highlight: false, day: 1 },
+      { time: "10:00", label: "Coastal hill section",   elevation: 75, icon: "hike",   highlight: false, day: 1 },
+      { time: "11:30", label: "Bãi Na · packed lunch",  elevation: 5,  icon: "food",   highlight: false, day: 1 },
+      { time: "13:30", label: "Scrub forest trail",     elevation: 80, icon: "hike",   highlight: false, day: 1 },
+      { time: "16:30", label: "Bãi Rạng · camp",       elevation: 5,  icon: "resort", highlight: false, day: 1 },
+      { time: "18:00", label: "BBQ beach dinner",       elevation: 5,  icon: "food",   highlight: true,  day: 1 },
+
+      { time: "04:30", label: "Depart camp in darkness", elevation: 5,  icon: "hike",   highlight: false, day: 2 },
+      { time: "05:30", label: "Mũi Đôi · first sunrise", elevation: 60, icon: "hike",   highlight: true,  day: 2 },
+      { time: "07:00", label: "Return to camp",           elevation: 5,  icon: "hike",   highlight: false, day: 2 },
+      { time: "07:30", label: "Boat to Bãi Thắm",        elevation: 2,  icon: "van",    highlight: false, day: 2 },
+      { time: "08:00", label: "Bãi Thắm · swim + rest",  elevation: 2,  icon: "resort", highlight: true,  day: 2 },
+      { time: "10:30", label: "Sand dune crossing",       elevation: 25, icon: "hike",   highlight: false, day: 2 },
+      { time: "12:00", label: "Lunch · Đầm Môn",         elevation: 10, icon: "food",   highlight: false, day: 2 },
+      { time: "14:00", label: "Return to Nha Trang",      elevation: 5,  icon: "return", highlight: false, day: 2 },
+    ],
+    elevationMax: 120,
+
+    activityCards: [
+      // ── Day 1 ──────────────────────────────────────────────────────────────
+      {
+        badgeLabel: "Drive",
+        time: "05:30 – 07:30 · Day 1",
+        title: "Nha Trang to Đầm Môn — Van, Coast Road North",
+        desc: "Early pickup from your Nha Trang hotel. The drive north follows the coast road through Vạn Ninh district toward Đầm Môn — roughly 2 hours. As the road narrows and the fishing villages get smaller, the bay opens to the east: still water, scattered islands, no development. You arrive at the fishing village, have breakfast with the team, get your gear sorted, and meet your local guide. Trek starts at 08:00.",
+        highlight: false,
+      },
+      {
+        badgeLabel: "Trek",
+        time: "08:00 – 11:30 · Day 1",
+        title: "Morning Section: Đầm Môn to Bãi Na",
+        desc: "The first trekking section covers roughly 5km along the eastern coast of the peninsula. The trail leaves the village and immediately enters coastal scrub — low trees, thorny brush, the occasional open section where the sea appears on your right. Two low ridges break the route, each topping out with views over Vân Phong Bay and the South China Sea. The descent from the second ridge brings you down to Bãi Na: a small, wild beach where you stop for lunch. No other parties. No facilities. Just a beach and a packed meal.",
+        highlight: false,
+      },
+      {
+        badgeLabel: "Trek",
+        time: "13:00 – 16:30 · Day 1",
+        title: "Afternoon Section: Bãi Na to Bãi Rạng",
+        desc: "After lunch and a rest, the trail continues south through a denser section of coastal forest. The canopy closes overhead, the path narrows. This is the quieter, more remote stretch of the day — scrub forest alternating with rocky sections above the sea. No signage, no waypoints, just the guide and the trail. About 3km and 2.5 hours later, the trees open onto Bãi Rạng: a wide, east-facing beach exposed to open ocean. Tents go up while the light is still good.",
+        highlight: false,
+      },
+      {
+        badgeLabel: "Food",
+        time: "16:30 – 20:00 · Night 1",
+        title: "Camp Setup & BBQ Dinner — Bãi Rạng",
+        desc: "Tents up, then swim. The water at Bãi Rạng is clear and the current is mild — it's the right moment to wash off the trail and let the day settle. Dinner is built around seafood sourced from Vân Phong Bay: squid, prawns, fish, grilled over a wood fire on the sand. Rice, charred vegetables, dipping sauces. The cook is your local guide, who has been running this route for years. The fire stays lit after dinner. Sleep comes early — wake-up call is 04:00.",
+        highlight: true,
+      },
+      // ── Day 2 ──────────────────────────────────────────────────────────────
+      {
+        badgeLabel: "Hiking",
+        time: "04:30 – 05:30 · Day 2",
+        title: "Pre-dawn Cliff Trek to Mũi Đôi — In Darkness",
+        desc: "Headlamps on at 04:30. The trail from Bãi Rạng to Mũi Đôi covers 500m along a coastal cliff above the South China Sea. Rocky underfoot, exposed in places — your guide leads and you follow closely. The path climbs to the headland ridge then descends slightly to the tip. After 20–25 minutes of careful walking, the trail ends at the cliff edge. You arrive in darkness, before the horizon changes. The sea is audible on three sides. You wait.",
+        highlight: true,
+      },
+      {
+        badgeLabel: "Sunrise",
+        time: "~05:30 · Day 2",
+        title: "First Sunrise at Mũi Đôi — Vietnam's Easternmost Point",
+        desc: "Vietnam's easternmost mainland point, at approximately 109°28'E. The sun rises here before any other point on the Vietnamese mainland — every single day, without exception. The light appears as a thin line above the horizon, then widens fast. The South China Sea runs to the edge of vision in three directions. There is nothing between this headland and the Philippines. Most people go quiet when it happens. Photographs help, but they don't capture the silence.",
+        highlight: true,
+      },
+      {
+        badgeLabel: "Drive",
+        time: "07:00 – 08:00 · Day 2",
+        title: "Return to Camp & Boat Transfer to Bãi Thắm",
+        desc: "After the sunrise, the group returns to Bãi Rạng along the same cliff trail — faster in daylight, easier underfoot. Camp is packed down: tents, mats, kitchen gear. A small boat meets you at the shoreline and takes the group 15 minutes south along the coast to Bãi Thắm. There is no road to Bãi Thắm, which is why it looks the way it does.",
+        highlight: false,
+      },
+      {
+        badgeLabel: "Beach",
+        time: "08:00 – 16:00 · Day 2",
+        title: "Bãi Thắm Beach, Sand Dunes & Return to Nha Trang",
+        desc: "Bãi Thắm is a long arc of white sand and shallow turquoise water — clear enough to see the bottom at chest depth, calm enough to float. Breakfast is served on the beach. Swim, rest, do nothing. When the group is ready, the exit is either a 30-minute walk over the sand dunes to the Đầm Môn road (scenic, worth it) or a shared truck for 1,500,000 ₫ per trip (up to 10 people). Lunch in Đầm Môn village, then the van back south to Nha Trang. Arrive mid-afternoon.",
+        highlight: true,
+      },
+    ],
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Day 1 — Nha Trang → Đầm Môn → Coastal Trek → Bãi Rạng Camp",
+        slots: [
+          "05:30  Hotel pickup · Nha Trang",
+          "07:30  Arrive Đầm Môn fishing village · breakfast + gear check",
+          "08:00  Trek begins — coastal trail heading south toward Mũi Đôi",
+          "10:00  Cross first hill section (~75m) · views open over Vân Phong Bay",
+          "11:30  Lunch at Bãi Na · packed meal, beach rest",
+          "13:00  Continue through coastal scrub forest · eastern face of the peninsula",
+          "16:30  Arrive Bãi Rạng · set up camp · swim",
+          "18:00  BBQ beach dinner — seafood grilled on the sand",
+          "Overnight at Bãi Rạng · wild beach camp · wake-up 04:00",
+        ],
+      },
+      {
+        day: 2,
+        title: "Day 2 — Pre-dawn to Mũi Đôi · Sunrise · Bãi Thắm · Nha Trang",
+        slots: [
+          "04:00  Wake up",
+          "04:30  Depart camp · headlamps on · 500m cliff trail to Mũi Đôi headland",
+          "05:30  Arrive Mũi Đôi · sunrise (time varies by season)",
+          "06:30  Return to camp · pack down",
+          "07:30  Boat transfer Bãi Rạng → Bãi Thắm (~15 minutes)",
+          "08:00  Arrive Bãi Thắm · breakfast · swimming · free time",
+          "10:30  Sand dune crossing on foot to Đầm Môn road (~30 min) · OR truck add-on 1,500,000 ₫ / trip / up to 10 pax",
+          "12:00  Lunch at Đầm Môn",
+          "14:00  Depart Đầm Môn → Nha Trang",
+          "16:00  Arrive Nha Trang · end of tour",
+        ],
+      },
+    ],
+
+    seasonality: {
+      intro: "Vân Phong Bay is one of the most sheltered bays on Vietnam's central coast. What changes across seasons is sea conditions and overnight comfort at camp.",
+      months: [
+        { name: "Jan", level: "best" },
+        { name: "Feb", level: "best" },
+        { name: "Mar", level: "best" },
+        { name: "Apr", level: "best" },
+        { name: "May", level: "best" },
+        { name: "Jun", level: "good" },
+        { name: "Jul", level: "good" },
+        { name: "Aug", level: "good" },
+        { name: "Sep", level: "wet"  },
+        { name: "Oct", level: "wet"  },
+        { name: "Nov", level: "best" },
+        { name: "Dec", level: "best" },
+      ],
+      notes: [
+        { title: "Best conditions (Nov – May)", desc: "Dry season on the south-central coast. Clear skies, calm seas, comfortable nights at camp. Sunrise visibility is highest December through March. These months are the reason to go." },
+        { title: "Shoulder season (Jun – Aug)", desc: "Hot and humid, occasional afternoon showers. Vân Phong Bay stays relatively sheltered even when the open coast is choppy. Camp is manageable — main differences are heat on the trail and insects at night." },
+        { title: "Typhoon season (Sep – Oct)", desc: "Highest rainfall and wave activity on the central coast. We run tours year-round but will flag conditions closer to your date. If the sea requires it, departure may be adjusted for safety." },
+      ],
+    },
+
+    faqs: [
+      { q: "How fit do I need to be?", a: "Moderate fitness. The trek covers roughly 12km over two days on uneven coastal trail — scrub forest, rocky sections, and one cliff path. No technical climbing, but the pre-dawn section requires steady footing on uneven rock in the dark. If you can hike 4–5 hours comfortably, you can do this. Not ideal if you have knee problems." },
+      { q: "What's the truck option on Day 2?", a: "After Bãi Thắm, you can either walk across the sand dunes back to the Đầm Môn road (~30 minutes) or share a truck (xe bán tải) for 1,500,000 ₫ per trip, fitting up to 10 people. We decide together at the beach based on how the group is feeling." },
+      { q: "What camping gear is provided?", a: "Tents and sleeping mats are included. Bring your own sleeping bag or lightweight liner — Bãi Rạng nights are warm but a liner adds comfort. A headlamp is essential for the 04:30 cliff walk — bring one or ask us in advance." },
+      { q: "I'm not staying in Nha Trang — can I still join?", a: "Yes. We depart from Nha Trang on Saturday mornings at 05:30. If you need a flight, we can add a Nha Trang (Cam Ranh Airport · CXR) flight package to your booking — just ask when you enquire." },
+      { q: "What's the private group option?", a: "Groups of 6 or more can book a private departure on any day that works — not only Saturdays. Contact us with your dates and group size." },
+      { q: "Is there signal on the trail?", a: "Weak to none once you leave Đầm Môn village. Tell someone where you're going before you depart. Your guide carries emergency contact and knows the route." },
+    ],
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "Your host hands you a Morning Vietnam pack at the trailhead in Đầm Môn. One item was chosen for the kind of morning that starts at 04:00.",
+    },
+
+    unlockChallenge: null,
   },
 
   // ── Ninh Bình In A New Way ───────────────────────────────────────────────

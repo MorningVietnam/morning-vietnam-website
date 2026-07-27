@@ -376,25 +376,51 @@ const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-tri
 </style>
 
 <script>
-  // Filter pills
   const pills = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
-  const cards = document.querySelectorAll<HTMLElement>('[data-tour-region]');
+  const grid = document.querySelector<HTMLElement>('.tours-grid');
+  const allCards = Array.from(document.querySelectorAll<HTMLElement>('[data-tour-region]'));
+  const originalOrder = [...allCards];
+
+  function applyFilter(filter: string) {
+    pills.forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
+
+    if (filter === 'all') {
+      originalOrder.forEach(card => {
+        grid!.appendChild(card);
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+        card.style.pointerEvents = '';
+      });
+      return;
+    }
+
+    const matched: HTMLElement[] = [];
+    const unmatched: HTMLElement[] = [];
+    allCards.forEach(card => {
+      const region = card.dataset.tourRegion ?? '';
+      (region === filter || region === 'bespoke' ? matched : unmatched).push(card);
+    });
+
+    [...matched, ...unmatched].forEach(card => grid!.appendChild(card));
+    matched.forEach(card => {
+      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'scale(1)';
+      card.style.pointerEvents = '';
+    });
+    unmatched.forEach(card => {
+      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      card.style.opacity = '0.2';
+      card.style.transform = 'scale(0.97)';
+      card.style.pointerEvents = 'none';
+    });
+  }
 
   pills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      const filter = pill.dataset.filter ?? 'all';
-
-      pills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-
-      cards.forEach(card => {
-        const region = card.dataset.tourRegion ?? '';
-        const match = filter === 'all' || region === filter || region === 'bespoke';
-        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        card.style.opacity = match ? '1' : '0.2';
-        card.style.transform = match ? 'scale(1)' : 'scale(0.97)';
-        card.style.pointerEvents = match ? '' : 'none';
-      });
-    });
+    pill.addEventListener('click', () => applyFilter(pill.dataset.filter ?? 'all'));
   });
+
+  const initialFilter = new URLSearchParams(location.search).get('filter') ?? 'all';
+  applyFilter(initialFilter);
 </script>

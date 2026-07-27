@@ -2237,7 +2237,7 @@ export const tours: Tour[] = [
     hub:         "Sa Pa",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
-    image:       "/tours/sapa-nam-cang/5.webp",
+    image:       "/tours/sapa-nam-cang/7.webp",
     panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
     selectorMode: 'duration-tabs',
 

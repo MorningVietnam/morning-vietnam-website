@@ -2,9 +2,10 @@
 // TODO: Replace placeholder testimonials with real reviews from Google/TripAdvisor when available
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Marquee from '../components/Marquee.astro';
-import { tours } from '../data/tours.ts';
+import { tours, type Tour } from '../data/tours.ts';
 
-const featuredTours = tours.filter(t => !t.comingSoon).slice(0, 3);
+const FEATURED_SLUGS = ['sapa-nam-cang', 'sa-pa-lai-chau', 'ho-chi-minh-a-life', 'mui-doi-first-sunrise'];
+const featuredTours = FEATURED_SLUGS.map(s => tours.find(t => t.slug === s)).filter((t): t is Tour => !!t);
 
 const team = [
   { image: "/team/tung.png",    name: "Tùng",     role: "Co-founder", quote: "If there's a shortcut through the mountains, I've probably walked it twice.", wa: "https://wa.me/84968495956" },
@@ -19,15 +20,15 @@ const regions = [
     name: "North Vietnam",
     sub: "Starting here — Hanoi hub",
     image: "https://images.unsplash.com/photo-1528127269322-539801943592?w=900&q=80",
-    href: "/tours",
+    href: "/tours?filter=north",
     status: "available",
   },
   {
     name: "Central Vietnam",
     sub: "Hue · Da Nang · Hoi An",
     image: "https://images.unsplash.com/photo-1568775791746-bcc117bcb312?w=900&q=80",
-    href: "/tours",
-    status: "soon",
+    href: "/tours?filter=central",
+    status: "available",
   },
   {
     name: "South Vietnam",
@@ -86,13 +87,14 @@ const regions = [
   <!-- ═══ SHOWCASE ══════════════════════════════════════════════════ -->
   <section class="hp-showcase2">
     <div class="container hp-showcase2__inner">
-      <!-- Left: heading + image -->
-      <div class="hp-showcase2__left">
+      <div class="hp-showcase2__header">
         <p class="section-label">Pick your adventure</p>
         <h2 class="hp-showcase2__heading" id="showcase-heading">{featuredTours[0].name}</h2>
-        <div class="hp-showcase2__image">
-          <img id="showcase-image" src={featuredTours[0].image} alt={featuredTours[0].name} />
-        </div>
+      </div>
+
+      <div class="hp-showcase2__cols">
+      <div class="hp-showcase2__image">
+        <img id="showcase-image" src={featuredTours[0].image} alt={featuredTours[0].name} />
       </div>
 
       <!-- Right: sidebar info + nav -->
@@ -128,6 +130,7 @@ const regions = [
             <button class={`hp-showcase2__dot${i === 0 ? ' active' : ''}`} data-idx={String(i)} aria-label={tour.name}></button>
           ))}
         </div>
+      </div>
       </div>
     </div>
 
@@ -582,19 +585,24 @@ const regions = [
     overflow: hidden;
   }
   .hp-showcase2__inner {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 80px;
-    align-items: stretch;
-  }
-  .hp-showcase2__left {
     display: flex;
     flex-direction: column;
     gap: 32px;
   }
+  .hp-showcase2__header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .hp-showcase2__cols {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
   .hp-showcase2__heading {
     font-family: var(--font-heading);
-    font-size: clamp(48px, 7vw, 96px);
+    font-size: clamp(24px, 3.5vw, 48px);
     font-weight: 700;
     color: var(--color-nordic);
     line-height: 0.95;
@@ -618,7 +626,6 @@ const regions = [
     display: flex;
     flex-direction: column;
     gap: 28px;
-    padding-top: 40px;
   }
   .hp-showcase2__index {
     font-family: var(--font-heading);
@@ -718,15 +725,19 @@ const regions = [
 
   /* ── Regions ────────────────────────────────────────────────────── */
   .hp-regions {
-    background: var(--color-white-nectar);
+    background: var(--color-java);
     padding-block: 96px;
+  }
+
+  .hp-regions .section-label {
+    color: var(--color-riptide);
   }
 
   .hp-regions__title {
     font-family: var(--font-heading);
     font-size: clamp(32px, 5vw, 64px);
     font-weight: 700;
-    color: var(--color-nordic);
+    color: var(--color-light-cyan);
     margin-bottom: 48px;
     line-height: 1.0;
     letter-spacing: -0.02em;
@@ -953,7 +964,6 @@ const regions = [
     right: 0;
     padding: 0 max(48px, calc((100vw - var(--max-width)) / 2 + 48px));
     color: white;
-    max-width: 800px;
     opacity: 0;
     transition: opacity 0.6s cubic-bezier(0.77, 0, 0.175, 1);
     will-change: opacity;
@@ -972,6 +982,7 @@ const regions = [
     letter-spacing: -0.01em;
     margin-bottom: 24px;
     text-align: justify;
+    max-width: 58ch;
   }
 
   .hp-testi__rating {
@@ -1416,7 +1427,8 @@ const regions = [
     });
 
     function startTimer() {
-      timer = setInterval(() => update(idx + 1), 6000);
+      clearInterval(timer);
+      timer = setInterval(() => update(idx + 1), 5000);
     }
 
     showcase.addEventListener('mouseenter', () => clearInterval(timer));

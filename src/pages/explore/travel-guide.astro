@@ -1,0 +1,1024 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Nội dung Travel Guide — chuyển từ "MNV - Travel Guide Book" (Canva) sang
+// trang web thật để Google/AI search đọc được và link bấm được trực tiếp.
+//
+// Đã CHỦ ĐỘNG BỎ 2 phần khỏi bản này (theo xác nhận của Thế Anh 2026-08-04):
+//   - Food & Drink theo vùng: Canva mới có tên món, chưa có mô tả/ảnh.
+//   - Popular Destinations (Hà Giang Loops, Đà Lạt, Quy Nhơn, Phong Nha):
+//     Canva mới có tên, chưa có mô tả.
+// Cũng bỏ 2 điểm đến trong "Off-the-Beaten-Path" vì nội dung nguồn có lỗi
+// (xem ghi chú cuối chat): Hoàng Su Phì (mô tả bị trùng y hệt Y Tý) và
+// Côn Đảo (mô tả nhắc "karst" / vịnh đá vôi — không đúng địa lý Côn Đảo).
+// Khi có nội dung chuẩn cho các phần này, chỉ cần thêm vào mảng tương ứng.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Link thật lấy từ Canva (đã kiểm tra từng đường link, không đoán mò)
+const LINKS = {
+  evisa: 'https://evisa.gov.vn',
+  thithuc: 'https://thithucdientu.gov.vn',
+  vietnamTravel: 'https://vietnam.travel/plan-your-trip',
+  grab: 'https://www.grab.com/vn/en/download/',
+  be: 'https://be.com.vn/en/download/',
+  greensm: 'https://www.greensm.com/vn-en/download',
+  dsvn: 'https://dsvn.vn/#/',
+  vexere: 'https://vexere.com/vn/ve-tau-hoa.vi',
+  weatherCommunity: 'https://chat.whatsapp.com/JaRg7YIBpg3FdkT6kAGGhL?s=cl&p=a&ilr=4',
+};
+
+const quickNav = [
+  { id: 'visa', label: 'Visa & Entry' },
+  { id: 'weather', label: 'Weather' },
+  { id: 'packing', label: 'Packing' },
+  { id: 'money', label: 'Money' },
+  { id: 'connectivity', label: 'SIM & Data' },
+  { id: 'getting-around', label: 'Getting Around' },
+  { id: 'transport', label: 'Between Regions' },
+  { id: 'culture', label: 'Culture' },
+  { id: 'phrases', label: 'Phrases' },
+  { id: 'safety', label: 'Safety' },
+  { id: 'destinations', label: 'Off the Beaten Path' },
+];
+
+const visaTypes = [
+  {
+    title: 'E-visa (all nationalities)',
+    body: "Valid for 90 days, single or multiple entry. USD 25 (single-entry) / USD 50 (multiple-entry). Apply only through Vietnam's official e-Visa portal. Processing takes about 3 working days, accepted at 80+ entry points nationwide (airports, land borders, seaports).",
+    link: { label: 'evisa.gov.vn', href: LINKS.evisa },
+  },
+  {
+    title: 'Unilateral visa exemption',
+    body: 'Citizens of a growing list of countries (UK, France, Germany, Italy, Spain, Japan, South Korea, Nordic countries, and more) can enter visa-free for 14–45 days depending on nationality. Policies change — always check before you travel.',
+  },
+  {
+    title: 'ASEAN exemptions',
+    body: 'Most ASEAN nationalities (Thailand, Singapore, Malaysia, etc.) enjoy 14–30 days visa-free for tourism.',
+  },
+  {
+    title: 'Phu Quoc Island exemption',
+    body: 'All nationalities may enter visa-free for up to 30 days if staying only on Phu Quoc Island.',
+  },
+];
+
+const weatherRegions = [
+  {
+    name: 'The North',
+    area: 'Hanoi · Sa Pa · Ninh Bình · Ha Long',
+    best: 'Mar–Apr | Sep–Nov',
+    notes: ['Nov–Feb: cold', 'Jun–Aug: hot & rain', 'Jul–Aug: typhoon season'],
+  },
+  {
+    name: 'The Central',
+    area: 'Da Nang · Hue · Hoi An',
+    best: 'Feb–May',
+    notes: ['Feb–Aug: dry season', 'Sep–Jan: wet / typhoon season'],
+  },
+  {
+    name: 'The South',
+    area: 'Ho Chi Minh City · Mekong Delta · Phu Quoc',
+    best: 'Dec–Apr',
+    notes: ['Dec–Apr: dry season', 'May–Nov: wet season'],
+  },
+];
+
+const packItems = [
+  { item: 'Comfortable clothes', note: 'Cotton is recommended for high humidity.' },
+  { item: 'Rain jacket or poncho', note: 'Showers appear with little warning, especially May–Sep.' },
+  { item: 'Comfortable walking shoes', note: 'For city walks, hikes and mountain adventures.' },
+  { item: 'Warm jacket', note: 'For the North between Nov–Mar, and any Fansipan or mountain visit year-round.' },
+  { item: 'Sun protection', note: 'Sunscreen, sunglasses, hat and insect repellent.' },
+  { item: 'Universal power adapter', note: 'Vietnam uses 220V, mostly two-pin round sockets.' },
+  { item: 'Health essentials', note: 'A basic first-aid kit and any personal medication.' },
+];
+
+const moneyItems = [
+  { title: 'Cash', note: 'Essential for street food, local markets, and rural areas. Carry small notes for everyday purchases.' },
+  { title: 'Cards & digital payments', note: 'Credit cards are widely accepted in hotels, shopping malls, and larger restaurants — small shops and street stalls are still largely cash or QR-only.' },
+  { title: 'Currency exchange', note: 'Banks and licensed exchange counters offer reliable rates. Airport counters are convenient but often less competitive.' },
+  { title: 'ATMs', note: 'Easy to find in cities, limited in remote destinations. Withdraw enough cash before heading to rural or mountainous areas.' },
+];
+
+const moneyTips = [
+  'Most ATMs charge 20,000–55,000 VND (~USD 0.80–2.20) per withdrawal. TPBank and VPBank are known for fee-free withdrawals on many international cards — check with your card issuer.',
+  'Card transaction fees run 1–3% for Visa/Mastercard. Apple Pay and Google Pay usually carry no extra fee where accepted.',
+];
+
+const simProviders = [
+  { name: 'Viettel', note: 'Largest network with the widest rural and mountain coverage — the safest choice for remote areas. Tourist SIMs run ~60,000–200,000 VND (USD 2–8) for 15–30 days of data.' },
+  { name: 'Vinaphone & MobiFone', note: 'Reliable in cities and along main tourist routes, slightly weaker in deep rural or mountainous terrain. eSIM plans usually include a local +84 number — handy for Grab, OTP, and bookings.' },
+  { name: 'Airalo / Holafly (eSIM)', note: 'Convenient if your phone supports eSIM — activate before you fly, or buy an official carrier eSIM (passport registration required) on arrival.' },
+];
+
+const whereToBuySim = [
+  { title: 'At the airport', note: 'Convenient on arrival, but prices are often higher.' },
+  { title: 'Official carrier stores', note: 'Viettel, Vinaphone, MobiFone — reliable service, passport required for registration.' },
+  { title: 'Online eSIM', note: 'Purchase before your trip and activate with a QR code.' },
+];
+
+const rideHailingApps = [
+  { name: 'Grab', note: 'The most widely used ride-hailing app in Vietnam — cars, motorbikes, food delivery, airport transfers.', href: LINKS.grab },
+  { name: 'Be', note: 'A popular local ride-hailing app with competitive fares for car and motorbike rides.', href: LINKS.be },
+  { name: 'Green SM', note: "Vietnam's all-electric taxi service — clean vehicles, professional drivers.", href: LINKS.greensm },
+];
+
+const cityTransport = [
+  { title: 'Motorbike taxi (app-based)', note: 'Green SM, Grab or Be — cheap and convenient, fares are fixed in-app so there is no negotiating.' },
+  { title: 'Taxi', note: 'A safe, comfortable option for longer distances. Stick to reputable brands (Green SM, Mai Linh, Vinasun) or app-based booking to avoid meter tampering.' },
+  { title: 'Public bus', note: 'Stations and signboards are everywhere. Search Google Maps and choose the bus option for the best route and stops.' },
+];
+
+const airlines = [
+  { name: 'Vietnam Airlines', note: 'Most reliable. 23kg baggage, meal and seat selection included. Best if you have a tight schedule or an important connection.' },
+  { name: 'Vietjet Air', note: 'Budget option and the cheapest, widest network including smaller cities. ~73% on-time rate, late-evening flights prone to delays, extra fees for baggage/seat/boarding pass.' },
+  { name: 'Bamboo Airways', note: 'Mid-range price and service (~81% on-time, 20kg baggage included). Network has shrunk to about a dozen domestic routes.' },
+  { name: 'Sun PhuQuoc Airways', note: "Vietnam's newest full-service airline, based in Phú Quốc. Worth checking if your trip includes the island." },
+  { name: 'Vietravel Airlines', note: 'Smaller leisure-focused airline with a growing network across Hà Nội, HCMC, Hải Phòng, Thanh Hóa, Nha Trang, Buôn Ma Thuột, Đà Nẵng, Phú Quốc, Vinh and more.' },
+];
+
+const trainClasses = [
+  { name: 'Soft seat', note: 'Cheapest option, day trips only.' },
+  { name: 'Hard sleeper', note: '6-berth, air-conditioned.' },
+  { name: 'Soft sleeper', note: '4-berth, air-conditioned — most comfortable, the standard choice for overnight trains.' },
+];
+
+const cultureEtiquette = [
+  { title: 'Greetings', note: 'A smile and a slight nod are always appreciated. Handshakes are common in business.' },
+  { title: 'Temples & pagodas', note: 'Dress modestly (cover shoulders and knees), remove your shoes when required, keep your voice low.' },
+  { title: 'Homes', note: 'Remove your shoes before entering a local home. Wait to be invited before sitting down or exploring the house.' },
+  { title: 'Public behavior', note: 'Avoid loud arguments or public displays of anger, and always ask permission before photographing local people — especially ethnic minority communities.' },
+];
+
+const phrases = [
+  { en: 'Hello', vi: 'Xin chào', pron: 'sin chow' },
+  { en: 'Thank you', vi: 'Cảm ơn', pron: 'gahm uhn' },
+  { en: 'How much is it?', vi: 'Bao nhiêu tiền?', pron: 'bao nyew tee-en?' },
+  { en: 'Delicious!', vi: 'Ngon quá!', pron: 'ngon kwa!' },
+  { en: 'Help me!', vi: 'Giúp tôi với!', pron: 'zoop toy vuh-ee!' },
+  { en: 'Where is the restroom?', vi: 'Nhà vệ sinh ở đâu?', pron: 'nya veh sinh uh dow?' },
+  { en: 'Excuse me / Sorry', vi: 'Xin lỗi', pron: 'sin loy' },
+  { en: "What's your name?", vi: 'Tên bạn là gì?', pron: 'ten ban la jee' },
+  { en: "I (don't) understand", vi: 'Tôi (không) hiểu', pron: 'toy (kont) hew' },
+];
+
+const safetyHotlines = [
+  { label: 'Police', number: '113' },
+  { label: 'Fire department', number: '114' },
+  { label: 'Medical emergency / ambulance', number: '115' },
+  { label: 'Search & rescue (natural disaster)', number: '112' },
+];
+
+const scams = [
+  'Use trusted taxi companies (Mai Linh, Vinasun) or ride-hailing apps like Grab, Xanh SM and Be.',
+  'Vietnamese Dong has many zeros — always double-check your change before leaving.',
+  'Avoid booking tours from unsolicited street offers. Choose licensed tour operators or reputable travel agencies instead.',
+];
+
+// "Off-the-Beaten-Path" — chỉ giữ các điểm có mô tả đầy đủ, đúng, không trùng lặp.
+const destinations = [
+  { name: 'Nậm Cạn', note: "A small Red Dao community about 30km from Sa Pa town, down a road rough enough that most tour buses turn back. Trek between rice paddies still worked by hand and stay the night in a homestay with a family Morning Vietnam has worked with for years." },
+  { name: 'Y Tý', note: 'A cloud-forest village near the Chinese border where sea-of-cloud mornings roll through the valley before burning off by mid-morning. Hà Nhì communities here still build earthen "mushroom houses" with thick clay walls and thatched roofs, built to hold warmth through the mountain winters. Chase the cloud sea at sunrise from Lảo Thẩn peak, wander between hamlets on foot, or visit during the Gạ Ma Do festival if your timing lines up.' },
+  { name: 'Đồng Văn Karst Plateau', note: "The far northern edge of Ha Giang province, where jagged limestone plateau gives way to terraced buckwheat and corn fields on impossibly steep slopes. Climb Lũng Cú Flagpole, marking Vietnam's northernmost point." },
+  { name: 'Lai Châu', note: 'Famous for its breathtaking sea of clouds, where mountain peaks rise above a blanket of white mist at sunrise — a perfect destination for nature lovers and photographers.' },
+  { name: 'Mù Cang Chải', note: 'Genuine family homestays and rice terraces among the most photographed in the country. La Pán Tẩn, Chế Cu Nha and Dế Xu Phình offer three distinct terrace formations within a short drive of each other.' },
+  { name: 'Pù Luông', note: "Layered rice terraces roll across the valley floor, framed by the Pù Luông Nature Reserve's forested peaks, with none of Sa Pa's crowds. Thái stilt houses dot the hillsides." },
+  { name: 'Măng Đen', note: 'A hill town in the Central Highlands often called "a second Đà Lạt," minus the crowds. Pine forests wrap around a scatter of lakes and waterfalls.' },
+  { name: 'Mũi Né', note: 'A coastal town shaped by wind, sand, and endless dunes. Strong ocean winds make it one of Southeast Asia\'s top spots for kitesurfing.' },
+  { name: 'Côn Đảo', note: "A remote archipelago 230km off Vietnam's southern coast, kept wild by more than a century as a prison island — around 80% of the main island is still forest today. Come for quiet beaches like Đầm Trâu, or the sea turtles that nest here from May to October, among the largest nesting grounds in the country. At Hàng Dương Cemetery, locals still come at dusk to light incense for Võ Thị Sáu — the island's history never far from the surface." },
+  { name: 'Cái Răng Floating Market', note: "Boats loaded with pineapples, watermelons and dragon fruit gather before sunrise outside Cần Thơ. The Mekong Delta's largest floating market — arrive by 6am to catch it at its busiest." },
+  { name: 'Trà Sư Cajuput Forest', note: 'A vast flooded cajuput forest in the Mekong Delta, where emerald-green duckweed blankets the waterways and birds glide quietly overhead.' },
+];
+---
+
+<BaseLayout
+  title="Vietnam Travel Guide"
+  description="Everything you need to know before you go: visas, weather, money, SIM cards, getting around, culture, safety, and off-the-beaten-path destinations across Vietnam."
+>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════════════════ -->
+  <section class="tg-hero">
+    <div class="container tg-hero__content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <a href="/explore/about">Explore</a>
+        <span aria-hidden="true">›</span>
+        <span>Travel Guide</span>
+      </nav>
+      <h1>Your Vietnam travel guide.</h1>
+      <p class="tg-hero__sub">Visas, weather, money, SIM cards, getting around, culture, safety, and the routes off the well-worn path — everything before you land.</p>
+      <a href="/explore/travel-guide/book" class="tg-hero__book-link">Prefer the original guide? Flip through it page by page →</a>
+    </div>
+  </section>
+
+  <!-- ═══ QUICK NAV ═════════════════════════════════════════════════════ -->
+  <div class="tg-quicknav-bar">
+    <div class="container">
+      <nav class="tg-quicknav" id="tg-quicknav" aria-label="Travel guide sections">
+        {quickNav.map(item => (
+          <a href={`#${item.id}`} class="tg-quicknav__link" data-target={item.id}>{item.label}</a>
+        ))}
+      </nav>
+    </div>
+  </div>
+
+  <!-- ═══ VISA & ENTRY ══════════════════════════════════════════════════ -->
+  <section class="tg-section" id="visa">
+    <div class="container">
+      <p class="section-label">Before you go</p>
+      <h2>Visa & entry requirements</h2>
+      <div class="tg-grid tg-grid--2">
+        {visaTypes.map(v => (
+          <div class="tg-card">
+            <h3>{v.title}</h3>
+            <p>{v.body}</p>
+            {v.link && (
+              <a href={v.link.href} target="_blank" rel="noopener noreferrer" class="tg-card__link">{v.link.label} →</a>
+            )}
+          </div>
+        ))}
+      </div>
+      <div class="tg-callout">
+        <p>Visa requirements vary by nationality — check the official Vietnam e-Visa websites before traveling:
+          <a href={LINKS.thithuc} target="_blank" rel="noopener noreferrer">thithucdientu.gov.vn</a> (e-visa) or
+          <a href={LINKS.vietnamTravel} target="_blank" rel="noopener noreferrer">vietnam.travel</a>.
+        </p>
+        <p>Your passport must be valid for at least 6 months and have blank pages available.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ WEATHER ═══════════════════════════════════════════════════════ -->
+  <section class="tg-section tg-section--alt" id="weather">
+    <div class="container">
+      <p class="section-label">Plan your dates</p>
+      <h2>Weather by region</h2>
+      <div class="tg-grid tg-grid--3">
+        {weatherRegions.map(r => (
+          <div class="tg-weather-card">
+            <h3>{r.name}</h3>
+            <p class="tg-weather-card__area">{r.area}</p>
+            <p class="tg-weather-card__best">Best time: {r.best}</p>
+            <ul>
+              {r.notes.map(n => <li>{n}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="tg-note">Weather can be unpredictable at the edges of each season — build in a flexible day or two where you can.</p>
+      <a href={LINKS.weatherCommunity} target="_blank" rel="noopener noreferrer" class="tg-note-link">Check the weather with our community here →</a>
+    </div>
+  </section>
+
+  <!-- ═══ PACKING ═══════════════════════════════════════════════════════ -->
+  <section class="tg-section" id="packing">
+    <div class="container">
+      <p class="section-label">Pack smart</p>
+      <h2>What to pack</h2>
+      <div class="tg-list">
+        {packItems.map(p => (
+          <div class="tg-list__row">
+            <div class="tg-list__label">{p.item}</div>
+            <div class="tg-list__note">{p.note}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ MONEY ═════════════════════════════════════════════════════════ -->
+  <section class="tg-section tg-section--alt" id="money">
+    <div class="container">
+      <p class="section-label">Money & currency</p>
+      <h2>Currency: Vietnamese Dong (VND)</h2>
+      <div class="tg-grid tg-grid--2">
+        {moneyItems.map(m => (
+          <div class="tg-card">
+            <h3>{m.title}</h3>
+            <p>{m.note}</p>
+          </div>
+        ))}
+      </div>
+      <div class="tg-callout">
+        {moneyTips.map(tip => <p>{tip}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONNECTIVITY ══════════════════════════════════════════════════ -->
+  <section class="tg-section" id="connectivity">
+    <div class="container">
+      <p class="section-label">Stay connected</p>
+      <h2>SIM cards & data</h2>
+      <div class="tg-grid tg-grid--3">
+        {simProviders.map(s => (
+          <div class="tg-card">
+            <h3>{s.name}</h3>
+            <p>{s.note}</p>
+          </div>
+        ))}
+      </div>
+      <h3 class="tg-subheading">Where to buy</h3>
+      <div class="tg-grid tg-grid--3">
+        {whereToBuySim.map(w => (
+          <div class="tg-card tg-card--sm">
+            <h4>{w.title}</h4>
+            <p>{w.note}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ GETTING AROUND ════════════════════════════════════════════════ -->
+  <section class="tg-section tg-section--alt" id="getting-around">
+    <div class="container">
+      <p class="section-label">On the ground</p>
+      <h2>Getting around</h2>
+      <p class="tg-note">Green SM, Grab and Be can all be booked directly from your phone — download before you land.</p>
+      <div class="tg-grid tg-grid--3">
+        {rideHailingApps.map(app => (
+          <div class="tg-card">
+            <h3>{app.name}</h3>
+            <p>{app.note}</p>
+            <a href={app.href} target="_blank" rel="noopener noreferrer" class="tg-card__link">Download →</a>
+          </div>
+        ))}
+      </div>
+      <h3 class="tg-subheading">Around the city</h3>
+      <div class="tg-grid tg-grid--3">
+        {cityTransport.map(c => (
+          <div class="tg-card tg-card--sm">
+            <h4>{c.title}</h4>
+            <p>{c.note}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ BETWEEN REGIONS ═══════════════════════════════════════════════ -->
+  <section class="tg-section" id="transport">
+    <div class="container">
+      <p class="section-label">Longer distances</p>
+      <h2>Traveling between regions</h2>
+      <h3 class="tg-subheading">Domestic airlines — an honest comparison</h3>
+      <div class="tg-list">
+        {airlines.map(a => (
+          <div class="tg-list__row">
+            <div class="tg-list__label">{a.name}</div>
+            <div class="tg-list__note">{a.note}</div>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="tg-subheading">Train — comfortable and scenic, especially overnight</h3>
+      <div class="tg-grid tg-grid--2">
+        <div class="tg-card">
+          <h4>Buying tickets</h4>
+          <p>Official channel: Vietnam Railways at <a href={LINKS.dsvn} target="_blank" rel="noopener noreferrer">DSVN</a> — real-time schedules, seat selection, e-tickets. Vietnam-issued bank cards only.</p>
+          <p>For foreigners: <a href={LINKS.vexere} target="_blank" rel="noopener noreferrer">Vexere</a> accepts international card payment and emails your e-ticket. Or buy at any station ticket window (cash only).</p>
+        </div>
+        <div class="tg-card">
+          <h4>Seat / berth classes</h4>
+          {trainClasses.map(t => (
+            <p><strong>{t.name}</strong> — {t.note}</p>
+          ))}
+        </div>
+      </div>
+      <div class="tg-grid tg-grid--2">
+        <div class="tg-card tg-card--sm">
+          <span class="tg-tag">Most scenic route</span>
+          <h4>Hue – Da Nang</h4>
+          <p>2.5–3 hour journey with views of Lang Co Bay, Lap An Lagoon and the East Sea. For the best daytime scenery, choose SE1, SE2, SE4 or SE10 and book a window seat.</p>
+        </div>
+        <div class="tg-card tg-card--sm">
+          <span class="tg-tag">Popular route</span>
+          <h4>Hanoi – Lao Cai</h4>
+          <p>Overnight train to Lào Cai is a classic way to start a trip to Sa Pa. Slower than the bus but memorable, especially in a soft sleeper cabin. Book a few days ahead in peak season (Sep–Oct, Dec–Feb).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COFFEE & BIA HƠI ══════════════════════════════════════════════ -->
+  <section class="tg-section tg-section--alt" id="coffee">
+    <div class="container">
+      <p class="section-label">A local ritual</p>
+      <h2>Vietnamese coffee & bia hơi</h2>
+      <div class="tg-grid tg-grid--2">
+        <div class="tg-card">
+          <h3>Coffee culture</h3>
+          <p>Coffee in Vietnam isn't just morning fuel — it's a whole vibe. Grab a tiny plastic stool, watch the world go by, and join the locals for a slow coffee break. Look out for egg coffee, coconut coffee, iced milk coffee, and phin coffee.</p>
+        </div>
+        <div class="tg-card">
+          <h3>Bia hơi (fresh beer)</h3>
+          <p>Brewed fresh daily and served at street-side beer corners — a ritual, not just a drink. Tạ Hiện Street in Hanoi and Bùi Viện Street in Ho Chi Minh City are the famous spots, but the real local experience is beyond the busy streets.</p>
+          <p>If someone raises a glass and says <em>"Một, hai, ba, dzô!"</em> — they're inviting the whole table to toast together.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CULTURE & ETIQUETTE ═══════════════════════════════════════════ -->
+  <section class="tg-section" id="culture">
+    <div class="container">
+      <p class="section-label">Respect goes both ways</p>
+      <h2>Culture & etiquette</h2>
+      <div class="tg-grid tg-grid--2">
+        {cultureEtiquette.map(c => (
+          <div class="tg-card">
+            <h3>{c.title}</h3>
+            <p>{c.note}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COMMON PHRASES ════════════════════════════════════════════════ -->
+  <section class="tg-section tg-section--alt" id="phrases">
+    <div class="container">
+      <p class="section-label">A little goes a long way</p>
+      <h2>Common phrases</h2>
+      <div class="tg-table">
+        <div class="tg-table__row tg-table__row--head">
+          <div>English</div>
+          <div>Vietnamese</div>
+          <div>Pronunciation</div>
+        </div>
+        {phrases.map(p => (
+          <div class="tg-table__row">
+            <div>{p.en}</div>
+            <div>{p.vi}</div>
+            <div>{p.pron}</div>
+          </div>
+        ))}
+      </div>
+      <div class="tg-callout">
+        <p><strong>Side note:</strong> if someone teaches you a phrase that sounds like it could be a swear word, don't repeat it. It might sound funny in memes, but in real life it can offend people and land you in awkward situations.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SAFETY ════════════════════════════════════════════════════════ -->
+  <section class="tg-section" id="safety">
+    <div class="container">
+      <p class="section-label">Just in case</p>
+      <h2>Safety & emergency information</h2>
+      <div class="tg-hotlines">
+        {safetyHotlines.map(h => (
+          <div class="tg-hotline">
+            <div class="tg-hotline__number">{h.number}</div>
+            <div class="tg-hotline__label">{h.label}</div>
+          </div>
+        ))}
+      </div>
+      <div class="tg-callout">
+        <p>English support on emergency lines can be limited outside major cities. If possible, ask hotel or homestay staff — or your guide — to make the call on your behalf. Save your accommodation's name, address and phone number in your phone before heading out.</p>
+      </div>
+
+      <h3 class="tg-subheading">Road safety</h3>
+      <p>Road traffic can be busy, especially in major cities. Cross streets slowly and predictably, let traffic flow around you, and avoid sudden stops or direction changes. If renting a motorbike yourself, an international driving permit and a helmet are both required by law — riding experience is strongly recommended given local traffic conditions.</p>
+
+      <h3 class="tg-subheading">Common scams to watch for</h3>
+      <ul class="tg-checklist">
+        {scams.map(s => <li>{s}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══ DESTINATIONS ══════════════════════════════════════════════════ -->
+  <section class="tg-section tg-section--alt" id="destinations">
+    <div class="container">
+      <p class="section-label">Beyond the postcard</p>
+      <h2>Off the beaten path</h2>
+      <p class="tg-note">The routes without the souvenir stalls — where Morning Vietnam actually takes people.</p>
+      <div class="tg-grid tg-grid--3 stagger">
+        {destinations.map((d, i) => (
+          <div class={`tg-dest-card reveal reveal-delay-${(i % 5) + 1}`}>
+            <h3>{d.name}</h3>
+            <p>{d.note}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ BOTTOM CTA ════════════════════════════════════════════════════ -->
+  <section class="tg-cta">
+    <div class="container tg-cta__inner">
+      <div>
+        <h2>Ready to see this in person?</h2>
+        <p>Not through a screen. Not from a bus window.</p>
+      </div>
+      <a href="/tours" class="c-button c-button--primary">See tours →</a>
+    </div>
+  </section>
+
+</BaseLayout>
+
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────────── */
+  .tg-hero {
+    background: var(--color-java);
+    min-height: 46vh;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .tg-hero__content {
+    padding-top: calc(var(--site-header-h) + 48px);
+    padding-bottom: 48px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 24px;
+  }
+
+  .breadcrumb a { color: rgba(255, 255, 255, 0.5); transition: color 0.2s; }
+  .breadcrumb a:hover { color: white; }
+
+  .tg-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 700;
+    color: white;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    max-width: 760px;
+  }
+
+  .tg-hero__sub {
+    font-size: clamp(15px, 2vw, 19px);
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 620px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .tg-hero__book-link {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .tg-hero__book-link:hover {
+    text-decoration-color: white;
+  }
+
+  /* ── Quick nav ────────────────────────────────────────────────── */
+  .tg-quicknav-bar {
+    position: sticky;
+    top: var(--site-header-h);
+    z-index: 60;
+    background: white;
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tg-quicknav {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 12px 0;
+    scrollbar-width: none;
+  }
+
+  .tg-quicknav::-webkit-scrollbar { display: none; }
+
+  .tg-quicknav__link {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    opacity: 0.55;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: opacity 0.2s, background 0.2s, color 0.2s;
+  }
+
+  .tg-quicknav__link:hover { opacity: 0.85; background: var(--color-light-cyan); }
+
+  .tg-quicknav__link.is-active {
+    opacity: 1;
+    color: var(--color-java);
+    background: rgba(29, 160, 160, 0.1);
+  }
+
+  /* ── Sections ─────────────────────────────────────────────────── */
+  .tg-section {
+    padding-block: 72px;
+    background: white;
+    scroll-margin-top: calc(var(--site-header-h) + 56px);
+  }
+
+  .tg-section--alt {
+    background: var(--color-light-cyan);
+  }
+
+  .tg-section h2 {
+    font-size: clamp(24px, 3.5vw, 40px);
+    color: var(--color-nordic);
+    margin-bottom: 32px;
+  }
+
+  .tg-subheading {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    margin: 40px 0 20px;
+  }
+
+  .tg-note {
+    font-size: 15px;
+    color: var(--color-nordic);
+    opacity: 0.65;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .tg-note-link {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-java);
+    text-decoration: none;
+    margin: -12px 0 24px;
+  }
+
+  .tg-note-link:hover { text-decoration: underline; }
+
+  /* ── Grids & cards ────────────────────────────────────────────── */
+  .tg-grid {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .tg-grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .tg-grid--3 { grid-template-columns: repeat(3, 1fr); }
+
+  .tg-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tg-section--alt .tg-card { background: white; }
+
+  .tg-card--sm { padding: 22px; }
+
+  .tg-card h3, .tg-card h4 {
+    font-family: var(--font-heading);
+    color: var(--color-nordic);
+    margin-bottom: 10px;
+  }
+
+  .tg-card h3 { font-size: 18px; }
+  .tg-card h4 { font-size: 16px; }
+
+  .tg-card p {
+    font-size: 14.5px;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+
+  .tg-card p:last-child { margin-bottom: 0; }
+
+  .tg-card__link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-java);
+    text-decoration: none;
+  }
+
+  .tg-card__link:hover { text-decoration: underline; }
+
+  .tg-tag {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    background: rgba(29, 160, 160, 0.1);
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+
+  /* ── Weather cards ────────────────────────────────────────────── */
+  .tg-weather-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--color-border);
+  }
+
+  .tg-weather-card h3 {
+    font-family: var(--font-heading);
+    font-size: 19px;
+    color: var(--color-nordic);
+    margin-bottom: 6px;
+  }
+
+  .tg-weather-card__area {
+    font-size: 13px;
+    color: var(--color-nordic);
+    opacity: 0.55;
+    margin-bottom: 10px;
+  }
+
+  .tg-weather-card__best {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-java);
+    margin-bottom: 14px;
+  }
+
+  .tg-weather-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .tg-weather-card li {
+    font-size: 13.5px;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .tg-weather-card li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--color-riptide);
+    font-weight: 700;
+  }
+
+  /* ── Definition-style list (packing, airlines) ───────────────── */
+  .tg-list {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .tg-list__row {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tg-list__label {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--color-nordic);
+  }
+
+  .tg-list__note {
+    font-size: 14.5px;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    line-height: 1.65;
+  }
+
+  /* ── Callout box ──────────────────────────────────────────────── */
+  .tg-callout {
+    background: var(--color-nordic);
+    border-radius: 16px;
+    padding: 24px 28px;
+  }
+
+  .tg-callout p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+
+  .tg-callout p:last-child { margin-bottom: 0; }
+
+  .tg-callout a {
+    color: var(--color-riptide);
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  /* ── Table (phrases) ──────────────────────────────────────────── */
+  .tg-table {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: white;
+    margin-bottom: 24px;
+  }
+
+  .tg-table__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tg-table__row:last-child { border-bottom: none; }
+
+  .tg-table__row > div {
+    padding: 14px 20px;
+    font-size: 14px;
+    color: var(--color-nordic);
+  }
+
+  .tg-table__row--head {
+    background: var(--color-nordic);
+  }
+
+  .tg-table__row--head > div {
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── Hotlines ─────────────────────────────────────────────────── */
+  .tg-hotlines {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .tg-hotline {
+    background: var(--color-nordic);
+    border-radius: 16px;
+    padding: 24px 18px;
+    text-align: center;
+  }
+
+  .tg-hotline__number {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--color-riptide);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .tg-hotline__label {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.4;
+  }
+
+  .tg-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tg-checklist li {
+    font-size: 15px;
+    color: var(--color-nordic);
+    opacity: 0.75;
+    line-height: 1.6;
+    padding-left: 26px;
+    position: relative;
+  }
+
+  .tg-checklist li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-java);
+    font-weight: 700;
+  }
+
+  /* ── Destination cards ────────────────────────────────────────── */
+  .tg-dest-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-java);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .tg-dest-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .tg-dest-card h3 {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    color: var(--color-nordic);
+    margin-bottom: 10px;
+  }
+
+  .tg-dest-card p {
+    font-size: 14px;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    line-height: 1.65;
+  }
+
+  /* ── Bottom CTA ───────────────────────────────────────────────── */
+  .tg-cta {
+    background: var(--color-light-cyan);
+    padding-block: 80px;
+  }
+
+  .tg-cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .tg-cta h2 {
+    font-size: clamp(24px, 3.5vw, 40px);
+    color: var(--color-nordic);
+    margin-bottom: 8px;
+  }
+
+  .tg-cta p {
+    font-size: 17px;
+    color: var(--color-nordic);
+    opacity: 0.65;
+  }
+
+  /* ── Responsive ───────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .tg-grid--3 { grid-template-columns: repeat(2, 1fr); }
+    .tg-hotlines { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 720px) {
+    .tg-grid--2, .tg-grid--3 { grid-template-columns: 1fr; }
+    .tg-list__row { grid-template-columns: 1fr; gap: 6px; }
+    .tg-table__row { grid-template-columns: 1fr; }
+    .tg-table__row > div { padding: 10px 16px; }
+    .tg-table__row > div:first-child { padding-top: 16px; font-weight: 700; }
+    .tg-table__row > div:last-child { padding-bottom: 16px; }
+    .tg-table__row--head { display: none; }
+    .tg-cta__inner { flex-direction: column; text-align: center; align-items: center; }
+  }
+</style>
+
+
+<script>
+  // ── Sticky quick-nav: highlight active section + smooth-scroll offset ──
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('.tg-quicknav__link');
+  const sections = document.querySelectorAll<HTMLElement>('.tg-section[id]');
+
+  if (navLinks.length && sections.length) {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navLinks.forEach(link => {
+              link.classList.toggle('is-active', link.dataset.target === id);
+            });
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -70% 0px', threshold: 0 }
+    );
+
+    sections.forEach(section => observer.observe(section));
+  }
+</script>

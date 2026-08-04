@@ -1,17 +1,35 @@
 ---
+import LangSwitcher from './LangSwitcher.astro';
+import { getLangFromPath, stripLang, navPath, type Lang } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
 const path = Astro.url.pathname;
-const isExplore  = path.startsWith('/explore');
-const isTours    = path === '/tours' || path.startsWith('/tours/');
-const isContact  = path === '/contact';
-const isPartners = path.startsWith('/catalogue');
+
+// Ngôn ngữ hiện tại + hàm dịch. `t('nav.tours')` sẽ trả về "Tours" hoặc "Tour"
+// tuỳ khách đang xem bản nào.
+const lang: Lang = getLangFromPath(path);
+const t = useTranslations(lang);
+
+// `l()` = biến '/tours' thành '/vi/tours' khi đang ở bản tiếng Việt.
+// Nếu trang đó CHƯA được dịch (chưa khai báo trong VI_ROUTES), hàm tự trả về
+// bản tiếng Anh để khách không rơi vào trang 404.
+// MỌI link nội bộ trong header phải bọc qua hàm này.
+const l = (p: string) => navPath(p, lang);
+
+// Xác định mục nào đang active — so sánh trên đường dẫn ĐÃ bỏ tiền tố ngôn ngữ
+const base       = stripLang(path);
+const isExplore  = base.startsWith('/explore');
+const isTours    = base === '/tours' || base.startsWith('/tours/');
+const isContact  = base === '/contact';
+const isPartners = base.startsWith('/catalogue');
 
 const marqueeItems = [
-  "Vietnam deeper. Horizons wider.",
-  "Small groups. Real moments.",
-  "Licensed tour operator",
-  "From strangers to family",
-  "Active but accessible",
-  "EN / FR / DE",
+  t('marquee.1'),
+  t('marquee.2'),
+  t('marquee.3'),
+  t('marquee.4'),
+  t('marquee.5'),
+  t('marquee.6'),
 ];
 ---
 
@@ -35,7 +53,7 @@ const marqueeItems = [
     <div class="wrapper header__inner">
 
       <!-- Logo -->
-      <a href="/" class="header__logo" aria-label="Morning Vietnam — home">
+      <a href={l('/')} class="header__logo" aria-label="Morning Vietnam — home">
         <img src="/logo.png" alt="Morning Vietnam" class="header__logo-img" />
       </a>
 
@@ -46,23 +64,27 @@ const marqueeItems = [
           <!-- Explore (dropdown only — NOT a link) -->
           <li class="nav-item nav-item--dropdown">
             <span class:list={["nav-link", "nav-link--trigger", { "nav-link--active": isExplore }]}>
-              Explore
+              {t('nav.explore')}
               <svg class="nav-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                 <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </span>
             <div class="nav-dropdown" role="menu">
-              <a href="/explore/about" class="nav-dropdown__link" role="menuitem">
-                <span class="nav-dropdown__label">About Us</span>
-                <span class="nav-dropdown__desc">Our story &amp; the team</span>
+              <a href={l('/explore/about')} class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">{t('nav.about')}</span>
+                <span class="nav-dropdown__desc">{t('nav.about.desc')}</span>
               </a>
-              <a href="/explore/vietnam-facts" class="nav-dropdown__link" role="menuitem">
-                <span class="nav-dropdown__label">Vietnam Facts</span>
-                <span class="nav-dropdown__desc">54 ethnicities. 3,260km coastline.</span>
+              <a href={l('/explore/vietnam-facts')} class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">{t('nav.facts')}</span>
+                <span class="nav-dropdown__desc">{t('nav.facts.desc')}</span>
               </a>
-              <a href="/explore/faq" class="nav-dropdown__link" role="menuitem">
-                <span class="nav-dropdown__label">FAQ</span>
-                <span class="nav-dropdown__desc">Everything you need to know</span>
+              <a href={l('/explore/faq')} class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">{t('nav.faq')}</span>
+                <span class="nav-dropdown__desc">{t('nav.faq.desc')}</span>
+              </a>
+              <a href={l('/explore/travel-guide')} class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">{t('nav.travelGuide')}</span>
+                <span class="nav-dropdown__desc">{t('nav.travelGuide.desc')}</span>
               </a>
             </div>
           </li>
@@ -70,27 +92,27 @@ const marqueeItems = [
           <!-- Tours (direct link) -->
           <li class="nav-item">
             <a
-              href="/tours"
+              href={l('/tours')}
               class:list={["nav-link", { "nav-link--active": isTours }]}
-            >Tours</a>
+            >{t('nav.tours')}</a>
           </li>
 
           <!-- For Partners (dropdown — B2B) -->
           <li class="nav-item nav-item--dropdown">
             <span class:list={["nav-link", "nav-link--trigger", { "nav-link--active": isPartners }]}>
-              For Partners
+              {t('nav.partners')}
               <svg class="nav-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                 <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </span>
             <div class="nav-dropdown" role="menu">
-              <a href="/catalogue" class="nav-dropdown__link" role="menuitem">
-                <span class="nav-dropdown__label">Catalogue</span>
-                <span class="nav-dropdown__desc">Destination brochures for agents</span>
+              <a href={l('/catalogue')} class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">{t('nav.catalogue')}</span>
+                <span class="nav-dropdown__desc">{t('nav.catalogue.desc')}</span>
               </a>
-              <a href="/contact" class="nav-dropdown__link" role="menuitem">
-                <span class="nav-dropdown__label">Partner with us</span>
-                <span class="nav-dropdown__desc">Pricing &amp; commission — get in touch</span>
+              <a href={l('/contact')} class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">{t('nav.partnerWithUs')}</span>
+                <span class="nav-dropdown__desc">{t('nav.partnerWithUs.desc')}</span>
               </a>
             </div>
           </li>
@@ -98,9 +120,9 @@ const marqueeItems = [
           <!-- Contact (direct link) -->
           <li class="nav-item">
             <a
-              href="/contact"
+              href={l('/contact')}
               class:list={["nav-link", { "nav-link--active": isContact }]}
-            >Contact</a>
+            >{t('nav.contact')}</a>
           </li>
 
         </ul>
@@ -108,7 +130,9 @@ const marqueeItems = [
 
       <!-- Right: CTA + hamburger -->
       <div class="header__right">
-        <a href="/contact" class="c-button c-button--primary header__book-btn">
+        <!-- Nút chọn ngôn ngữ — đặt TRƯỚC nút CTA để không cạnh tranh sự chú ý -->
+        <LangSwitcher variant="desktop" />
+        <a href={l('/contact')} class="c-button c-button--primary header__book-btn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0">
             <circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"/>
             <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
@@ -116,11 +140,11 @@ const marqueeItems = [
             <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
             <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
           </svg>
-          Say "Morning!"
+          {t('cta.book')}
         </a>
         <button
           class="hamburger"
-          aria-label="Open navigation menu"
+          aria-label={t('mobile.open')}
           aria-expanded="false"
           aria-controls="mobile-nav"
         >
@@ -142,29 +166,30 @@ const marqueeItems = [
   aria-label="Navigation menu"
   aria-hidden="true"
 >
-  <button class="mobile-nav__close" aria-label="Close navigation menu">✕</button>
+  <button class="mobile-nav__close" aria-label={t('mobile.close')}>✕</button>
 
   <ul class="mobile-nav__list">
     <li class="mobile-nav__group">
-      <span>Explore</span>
+      <span>{t('nav.explore')}</span>
       <ul class="mobile-nav__sub">
-        <li><a href="/explore/about">About Us</a></li>
-        <li><a href="/explore/vietnam-facts">Vietnam Facts</a></li>
-        <li><a href="/explore/faq">FAQ</a></li>
+        <li><a href={l('/explore/about')}>{t('nav.about')}</a></li>
+        <li><a href={l('/explore/vietnam-facts')}>{t('nav.facts')}</a></li>
+        <li><a href={l('/explore/faq')}>{t('nav.faq')}</a></li>
+        <li><a href={l('/explore/travel-guide')}>{t('nav.travelGuide')}</a></li>
       </ul>
     </li>
-    <li><a href="/tours">Tours</a></li>
+    <li><a href={l('/tours')}>{t('nav.tours')}</a></li>
     <li class="mobile-nav__group">
-      <span>For Partners</span>
+      <span>{t('nav.partners')}</span>
       <ul class="mobile-nav__sub">
-        <li><a href="/catalogue">Catalogue</a></li>
-        <li><a href="/contact">Partner with us</a></li>
+        <li><a href={l('/catalogue')}>{t('nav.catalogue')}</a></li>
+        <li><a href={l('/contact')}>{t('nav.partnerWithUs')}</a></li>
       </ul>
     </li>
-    <li><a href="/contact">Contact</a></li>
+    <li><a href={l('/contact')}>{t('nav.contact')}</a></li>
   </ul>
 
-  <a href="/contact" class="c-button c-button--primary">
+  <a href={l('/contact')} class="c-button c-button--primary">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex-shrink:0">
       <circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"/>
       <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
@@ -172,8 +197,11 @@ const marqueeItems = [
       <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
       <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
     </svg>
-    Say "Morning!"
+    {t('cta.book')}
   </a>
+
+  <!-- Chọn ngôn ngữ trong menu di động — đặt cuối, dưới nút CTA -->
+  <LangSwitcher variant="mobile" />
 </nav>
 
 <div class="mobile-nav-overlay" aria-hidden="true"></div>

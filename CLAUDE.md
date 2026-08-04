@@ -135,6 +135,27 @@ trong `global.css`.
 
 ---
 
+## 6b. Đa ngôn ngữ (i18n)
+
+Website hỗ trợ nhiều ngôn ngữ theo kiểu **subpath**. Chi tiết đầy đủ ở
+`src/i18n/README.md` — đọc file đó trước khi đụng vào phần đa ngôn ngữ.
+
+- **EN là mặc định, KHÔNG có tiền tố** (`/tours`) → giữ nguyên toàn bộ SEO cũ.
+  Tuyệt đối không đổi sang `/en/`.
+- **VI ở `/vi/`** (`/vi/tours`).
+- `src/i18n/config.ts` — khai báo ngôn ngữ + mảng `VI_ROUTES` (danh sách trang
+  đã dịch). **Dịch xong trang nào phải thêm vào `VI_ROUTES`**, nếu không nút
+  chuyển ngôn ngữ và hreflang sẽ bỏ qua trang đó.
+- `src/i18n/ui.ts` — từ điển chuỗi giao diện (menu, nút, footer). Không đổi tên khoá.
+- `src/components/LangSwitcher.astro` — nút chọn ngôn ngữ, tự đọc danh sách từ
+  config, không cần sửa khi thêm ngôn ngữ.
+- Header/Footer dùng `navPath()` cho mọi link nội bộ → trang chưa dịch tự trỏ
+  về bản EN thay vì 404.
+- `BaseLayout.astro` tự sinh `hreflang` + `og:locale` + `<html lang>`.
+
+**Trạng thái:** mới có `/vi` (trang chủ). Chưa có `src/data/tours.vi.ts` —
+không tự bịa nội dung/giá tour tiếng Việt khi chưa được duyệt.
+
 ## 7. Việc còn dang dở (TODO trong code)
 
 Khi đụng tới các phần này, lưu ý chúng **chưa hoàn thiện**:

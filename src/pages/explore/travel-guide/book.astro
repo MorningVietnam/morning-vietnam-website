@@ -1,0 +1,610 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Travel Guide — bản "lật sách" giữ nguyên 100% thiết kế gốc từ Canva
+// ("MNV - Travel Guide Book"), ảnh export tại public/travel-guide/page-NN.jpg.
+//
+// Đây là bản BỔ SUNG cho /explore/travel-guide (bản HTML giữ để SEO).
+// Cùng cơ chế lật trang với /catalogue/[slug] (thư viện page-flip), thêm lớp
+// link bấm được (hotspot) đặt chồng lên đúng vị trí link thật trong Canva.
+//
+// Vị trí hotspot (top/left/width/height, đơn vị %) được đo BẰNG OCR
+// (tesseract) trên chính ảnh gốc — không đoán mò toạ độ.
+//
+// Muốn thêm/sửa hotspot: sửa mảng HOTSPOTS bên dưới, key = số trang (1-28).
+// ═══════════════════════════════════════════════════════════════════════════
+
+const TOTAL_PAGES = 28;
+
+const LINKS = {
+  evisa: 'https://evisa.gov.vn',
+  thithuc: 'https://thithucdientu.gov.vn',
+  vietnamTravel: 'https://vietnam.travel/plan-your-trip',
+  weatherCommunity: 'https://chat.whatsapp.com/JaRg7YIBpg3FdkT6kAGGhL?s=cl&p=a&ilr=4',
+  grab: 'https://www.grab.com/vn/en/download/',
+  be: 'https://be.com.vn/en/download/',
+  greensm: 'https://www.greensm.com/vn-en/download',
+  dsvn: 'https://dsvn.vn/#/',
+  vexere: 'https://vexere.com/vn/ve-tau-hoa.vi',
+};
+
+interface Hotspot {
+  href: string;
+  label: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+const HOTSPOTS: Record<number, Hotspot[]> = {
+  4: [
+    { href: LINKS.evisa, label: 'Vietnam official e-Visa portal', top: 43.4, left: 13.1, width: 21.3, height: 3.0 },
+    { href: LINKS.thithuc, label: 'thithucdientu.gov.vn', top: 82.0, left: 16.9, width: 21.7, height: 3.0 },
+    { href: LINKS.vietnamTravel, label: 'vietnam.travel', top: 82.0, left: 48.0, width: 15.5, height: 3.0 },
+  ],
+  5: [
+    { href: LINKS.weatherCommunity, label: 'Check the weather with our community', top: 78.0, left: 58.9, width: 27.6, height: 3.0 },
+  ],
+  11: [
+    { href: LINKS.grab, label: 'Download Grab', top: 78.8, left: 6.1, width: 10.7, height: 2.4 },
+    { href: LINKS.be, label: 'Download Be', top: 68.6, left: 46.2, width: 10.2, height: 2.6 },
+    { href: LINKS.greensm, label: 'Download Green SM', top: 90.7, left: 6.6, width: 10.7, height: 2.4 },
+  ],
+  13: [
+    { href: LINKS.dsvn, label: 'DSVN — official train tickets', top: 55.1, left: 58.6, width: 6.5, height: 2.6 },
+  ],
+  14: [
+    { href: LINKS.dsvn, label: 'DSVN.vn', top: 50.0, left: 75.6, width: 8.8, height: 2.5 },
+    { href: LINKS.vexere, label: 'Vexere — bus tickets', top: 78.1, left: 64.6, width: 8.0, height: 2.4 },
+  ],
+};
+
+const pageUrls = Array.from({ length: TOTAL_PAGES }, (_, i) => {
+  const n = String(i + 1).padStart(2, '0');
+  return `/travel-guide/page-${n}.jpg`;
+});
+---
+
+<BaseLayout
+  title="Vietnam Travel Guide — Flipbook"
+  description="The full Morning Vietnam travel guide, page by page — visas, money, SIM cards, transport, culture, and off-the-beaten-path destinations, with clickable links."
+>
+  <div class="flip-page">
+
+    <!-- Top bar: back + title -->
+    <header class="flip-bar">
+      <div class="container flip-bar__inner">
+        <a href="/explore/travel-guide" class="flip-back" aria-label="Back to text version">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span>Text version</span>
+        </a>
+        <div class="flip-bar__title">
+          <span class="flip-bar__region">Morning Vietnam</span>
+          <h1>Travel Guide to Vietnam</h1>
+        </div>
+        <div class="flip-bar__spacer" aria-hidden="true"></div>
+      </div>
+    </header>
+
+    <!-- Flipbook stage -->
+    <div class="flip-stage" id="flip-stage">
+      <div id="flipbook" class="flipbook">
+        {pageUrls.map((url, i) => {
+          const pageNum = i + 1;
+          const isCoverPosition = i === 0 || i === pageUrls.length - 1;
+          const spots = HOTSPOTS[pageNum] ?? [];
+          return (
+            <div
+              class="flip-page-leaf"
+              data-density={isCoverPosition ? 'hard' : 'soft'}
+            >
+              <div class="flip-page-inner">
+                <img
+                  src={url}
+                  alt={`Travel guide page ${pageNum}`}
+                  class="flip-page-front"
+                  draggable="false"
+                  loading={i < 4 ? 'eager' : 'lazy'}
+                />
+                {spots.map(s => (
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flip-hotspot"
+                    aria-label={s.label}
+                    title={s.label}
+                    style={`top:${s.top}%; left:${s.left}%; width:${s.width}%; height:${s.height}%;`}
+                  ></a>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Loading state -->
+      <div id="flip-loading" class="flip-loading" aria-live="polite">
+        <div class="flip-spinner" aria-hidden="true"></div>
+        <p>Loading guide…</p>
+      </div>
+
+      <!-- End-of-book overlay -->
+      <div id="flip-end" class="flip-end" aria-hidden="true">
+        <div class="flip-end__inner">
+          <span class="flip-end__kicker">That's the end of the guide</span>
+          <h2 class="flip-end__title">Ready for the real thing?</h2>
+          <p class="flip-end__sub">
+            Not through a screen. Not from a bus window.
+          </p>
+          <div class="flip-end__actions">
+            <button id="flip-restart" class="flip-end__btn flip-end__btn--ghost" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+                <path d="M3 3v5h5"/>
+              </svg>
+              Read again
+            </button>
+            <a href="/tours" class="flip-end__btn flip-end__btn--primary">
+              See tours →
+            </a>
+            <button id="flip-peek-last" class="flip-end__btn flip-end__btn--ghost flip-end__btn--mobile" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              View last page
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flip-controls">
+      <button id="flip-prev" class="flip-btn" aria-label="Previous page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <div class="flip-counter">
+        <span id="flip-current">1</span>
+        <span class="flip-counter__sep">/</span>
+        <span id="flip-total">{TOTAL_PAGES}</span>
+      </div>
+      <button id="flip-next" class="flip-btn" aria-label="Next page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="flip-hint">
+      Tip — drag a page edge, use the arrows, or press ← → on your keyboard. Underlined text and buttons in the guide are clickable links.
+    </p>
+  </div>
+</BaseLayout>
+
+
+<!-- ─────────────── Flipbook script ─────────────── -->
+<script>
+  import { PageFlip } from 'page-flip';
+
+  const stage = document.getElementById('flip-stage')!;
+  const container = document.getElementById('flipbook') as HTMLElement;
+  const loading = document.getElementById('flip-loading')!;
+  const endOverlay = document.getElementById('flip-end')!;
+  const restartBtn = document.getElementById('flip-restart') as HTMLButtonElement;
+  const prevBtn = document.getElementById('flip-prev') as HTMLButtonElement;
+  const nextBtn = document.getElementById('flip-next') as HTMLButtonElement;
+  const currentEl = document.getElementById('flip-current')!;
+  const totalEl = document.getElementById('flip-total')!;
+
+  // Tỉ lệ trang khớp với ảnh nguồn (1400x1980 ≈ A4-ish portrait)
+  const PAGE_W = 500;
+  const PAGE_H = 707;
+
+  // @ts-ignore
+  const pf = new PageFlip(container, {
+    width: PAGE_W,
+    height: PAGE_H,
+    size: 'stretch',
+    minWidth: 280,
+    maxWidth: 700,
+    minHeight: 396,
+    maxHeight: 990,
+    drawShadow: true,
+    flippingTime: 700,
+    showCover: true,
+    mobileScrollSupport: true,
+    usePortrait: true,
+    maxShadowOpacity: 0.5,
+    swipeDistance: 30,
+    // true (khác /catalogue) — cho phép click/tap "xuyên" tới link hotspot
+    // thay vì bị thư viện bắt làm cử chỉ kéo-lật-trang (đây là nguyên nhân
+    // gây vênh/lỗi hình khi bấm vào vùng link).
+    clickEventForward: true,
+    useMouseEvents: true,
+    showPageCorners: false,
+  });
+
+  const leaves = container.querySelectorAll('.flip-page-leaf');
+  pf.loadFromHTML(leaves);
+
+  const totalPages = pf.getPageCount();
+  const lastIndex = totalPages - 1;
+
+  pf.on('init', () => {
+    loading.classList.add('is-hidden');
+    container.classList.add('is-ready');
+    totalEl.textContent = String(totalPages);
+  });
+
+  function updateForPage(idx: number) {
+    currentEl.textContent = String(idx + 1);
+    if (idx >= lastIndex) {
+      endOverlay.classList.add('is-visible');
+      endOverlay.setAttribute('aria-hidden', 'false');
+    } else {
+      endOverlay.classList.remove('is-visible');
+      endOverlay.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  pf.on('flip', (e: any) => {
+    updateForPage(Number(e.data));
+  });
+
+  prevBtn.addEventListener('click', () => pf.flipPrev());
+  nextBtn.addEventListener('click', () => pf.flipNext());
+
+  restartBtn.addEventListener('click', () => {
+    pf.turnToPage(0);
+    endOverlay.classList.remove('is-visible');
+    endOverlay.setAttribute('aria-hidden', 'true');
+  });
+
+  const peekLastBtn = document.getElementById('flip-peek-last') as HTMLButtonElement;
+  let peekTimer: number | null = null;
+  peekLastBtn?.addEventListener('click', () => {
+    endOverlay.classList.add('is-peeking');
+    const restore = () => {
+      endOverlay.classList.remove('is-peeking');
+      stage.removeEventListener('click', restore);
+      if (peekTimer) window.clearTimeout(peekTimer);
+    };
+    stage.addEventListener('click', restore, { once: true });
+    if (peekTimer) window.clearTimeout(peekTimer);
+    peekTimer = window.setTimeout(restore, 5000);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') pf.flipPrev();
+    else if (e.key === 'ArrowRight') pf.flipNext();
+  });
+
+  // Chống copy cơ bản — KHÔNG chặn link (hotspot vẫn nằm trong bubbling path
+  // bình thường, chỉ chặn context-menu/drag/select trên ảnh trang)
+  stage.addEventListener('contextmenu', (e) => e.preventDefault());
+  stage.addEventListener('dragstart', (e) => e.preventDefault());
+  stage.addEventListener('selectstart', (e) => e.preventDefault());
+</script>
+
+
+<style>
+  .flip-page {
+    background: var(--color-java);
+    min-height: 100vh;
+    padding-top: var(--site-header-h);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flip-bar {
+    padding: 20px 0 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .flip-bar__inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .flip-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.12);
+    transition: background 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .flip-back:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: white;
+  }
+  .flip-bar__title {
+    flex: 1;
+    text-align: center;
+    color: white;
+  }
+  .flip-bar__region {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-light-cyan);
+    margin-bottom: 4px;
+  }
+  .flip-bar__title h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.1;
+  }
+  .flip-bar__spacer { width: 140px; flex-shrink: 0; }
+
+  .flip-stage {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    min-height: 70vh;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .flipbook {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    max-width: 100%;
+  }
+  .flipbook.is-ready { opacity: 1; }
+
+  /* Wrapper trong — nơi thực sự đặt position:relative cho hotspot bám vào.
+     KHÔNG đặt position lên .flip-page-leaf trực tiếp — thư viện page-flip tự
+     set style (transform/position) lên chính leaf để tạo hiệu ứng lật trang;
+     ghi đè position ở đây từng làm hỏng hiệu ứng lật (trang bị vỡ layout). */
+  .flip-page-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .flip-page-leaf img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Vùng link bấm được — vô hình, đặt đúng vị trí link thật trong ảnh */
+  .flip-hotspot {
+    position: absolute;
+    display: block;
+    cursor: pointer;
+    /* bỏ comment dòng dưới khi cần debug vị trí hotspot */
+    /* background: rgba(255, 0, 0, 0.25); */
+  }
+
+  .flip-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: rgba(217, 247, 245, 0.7);
+    font-size: 14px;
+    transition: opacity 0.3s ease;
+  }
+  .flip-loading.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .flip-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(217, 247, 245, 0.15);
+    border-top-color: var(--color-riptide);
+    border-radius: 50%;
+    animation: flip-spin 0.9s linear infinite;
+  }
+  @keyframes flip-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .flip-end {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 32px 80px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease 1s;
+    z-index: 30;
+  }
+  .flip-end.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .flip-end.is-peeking {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease 0s;
+  }
+
+  .flip-end__btn--mobile {
+    display: none !important;
+  }
+  .flip-end__inner {
+    text-align: center;
+    max-width: 380px;
+    color: white;
+    transform: translateY(12px);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1s;
+  }
+  .flip-end.is-visible .flip-end__inner {
+    transform: translateY(0);
+  }
+  .flip-end__kicker {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-light-cyan);
+    margin-bottom: 14px;
+  }
+  .flip-end__title {
+    font-family: var(--font-heading);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.05;
+    margin: 0 0 12px;
+    color: white;
+  }
+  .flip-end__sub {
+    font-size: 15px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 24px;
+  }
+  .flip-end__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .flip-end__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 100px;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease;
+    border: 1.5px solid transparent;
+  }
+  .flip-end__btn--ghost {
+    background: transparent;
+    color: var(--color-light-cyan);
+    border-color: rgba(217, 247, 245, 0.35);
+  }
+  .flip-end__btn--ghost:hover {
+    background: rgba(217, 247, 245, 0.12);
+    border-color: rgba(217, 247, 245, 0.55);
+  }
+  .flip-end__btn--primary {
+    background: var(--color-sorbus);
+    color: white;
+    border-color: var(--color-sorbus);
+  }
+  .flip-end__btn--primary:hover {
+    background: #d8552c;
+    border-color: #d8552c;
+    transform: translateY(-2px);
+  }
+
+  .flip-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 16px 0 8px;
+  }
+  .flip-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+  .flip-btn:hover {
+    background: white;
+    color: var(--color-java);
+    border-color: white;
+    transform: scale(1.05);
+  }
+  .flip-btn:active { transform: scale(0.96); }
+
+  .flip-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    min-width: 80px;
+    justify-content: center;
+    letter-spacing: 0.04em;
+  }
+  .flip-counter__sep { opacity: 0.5; }
+
+  .flip-hint {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0 16px 32px;
+    margin: 0;
+  }
+
+  @media (max-width: 720px) {
+    .flip-bar__spacer { display: none; }
+    .flip-bar__inner { gap: 12px; }
+    .flip-back span { display: none; }
+    .flip-back {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      justify-content: center;
+    }
+    .flip-stage { padding: 12px 8px; min-height: 60vh; }
+    .flip-bar__title h1 { font-size: 16px; }
+    .flip-end {
+      left: 0;
+      padding: 24px 16px 60px;
+      background: rgba(29, 160, 160, 0.88);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .flip-end__actions { flex-direction: column; }
+    .flip-end__btn { width: 100%; justify-content: center; }
+    .flip-end__btn--mobile { display: inline-flex !important; }
+  }
+</style>

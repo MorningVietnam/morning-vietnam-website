@@ -1,0 +1,176 @@
+---
+/**
+ * Popup tự động hiện ở TRANG CHỦ, dẫn khách sang bản flipbook Travel Guide
+ * (/explore/travel-guide/book — giữ đúng design gốc từ Canva, link click được).
+ *
+ * Hành vi hiện/ẩn (đọc kỹ trước khi đổi):
+ *  - Dùng `sessionStorage` (KHÔNG dùng `localStorage`). sessionStorage tự xoá
+ *    khi đóng tab/trình duyệt, nên: mỗi LƯỢT VÀO MỚI (tab mới, hoặc mở lại
+ *    trình duyệt) → hiện lại từ đầu. Còn nếu khách đang browse quanh site rồi
+ *    quay lại trang chủ (cùng tab, chưa đóng) → KHÔNG hiện lại. Đúng yêu cầu
+ *    "vào lần đầu thì hiện, quay lại thì thôi".
+ *  - Dùng chung 1 storageKey cho cả bản EN (/) và VI (/vi) — khách đã thấy ở
+ *    bản EN thì qua /vi trong cùng phiên cũng không bị hiện lại lần nữa.
+ *  - Cơ chế mở/đóng (nút X, bấm ra ngoài, phím Esc) dùng chung hệ thống
+ *    `.b-popup` + `[data-popup-close]` đã có sẵn trong scripts/main.js —
+ *    không cần viết lại, chỉ cần đúng class/attribute.
+ */
+interface Props {
+  title: string;
+  subtitle: string;
+  ctaLabel: string;
+  dismissLabel: string;
+  ctaHref?: string;
+}
+
+const {
+  title,
+  subtitle,
+  ctaLabel,
+  dismissLabel,
+  ctaHref = '/explore/travel-guide/book',
+} = Astro.props;
+---
+
+<div class="b-popup tg-popup" id="tg-popup" role="dialog" aria-modal="true" aria-labelledby="tg-popup-title">
+  <div class="b-popup__holder tg-popup__holder">
+    <button class="b-popup__close" data-popup-close aria-label="Close">×</button>
+
+    <div class="tg-popup__image">
+      <img
+        src="/travel-guide/page-01.jpg"
+        alt="Morning Vietnam Travel Guide — book cover"
+        loading="eager"
+      />
+    </div>
+
+    <div class="tg-popup__body">
+      <div class="tg-popup__copy">
+        <p class="tg-popup__eyebrow">Free travel guide</p>
+        <h2 id="tg-popup-title" class="tg-popup__title">{title}</h2>
+        <p class="tg-popup__sub">{subtitle}</p>
+      </div>
+      <div class="tg-popup__actions">
+        <a href={ctaHref} class="c-button c-button--primary tg-popup__cta">{ctaLabel}</a>
+        <button type="button" class="tg-popup__dismiss" data-popup-close>{dismissLabel}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tg-popup__holder {
+    padding: 0;
+    max-width: 720px;
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    overflow: hidden;
+  }
+
+  .tg-popup__image {
+    position: relative;
+    background: var(--color-nordic);
+  }
+
+  .tg-popup__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .tg-popup__body {
+    padding: 44px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* copy neo trên cùng, actions (CTA + Maybe later) neo sát đáy panel —
+       chiều cao panel tự khớp chiều cao ảnh bên trái nhờ grid. */
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .tg-popup__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tg-popup__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-riptide);
+    margin-bottom: 12px;
+  }
+
+  .tg-popup__title {
+    font-family: var(--font-heading);
+    font-size: clamp(22px, 2.4vw, 30px);
+    font-weight: 700;
+    color: var(--color-light-cyan);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+
+  .tg-popup__sub {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--color-light-cyan);
+    opacity: 0.75;
+    margin-bottom: 28px;
+  }
+
+  .tg-popup__cta {
+    margin-bottom: 16px;
+  }
+
+  .tg-popup__dismiss {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--color-light-cyan);
+    opacity: 0.55;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s ease;
+  }
+
+  .tg-popup__dismiss:hover {
+    opacity: 0.9;
+  }
+
+  @media (max-width: 640px) {
+    .tg-popup__holder {
+      grid-template-columns: 1fr;
+      max-width: 420px;
+    }
+    .tg-popup__image {
+      height: 200px;
+    }
+    .tg-popup__body {
+      padding: 32px 28px;
+    }
+  }
+</style>
+
+<script>
+  // sessionStorage — xem giải thích đầy đủ ở comment đầu file .astro.
+  const STORAGE_KEY = 'mvn_tg_popup_seen';
+  const popup = document.getElementById('tg-popup');
+
+  if (popup && !sessionStorage.getItem(STORAGE_KEY)) {
+    // Đánh dấu "đã thấy" NGAY LẬP TỨC (trước khi hiện) — tránh trường hợp
+    // bấm back/forward nhanh trong lúc setTimeout bên dưới chưa kịp chạy.
+    sessionStorage.setItem(STORAGE_KEY, '1');
+    window.setTimeout(() => {
+      popup.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }, 1000);
+  }
+</script>

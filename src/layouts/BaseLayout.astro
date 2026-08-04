@@ -1,6 +1,13 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import {
+  LANGUAGES,
+  getLangFromPath,
+  stripLang,
+  getAlternates,
+  type Lang,
+} from '../i18n/config';
 
 interface Props {
   title: string;
@@ -8,22 +15,47 @@ interface Props {
   image?: string;
 }
 
+const siteURL = 'https://morningvietnam.co';
+
+// ── Ngôn ngữ của trang này ────────────────────────────────────────────────
+// Tự đọc từ đường dẫn: /vi/tours → 'vi', /tours → 'en'.
+// Không cần khai báo gì thêm ở từng trang.
+const currentLang: Lang = getLangFromPath(Astro.url.pathname);
+const langInfo = LANGUAGES[currentLang];
+
+// Mô tả mặc định theo từng ngôn ngữ (khi trang không tự truyền description)
+const DEFAULT_DESCRIPTION: Record<Lang, string> = {
+  en: "Morning Vietnam designs adventure journeys across Vietnam where you don't just visit — you live it. Small group inbound tours with local immersion and gamified challenges.",
+  vi: 'Morning Vietnam thiết kế những hành trình khám phá Việt Nam để bạn không chỉ ghé qua — mà thật sự sống cùng. Tour nhóm nhỏ, đồng hành cùng người bản địa, có thử thách trải nghiệm riêng.',
+};
+
+// Tiêu đề trang chủ theo từng ngôn ngữ
+const HOME_TITLE: Record<Lang, string> = {
+  en: 'Morning Vietnam | Vietnam deeper. Horizons wider.',
+  vi: 'Morning Vietnam | Việt Nam sâu hơn. Chân trời rộng hơn.',
+};
+
 const {
   title,
-  description = "Morning Vietnam designs adventure journeys across Vietnam where you don't just visit — you live it. Small group inbound tours with local immersion and gamified challenges.",
+  description = DEFAULT_DESCRIPTION[currentLang],
   image = "/og-default.jpg",
 } = Astro.props;
 
-const siteURL = 'https://morningvietnam.co';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? siteURL);
-const isHome = Astro.url.pathname === '/';
+
+// Trang chủ của BẤT KỲ ngôn ngữ nào ('/' hoặc '/vi') đều dùng tiêu đề riêng
+const isHome = stripLang(Astro.url.pathname) === '/';
 const pageTitle = isHome
-  ? 'Morning Vietnam | Vietnam deeper. Horizons wider.'
+  ? HOME_TITLE[currentLang]
   : `${title} | Morning Vietnam`;
+
+// Danh sách bản dịch của trang hiện tại → sinh thẻ hreflang cho Google.
+// Chỉ liệt kê ngôn ngữ ĐÃ thật sự có bản dịch (khai báo trong src/i18n/config.ts).
+const alternates = getAlternates(Astro.url.pathname);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={langInfo.htmlLang}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -37,8 +69,19 @@ const pageTitle = isHome
 
   <title>{pageTitle}</title>
   <meta name="description" content={description} />
-  <meta name="keywords" content="Vietnam inbound tour, Vietnam adventure tours, Vietnam small group tours, Vietnam local experience, Morning Vietnam" />
+  <meta name="keywords" content={currentLang === 'vi'
+    ? 'tour Việt Nam, tour trải nghiệm, tour nhóm nhỏ, du lịch bản địa, Morning Vietnam'
+    : 'Vietnam inbound tour, Vietnam adventure tours, Vietnam small group tours, Vietnam local experience, Morning Vietnam'} />
   <link rel="canonical" href={canonicalURL} />
+
+  <!-- ═══ Hreflang — báo Google trang này có những bản ngôn ngữ nào ═══════
+       Đây là thẻ quan trọng nhất của SEO đa ngôn ngữ. Thiếu nó Google có thể
+       coi bản VI và bản EN là nội dung trùng lặp.
+       x-default = bản mặc định cho khách ở nước không khớp ngôn ngữ nào. -->
+  {alternates.map((alt) => (
+    <link rel="alternate" hreflang={alt.htmlLang} href={new URL(alt.path, Astro.site ?? siteURL)} />
+  ))}
+  <link rel="alternate" hreflang="x-default" href={new URL(stripLang(Astro.url.pathname), Astro.site ?? siteURL)} />
 
   <!-- Open Graph -->
   <meta property="og:type"        content="website" />
@@ -47,7 +90,7 @@ const pageTitle = isHome
   <meta property="og:description" content={description} />
   <meta property="og:image"       content={new URL(image, siteURL)} />
   <meta property="og:site_name"   content="Morning Vietnam" />
-  <meta property="og:locale"      content="en_US" />
+  <meta property="og:locale"      content={langInfo.ogLocale} />
 
   <!-- Twitter Card -->
   <meta name="twitter:card"        content="summary_large_image" />

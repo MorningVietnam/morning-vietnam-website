@@ -1,0 +1,309 @@
+---
+/**
+ * LangSwitcher.astro — Nút cho khách chọn ngôn ngữ
+ * ============================================================================
+ *
+ * Hiển thị: [🌐 EN ▾]  → bấm vào hiện danh sách English / Tiếng Việt
+ *
+ * Tự động:
+ *   • Biết khách đang ở ngôn ngữ nào (đọc từ đường dẫn)
+ *   • Giữ nguyên trang khi đổi ngôn ngữ (đang ở /tours → bấm VI → /vi/tours)
+ *   • Nếu trang đó CHƯA có bản dịch → tự đưa về trang chủ ngôn ngữ đó,
+ *     không để khách rơi vào trang lỗi
+ *
+ * Thêm ngôn ngữ mới (FR/DE) → không cần sửa file này, chỉ sửa src/i18n/config.ts
+ *
+ * Prop `variant`:
+ *   'desktop' — nút gọn nằm cạnh nút CTA trên thanh nav
+ *   'mobile'  — danh sách trải phẳng trong menu di động (không cần bấm mở)
+ */
+import {
+  LANGUAGES,
+  LANG_CODES,
+  getLangFromPath,
+  switchLangPath,
+  type Lang,
+} from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  variant?: 'desktop' | 'mobile';
+}
+
+const { variant = 'desktop' } = Astro.props;
+
+const path = Astro.url.pathname;
+const currentLang: Lang = getLangFromPath(path);
+const t = useTranslations(currentLang);
+
+// Dựng sẵn link cho từng ngôn ngữ ngay lúc build → không cần JavaScript để chạy
+const options = LANG_CODES.map((code) => ({
+  code,
+  info: LANGUAGES[code],
+  href: switchLangPath(path, code),
+  isCurrent: code === currentLang,
+}));
+---
+
+{variant === 'desktop' ? (
+  <div class="lang-switcher" data-lang-switcher>
+    <button
+      type="button"
+      class="lang-switcher__trigger"
+      aria-label={t('lang.label')}
+      aria-expanded="false"
+      aria-haspopup="true"
+    >
+      <svg class="lang-switcher__globe" width="16" height="16" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M3 12h18" />
+        <path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18" />
+      </svg>
+      <span class="lang-switcher__code">{LANGUAGES[currentLang].code}</span>
+      <svg class="lang-switcher__arrow" width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+        <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+
+    <ul class="lang-switcher__menu" role="menu">
+      {options.map((o) => (
+        <li role="none">
+          <a
+            role="menuitem"
+            href={o.href}
+            hreflang={o.info.htmlLang}
+            lang={o.info.htmlLang}
+            class:list={['lang-switcher__option', { 'is-current': o.isCurrent }]}
+            aria-current={o.isCurrent ? 'true' : undefined}
+          >
+            <span class="lang-switcher__native">{o.info.nativeName}</span>
+            <span class="lang-switcher__badge">{o.info.code}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+) : (
+  <div class="lang-switcher-mobile">
+    <span class="lang-switcher-mobile__label">{t('lang.current')}</span>
+    <div class="lang-switcher-mobile__options">
+      {options.map((o) => (
+        <a
+          href={o.href}
+          hreflang={o.info.htmlLang}
+          lang={o.info.htmlLang}
+          class:list={['lang-switcher-mobile__option', { 'is-current': o.isCurrent }]}
+          aria-current={o.isCurrent ? 'true' : undefined}
+        >{o.info.nativeName}</a>
+      ))}
+    </div>
+  </div>
+)}
+
+<script>
+  // Mở/đóng menu ngôn ngữ trên desktop.
+  // Có thể có nhiều switcher trên trang → dùng querySelectorAll.
+  document.querySelectorAll<HTMLElement>('[data-lang-switcher]').forEach((root) => {
+    const trigger = root.querySelector<HTMLButtonElement>('.lang-switcher__trigger');
+    if (!trigger) return;
+
+    const close = () => {
+      root.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    };
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = root.classList.toggle('open');
+      trigger.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // Bấm ra ngoài → đóng
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target as Node)) close();
+    });
+
+    // Phím Esc → đóng
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+  });
+</script>
+
+<style>
+  /* ══ DESKTOP ══════════════════════════════════════════════════════════ */
+  .lang-switcher {
+    position: relative;
+    display: inline-block;
+  }
+
+  .lang-switcher__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px var(--space-3);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .lang-switcher__trigger:hover,
+  .lang-switcher.open .lang-switcher__trigger {
+    background: var(--color-light-cyan);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .lang-switcher__trigger:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .lang-switcher__globe { flex-shrink: 0; }
+
+  .lang-switcher__code {
+    letter-spacing: 0.04em;
+  }
+
+  .lang-switcher__arrow {
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+  }
+
+  .lang-switcher.open .lang-switcher__arrow {
+    transform: rotate(180deg);
+  }
+
+  /* ── Menu thả xuống ── */
+  .lang-switcher__menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 170px;
+    margin: 0;
+    padding: var(--space-xs);
+    list-style: none;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
+    z-index: 900;
+  }
+
+  .lang-switcher.open .lang-switcher__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .lang-switcher__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 10px var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .lang-switcher__option:hover {
+    background: var(--color-light-cyan);
+    color: var(--color-primary);
+  }
+
+  .lang-switcher__option.is-current {
+    background: var(--color-light-cyan);
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  .lang-switcher__badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+
+  .lang-switcher__option.is-current .lang-switcher__badge,
+  .lang-switcher__option:hover .lang-switcher__badge {
+    color: var(--color-primary);
+  }
+
+  /* Ẩn nút desktop trên màn hình nhỏ — mobile dùng bản trong menu trượt */
+  @media (max-width: 900px) {
+    .lang-switcher { display: none; }
+  }
+
+  /* ══ MOBILE ═══════════════════════════════════════════════════════════ */
+  .lang-switcher-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-md);
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .lang-switcher-mobile__label {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+  }
+
+  .lang-switcher-mobile__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .lang-switcher-mobile__option {
+    padding: 10px var(--space-sm);
+    border: 1px solid currentColor;
+    border-radius: var(--radius-full);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity var(--transition-fast), background var(--transition-fast);
+  }
+
+  /* Menu di động có nền teal (--color-java) → mục đang chọn phải dùng nền
+     trắng chữ teal, nếu dùng nền teal sẽ trùng nền và biến mất. */
+  .lang-switcher-mobile__option.is-current {
+    opacity: 1;
+    font-weight: 700;
+    background: var(--color-white);
+    border-color: var(--color-white);
+    color: var(--color-primary);
+  }
+
+  .lang-switcher-mobile__option:not(.is-current):hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  @media (min-width: 901px) {
+    .lang-switcher-mobile { display: none; }
+  }
+</style>

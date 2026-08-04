@@ -2,6 +2,7 @@
 // TODO: Replace placeholder testimonials with real reviews from Google/TripAdvisor when available
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Marquee from '../components/Marquee.astro';
+import TravelGuidePopup from '../components/TravelGuidePopup.astro';
 import { tours, type Tour } from '../data/tours.ts';
 
 const FEATURED_SLUGS = ['sapa-nam-cang', 'sa-pa-lai-chau', 'ho-chi-minh-a-life', 'mui-doi-first-sunrise'];
@@ -373,6 +374,13 @@ const regions = [
     </div>
 
   </section>
+
+  <TravelGuidePopup
+    title="Before you go — grab our free Travel Guide"
+    subtitle="Visas, weather, SIM cards, transport, food & more — flip through it just like the real thing, links included."
+    ctaLabel="Flip through the guide →"
+    dismissLabel="Maybe later"
+  />
 
 </BaseLayout>
 

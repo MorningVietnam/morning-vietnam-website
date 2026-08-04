@@ -1,6 +1,16 @@
 ---
+import { getLangFromPath, navPath, type Lang } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
 const year = new Date().getFullYear();
 const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: same form ID as NotifyPopup, or create separate "newsletter" form
+
+// Ngôn ngữ hiện tại + hàm dịch (xem src/i18n/ui.ts để sửa chữ)
+const lang: Lang = getLangFromPath(Astro.url.pathname);
+const t = useTranslations(lang);
+// `l()` giữ khách ở đúng ngôn ngữ khi bấm link trong footer.
+// Trang chưa dịch → tự trả về bản tiếng Anh, tránh lỗi 404.
+const l = (p: string) => navPath(p, lang);
 ---
 
 <footer class="site-footer2">
@@ -10,58 +20,59 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: same form ID as NotifyPopup, 
       <!-- Left: heading + subscribe -->
       <div class="site-footer2__left">
         <h2 class="site-footer2__heading">
-          Vietnam deeper.<br/>Horizons wider.
+          {t('footer.heading.line1')}<br/>{t('footer.heading.line2')}
         </h2>
-        <p class="site-footer2__sub">Join the list — first dibs on new tours, real stories from the road.</p>
+        <p class="site-footer2__sub">{t('footer.sub')}</p>
         <form
           class="site-footer2__form"
           action={`https://formspree.io/f/${FORMSPREE_ID}`}
           method="POST"
         >
           <input type="hidden" name="_subject" value="Morning Vietnam — Newsletter signup" />
-          <label for="footer-email" class="sr-only">Email address</label>
+          <label for="footer-email" class="sr-only">{t('footer.emailLabel')}</label>
           <input
             type="email"
             id="footer-email"
             name="email"
             required
-            placeholder="your@email.com"
+            placeholder={t('footer.emailPlaceholder')}
             autocomplete="email"
           />
-          <button type="submit" class="site-footer2__submit">Subscribe</button>
+          <button type="submit" class="site-footer2__submit">{t('footer.subscribe')}</button>
         </form>
-        <p class="site-footer2__form-success" hidden>You're on the list ✓</p>
+        <p class="site-footer2__form-success" hidden>{t('footer.subscribed')}</p>
       </div>
 
       <!-- Right: 4 nav columns -->
       <div class="site-footer2__nav">
         <div class="site-footer2__col">
-          <h3>Tours</h3>
+          <h3>{t('footer.col.tours')}</h3>
           <ul>
-            <li><a href="/tours">All tours</a></li>
-            <li><a href="/tours?region=north">North Vietnam</a></li>
-            <li><a href="/tours?region=soon">Coming soon</a></li>
+            <li><a href={l('/tours')}>{t('footer.allTours')}</a></li>
+            <li><a href={`${l('/tours')}?region=north`}>{t('footer.north')}</a></li>
+            <li><a href={`${l('/tours')}?region=soon`}>{t('footer.comingSoon')}</a></li>
           </ul>
         </div>
         <div class="site-footer2__col">
-          <h3>Explore</h3>
+          <h3>{t('footer.col.explore')}</h3>
           <ul>
-            <li><a href="/explore/about">About us</a></li>
-            <li><a href="/explore/vietnam-facts">Vietnam facts</a></li>
-            <li><a href="/explore/faq">FAQ</a></li>
+            <li><a href={l('/explore/about')}>{t('footer.aboutUs')}</a></li>
+            <li><a href={l('/explore/vietnam-facts')}>{t('footer.vietnamFacts')}</a></li>
+            <li><a href={l('/explore/faq')}>{t('footer.faq')}</a></li>
+            <li><a href={l('/explore/travel-guide')}>{t('footer.travelGuide')}</a></li>
           </ul>
         </div>
         <div class="site-footer2__col">
-          <h3>Help</h3>
+          <h3>{t('footer.col.help')}</h3>
           <ul>
-            <li><a href="/contact">Contact</a></li>
-            <li><a href="mailto:good@morningvietnam.co">Email us</a></li>
-            <li><a href="https://wa.me/84961836611" target="_blank" rel="noopener">WhatsApp</a></li>
-            <li><a href="/catalogue">Catalogue (B2B)</a></li>
+            <li><a href={l('/contact')}>{t('footer.contact')}</a></li>
+            <li><a href="mailto:good@morningvietnam.co">{t('footer.emailUs')}</a></li>
+            <li><a href="https://wa.me/84961836611" target="_blank" rel="noopener">{t('footer.whatsapp')}</a></li>
+            <li><a href={l('/catalogue')}>{t('footer.catalogueB2B')}</a></li>
           </ul>
         </div>
         <div class="site-footer2__col">
-          <h3>Socials</h3>
+          <h3>{t('footer.col.socials')}</h3>
           <ul>
             <li><a href="https://www.instagram.com/morningvietnam.local" target="_blank" rel="noopener noreferrer">Instagram</a></li>
             <li><a href="https://www.facebook.com/morningvietnam.local" target="_blank" rel="noopener noreferrer">Facebook</a></li>
@@ -83,12 +94,13 @@ const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // TODO: same form ID as NotifyPopup, 
       />
     </div>
     <div class="container site-footer2__bottom-row">
-      <p class="site-footer2__copy site-footer2__license"><strong>Travel agency business license number:<br/>01-3135/2026/CDLQGVN-GP LHQT</strong></p>
+      <!-- Số giấy phép là thông tin pháp lý — KHÔNG dịch, KHÔNG đổi -->
+      <p class="site-footer2__copy site-footer2__license"><strong>{t('footer.license')}<br/>01-3135/2026/CDLQGVN-GP LHQT</strong></p>
       <div class="site-footer2__copy-legal">
-        <p class="site-footer2__copy">© {year} Morning Vietnam Co. Ltd. All rights reserved.</p>
+        <p class="site-footer2__copy">© {year} Morning Vietnam Co. Ltd. {t('footer.rights')}</p>
         <div class="site-footer2__legal">
-          <a href="/privacy-policy">Privacy policy</a>
-          <a href="/terms-and-conditions">Terms &amp; conditions</a>
+          <a href={l('/privacy-policy')}>{t('footer.privacy')}</a>
+          <a href={l('/terms-and-conditions')}>{t('footer.terms')}</a>
         </div>
       </div>
     </div>

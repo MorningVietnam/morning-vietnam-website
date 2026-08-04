@@ -1,0 +1,243 @@
+---
+/**
+ * /vi — Trang chủ tiếng Việt
+ * ============================================================================
+ *
+ * ⚠️  ĐÂY LÀ BẢN GIAI ĐOẠN 1 — dựng để kiểm chứng hệ thống đa ngôn ngữ chạy
+ *     đúng (nút đổi ngôn ngữ, hreflang, Header/Footer tiếng Việt).
+ *
+ * CHƯA CÓ: khối danh sách tour. Lý do — dữ liệu tour tiếng Việt (tên tour, giá
+ * VNĐ, mô tả) chưa được duyệt. Không tự bịa. Khi anh duyệt xong nội dung tour
+ * tiếng Việt, sẽ tạo file src/data/tours.vi.ts và bật khối tour ở đây.
+ *
+ * Nội dung dưới đây là bản dịch giọng thương hiệu — anh đọc và sửa thoải mái,
+ * sửa thẳng phần chữ trong file này là được.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TravelGuidePopup from '../../components/TravelGuidePopup.astro';
+import { navPath } from '../../i18n/config';
+
+// Trang nào chưa có bản tiếng Việt thì link tự trỏ về bản tiếng Anh (không 404).
+// Khi dịch xong, chỉ cần thêm đường dẫn vào VI_ROUTES trong src/i18n/config.ts
+// là link ở đây tự chuyển sang bản Việt — không phải sửa file này.
+const l = (p: string) => navPath(p, 'vi');
+
+// 4 trụ định vị — dịch từ bản tiếng Anh, giữ nguyên ý
+const pillars = [
+  {
+    icon: 'ti-users-group',
+    title: 'Nhóm tối đa 8 người',
+    desc: 'Không gộp nhóm, không xe 45 chỗ. Đủ nhỏ để ai cũng được nghe, được hỏi, được dừng lại khi muốn.',
+  },
+  {
+    icon: 'ti-heart-handshake',
+    title: 'Người bản địa đồng hành',
+    desc: 'Không phải hướng dẫn viên đọc thuộc lòng. Là người sống ở đó, dẫn bạn về nhà họ, ăn cơm cùng gia đình họ.',
+  },
+  {
+    icon: 'ti-key',
+    title: 'Unlock Challenge',
+    desc: 'Format riêng của Morning Vietnam: những thử thách nhỏ đặt đúng vào khoảnh khắc văn hoá. Bạn không xem — bạn làm.',
+  },
+  {
+    icon: 'ti-shield-check',
+    title: 'Không đặt cọc trước',
+    desc: 'Giữ chỗ trước, thanh toán sau. Huỷ miễn phí đến 14 ngày trước ngày khởi hành.',
+  },
+];
+---
+
+<BaseLayout
+  title="Trang chủ"
+  description="Morning Vietnam thiết kế những hành trình khám phá Việt Nam để bạn không chỉ ghé qua — mà thật sự sống cùng. Tour nhóm nhỏ tối đa 8 người, đồng hành cùng người bản địa."
+>
+  <!-- ═══ HERO ══════════════════════════════════════════════════════════ -->
+  <section class="vi-hero">
+    <div class="wrapper vi-hero__inner">
+      <p class="vi-hero__eyebrow">Morning Vietnam</p>
+      <h1 class="vi-hero__title">
+        Việt Nam sâu hơn.<br />Chân trời rộng hơn.
+      </h1>
+      <p class="vi-hero__lead">
+        Chúng tôi không bán chuyến đi để chụp ảnh. Chúng tôi thiết kế những hành
+        trình mà bạn ăn, đi, cười và lạc đường cùng người bản địa — rồi rời đi
+        với cảm giác vừa thuộc về một nơi nào đó.
+      </p>
+      <div class="vi-hero__actions">
+        <a href={l('/tours')} class="c-button c-button--primary">Xem các tour</a>
+        <a href={l('/explore/about')} class="vi-hero__link">Chúng tôi là ai →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 4 TRỤ ĐỊNH VỊ ═════════════════════════════════════════════════ -->
+  <section class="vi-pillars">
+    <div class="wrapper">
+      <h2 class="vi-pillars__heading">Điều khiến Morning Vietnam khác</h2>
+      <div class="vi-pillars__grid">
+        {pillars.map((p) => (
+          <article class="vi-pillar">
+            <i class={`ti ${p.icon} vi-pillar__icon`} aria-hidden="true"></i>
+            <h3 class="vi-pillar__title">{p.title}</h3>
+            <p class="vi-pillar__desc">{p.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!--
+    ═══ KHỐI DANH SÁCH TOUR — SẼ BẬT SAU ═══════════════════════════════════
+    Khi có src/data/tours.vi.ts đã duyệt, thêm khối tour ở đây bằng TourCard.
+  -->
+
+  <!-- ═══ CTA CUỐI TRANG ════════════════════════════════════════════════ -->
+  <section class="vi-cta">
+    <div class="wrapper vi-cta__inner">
+      <h2 class="vi-cta__heading">Chưa biết bắt đầu từ đâu?</h2>
+      <p class="vi-cta__sub">
+        Nhắn cho chúng tôi vài dòng về kiểu chuyến đi bạn muốn. Không form dài,
+        không đặt cọc — chỉ là một cuộc trò chuyện.
+      </p>
+      <a href={l('/contact')} class="c-button c-button--primary">Liên hệ ngay</a>
+    </div>
+  </section>
+
+  <TravelGuidePopup
+    title="Trước khi đi — lấy Cẩm nang du lịch miễn phí"
+    subtitle="Visa, thời tiết, SIM card, di chuyển, ẩm thực & hơn thế — lật từng trang y như bản gốc, link vẫn bấm được."
+    ctaLabel="Lật xem cẩm nang →"
+    dismissLabel="Để sau"
+  />
+</BaseLayout>
+
+<style>
+  /* Chỉ dùng CSS variables trong src/styles/variables.css — không hardcode màu */
+
+  .vi-hero {
+    padding: calc(var(--site-header-h, 100px) + var(--space-xl)) 0 var(--space-xl);
+    background: var(--color-bg);
+  }
+
+  .vi-hero__inner {
+    max-width: 900px;
+  }
+
+  .vi-hero__eyebrow {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .vi-hero__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h1);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--color-text);
+    margin: 0 0 var(--space-md);
+  }
+
+  .vi-hero__lead {
+    font-family: var(--font-body);
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    max-width: 62ch;
+    margin: 0 0 var(--space-lg);
+  }
+
+  .vi-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .vi-hero__link {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .vi-hero__link:hover { opacity: 0.7; }
+
+  /* ── Trụ định vị ── */
+  .vi-pillars {
+    padding: var(--space-xl) 0;
+    background: var(--color-surface);
+  }
+
+  .vi-pillars__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--space-lg);
+  }
+
+  .vi-pillars__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .vi-pillar {
+    padding: var(--space-md);
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-lg);
+  }
+
+  .vi-pillar__icon {
+    font-size: 32px;
+    color: var(--color-primary);
+    display: block;
+    margin-bottom: var(--space-sm);
+  }
+
+  .vi-pillar__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-body-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--space-xs);
+  }
+
+  .vi-pillar__desc {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  /* ── CTA ── */
+  .vi-cta {
+    padding: var(--space-xl) 0;
+    background: var(--color-bg);
+    text-align: center;
+  }
+
+  .vi-cta__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .vi-cta__sub {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    max-width: 52ch;
+    margin: 0 auto var(--space-md);
+  }
+</style>

@@ -39,13 +39,13 @@ export default async function handler(req, res) {
       if (!isNaN(n)) fields['Group size'] = n;
     }
     if (body.tour)      fields['Tour interest'] = body.tour;
-    if (body.message)   fields['Mô tả tình trạng'] = body.message;
+    if (body.message)   fields['Yêu cầu chi tiết của khách'] = body.message;
     if (body.source)    fields['Biết đến qua'] = body.source;
     if (body.duration)  fields['Duration'] = body.duration;
     if (body.pickup)    fields['Đi từ đâu'] = body.pickup;
     if (body.vehicle)   fields['Phương tiện'] = body.vehicle;
     fields['Trạng thái'] = 'New';
-    fields['Ngày booking'] = Date.now();
+    fields['Ngày nhận lead'] = Date.now();
     const token = await getToken();
     const larkRes = await fetch(`${LARK_API}/open-apis/bitable/v1/apps/${BASE_ID}/tables/${TABLE_ID}/records`, {
       method: 'POST',

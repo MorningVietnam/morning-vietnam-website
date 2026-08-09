@@ -278,7 +278,8 @@ const pageUrls = Array.from({ length: TOTAL_PAGES }, (_, i) => {
 
   const peekLastBtn = document.getElementById('flip-peek-last') as HTMLButtonElement;
   let peekTimer: number | null = null;
-  peekLastBtn?.addEventListener('click', () => {
+  peekLastBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
     endOverlay.classList.add('is-peeking');
     const restore = () => {
       endOverlay.classList.remove('is-peeking');

@@ -12,21 +12,27 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 // Vị trí hotspot (top/left/width/height, đơn vị %) được đo BẰNG OCR
 // (tesseract) trên chính ảnh gốc — không đoán mò toạ độ.
 //
-// Muốn thêm/sửa hotspot: sửa mảng HOTSPOTS bên dưới, key = số trang (1-28).
+// Muốn thêm/sửa hotspot: sửa mảng HOTSPOTS bên dưới, key = số trang (1-30).
+//
+// Bản cập nhật 2026 (30 trang, thay 28 trang cũ) — thay đổi đã xác nhận với
+// Thế Anh: dsvn đổi domain gọn hơn, weatherCommunity giữ đúng nhóm cũ (chỉ
+// link WhatsApp copy lại có tham số tracking mới), thêm nhóm WhatsApp "Need a
+// Hand Planning Your Trip?" ở bìa sau (trang 30, KHÁC nhóm weatherCommunity),
+// bỏ hẳn link Vexere (không còn trong bản Canva mới).
 // ═══════════════════════════════════════════════════════════════════════════
 
-const TOTAL_PAGES = 28;
+const TOTAL_PAGES = 30;
 
 const LINKS = {
   evisa: 'https://evisa.gov.vn',
   thithuc: 'https://thithucdientu.gov.vn',
   vietnamTravel: 'https://vietnam.travel/plan-your-trip',
-  weatherCommunity: 'https://chat.whatsapp.com/JaRg7YIBpg3FdkT6kAGGhL?s=cl&p=a&ilr=4',
+  weatherCommunity: 'https://chat.whatsapp.com/JaRg7YIBpg3FdkT6kAGGhL?s=cl&p=i&mlu=4',
+  tripPlanningWhatsApp: 'https://chat.whatsapp.com/HIn9AkOQ2VfAWYneOw0PPC?s=cl&p=i&mlu=4',
   grab: 'https://www.grab.com/vn/en/download/',
   be: 'https://be.com.vn/en/download/',
   greensm: 'https://www.greensm.com/vn-en/download',
-  dsvn: 'https://dsvn.vn/#/',
-  vexere: 'https://vexere.com/vn/ve-tau-hoa.vi',
+  dsvn: 'https://dsvn.vn/',
 };
 
 interface Hotspot {
@@ -40,24 +46,26 @@ interface Hotspot {
 
 const HOTSPOTS: Record<number, Hotspot[]> = {
   4: [
-    { href: LINKS.evisa, label: 'Vietnam official e-Visa portal', top: 43.4, left: 13.1, width: 21.3, height: 3.0 },
-    { href: LINKS.thithuc, label: 'thithucdientu.gov.vn', top: 82.0, left: 16.9, width: 21.7, height: 3.0 },
-    { href: LINKS.vietnamTravel, label: 'vietnam.travel', top: 82.0, left: 48.0, width: 15.5, height: 3.0 },
+    { href: LINKS.evisa, label: 'Vietnam official e-Visa portal', top: 43.3, left: 13.6, width: 20.3, height: 2.6 },
+    { href: LINKS.thithuc, label: 'thithucdientu.gov.vn', top: 82.0, left: 17.4, width: 20.7, height: 2.6 },
+    { href: LINKS.vietnamTravel, label: 'vietnam.travel', top: 82.0, left: 48.6, width: 14.4, height: 2.3 },
   ],
   5: [
-    { href: LINKS.weatherCommunity, label: 'Check the weather with our community', top: 78.0, left: 58.9, width: 27.6, height: 3.0 },
+    { href: LINKS.weatherCommunity, label: 'Check the weather with our community', top: 79.1, left: 59.4, width: 26.5, height: 2.4 },
   ],
   11: [
-    { href: LINKS.grab, label: 'Download Grab', top: 78.8, left: 6.1, width: 10.7, height: 2.4 },
-    { href: LINKS.be, label: 'Download Be', top: 68.6, left: 46.2, width: 10.2, height: 2.6 },
-    { href: LINKS.greensm, label: 'Download Green SM', top: 90.7, left: 6.6, width: 10.7, height: 2.4 },
+    { href: LINKS.grab, label: 'Download Grab', top: 78.8, left: 6.6, width: 9.8, height: 2.4 },
+    { href: LINKS.be, label: 'Download Be', top: 78.6, left: 52.7, width: 9.7, height: 2.2 },
+    { href: LINKS.greensm, label: 'Download Green SM', top: 90.8, left: 7.1, width: 9.7, height: 2.2 },
   ],
   13: [
-    { href: LINKS.dsvn, label: 'DSVN — official train tickets', top: 55.1, left: 58.6, width: 6.5, height: 2.6 },
+    { href: LINKS.dsvn, label: 'DSVN — official train tickets', top: 55.9, left: 59.4, width: 5.1, height: 1.9 },
   ],
   14: [
-    { href: LINKS.dsvn, label: 'DSVN.vn', top: 50.0, left: 75.6, width: 8.8, height: 2.5 },
-    { href: LINKS.vexere, label: 'Vexere — bus tickets', top: 78.1, left: 64.6, width: 8.0, height: 2.4 },
+    { href: LINKS.dsvn, label: 'DSVN.vn', top: 50.1, left: 76.4, width: 7.6, height: 2.1 },
+  ],
+  30: [
+    { href: LINKS.tripPlanningWhatsApp, label: 'Join our WhatsApp group!', top: 54.1, left: 10.6, width: 29.2, height: 3.1 },
   ],
 };
 

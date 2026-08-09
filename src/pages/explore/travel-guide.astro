@@ -5,17 +5,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 // Nội dung Travel Guide — chuyển từ "MNV - Travel Guide Book" (Canva) sang
 // trang web thật để Google/AI search đọc được và link bấm được trực tiếp.
 //
-// Đã CHỦ ĐỘNG BỎ 2 phần khỏi bản này (theo xác nhận của Thế Anh 2026-08-04):
-//   - Food & Drink theo vùng: Canva mới có tên món, chưa có mô tả/ảnh.
-//   - Popular Destinations (Hà Giang Loops, Đà Lạt, Quy Nhơn, Phong Nha):
-//     Canva mới có tên, chưa có mô tả.
-// Cũng bỏ 2 điểm đến trong "Off-the-Beaten-Path" vì nội dung nguồn có lỗi
-// (xem ghi chú cuối chat): Hoàng Su Phì (mô tả bị trùng y hệt Y Tý) và
-// Côn Đảo (mô tả nhắc "karst" / vịnh đá vôi — không đúng địa lý Côn Đảo).
-// Khi có nội dung chuẩn cho các phần này, chỉ cần thêm vào mảng tương ứng.
+// Bản cập nhật 2026-08 — theo bản Canva 30 trang mới (thay bản 28 trang cũ).
+// Toàn bộ nội dung dưới đây transcribe trực tiếp từ ảnh export mới (OCR +
+// đọc ảnh tay, không đoán mò). So với bản cũ:
+//   - Money: thêm hẳn phần FAQ (thẻ tín dụng, tiền mặt, phí ATM, phí giao dịch).
+//   - SIM: thêm đủ 6 kênh mua (bản cũ chỉ có 3).
+//   - Getting Around: thêm "Arriving by air" + chi tiết bus sân bay Hà Nội.
+//   - Transport: thêm Heritage & Experience Trains, Limousine/Sleeper/Local Bus.
+//     Bỏ hẳn link Vexere (không còn trong bản Canva mới).
+//   - Food & Drink: thêm mới hoàn toàn (North/Central/South, tên món ăn).
+//   - Destinations: viết lại theo đúng 3 nhóm + mục Trekking riêng của Canva
+//     (trước đây gộp lẫn 1 danh sách, thiếu Hoàng Su Phì/Côn Đảo do lỗi nguồn —
+//     bản Canva mới đã sửa xong 2 lỗi đó). Bỏ "Đồng Văn Karst Plateau" —
+//     không có trong bản Canva mới.
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Link thật lấy từ Canva (đã kiểm tra từng đường link, không đoán mò)
+// Link thật — đã xác nhận với Thế Anh 2026-08-09
 const LINKS = {
   evisa: 'https://evisa.gov.vn',
   thithuc: 'https://thithucdientu.gov.vn',
@@ -23,9 +28,9 @@ const LINKS = {
   grab: 'https://www.grab.com/vn/en/download/',
   be: 'https://be.com.vn/en/download/',
   greensm: 'https://www.greensm.com/vn-en/download',
-  dsvn: 'https://dsvn.vn/#/',
-  vexere: 'https://vexere.com/vn/ve-tau-hoa.vi',
-  weatherCommunity: 'https://chat.whatsapp.com/JaRg7YIBpg3FdkT6kAGGhL?s=cl&p=a&ilr=4',
+  dsvn: 'https://dsvn.vn/',
+  weatherCommunity: 'https://chat.whatsapp.com/JaRg7YIBpg3FdkT6kAGGhL?s=cl&p=i&mlu=4',
+  tripPlanningWhatsApp: 'https://chat.whatsapp.com/HIn9AkOQ2VfAWYneOw0PPC?s=cl&p=i&mlu=4',
 };
 
 const quickNav = [
@@ -36,21 +41,22 @@ const quickNav = [
   { id: 'connectivity', label: 'SIM & Data' },
   { id: 'getting-around', label: 'Getting Around' },
   { id: 'transport', label: 'Between Regions' },
+  { id: 'food', label: 'Food & Drink' },
   { id: 'culture', label: 'Culture' },
   { id: 'phrases', label: 'Phrases' },
   { id: 'safety', label: 'Safety' },
-  { id: 'destinations', label: 'Off the Beaten Path' },
+  { id: 'destinations', label: 'Destinations' },
 ];
 
 const visaTypes = [
   {
     title: 'E-visa (all nationalities)',
-    body: "Valid for 90 days, single or multiple entry. USD 25 (single-entry) / USD 50 (multiple-entry). Apply only through Vietnam's official e-Visa portal. Processing takes about 3 working days, accepted at 80+ entry points nationwide (airports, land borders, seaports).",
+    body: "Valid for 90 days, single or multiple entry. USD 25 (single-entry) / USD 50 (multiple-entry). Apply only through Vietnam's official government e-Visa portal. Processing normally takes about 3 working days, and the e-visa is now accepted at more than 80 entry points nationwide (airports, land borders and seaports).",
     link: { label: 'evisa.gov.vn', href: LINKS.evisa },
   },
   {
     title: 'Unilateral visa exemption',
-    body: 'Citizens of a growing list of countries (UK, France, Germany, Italy, Spain, Japan, South Korea, Nordic countries, and more) can enter visa-free for 14–45 days depending on nationality. Policies change — always check before you travel.',
+    body: 'Citizens of a growing list of countries (including the UK, France, Germany, Italy, Spain, Japan, South Korea, the Nordic countries, and a number of additional European countries) can enter without a visa for 14–45 days, depending on nationality. Always check the latest entry requirements before you travel, as visa policies and permitted lengths of stay may change.',
   },
   {
     title: 'ASEAN exemptions',
@@ -67,7 +73,7 @@ const weatherRegions = [
     name: 'The North',
     area: 'Hanoi · Sa Pa · Ninh Bình · Ha Long',
     best: 'Mar–Apr | Sep–Nov',
-    notes: ['Nov–Feb: cold', 'Jun–Aug: hot & rain', 'Jul–Aug: typhoon season'],
+    notes: ['Nov–Feb: cold', 'Jun–Aug: rain frequently', 'Jul–Aug: typhoon season'],
   },
   {
     name: 'The Central',
@@ -85,7 +91,7 @@ const weatherRegions = [
 
 const packItems = [
   { item: 'Comfortable clothes', note: 'Cotton is recommended for high humidity.' },
-  { item: 'Rain jacket or poncho', note: 'Showers appear with little warning, especially May–Sep.' },
+  { item: 'Rain jacket or poncho', note: 'Showers can appear with little warning, especially May–Sep.' },
   { item: 'Comfortable walking shoes', note: 'For city walks, hikes and mountain adventures.' },
   { item: 'Warm jacket', note: 'For the North between Nov–Mar, and any Fansipan or mountain visit year-round.' },
   { item: 'Sun protection', note: 'Sunscreen, sunglasses, hat and insect repellent.' },
@@ -95,52 +101,102 @@ const packItems = [
 
 const moneyItems = [
   { title: 'Cash', note: 'Essential for street food, local markets, and rural areas. Carry small notes for everyday purchases.' },
-  { title: 'Cards & digital payments', note: 'Credit cards are widely accepted in hotels, shopping malls, and larger restaurants — small shops and street stalls are still largely cash or QR-only.' },
+  { title: 'Cards & digital payments', note: 'Credit cards are widely accepted in hotels, shopping malls, and larger restaurants.' },
   { title: 'Currency exchange', note: 'Banks and licensed exchange counters offer reliable rates. Airport counters are convenient but often less competitive.' },
-  { title: 'ATMs', note: 'Easy to find in cities, limited in remote destinations. Withdraw enough cash before heading to rural or mountainous areas.' },
+  { title: 'ATMs', note: 'Easy to find in cities, but limited in remote destinations. Withdraw enough cash before traveling to rural or mountainous areas.' },
 ];
 
-const moneyTips = [
-  'Most ATMs charge 20,000–55,000 VND (~USD 0.80–2.20) per withdrawal. TPBank and VPBank are known for fee-free withdrawals on many international cards — check with your card issuer.',
-  'Card transaction fees run 1–3% for Visa/Mastercard. Apple Pay and Google Pay usually carry no extra fee where accepted.',
+const moneyFaqs = [
+  { q: 'Can I pay by credit card everywhere?', a: 'Cards are accepted at hotels, malls, chain restaurants and most city-center businesses. But small shops, street food stalls, local markets and rural areas are still largely cash-only, or increasingly QR-only.' },
+  { q: 'Should I carry cash in Vietnam?', a: 'Cash is still essential for small purchases, especially at street food stalls, local markets, and in rural areas. Carry small denomination notes for everyday spending.' },
+  { q: 'Can I withdraw cash using an international card?', a: 'Exchange only a small amount at the airport for immediate expenses, then get better rates at banks or licensed exchange counters in the city.' },
+  { q: 'Do ATMs charge withdrawal fees?', a: 'Most ATMs in Vietnam charge 20,000–55,000 VND (USD 0.80–2.20) per withdrawal. VPBank and Techcombank are the banks offering fee-free withdrawals for many international cards (though this may vary depending on your card issuer).' },
+  { q: 'What are the transaction fees for Visa, Mastercard, Wise, Revolut, Apple Pay, Google Pay, and local ATMs?', a: 'Transaction fees: Visa/Mastercard (1–3%), ATM withdrawal (20,000–55,000 VND per transaction). Pro-tip: use TPBank or VPBank for zero fees — Apple Pay and Google Pay usually carry no extra fee.' },
 ];
 
 const simProviders = [
-  { name: 'Viettel', note: 'Largest network with the widest rural and mountain coverage — the safest choice for remote areas. Tourist SIMs run ~60,000–200,000 VND (USD 2–8) for 15–30 days of data.' },
-  { name: 'Vinaphone & MobiFone', note: 'Reliable in cities and along main tourist routes, slightly weaker in deep rural or mountainous terrain. eSIM plans usually include a local +84 number — handy for Grab, OTP, and bookings.' },
-  { name: 'Airalo / Holafly (eSIM)', note: 'Convenient if your phone supports eSIM — activate before you fly, or buy an official carrier eSIM (passport registration required) on arrival.' },
+  { name: 'Viettel', note: 'Largest network with the widest rural and mountain coverage — the safest choice if you\'re heading to remote areas. Tourist SIMs run roughly 60,000–200,000 VND (~USD 2–8) for 15–30 days of data. Official data-only eSIMs are available at Viettel stores, while a physical SIM is required if you need a local +84 number for app registration or OTP verification.' },
+  { name: 'Vinaphone & MobiFone', note: 'Reliable in cities and along main tourist routes, slightly weaker in deep rural or mountainous terrain. Both offer physical SIMs and official eSIMs, with most eSIM plans including a local +84 phone number — ideal for Grab, OTP verification, restaurant bookings, and other local services.' },
+  { name: 'Airalo / Holafly (eSIM)', note: 'Convenient if your phone supports it — activate before you fly via providers like Airalo or Holafly, or buy an official carrier eSIM (passport registration required) on arrival.' },
 ];
 
 const whereToBuySim = [
-  { title: 'At the airport', note: 'Convenient on arrival, but prices are often higher.' },
-  { title: 'Official carrier stores', note: 'Viettel, Vinaphone, MobiFone — reliable service, passport required for registration.' },
-  { title: 'Online eSIM', note: 'Purchase before your trip and activate with a QR code.' },
+  { title: 'At the airport', note: 'Convenient upon arrival, but prices are often higher.' },
+  { title: 'Official carrier stores', note: 'Viettel, Vinaphone, and MobiFone offer reliable service and a variety of prepaid plans (passport required for registration).' },
+  { title: 'Convenience stores & retailers', note: 'Order a physical SIM or eSIM directly from the official websites of major mobile carriers before your trip.' },
+  { title: 'Online eSIM', note: 'A convenient option for compatible devices — purchase before your trip and activate with a QR code.' },
+  { title: 'Online', note: 'Available in most cities, though activation support may vary.' },
+  { title: 'Contacting us', note: "Alternatively, we can help you purchase an eSIM before your trip. Just contact us, and we'll be happy to assist you with the setup.", href: '/contact' },
+];
+
+const arrivalAirports = [
+  'Hanoi (Noi Bai International Airport)',
+  'Da Nang (Da Nang International Airport)',
+  'Ho Chi Minh City (Tan Son Nhat International Airport)',
+  'Nha Trang (Cam Ranh International Airport)',
 ];
 
 const rideHailingApps = [
-  { name: 'Grab', note: 'The most widely used ride-hailing app in Vietnam — cars, motorbikes, food delivery, airport transfers.', href: LINKS.grab },
-  { name: 'Be', note: 'A popular local ride-hailing app with competitive fares for car and motorbike rides.', href: LINKS.be },
-  { name: 'Green SM', note: "Vietnam's all-electric taxi service — clean vehicles, professional drivers.", href: LINKS.greensm },
+  { name: 'Grab', note: 'The most widely used ride-hailing app in Vietnam for cars, motorbikes, food delivery, and airport transfers.', href: LINKS.grab },
+  { name: 'Be', note: 'A popular local ride-hailing app offering competitive fares for car and motorbike rides.', href: LINKS.be },
+  { name: 'Green SM', note: "Vietnam's all-electric taxi service, known for clean vehicles and professional drivers.", href: LINKS.greensm },
 ];
 
 const cityTransport = [
-  { title: 'Motorbike taxi (app-based)', note: 'Green SM, Grab or Be — cheap and convenient, fares are fixed in-app so there is no negotiating.' },
-  { title: 'Taxi', note: 'A safe, comfortable option for longer distances. Stick to reputable brands (Green SM, Mai Linh, Vinasun) or app-based booking to avoid meter tampering.' },
-  { title: 'Public bus', note: 'Stations and signboards are everywhere. Search Google Maps and choose the bus option for the best route and stops.' },
+  { title: 'Motorbike taxi (app-based)', note: 'Green SM, Grab or Be — a cheap, convenient way to get around; fares are fixed in-app, avoiding negotiation.' },
+  { title: 'Taxi', note: 'A safe, comfortable option for longer distances — stick to reputable brands (Green SM, Mai Linh, Vinasun) or app-based booking to avoid meter tampering.' },
+  { title: 'Public bus', note: 'You can see bus stations and signboards everywhere on the road. Search Google Maps and choose the bus option to see the best route and stops.' },
 ];
 
 const airlines = [
   { name: 'Vietnam Airlines', note: 'Most reliable. 23kg baggage, meal and seat selection included. Best if you have a tight schedule or an important connection.' },
-  { name: 'Vietjet Air', note: 'Budget option and the cheapest, widest network including smaller cities. ~73% on-time rate, late-evening flights prone to delays, extra fees for baggage/seat/boarding pass.' },
-  { name: 'Bamboo Airways', note: 'Mid-range price and service (~81% on-time, 20kg baggage included). Network has shrunk to about a dozen domestic routes.' },
-  { name: 'Sun PhuQuoc Airways', note: "Vietnam's newest full-service airline, based in Phú Quốc. Worth checking if your trip includes the island." },
-  { name: 'Vietravel Airlines', note: 'Smaller leisure-focused airline with a growing network across Hà Nội, HCMC, Hải Phòng, Thanh Hóa, Nha Trang, Buôn Ma Thuột, Đà Nẵng, Phú Quốc, Vinh and more.' },
+  { name: 'Vietjet Air', note: 'Budget option and the cheapest, widest network (even smaller cities). On-time rate ~73%, late-evening flights (after 8 PM) prone to delays. Extra fees for baggage, seat, printed boarding pass, etc.' },
+  { name: 'Bamboo Airways', note: 'Mid-range in price and service (~81% on-time, 20kg baggage included). Network has shrunk from 81 destinations to about a dozen domestic routes.' },
+  { name: 'Sun PhuQuoc Airways', note: "Vietnam's newest full-service airline, based in Phú Quốc. Worth checking if your trip includes the island — comfortable service and a growing domestic and international network." },
+  { name: 'Vietravel Airlines', note: 'Smaller leisure-focused airline with a growing network: Hà Nội, HCM City, Hải Phòng, Thanh Hóa, Nha Trang, Buôn Ma Thuột, Đà Nẵng, Phú Quốc, Vinh and selected international routes.' },
 ];
 
 const trainClasses = [
-  { name: 'Soft seat', note: 'Cheapest option, day trips only.' },
+  { name: 'Soft seat', note: 'Cheapest, day trips only.' },
   { name: 'Hard sleeper', note: '6-berth, air-conditioned.' },
-  { name: 'Soft sleeper', note: '4-berth, air-conditioned — most comfortable, the standard choice for overnight trains.' },
+  { name: 'Soft sleeper', note: '4-berth, air-conditioned — most comfortable, standard choice for overnight trains.' },
+];
+
+const heritageTrains = [
+  { name: 'Hue – Da Nang Heritage Train', note: 'Cultural train across Hai Van Pass with live performances and coastal views. Some departures stop at Lang Co Station.' },
+  { name: 'The Vietage — Da Nang to Quy Nhơn', note: "Vietnam's first luxury train: 12-seat carriages, gourmet dining, bar and massage. A journey turned into an unforgettable experience." },
+  { name: 'Da Lat – Trại Mát Heritage Railway', note: "7km remnant of the old Da Lat – Thap Cham cog railway. A short (well under 1 hour) but scenic ride through flower farms and pine forest to a hillside pagoda." },
+  { name: 'Hanoi Double Decker Tourist Train', note: "Panoramic sightseeing of Hanoi's historic streets, lakes and French architecture — explore the capital without the traffic." },
+  { name: "Hanoi's Five Gates Train", note: 'Weekend cultural charter service with live xam music. Welcomed ~70,000 riders in under a year.' },
+];
+
+const longDistanceBus = [
+  { title: 'Limousine bus', note: 'A premium bus service with spacious reclining seats, ideal for short and mid-distance journeys.' },
+  { title: 'Sleeper / cabin bus', note: "A popular overnight option featuring sleeper berths or private cabins for added comfort. Book through online platforms, directly on the bus operator's website, or ask your hotel, travel agency, or tour operator to make the reservation for you." },
+  { title: 'Local bus', note: "Can be quite challenging for foreign travellers due to language barriers and ticket booking. If you need help finding the right bus or arranging transportation, feel free to message Morning Vietnam — we're happy to assist you.", href: LINKS.tripPlanningWhatsApp },
+];
+
+const intercityRoutes = [
+  { route: 'Hanoi ⇄ Sa Pa', time: '5.5–6.5 hrs' },
+  { route: 'Hanoi ⇄ Ha Long', time: '2.5–3.5 hrs' },
+  { route: 'Hanoi ⇄ Ninh Bình', time: '2–2.5 hrs' },
+  { route: 'Hanoi ⇄ Ha Giang', time: '6–7 hrs' },
+  { route: 'Hanoi ⇄ Cao Bằng', time: '8–9 hrs' },
+  { route: 'Ninh Bình ⇄ Sa Pa', time: '7–8 hrs' },
+  { route: 'Ninh Bình ⇄ Ha Long', time: '4–5 hrs' },
+  { route: 'Ha Long ⇄ Sa Pa', time: '6.5–7.5 hrs' },
+  { route: 'Hanoi ⇄ Quảng Bình', time: '9.5–10.5 hrs' },
+  { route: 'Da Nang ⇄ Hue', time: '2.5–3 hrs' },
+  { route: 'Da Nang ⇄ Nha Trang', time: '7.5–8.5 hrs' },
+  { route: 'Nha Trang ⇄ Da Lat', time: '3.5–4.5 hrs' },
+  { route: 'Ho Chi Minh City ⇄ Nha Trang', time: '8–9 hrs' },
+  { route: 'Ho Chi Minh City ⇄ Cần Thơ', time: '3.5–4.5 hrs' },
+];
+
+const foodByRegion = [
+  { region: 'The North', dishes: ['Phở', 'Bún Chả', 'Chả Cá', 'Bánh Cuốn', 'Bánh Mì', 'Cơm Bản'] },
+  { region: 'The Central', dishes: ['Mì Quảng', 'Bún Bò Huế', 'Bánh Khoái', 'Cao Lầu', 'Nem Chua', 'Cơm Hến'] },
+  { region: 'The South & Central Highlands', dishes: ['Bánh Xèo', 'Cơm Tấm', 'Hủ Tiếu', 'Canh Chua', 'Bún Đỏ', 'Lẩu Mắm'] },
 ];
 
 const cultureEtiquette = [
@@ -170,30 +226,44 @@ const safetyHotlines = [
 ];
 
 const scams = [
-  'Use trusted taxi companies (Mai Linh, Vinasun) or ride-hailing apps like Grab, Xanh SM and Be.',
+  'Use trusted taxi companies (Mai Linh, Vinasun) or ride-hailing apps like Grab, Green SM and Be.',
   'Vietnamese Dong has many zeros — always double-check your change before leaving.',
   'Avoid booking tours from unsolicited street offers. Choose licensed tour operators or reputable travel agencies instead.',
 ];
 
-// "Off-the-Beaten-Path" — chỉ giữ các điểm có mô tả đầy đủ, đúng, không trùng lặp.
-const destinations = [
-  { name: 'Nậm Cạn', note: "A small Red Dao community about 30km from Sa Pa town, down a road rough enough that most tour buses turn back. Trek between rice paddies still worked by hand and stay the night in a homestay with a family Morning Vietnam has worked with for years." },
+// "1. Classic, Must-See Vietnam" — chỉ có tên + ảnh trong Canva, không có mô tả.
+const classicDestinations = ['Hà Nội', 'Ninh Bình', 'Vịnh Hạ Long', 'Huế', 'Đà Nẵng', 'Hội An', 'Sa Pa', 'Hồ Chí Minh City', 'Nha Trang', 'Phú Quốc'];
+
+// "2. Popular Destinations" — chỉ có tên + ảnh trong Canva, không có mô tả.
+const popularDestinations = ['Hà Giang Loops', 'Đà Lạt', 'Quy Nhơn', 'Phong Nha Cave'];
+
+// "3. Unique & Off-the-Beaten-Path" — có mô tả đầy đủ.
+const offBeatenPath = [
+  { name: 'Nậm Cang', note: "A small Red Dao community about 30km from Sa Pa town, down a road rough enough that most tour buses turn back. Terraced valleys unfold slower here, without the souvenir-stall crowding of Sa Pa's main trails. Trek between rice paddies still worked by hand, stay the night in a homestay with a family Morning Vietnam has worked with for years, and wake to mist still sitting in the valley below." },
+  { name: 'Lai Châu', note: 'Famous for its breathtaking sea of clouds, where mountain peaks rise above a blanket of white mist at sunrise. Combined with its stunning highland scenery, it is a perfect destination for nature lovers, photographers, and anyone seeking unforgettable mountain views.' },
+  { name: 'Mai Châu', note: 'A quiet postcard unfolds between the hills, just a couple of hours from Hanoi. Wooden stilt houses rise above a patchwork of rice paddies, framed by soft blue mountains in the late afternoon light. Cycle through White Thai villages, settle into a homestay for the night, or simply watch farmers at work in the fields below.' },
   { name: 'Y Tý', note: 'A cloud-forest village near the Chinese border where sea-of-cloud mornings roll through the valley before burning off by mid-morning. Hà Nhì communities here still build earthen "mushroom houses" with thick clay walls and thatched roofs, built to hold warmth through the mountain winters. Chase the cloud sea at sunrise from Lảo Thẩn peak, wander between hamlets on foot, or visit during the Gạ Ma Do festival if your timing lines up.' },
-  { name: 'Đồng Văn Karst Plateau', note: "The far northern edge of Ha Giang province, where jagged limestone plateau gives way to terraced buckwheat and corn fields on impossibly steep slopes. Climb Lũng Cú Flagpole, marking Vietnam's northernmost point." },
-  { name: 'Lai Châu', note: 'Famous for its breathtaking sea of clouds, where mountain peaks rise above a blanket of white mist at sunrise — a perfect destination for nature lovers and photographers.' },
-  { name: 'Mù Cang Chải', note: 'Genuine family homestays and rice terraces among the most photographed in the country. La Pán Tẩn, Chế Cu Nha and Dế Xu Phình offer three distinct terrace formations within a short drive of each other.' },
-  { name: 'Pù Luông', note: "Layered rice terraces roll across the valley floor, framed by the Pù Luông Nature Reserve's forested peaks, with none of Sa Pa's crowds. Thái stilt houses dot the hillsides." },
-  { name: 'Măng Đen', note: 'A hill town in the Central Highlands often called "a second Đà Lạt," minus the crowds. Pine forests wrap around a scatter of lakes and waterfalls.' },
-  { name: 'Mũi Né', note: 'A coastal town shaped by wind, sand, and endless dunes. Strong ocean winds make it one of Southeast Asia\'s top spots for kitesurfing.' },
-  { name: 'Côn Đảo', note: "A remote archipelago 230km off Vietnam's southern coast, kept wild by more than a century as a prison island — around 80% of the main island is still forest today. Come for quiet beaches like Đầm Trâu, or the sea turtles that nest here from May to October, among the largest nesting grounds in the country. At Hàng Dương Cemetery, locals still come at dusk to light incense for Võ Thị Sáu — the island's history never far from the surface." },
-  { name: 'Cái Răng Floating Market', note: "Boats loaded with pineapples, watermelons and dragon fruit gather before sunrise outside Cần Thơ. The Mekong Delta's largest floating market — arrive by 6am to catch it at its busiest." },
-  { name: 'Trà Sư Cajuput Forest', note: 'A vast flooded cajuput forest in the Mekong Delta, where emerald-green duckweed blankets the waterways and birds glide quietly overhead.' },
+  { name: 'Pù Luông', note: "Layered rice terraces roll across the valley floor here, framed by the Pù Luông Nature Reserve's forested peaks, with none of Sa Pa's crowds. Thai stilt houses dot the hillsides, water wheels turn slowly along the streams, and the pace of the whole valley seems to slow to match them. Trek between villages on foot or by bicycle, cool off at Hieu Waterfall, or watch the terraces flood and mirror the sky just before planting season." },
+  { name: 'Mù Cang Chải', note: 'Genuine family homestays here with only the basics are part of what keeps this valley feeling undiscovered despite its rice terraces being among the most photographed in the country. La Pán Tẩn, Chế Cu Nha and Dế Xu Phình offer three distinct terrace formations within a short drive of each other. Trek between viewpoints during the September–October harvest, join a local family in the fields, or simply watch the whole valley turn gold at sunset.' },
+  { name: 'Hoàng Su Phì (Hà Giang)', note: "Rice terraces here don't just cascade down one hillside, they wrap entire mountain ranges in overlapping curves, among the most dramatic in Vietnam and far less photographed than Sa Pa's. La Chí, Dao and Nùng communities have carved these fields by hand for generations." },
+  { name: 'Măng Đen', note: 'A hill town in the Central Highlands often called "a second Đà Lạt," minus the crowds. Pine forests wrap around a scatter of lakes and waterfalls, and the air stays noticeably cooler than the lowlands just below. Walk among the pines at Đắk Ke Lake, visit a Ba Na or Xơ Đăng village nearby, or simply enjoy a town that still feels like it hasn\'t been discovered yet.' },
+  { name: 'Mũi Né', note: "A coastal town shaped by wind, sand, and endless dunes. Towering red and white sand dunes roll along the coast, drawing dune-buggy rides and quiet sunrise walks. Strong ocean winds make it one of Southeast Asia's top spots for kitesurfing, while nearby fishing villages keep the pace refreshingly slow." },
+  { name: 'Côn Đảo Island', note: "Ha Long Bay's calmer twin, rising from the same emerald water with a fraction of the boat traffic. The terrains here are just as dramatic, but the coves stay quiet enough to hear your own paddle. Kayak between limestone islands, swim off a beach with no one else on it, or stay overnight on the water for a sunrise no day-tripper gets to see." },
+  { name: 'Cái Răng Floating Market', note: "Before sunrise, boats loaded with pineapples, watermelons and dragon fruit begin gathering on the water outside Cần Thơ, each one hanging a sample of its cargo from a tall pole so buyers can spot it from a distance. This is the Mekong Delta's largest floating market, and it's still very much a working one — arrive by 6am to catch it at its busiest, before the tour boats do. Drift between vendor boats by smaller sampan, buy breakfast straight off the water, or watch the market wind down as the delta's ordinary day begins around it." },
+  { name: 'Trà Sư Cajuput Forest', note: 'A vast flooded cajuput forest in the Mekong Delta, where emerald-green duckweed blankets the waterways and birds glide quietly overhead. Wooden boats drift through narrow channels beneath towering trees, revealing one of southern Vietnam\'s richest wetland ecosystems.' },
+];
+
+// Mục riêng của Canva, không đánh số — chèn liền sau "Off-the-Beaten-Path".
+const trekkingParks = [
+  { name: 'Trekking in Tà Chì Nhù', note: "One of Vietnam's most popular trekking peaks, rising 2,979 meters above sea level in Yên Bái Province. Renowned for its breathtaking sea of clouds and panoramic mountain views, the summit offers unforgettable sunrises above a blanket of mist. In autumn, its hills are covered with golden wild grass, creating one of the most iconic landscapes in northern Vietnam." },
+  { name: 'Trekking in Pu Ta Leng', note: "Vietnam's second-highest mountain, standing at 3,049 meters above sea level. Known for its challenging trekking routes, ancient forests, and spectacular sea of clouds, it offers one of the most rewarding hiking experiences in northern Vietnam. During spring, the mountain comes alive with vibrant rhododendron blooms." },
+  { name: 'Cúc Phương National Park', note: "Vietnam's first and oldest national park, where thousand-year-old trees rise out of dense limestone-forest canopy. Ancient cave systems, resident primates and one of the country's most respected endangered-species rescue centers all sit within a short walk of each other. Trek to the Cave of Prehistoric Man, cycle the park's quiet roads at dawn when wildlife is most active, or visit the Primate Rescue Center." },
 ];
 ---
 
 <BaseLayout
   title="Vietnam Travel Guide"
-  description="Everything you need to know before you go: visas, weather, money, SIM cards, getting around, culture, safety, and off-the-beaten-path destinations across Vietnam."
+  description="Everything you need to know before you go: visas, weather, money, SIM cards, getting around, food, culture, safety, and destinations across Vietnam."
 >
 
   <!-- ═══ HERO ══════════════════════════════════════════════════════════ -->
@@ -207,7 +277,7 @@ const destinations = [
         <span>Travel Guide</span>
       </nav>
       <h1>Your Vietnam travel guide.</h1>
-      <p class="tg-hero__sub">Visas, weather, money, SIM cards, getting around, culture, safety, and the routes off the well-worn path — everything before you land.</p>
+      <p class="tg-hero__sub">Visas, weather, money, SIM cards, getting around, food, culture, safety, and the routes off the well-worn path — everything before you land.</p>
       <a href="/explore/travel-guide/book" class="tg-hero__book-link">Prefer the original guide? Flip through it page by page →</a>
     </div>
   </section>
@@ -266,7 +336,7 @@ const destinations = [
           </div>
         ))}
       </div>
-      <p class="tg-note">Weather can be unpredictable at the edges of each season — build in a flexible day or two where you can.</p>
+      <p class="tg-note">The weather can be a bit unpredictable — build in a flexible day or two where you can.</p>
       <a href={LINKS.weatherCommunity} target="_blank" rel="noopener noreferrer" class="tg-note-link">Check the weather with our community here →</a>
     </div>
   </section>
@@ -300,8 +370,15 @@ const destinations = [
           </div>
         ))}
       </div>
-      <div class="tg-callout">
-        {moneyTips.map(tip => <p>{tip}</p>)}
+
+      <h3 class="tg-subheading">FAQ</h3>
+      <div class="tg-faq">
+        {moneyFaqs.map(f => (
+          <div class="tg-faq__item">
+            <p class="tg-faq__q">{f.q}</p>
+            <p class="tg-faq__a">{f.a}</p>
+          </div>
+        ))}
       </div>
     </div>
   </section>
@@ -325,6 +402,7 @@ const destinations = [
           <div class="tg-card tg-card--sm">
             <h4>{w.title}</h4>
             <p>{w.note}</p>
+            {w.href && <a href={w.href} class="tg-card__link">Get in touch →</a>}
           </div>
         ))}
       </div>
@@ -336,7 +414,23 @@ const destinations = [
     <div class="container">
       <p class="section-label">On the ground</p>
       <h2>Getting around</h2>
-      <p class="tg-note">Green SM, Grab and Be can all be booked directly from your phone — download before you land.</p>
+
+      <h3 class="tg-subheading">Arriving in Vietnam by air</h3>
+      <ul class="tg-checklist tg-checklist--plane">
+        {arrivalAirports.map(a => <li>{a}</li>)}
+      </ul>
+      <div class="tg-callout tg-callout--light">
+        <p>Vietnam is gradually introducing a Digital Arrival Card at selected international airports. Before you travel, check whether your arrival airport requires online registration.</p>
+      </div>
+
+      <h3 class="tg-subheading">From the airport to the city center — Hanoi example</h3>
+      <div class="tg-card">
+        <p>From Noi Bai Airport to central Hanoi, use Google Maps to find your route. Key lines include 86, 68, 07, 17, 109, 90, E10, NB01, NB02. Fares run 14,000–50,000 VND, operating roughly 05:00–22:30.</p>
+        <p>Hanoi has introduced electronic ticket payments on selected bus routes — pay using a bank card, mobile wallet, QR code, or a transport smart card.</p>
+        <p><strong>Electronic ticketing is currently available on:</strong> BRT Line BRT 01 · Electric Bus Routes E01–E09 · Regular Bus Routes 02, 08, 21, 32, 58, 64, 65, 74, 103, 142, 143, 146, 157 and 159.</p>
+      </div>
+
+      <p class="tg-note" style="margin-top: 32px;">Green SM, Grab and Be can all be booked directly from your phone — download before you land.</p>
       <div class="tg-grid tg-grid--3">
         {rideHailingApps.map(app => (
           <div class="tg-card">
@@ -377,8 +471,8 @@ const destinations = [
       <div class="tg-grid tg-grid--2">
         <div class="tg-card">
           <h4>Buying tickets</h4>
-          <p>Official channel: Vietnam Railways at <a href={LINKS.dsvn} target="_blank" rel="noopener noreferrer">DSVN</a> — real-time schedules, seat selection, e-tickets. Vietnam-issued bank cards only.</p>
-          <p>For foreigners: <a href={LINKS.vexere} target="_blank" rel="noopener noreferrer">Vexere</a> accepts international card payment and emails your e-ticket. Or buy at any station ticket window (cash only).</p>
+          <p>Official channel: Vietnam Railways at <a href={LINKS.dsvn} target="_blank" rel="noopener noreferrer">DSVN</a> — shows real-time schedules and lets you pick exact seats. Only accepts Vietnam-issued bank cards.</p>
+          <p>Buy at any railway station ticket window (cash only), or contact us and we can help you purchase a train ticket.</p>
         </div>
         <div class="tg-card">
           <h4>Seat / berth classes</h4>
@@ -391,31 +485,75 @@ const destinations = [
         <div class="tg-card tg-card--sm">
           <span class="tg-tag">Most scenic route</span>
           <h4>Hue – Da Nang</h4>
-          <p>2.5–3 hour journey with views of Lang Co Bay, Lap An Lagoon and the East Sea. For the best daytime scenery, choose SE1, SE2, SE4 or SE10 and book a window seat.</p>
+          <p>2.5–3 hour journey with stunning views of Lang Co Bay, Lap An Lagoon and the East Sea. For the best daytime scenery, choose SE1, SE2, SE4 or SE10 and book a window seat.</p>
         </div>
         <div class="tg-card tg-card--sm">
           <span class="tg-tag">Popular route</span>
           <h4>Hanoi – Lao Cai</h4>
-          <p>Overnight train to Lào Cai is a classic way to start a trip to Sa Pa. Slower than the bus but memorable, especially in a soft sleeper cabin. Book a few days ahead in peak season (Sep–Oct, Dec–Feb).</p>
+          <p>Overnight train to Lào Cai is a classic way to start your trip to Sa Pa. Slower than the bus but comfortable and memorable, especially in a soft sleeper cabin. Book a few days ahead in peak seasons (Sep–Oct, Dec–Feb).</p>
         </div>
+      </div>
+
+      <h3 class="tg-subheading">Heritage & experience trains</h3>
+      <div class="tg-grid tg-grid--3">
+        {heritageTrains.map(t => (
+          <div class="tg-card tg-card--sm">
+            <h4>{t.name}</h4>
+            <p>{t.note}</p>
+          </div>
+        ))}
+      </div>
+      <p class="tg-note">Tickets can be booked at the railway stations or through <a href={LINKS.dsvn} target="_blank" rel="noopener noreferrer" style="color: var(--color-java); font-weight: 700;">DSVN.vn</a>.</p>
+
+      <h3 class="tg-subheading">Limousine, sleeper & local bus</h3>
+      <div class="tg-grid tg-grid--3">
+        {longDistanceBus.map(b => (
+          <div class="tg-card tg-card--sm">
+            <h4>{b.title}</h4>
+            <p>{b.note}</p>
+            {b.href && <a href={b.href} target="_blank" rel="noopener noreferrer" class="tg-card__link">Message us →</a>}
+          </div>
+        ))}
+      </div>
+
+      <h3 class="tg-subheading">Popular intercity routes</h3>
+      <p class="tg-note">Even with this in hand, booking it all yourself is still a wild ride — we can assist with booking bus tickets for all major routes and operators throughout Vietnam.</p>
+      <div class="tg-route-grid">
+        {intercityRoutes.map(r => (
+          <div class="tg-route-grid__row">
+            <span>{r.route}</span>
+            <span class="tg-route-grid__time">{r.time}</span>
+          </div>
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- ═══ COFFEE & BIA HƠI ══════════════════════════════════════════════ -->
-  <section class="tg-section tg-section--alt" id="coffee">
+  <!-- ═══ FOOD & DRINK ══════════════════════════════════════════════════ -->
+  <section class="tg-section tg-section--alt" id="food">
     <div class="container">
-      <p class="section-label">A local ritual</p>
-      <h2>Vietnamese coffee & bia hơi</h2>
+      <p class="section-label">Eat like a local</p>
+      <h2>Food & drink by region</h2>
+      {foodByRegion.map(f => (
+        <div class="tg-food-region">
+          <h3 class="tg-subheading" style="margin-top: 0;">{f.region}</h3>
+          <div class="tg-chip-list">
+            {f.dishes.map(d => <span class="tg-chip">{d}</span>)}
+          </div>
+        </div>
+      ))}
+
+      <h3 class="tg-subheading">Vietnamese coffee & bia hơi</h3>
       <div class="tg-grid tg-grid--2">
         <div class="tg-card">
           <h3>Coffee culture</h3>
-          <p>Coffee in Vietnam isn't just morning fuel — it's a whole vibe. Grab a tiny plastic stool, watch the world go by, and join the locals for a slow coffee break. Look out for egg coffee, coconut coffee, iced milk coffee, and phin coffee.</p>
+          <p>Coffee in Vietnam is not just a morning fuel, it's a whole vibe. Grab a tiny plastic stool, watch the world go by, and join the locals for a slow coffee break. Look out for egg coffee, salt coffee, iced milk coffee, and phin coffee.</p>
         </div>
         <div class="tg-card">
           <h3>Bia hơi (fresh beer)</h3>
-          <p>Brewed fresh daily and served at street-side beer corners — a ritual, not just a drink. Tạ Hiện Street in Hanoi and Bùi Viện Street in Ho Chi Minh City are the famous spots, but the real local experience is beyond the busy streets.</p>
-          <p>If someone raises a glass and says <em>"Một, hai, ba, dzô!"</em> — they're inviting the whole table to toast together.</p>
+          <p>Bia hơi is more than just a drink in Vietnam — it's a simple local ritual. Brewed fresh every day and served at street-side beer corners, this light and refreshing draft beer is where people come to relax, share stories, and enjoy the evening after a long day.</p>
+          <p>You may have heard of Tạ Hiện Beer Street in Hanoi or Bùi Viện Street in Ho Chi Minh City, the famous spots where travellers gather for a lively night out. But if you want to experience beer like a local, look beyond the busy streets.</p>
+          <p>If someone raises a glass and says <em>"Một, hai, ba, dzô!"</em> — they're inviting everyone at the table to toast together.</p>
         </div>
       </div>
     </div>
@@ -492,11 +630,33 @@ const destinations = [
   <!-- ═══ DESTINATIONS ══════════════════════════════════════════════════ -->
   <section class="tg-section tg-section--alt" id="destinations">
     <div class="container">
-      <p class="section-label">Beyond the postcard</p>
-      <h2>Off the beaten path</h2>
+      <p class="section-label">Where to go</p>
+      <h2>Destinations</h2>
+
+      <h3 class="tg-subheading" style="margin-top: 0;">1. Classic, must-see Vietnam</h3>
+      <div class="tg-chip-list">
+        {classicDestinations.map(d => <span class="tg-chip">{d}</span>)}
+      </div>
+
+      <h3 class="tg-subheading">2. Popular destinations</h3>
+      <div class="tg-chip-list">
+        {popularDestinations.map(d => <span class="tg-chip">{d}</span>)}
+      </div>
+
+      <h3 class="tg-subheading">3. Unique & off-the-beaten-path</h3>
       <p class="tg-note">The routes without the souvenir stalls — where Morning Vietnam actually takes people.</p>
       <div class="tg-grid tg-grid--3 stagger">
-        {destinations.map((d, i) => (
+        {offBeatenPath.map((d, i) => (
+          <div class={`tg-dest-card reveal reveal-delay-${(i % 5) + 1}`}>
+            <h3>{d.name}</h3>
+            <p>{d.note}</p>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="tg-subheading">Trekking & national parks</h3>
+      <div class="tg-grid tg-grid--3 stagger">
+        {trekkingParks.map((d, i) => (
           <div class={`tg-dest-card reveal reveal-delay-${(i % 5) + 1}`}>
             <h3>{d.name}</h3>
             <p>{d.note}</p>
@@ -811,6 +971,35 @@ const destinations = [
     line-height: 1.65;
   }
 
+  /* ── FAQ (money) ──────────────────────────────────────────────── */
+  .tg-faq {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .tg-faq__item {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tg-faq__item:last-child { border-bottom: none; }
+
+  .tg-faq__q {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15.5px;
+    color: var(--color-nordic);
+    margin-bottom: 6px;
+  }
+
+  .tg-faq__a {
+    font-size: 14.5px;
+    color: var(--color-nordic);
+    opacity: 0.7;
+    line-height: 1.65;
+  }
+
   /* ── Callout box ──────────────────────────────────────────────── */
   .tg-callout {
     background: var(--color-nordic);
@@ -831,6 +1020,95 @@ const destinations = [
     color: var(--color-riptide);
     font-weight: 700;
     text-decoration: underline;
+  }
+
+  .tg-callout--light {
+    background: white;
+    border: 1px solid var(--color-border);
+    margin-bottom: 24px;
+  }
+
+  .tg-callout--light p {
+    color: var(--color-nordic);
+    opacity: 0.7;
+  }
+
+  /* ── Checklist (also reused for airport list) ────────────────── */
+  .tg-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tg-checklist li {
+    font-size: 15px;
+    color: var(--color-nordic);
+    opacity: 0.75;
+    line-height: 1.6;
+    padding-left: 26px;
+    position: relative;
+  }
+
+  .tg-checklist li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-java);
+    font-weight: 700;
+  }
+
+  .tg-checklist--plane li::before {
+    content: '✈';
+  }
+
+  /* ── Chip list (food dishes, photo-only destinations) ────────── */
+  .tg-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .tg-chip {
+    display: inline-block;
+    background: white;
+    border: 1px solid var(--color-border);
+    color: var(--color-nordic);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 100px;
+  }
+
+  .tg-section--alt .tg-chip { background: white; }
+
+  .tg-food-region:last-of-type .tg-chip-list { margin-bottom: 40px; }
+
+  /* ── Route grid (intercity times) ────────────────────────────── */
+  .tg-route-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 32px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .tg-route-grid__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 14px;
+    color: var(--color-nordic);
+  }
+
+  .tg-route-grid__time {
+    opacity: 0.6;
+    font-weight: 600;
+    white-space: nowrap;
   }
 
   /* ── Table (phrases) ──────────────────────────────────────────── */
@@ -899,32 +1177,6 @@ const destinations = [
     line-height: 1.4;
   }
 
-  .tg-checklist {
-    list-style: none;
-    padding: 0;
-    margin: 16px 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .tg-checklist li {
-    font-size: 15px;
-    color: var(--color-nordic);
-    opacity: 0.75;
-    line-height: 1.6;
-    padding-left: 26px;
-    position: relative;
-  }
-
-  .tg-checklist li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: var(--color-java);
-    font-weight: 700;
-  }
-
   /* ── Destination cards ────────────────────────────────────────── */
   .tg-dest-card {
     background: white;
@@ -984,6 +1236,7 @@ const destinations = [
   @media (max-width: 900px) {
     .tg-grid--3 { grid-template-columns: repeat(2, 1fr); }
     .tg-hotlines { grid-template-columns: repeat(2, 1fr); }
+    .tg-route-grid { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 720px) {

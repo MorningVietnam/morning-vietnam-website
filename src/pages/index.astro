@@ -1,5 +1,6 @@
 ---
-// TODO: Replace placeholder testimonials with real reviews from Google/TripAdvisor when available
+// Real reviews pulled from Google Maps (5.0★, 23 reviews) & Tripadvisor (5.0★, 7 reviews) — refreshed 2026-09-03.
+// Update again periodically as new reviews come in. See each card's outbound link for the live source.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Marquee from '../components/Marquee.astro';
 import TravelGuidePopup from '../components/TravelGuidePopup.astro';
@@ -16,27 +17,50 @@ const team = [
   { image: "/team/my.png",      name: "My",       role: "",           quote: "Life's too short to be serious on an adventure. Let's play.",                    wa: "https://wa.me/84969776359" },
 ];
 
-const regions = [
+// "The country" — sticky-label-card + scrolling-photo-track. Each card is
+// its own real photo (background-image) + gradient overlay — see below.
+const exploreCategories = [
   {
-    name: "North Vietnam",
-    sub: "Starting here — Hanoi hub",
-    image: "https://images.unsplash.com/photo-1528127269322-539801943592?w=900&q=80",
-    href: "/tours?filter=north",
-    status: "available",
+    key:   "north",
+    name:  "North Vietnam",
+    desc:  "Where the story starts. Limestone spires, terraced valleys, and H'Mông and Dao villages the coach tours never reach — Hanoi is your hub into all of it.",
+    href:  "/tours?filter=north",
+    image: "/tours/lai-chau-motortour/15.webp",
   },
   {
-    name: "Central Vietnam",
-    sub: "Hue · Da Nang · Hoi An",
-    image: "https://images.unsplash.com/photo-1568775791746-bcc117bcb312?w=900&q=80",
-    href: "/tours?filter=central",
-    status: "available",
+    key:   "central",
+    name:  "Central Vietnam",
+    desc:  "Imperial citadels, wild coastline, and the first sunrise to touch Vietnamese soil. Hue's old capital to Mũi Đôi's empty cliffs — the middle ground, deepened.",
+    href:  "/tours?filter=central",
+    image: "/tours/mui-doi/1.webp",
   },
   {
-    name: "South Vietnam",
-    sub: "Mekong Delta · HCMC",
-    image: "https://images.unsplash.com/photo-1589562337460-9d825d2cd5a2?w=900&q=80",
-    href: "/tours",
-    status: "soon",
+    key:   "south",
+    name:  "South Vietnam",
+    desc:  "Saigon's layered history, and the delta beyond it. We're building this one the same way we built the north — slow, honest, no rushed itinerary.",
+    href:  "/tours",
+    // Was "/tours/hcm-a-life/1.webp" — that's the "Ho Chi Minh: A Life"
+    // tour (a Hanoi tour about the historical figure, Ba Đình/Mausoleum —
+    // wrong city entirely, not Saigon). No real MVN photo of Ho Chi Minh
+    // City/Saigon exists yet (no tour runs there — south-vietnam in
+    // tours.ts is still a "Coming 2026" placeholder), so this is the same
+    // Unsplash Saigon-skyline stock shot used on that placeholder's /tours
+    // card — swap both together once a real MVN photo exists.
+    image: "https://images.unsplash.com/photo-1521019795854-14e15f600980?w=900&q=80",
+  },
+  {
+    key:   "mekong",
+    name:  "Mekong Delta",
+    desc:  "Floating markets at first light, river villages, and the unhurried rhythm of the south.",
+    href:  "/tours",
+    image: "/tours/mekong-delta-thumb.jpg",
+  },
+  {
+    key:   "hiking",
+    name:  "Hiking & Trekking",
+    desc:  "Real trails, not boardwalks built for photos. Terraced descents, jungle waterfalls, cloud-wrapped passes — earned on foot, with a local host who's walked them a hundred times.",
+    href:  "/tours?filter=hiking",
+    image: "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-1.webp",
   },
 ];
 ---
@@ -139,24 +163,46 @@ const regions = [
     <script type="application/json" id="showcase-data" is:inline set:html={JSON.stringify(featuredTours)}></script>
   </section>
 
-  <!-- ═══ REGIONS ═══════════════════════════════════════════════════ -->
-  <section class="hp-regions">
-    <div class="container">
-      <p class="section-label">The country</p>
-      <h2 class="hp-regions__title">North. Central. South.</h2>
-      <div class="hp-regions__grid">
-        {regions.map(r => (
-          <a href={r.href} class={`hp-region${r.status === 'soon' ? ' hp-region--soon' : ''}`}>
-            <div class="hp-region__photo">
-              <img src={r.image} alt={r.name} loading="lazy" />
-            </div>
-            <div class="hp-region__overlay">
-              <h3 class="hp-region__name">{r.name}</h3>
-              <span class="hp-region__sub">{r.sub}</span>
-              {r.status === 'soon' && <span class="hp-region__badge">Coming 2026</span>}
-            </div>
-          </a>
-        ))}
+  <!-- ═══ THE COUNTRY — sticky-scroll mechanism cloned from Tanigro's "Why
+       Choose Sustainable Solutions" section (tanigro.webflow.io), verified
+       via their live GSAP ScrollTrigger instances: the left sticky block
+       stays pinned (`position: sticky`) while a clipped "window" to its
+       right holds a card track that translates horizontally (x: 0% →
+       -100%, ease: "none", scrub tied to scroll) as the user scrolls
+       through a taller wrapper below — sliding the next card(s) into view.
+       Reimplemented in plain JS/rAF (no GSAP — Astro + TS only). Visual
+       treatment diverges from Tanigro here: instead of one shared photo +
+       icon cards, each card carries its own real Morning Vietnam tour
+       photo (background-image) + dark gradient overlay, and the left
+       block is a plain text "label card" instead of a photo. Desktop-only:
+       on mobile the runway collapses and all 5 cards stack full-width. ═══ -->
+  <section class="hp-explore">
+    <div class="container hp-explore__runway" id="explore-runway">
+      <div class="hp-explore__sticky">
+        <div class="hp-explore__label-card">
+          <p class="section-label hp-explore__section-label">The country</p>
+          <h2 class="hp-explore__title">Which destination<br />or vibe is next<br />on your wishlist?</h2>
+        </div>
+        <div class="hp-explore__window" id="explore-window">
+          <div class="hp-explore__track" id="explore-track">
+            {exploreCategories.map(c => (
+              <article
+                class="hp-explore__card"
+                data-card={c.key}
+                style={`background-image: url('${c.image}')`}
+              >
+                <div class="hp-explore__card-overlay"></div>
+                <div class="hp-explore__body">
+                  <h3 class="hp-explore__name">{c.name}</h3>
+                  <p class="hp-explore__desc">{c.desc}</p>
+                  <div class="hp-explore__footer">
+                    <a href={c.href} class="hp-explore__link">Explore tours →</a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -238,67 +284,124 @@ const regions = [
     </div>
   </section>
 
-  <!-- ═══ TESTIMONIALS ════════════════════════════════════════════ -->
-  <section class="hp-testi">
-
-    <!-- Layer 1: Image stack (absolute, full bleed) -->
-    <div class="hp-testi__images">
-      <div class="hp-testi__image active" data-idx="0">
-        <img src="/testimonial/1.jpeg" alt="" loading="lazy" />
-      </div>
-      <div class="hp-testi__image" data-idx="1">
-        <img src="/testimonial/2.webp" alt="" loading="lazy" />
-      </div>
-      <div class="hp-testi__image" data-idx="2">
-        <img src="/testimonial/3.jpg" alt="" loading="lazy" />
-      </div>
-    </div>
-    <div class="hp-testi__shade"></div>
-
-    <!-- Layer 2: Quote/author overlay (independently faded) -->
-    <div class="hp-testi__items">
-      <div class="hp-testi__item active" data-idx="0">
-        <blockquote class="hp-testi__quote">
-          "I came to Vietnam expecting another guided tour. I left with a family. The Unlock challenge in Mai Châu broke down every wall — by night two we were cooking with locals like we'd known them for years."
-        </blockquote>
-        <div class="hp-testi__rating" aria-label="5 out of 5 stars">★ ★ ★ ★ ★</div>
-        <div class="hp-testi__author">Sarah K.</div>
-        <div class="hp-testi__role">Solo traveler · France · Mai Châu 3D2N</div>
-      </div>
-      <div class="hp-testi__item" data-idx="1">
-        <blockquote class="hp-testi__quote">
-          "Most tours feel like a moving museum. Morning Vietnam feels like a homecoming. The hosts don't perform Vietnam — they live it, and they let you in."
-        </blockquote>
-        <div class="hp-testi__rating">★ ★ ★ ★ ★</div>
-        <div class="hp-testi__author">Marcus T.</div>
-        <div class="hp-testi__role">Couple · Germany · Ho Chi Minh A Life</div>
-      </div>
-      <div class="hp-testi__item" data-idx="2">
-        <blockquote class="hp-testi__quote">
-          "Eight people, one van, three days. By the end we had a WhatsApp group that's still active a year later. That's the kind of tour I came for and never thought I'd find."
-        </blockquote>
-        <div class="hp-testi__rating">★ ★ ★ ★ ★</div>
-        <div class="hp-testi__author">Léa M.</div>
-        <div class="hp-testi__role">Friend group · Belgium · Unlock Lai Châu</div>
+  <!-- ═══ TESTIMONIALS — real reviews from Google Maps & Tripadvisor ══ -->
+  <!-- Background images are temporary placeholders — swap /public/testimonial/hue.webp,
+       20-day-trip.jpg, ninh-binh.jpg, mekong-delta.jpg for the custom-designed art. -->
+  <!-- ═══ TESTIMONIALS — sticky stacking cards, cloned from Tanigro's
+       "How It Works" scroll pattern (tanigro.webflow.io): each card pins in
+       place under the header while the next one scrolls up to cover it.
+       Same 4 real reviews/links/CTAs as before — only the presentation
+       changed, from an auto-playing single-slide carousel to a
+       scroll-driven stack. On mobile the stickiness is turned off and
+       cards just flow normally (pinning 4 tall cards on a small screen
+       tends to feel janky rather than premium). -->
+  <section class="testi-stack">
+    <div class="testi-stack__intro">
+      <div class="testi-stack__eyebrow">Real Guests, Real Words</div>
+      <h2 class="testi-stack__heading">From Strangers to Family<br />In Their Words</h2>
+      <p class="testi-stack__desc">Every quote below links straight to the original review — read the full thing, and the others we haven't put on this page, on Google or Tripadvisor.</p>
+      <div class="testi-stack__trust">
+        <a href="https://maps.app.goo.gl/eNxtXo9UjUda7Az77" target="_blank" rel="noopener noreferrer" class="testi-stack__trust-badge">
+          <svg class="testi-stack__trust-logo" viewBox="0 0 256 262" aria-hidden="true">
+            <path fill="#4285F4" d="M255.878,133.451 C255.878,122.717 255.007,114.884 253.122,106.761 L130.55,106.761 L130.55,155.209 L202.497,155.209 C201.047,167.249 193.214,185.381 175.807,197.565 L175.563,199.187 L214.318,229.21 L217.003,229.478 C241.662,206.704 255.878,173.196 255.878,133.451" />
+            <path fill="#34A853" d="M130.55,261.1 C165.798,261.1 195.389,249.495 217.003,229.478 L175.807,197.565 C164.783,205.253 149.987,210.62 130.55,210.62 C96.027,210.62 66.726,187.847 56.281,156.37 L54.75,156.5 L14.452,187.687 L13.925,189.152 C35.393,231.798 79.49,261.1 130.55,261.1" />
+            <path fill="#FBBC05" d="M56.281,156.37 C53.525,148.247 51.93,139.543 51.93,130.55 C51.93,121.556 53.525,112.853 56.136,104.73 L56.063,103 L15.26,71.312 L13.925,71.947 C5.077,89.644 0,109.517 0,130.55 C0,151.583 5.077,171.455 13.925,189.152 L56.281,156.37" />
+            <path fill="#EA4335" d="M130.55,50.479 C155.064,50.479 171.6,61.068 181.029,69.917 L217.873,33.943 C195.245,12.91 165.798,0 130.55,0 C79.49,0 35.393,29.301 13.925,71.947 L56.136,104.73 C66.726,73.253 96.027,50.479 130.55,50.479" />
+          </svg>
+          <span class="testi-stack__trust-stars testi-stack__trust-stars--google">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 5.0 on Google
+        </a>
+        <a href="https://www.tripadvisor.com/Attraction_Review-g293924-d34570182-Reviews-Morning_Vietnam-Hanoi.html" target="_blank" rel="noopener noreferrer" class="testi-stack__trust-badge">
+          <svg class="testi-stack__trust-logo" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#00AA6C" d="M12.006 4.295c-2.67 0-5.338.784-7.645 2.353H0l1.963 2.135a5.997 5.997 0 0 0 4.04 10.43 5.976 5.976 0 0 0 4.075-1.6L12 19.705l1.922-2.09a5.972 5.972 0 0 0 4.072 1.598 6 6 0 0 0 6-5.998 5.982 5.982 0 0 0-1.957-4.432L24 6.648h-4.35a13.573 13.573 0 0 0-7.644-2.353zM12 6.255c1.531 0 3.063.303 4.504.903C13.943 8.138 12 10.43 12 13.1c0-2.671-1.942-4.962-4.504-5.942A11.72 11.72 0 0 1 12 6.256zM6.002 9.157a4.059 4.059 0 1 1 0 8.118 4.059 4.059 0 0 1 0-8.118zm11.992.002a4.057 4.057 0 1 1 .003 8.115 4.057 4.057 0 0 1-.003-8.115zm-11.992 1.93a2.128 2.128 0 0 0 0 4.256 2.128 2.128 0 0 0 0-4.256zm11.992 0a2.128 2.128 0 0 0 0 4.256 2.128 2.128 0 0 0 0-4.256z" />
+          </svg>
+          <span class="testi-stack__trust-stars testi-stack__trust-stars--tripadvisor">&#9679;&#9679;&#9679;&#9679;&#9679;</span> 5.0 on Tripadvisor
+        </a>
       </div>
     </div>
 
-    <!-- Layer 3: Nav (CTA + dots) -->
-    <div class="hp-testi__nav">
-      <div class="hp-testi__ctas">
-        <a href="/tours/unlock-mai-chau"    class="hp-testi__cta active" data-idx="0">See this tour →</a>
-        <a href="/tours/ho-chi-minh-a-life" class="hp-testi__cta"        data-idx="1">See this tour →</a>
-        <a href="/tours/sa-pa-lai-chau" class="hp-testi__cta"        data-idx="2">See this tour →</a>
-      </div>
-      <div class="hp-testi__dots" role="tablist">
-        <button class="hp-testi__dot active" data-target="0" aria-label="Testimonial 1"></button>
-        <button class="hp-testi__dot" data-target="1" aria-label="Testimonial 2"></button>
-        <button class="hp-testi__dot" data-target="2" aria-label="Testimonial 3"></button>
-      </div>
+    <div class="testi-stack__cards">
+      <article class="testi-card testi-card--right">
+        <img class="testi-card__img testi-card__img--flip" src="/testimonial/20-day-trip.webp" alt="" loading="lazy" />
+        <div class="testi-card__panel">
+          <div class="testi-card__mark" aria-hidden="true">&ldquo;</div>
+          <blockquote class="testi-card__quote">
+            "Thank you so much to Mr. Joey Bui, Co-Founder, and Miss Vũ Khánh Huyên, Travel Director, at Morning Vietnam for making our 20-Day Vietnam trip flawlessly smooth and enjoyable. Your food recommendations, must-try activities, and advice on where to go and how to get around were all perfect — everything worked out flawlessly. We highly recommend you to our relatives and friends."
+          </blockquote>
+          <div class="testi-card__meta">
+            <span class="testi-card__rating" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <a href="https://maps.app.goo.gl/eNxtXo9UjUda7Az77" target="_blank" rel="noopener noreferrer" class="testi-card__source">See on Google ↗</a>
+          </div>
+          <div class="testi-card__details">
+            <div class="testi-card__name">Carey Nuon</div>
+            <div class="testi-card__detail">🇺🇸 United States</div>
+            <div class="testi-card__detail">Traveled as a couple</div>
+            <div class="testi-card__detail">20-Day custom Vietnam itinerary</div>
+          </div>
+          <a href="/contact" class="testi-card__cta">Plan YOUR OWN Vietnam Trip →</a>
+        </div>
+      </article>
+      <article class="testi-card testi-card--right">
+        <img class="testi-card__img testi-card__img--flip" src="/testimonial/hue.webp" alt="" loading="lazy" />
+        <div class="testi-card__panel">
+          <div class="testi-card__mark" aria-hidden="true">&ldquo;</div>
+          <blockquote class="testi-card__quote">
+            "We used Morning Vietnam to arrange a guided tour for us in Hue. On arrival, we were greeted by our German-speaking guide and his reliable driver. Our personal guide, 'Thi,' impressed us with his local knowledge, facts, and background information about the history of Hue and Vietnam in general. Consideration was also given to our seven-year-old child, and the tour was adapted accordingly."
+          </blockquote>
+          <div class="testi-card__meta">
+            <span class="testi-card__rating" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <a href="https://maps.app.goo.gl/eNxtXo9UjUda7Az77" target="_blank" rel="noopener noreferrer" class="testi-card__source">See on Google ↗</a>
+          </div>
+          <div class="testi-card__details">
+            <div class="testi-card__name">CL</div>
+            <div class="testi-card__detail">🇩🇪 Germany</div>
+            <div class="testi-card__detail">Traveled with family</div>
+            <div class="testi-card__detail">Custom 2-day Hue tour</div>
+          </div>
+          <a href="/contact" class="testi-card__cta">Plan YOUR OWN Vietnam Trip →</a>
+        </div>
+      </article>
+      <article class="testi-card testi-card--left">
+        <img class="testi-card__img" src="/testimonial/ninh-binh.webp" alt="" loading="lazy" />
+        <div class="testi-card__panel">
+          <div class="testi-card__mark" aria-hidden="true">&ldquo;</div>
+          <blockquote class="testi-card__quote">
+            "We had an awesome experience with Morning Vietnam and couldn't recommend them highly enough. They helped us organise our transfers from Hanoi to Ninh Binh and then took care of planning our entire day, booking all of our activities and transport along the way. They have such great energy, are incredibly helpful and genuinely care about making sure you have a great experience."
+          </blockquote>
+          <div class="testi-card__meta">
+            <span class="testi-card__rating" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <a href="https://maps.app.goo.gl/eNxtXo9UjUda7Az77" target="_blank" rel="noopener noreferrer" class="testi-card__source">See on Google ↗</a>
+          </div>
+          <div class="testi-card__details">
+            <div class="testi-card__name">Callum</div>
+            <div class="testi-card__detail">🇦🇺 Australia</div>
+            <div class="testi-card__detail">Traveled with the Friend Squad</div>
+            <div class="testi-card__detail">Ninh Bình In A New Way</div>
+          </div>
+          <a href="/contact" class="testi-card__cta">Plan YOUR OWN Vietnam Trip →</a>
+        </div>
+      </article>
+      <article class="testi-card testi-card--left">
+        <img class="testi-card__img" src="/testimonial/mekong-delta.webp" alt="" loading="lazy" />
+        <div class="testi-card__panel">
+          <div class="testi-card__mark" aria-hidden="true">&ldquo;</div>
+          <blockquote class="testi-card__quote">
+            "We left in time to go to the countryside and learn all about harvesting. Then a lunch after which we left for the coconut boats — they made a real show of it! Thanks to Nancy who explained everything super well, answered questions and was interested in our lives. Highly recommended!!"
+          </blockquote>
+          <div class="testi-card__meta">
+            <span class="testi-card__rating testi-card__rating--tripadvisor" aria-label="5 out of 5 on Tripadvisor">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
+            <a href="https://www.tripadvisor.com/ShowUserReviews-g293924-d34570182-r1073077929-Morning_Vietnam-Hanoi.html" target="_blank" rel="noopener noreferrer" class="testi-card__source">Read on Tripadvisor ↗</a>
+          </div>
+          <div class="testi-card__details">
+            <div class="testi-card__name">Hanneke V</div>
+            <div class="testi-card__detail">🇳🇱 Netherlands</div>
+            <div class="testi-card__detail">Traveled with family</div>
+            <div class="testi-card__detail">Mekong Delta</div>
+          </div>
+          <a href="/contact" class="testi-card__cta">Plan YOUR OWN Vietnam Trip →</a>
+        </div>
+      </article>
     </div>
-
   </section>
-
   <!-- ═══ CTA ════════════════════════════════════════════════════════ -->
   <section class="hp-cta">
     <div class="hp-cta__photo">
@@ -618,8 +721,8 @@ const regions = [
     transition: opacity 0.4s ease;
   }
   .hp-showcase2__image {
-    flex: 1;
-    min-height: 420px;
+    aspect-ratio: 4/3;
+    width: 100%;
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 16px 48px rgba(4, 51, 65, 0.18);
@@ -628,6 +731,7 @@ const regions = [
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
     transition: opacity 0.4s ease, transform 0.6s var(--ease-smooth, ease);
   }
   .hp-showcase2__right {
@@ -727,103 +831,139 @@ const regions = [
   }
   @media (max-width: 960px) {
     .hp-showcase2__inner { grid-template-columns: 1fr; gap: 48px; }
-    .hp-showcase2__image { min-height: 320px; }
     .hp-showcase2__right { padding-top: 0; }
   }
 
-  /* ── Regions ────────────────────────────────────────────────────── */
-  .hp-regions {
-    background: var(--color-java);
+  /* ── The country (sticky label card + horizontally-scrolling image cards) */
+  .hp-explore {
+    background: var(--color-nordic);
     padding-block: 96px;
   }
 
-  .hp-regions .section-label {
-    color: var(--color-riptide);
+  /* Runway: taller than the sticky content itself — extra height = scroll
+     distance for the horizontal reveal. JS reads rendered heights at runtime. */
+  .hp-explore__runway {
+    position: relative;
+    height: calc(470px + 1100px);
   }
 
-  .hp-regions__title {
-    font-family: var(--font-heading);
-    font-size: clamp(32px, 5vw, 64px);
-    font-weight: 700;
-    color: var(--color-light-cyan);
-    margin-bottom: 48px;
-    line-height: 1.0;
-    letter-spacing: -0.02em;
-  }
-
-  .hp-regions__grid {
+  .hp-explore__sticky {
+    position: sticky;
+    top: 120px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: minmax(240px, 34%) 1fr;
+    gap: 24px;
+  }
+
+  /* Label card — replaces the old photo; light-cyan, text only */
+  .hp-explore__label-card {
+    height: 470px;
+    border-radius: var(--radius-lg);
+    background: var(--color-light-cyan);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     gap: 16px;
   }
 
-  .hp-region {
-    position: relative;
-    aspect-ratio: 3/4;
+  .hp-explore__section-label {
+    color: var(--color-nordic);
+    opacity: 0.6;
+  }
+
+  .hp-explore__title {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 3.5vw, 46px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  /* Window — clips the scrolling track */
+  .hp-explore__window {
     overflow: hidden;
-    border-radius: 16px;
-    display: block;
-    text-decoration: none;
+    height: 470px;
   }
 
-  .hp-region__photo {
-    position: absolute;
-    inset: 0;
-  }
-
-  .hp-region__photo img {
-    width: 100%;
+  .hp-explore__track {
+    display: flex;
+    gap: 16px;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.7s var(--ease-smooth);
+    width: max-content;
+    will-change: transform;
   }
 
-  .hp-region:hover .hp-region__photo img {
-    transform: scale(1.07);
-  }
-
-  .hp-region__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(4, 51, 65, 0.85) 0%, rgba(4, 51, 65, 0.1) 55%, transparent 100%);
+  /* Feature cards — full-bleed photo background + dark gradient overlay */
+  .hp-explore__card {
+    box-sizing: border-box;
+    flex: 0 0 var(--explore-card-w, 420px);
+    width: var(--explore-card-w, 420px);
+    height: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    background-size: cover;
+    background-position: center;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 28px;
-    gap: 6px;
   }
 
-  .hp-region__name {
+  /* Gradient overlay darkens lower half for text legibility */
+  .hp-explore__card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 30%, rgba(4, 51, 65, 0.82) 100%);
+    pointer-events: none;
+  }
+
+  .hp-explore__body {
+    position: relative;
+    z-index: 1;
+    padding: 28px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .hp-explore__name {
     font-family: var(--font-heading);
-    font-size: clamp(20px, 2.2vw, 28px);
+    font-size: clamp(20px, 2vw, 26px);
     font-weight: 700;
-    color: white;
-    line-height: 1.1;
+    color: #fff;
+    line-height: 1.15;
+    margin: 0;
   }
 
-  .hp-region__sub {
+  .hp-explore__desc {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.55;
+  }
+
+  .hp-explore__footer {
+    margin-top: 12px;
+  }
+
+  .hp-explore__link {
+    font-family: var(--font-heading);
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.65);
-    line-height: 1.4;
-  }
-
-  .hp-region--soon .hp-region__photo img {
-    filter: grayscale(50%) brightness(0.65);
-  }
-
-  .hp-region__badge {
-    display: inline-block;
-    margin-top: 4px;
-    font-family: var(--font-heading);
-    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-riptide);
-    border: 1.5px solid rgba(125, 226, 209, 0.6);
-    padding: 4px 10px;
-    border-radius: 100px;
-    align-self: flex-start;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    color: #fff;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.6);
+    padding-bottom: 2px;
+    opacity: 0.92;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+  }
+
+  .hp-explore__link:hover {
+    opacity: 1;
+    border-color: #fff;
   }
 
   /* ── Why ────────────────────────────────────────────────────────── */
@@ -891,198 +1031,262 @@ const regions = [
     flex: 1;
   }
 
-  /* ── Testimonials clip-path slider ──────────────────────────── */
-  .hp-testi {
-    position: relative;
-    height: 90vh;
-    min-height: 540px;
+  /* ═══ Testimonials — sticky stacking cards (cloned from Tanigro's
+     "How It Works" pattern: tanigro.webflow.io). Each .testi-card is
+     position:sticky at the same `top`, so as you scroll, card N sticks in
+     place until card N+1's normal-flow top reaches that same offset and
+     visually covers it — the classic "stack of cards" scroll effect.
+     Falls back to a plain stacked (non-sticky) layout on mobile. ─────── */
+  .testi-stack {
+    background: var(--color-primary);
+    padding: var(--space-2xl) 0;
+  }
+
+  .testi-stack__intro {
+    max-width: 640px;
+    margin: 0 auto var(--space-xl);
+    padding: 0 var(--space-md);
+    text-align: center;
+  }
+
+  .testi-stack__eyebrow {
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-riptide);
+    margin-bottom: var(--space-sm);
+  }
+
+  .testi-stack__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: var(--space-sm);
+    line-height: 1.1;
+  }
+
+  .testi-stack__desc {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    color: var(--color-white);
+    opacity: 0.78;
+    line-height: 1.5;
+    margin-bottom: var(--space-lg);
+  }
+
+  .testi-stack__trust {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .testi-stack__trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 8px 16px 8px 12px;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .testi-stack__trust-badge:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary-light);
+  }
+
+  .testi-stack__trust-logo {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  .testi-stack__trust-stars {
+    font-size: 11px;
+    letter-spacing: -1px;
+  }
+
+  .testi-stack__trust-stars--google { color: #fbbc04; }
+
+  .testi-stack__trust-stars--tripadvisor {
+    color: #00aa6c;
+    font-size: 17px;
+    letter-spacing: 3px;
+  }
+
+  /* ── Card stack ── */
+  .testi-stack__cards {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .testi-card {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-md));
+    height: 70vh; /* matches Tanigro's own .process-wrapper-home-a rule */
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    background: var(--color-nordic);
+    opacity: 1;
+    transform-origin: center top;
+    will-change: transform, opacity;
   }
 
-  /* ── Image layer ── */
-  .hp-testi__images {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
-
-  .hp-testi__image {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    clip-path: inset(0 0 0 100%);
-    transition: clip-path 1.4s cubic-bezier(0.77, 0, 0.175, 1);
-    z-index: 1;
-    will-change: clip-path;
-  }
-
-  .hp-testi__image.active {
-    clip-path: inset(0 0 0 0%);
-    z-index: 3;
-  }
-
-  .hp-testi__image.prev {
-    clip-path: inset(0 0 0 0%);
-    z-index: 2;
-  }
-
-  .hp-testi__image img {
+  .testi-card__img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center 30%;
-    transform: scale(1.08);
-    transition: transform 1.6s cubic-bezier(0.77, 0, 0.175, 1);
   }
 
-  .hp-testi__image.active img {
-    transform: scale(1);
+  .testi-card__img--flip {
+    transform: scaleX(-1);
   }
 
-  /* ── Dark gradient overlay (real div, reliable z-index) ── */
-  .hp-testi__shade {
+  .testi-card__panel {
     position: absolute;
-    inset: 0;
-    z-index: 4;
-    pointer-events: none;
-    background: linear-gradient(
-      to top,
-      rgba(4, 51, 65, 0.85) 0%,
-      rgba(4, 51, 65, 0.5) 40%,
-      rgba(4, 51, 65, 0.15) 75%,
-      transparent 100%
-    );
+    top: var(--space-lg);
+    max-width: 400px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
   }
 
-  /* ── Text layer ── */
-  .hp-testi__items {
-    position: relative;
-    z-index: 5;
-    height: 100%;
-    pointer-events: none;
-  }
+  .testi-card--left .testi-card__panel { left: var(--space-lg); }
+  .testi-card--right .testi-card__panel { right: var(--space-lg); }
 
-  .hp-testi__item {
-    position: absolute;
-    bottom: max(24px, calc(120px - 27vh));
-    left: 0;
-    right: 0;
-    padding: 0 max(48px, calc((100vw - var(--max-width)) / 2 + 48px));
-    color: white;
-    opacity: 0;
-    transition: opacity 0.6s cubic-bezier(0.77, 0, 0.175, 1);
-    will-change: opacity;
-  }
-
-  .hp-testi__item.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .hp-testi__quote {
+  .testi-card__mark {
     font-family: var(--font-heading);
-    font-size: clamp(18px, 2.2vw, 30px);
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    margin-bottom: 24px;
-    text-align: justify;
-    max-width: 58ch;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--color-primary-light);
+    margin-bottom: var(--space-xs);
   }
 
-  .hp-testi__rating {
-    font-size: 16px;
-    letter-spacing: 0.01em;
-    color: var(--color-riptide);
-    margin-bottom: 8px;
-  }
-
-  .hp-testi__author {
+  .testi-card__quote {
+    font-family: var(--font-heading);
     font-size: 17px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--color-text);
+    margin: 0 0 var(--space-md);
+  }
+
+  .testi-card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+  }
+
+  .testi-card__rating {
+    color: #fbbc04;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .testi-card__rating--tripadvisor {
+    color: #00aa6c;
+    font-size: 20px;
+    letter-spacing: 3px;
+  }
+
+  .testi-card__source {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1px;
+  }
+
+  .testi-card__source:hover { opacity: 0.75; }
+
+  .testi-card__details {
+    margin-bottom: var(--space-md);
+  }
+
+  .testi-card__name {
+    font-family: var(--font-heading);
+    font-size: 15.6px; /* 120% of the old byline's 13px */
     font-weight: 700;
+    color: var(--color-text);
     margin-bottom: 2px;
   }
 
-  .hp-testi__role {
+  .testi-card__detail {
+    font-family: var(--font-body);
     font-size: 13px;
-    opacity: 0.75;
-    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    line-height: 1.4;
   }
 
-  /* ── Nav: CTA button + dots, bottom-right ── */
-  .hp-testi__nav {
-    position: absolute;
-    right: max(48px, calc((100vw - var(--max-width)) / 2 + 48px));
-    bottom: max(24px, calc(120px - 27vh));
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 12px;
-    z-index: 6;
-  }
-
-  .hp-testi__ctas {
-    position: relative;
-    height: 40px;
-  }
-
-  .hp-testi__cta {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: var(--color-java);
-    color: var(--color-light-cyan, #e8f8f5);
+  .testi-card__cta {
+    display: inline-block;
+    align-self: flex-end;
     font-family: var(--font-heading);
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
+    color: var(--color-white);
+    background: var(--color-primary);
+    padding: 10px 18px;
+    border-radius: var(--radius-full);
     text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 100px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
-    pointer-events: none;
+    transition: background var(--transition-fast);
   }
 
-  .hp-testi__cta.active {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
-
-  .hp-testi__dots {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .hp-testi__dot {
-    width: 32px;
-    height: 3px;
-    border-radius: 3px;
-    background: rgba(255, 255, 255, 0.35);
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, width 0.3s ease;
-    padding: 0;
-  }
-
-  .hp-testi__dot.active {
-    background: var(--color-riptide);
-    width: 56px;
-  }
+  .testi-card__cta:hover { background: var(--color-primary-dark); }
 
   @media (max-width: 768px) {
-    .hp-testi__item { bottom: 140px; }
-    .hp-testi__quote { font-size: clamp(16px, 4vw, 22px); }
-    .hp-testi__nav { right: 24px; bottom: 36px; }
-  }
+    .testi-stack { padding: var(--space-xl) 0; }
+    .testi-stack__cards { padding: 0 var(--space-md); gap: var(--space-md); }
 
+    .testi-card {
+      position: static;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .testi-card__img {
+      position: relative;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 3 / 2; /* Tanigro's own tablet-tier ratio */
+    }
+
+    .testi-card__panel {
+      position: static;
+      max-width: none;
+      border-radius: 0;
+      box-shadow: none;
+      border-top: 1px solid var(--color-border);
+    }
+  }
   /* ── CTA ────────────────────────────────────────────────────────── */
   .hp-cta {
     position: relative;
@@ -1174,15 +1378,38 @@ const regions = [
     .hp-hero__actions { right: 32px; bottom: 100px; }
   }
 
-  @media (max-width: 860px) {
-    .hp-regions__grid { grid-template-columns: 1fr 1fr; }
-    .hp-regions__grid .hp-region:last-child {
-      grid-column: span 2;
-      aspect-ratio: 16/7;
-    }
-  }
-
   @media (max-width: 768px) {
+    /* ── The country: un-stick, collapse runway, stack cards as a column */
+    .hp-explore { padding-block: 64px; }
+    .hp-explore__runway { height: auto; }
+    .hp-explore__sticky {
+      position: static;
+      display: block;
+    }
+    .hp-explore__label-card {
+      height: auto;
+      min-height: 200px;
+      margin-bottom: 24px;
+      padding: 32px 28px;
+    }
+    .hp-explore__window {
+      overflow: visible;
+      height: auto;
+    }
+    .hp-explore__track {
+      flex-direction: column;
+      width: auto;
+      height: auto;
+      gap: 20px;
+      transform: none !important;
+    }
+    .hp-explore__card {
+      flex: none;
+      width: 100%;
+      height: auto;
+      min-height: 280px;
+    }
+
     .hp-hero__content { bottom: 140px; }
     .hp-hero__brand { font-size: clamp(80px, 26vw, 180px); top: calc(var(--site-header-h, 100px) - 10px); }
     .hp-why__grid { grid-template-columns: 1fr; }
@@ -1242,11 +1469,6 @@ const regions = [
   }
 
   @media (max-width: 560px) {
-    .hp-regions__grid { grid-template-columns: 1fr; }
-    .hp-regions__grid .hp-region:last-child {
-      grid-column: 1;
-      aspect-ratio: 3/4;
-    }
     .hp-cta__btns { flex-direction: column; align-items: flex-start; }
   }
 
@@ -1444,57 +1666,180 @@ const regions = [
     startTimer();
   }
 
-  // ── Testimonials wipe-from-right slider ──────────────────────
-  const testi = document.querySelector('.hp-testi');
-  if (testi) {
-    const images  = testi.querySelectorAll<HTMLElement>('.hp-testi__image');
-    const items   = testi.querySelectorAll<HTMLElement>('.hp-testi__item');
-    const dots    = testi.querySelectorAll<HTMLButtonElement>('.hp-testi__dot');
-    const ctas    = Array.from(testi.querySelectorAll<HTMLElement>('.hp-testi__cta'));
-    let currentIdx = 0;
-    let timer: ReturnType<typeof setInterval>;
-    const TRANSITION_DURATION = 1400;
+  // ── Testimonials sticky stack: rise+fade in on approach, then shrink the
+  //    longer a card stays pinned — cloned from Tanigro's "How It Works"
+  //    scroll interaction (tanigro.webflow.io), values measured live on
+  //    the source site via getComputedStyle: each pinned card shrinks to
+  //    scale(0.6) (not just a subtle nudge) over roughly 1.25x its own
+  //    height of continued scroll, and — importantly — this happens to
+  //    EVERY card including the last one, driven by how long that card
+  //    itself has been pinned, not by whether a next card is covering it.
+  //    Desktop-only + gated to while the section is near the viewport.
+  const testiStackEl = document.querySelector<HTMLElement>('.testi-stack');
+  const testiCards = document.querySelectorAll<HTMLElement>('.testi-card');
+  if (testiStackEl && testiCards.length) {
+    const desktopQuery = window.matchMedia('(min-width: 769px)');
+    let testiRaf: number | null = null;
+    let testiInView = false;
+    const testiPinStartY: Array<number | null> = new Array(testiCards.length).fill(null);
+    // The translateY WE applied last frame — getBoundingClientRect() reports
+    // the post-transform box, so without subtracting this back out, our own
+    // downward drift would read as "no longer pinned" the next frame (a
+    // feedback loop that froze shrinkProgress near 0). Track it so every
+    // position read below uses the untransformed "true" layout position.
+    const testiLastTranslateY: number[] = new Array(testiCards.length).fill(0);
 
-    function goTo(newIdx: number) {
-      if (newIdx === currentIdx) return;
-      newIdx = ((newIdx % images.length) + images.length) % images.length;
-
-      // Fade out current text first
-      items[currentIdx].classList.remove('active');
-
-      // Image wipe: prev stays visible underneath, new one wipes in on top
-      images[currentIdx].classList.remove('active');
-      images[currentIdx].classList.add('prev');
-      images[newIdx].classList.add('active');
-
-      // Clean up prev after transition
-      setTimeout(() => {
-        images.forEach((img, i) => { if (i !== newIdx) img.classList.remove('prev'); });
-      }, TRANSITION_DURATION);
-
-      // Fade in new text after short delay
-      setTimeout(() => { items[newIdx].classList.add('active'); }, 400);
-
-      // Update dots + ctas
-      dots.forEach((d, i) => d.classList.toggle('active', i === newIdx));
-      ctas.forEach((c, i) => c.classList.toggle('active', i === newIdx));
-
-      currentIdx = newIdx;
+    function resetTesti() {
+      testiCards.forEach((card) => { card.style.transform = ''; card.style.opacity = ''; });
+      testiPinStartY.fill(null);
+      testiLastTranslateY.fill(0);
     }
 
-    dots.forEach((d, i) => d.addEventListener('click', () => {
-      clearInterval(timer);
-      goTo(i);
-      startTimer();
-    }));
+    function tickTesti() {
+      const stickyTop = parseFloat(getComputedStyle(testiCards[0]).top) || 0;
+      const vh = window.innerHeight;
+      const scrollY = window.scrollY;
 
-    function startTimer() {
-      timer = setInterval(() => goTo(currentIdx + 1), 10000);
+      testiCards.forEach((card, i) => {
+        const rect = card.getBoundingClientRect();
+        const trueTop = rect.top - testiLastTranslateY[i];
+
+        // Rise + fade in as the card approaches from below the fold.
+        let enter = (vh - trueTop) / (vh * 0.35);
+        enter = Math.min(1, Math.max(0, enter));
+
+        // Shrink based on how long THIS card has been pinned (own scroll
+        // distance since it first stuck) — not on a next-sibling covering
+        // it, so the last card shrinks the same way once you scroll past it.
+        const isPinned = trueTop <= stickyTop + 1;
+        if (isPinned) {
+          if (testiPinStartY[i] === null) testiPinStartY[i] = scrollY;
+        } else {
+          testiPinStartY[i] = null;
+        }
+        let shrinkProgress = 0;
+        const pinStart = testiPinStartY[i];
+        if (pinStart !== null) {
+          const naturalHeight = card.offsetHeight; // unaffected by our own transform
+          const shrinkDistance = naturalHeight * 1.25;
+          shrinkProgress = (scrollY - pinStart) / shrinkDistance;
+          shrinkProgress = Math.min(1, Math.max(0, shrinkProgress));
+        }
+
+        const scale = (0.96 + enter * 0.04) * (1 - shrinkProgress * 0.4);
+        // Once a card starts being covered, ease it down toward the
+        // 1/3-viewport mark as it shrinks — the incoming/active card still
+        // pins flush under the header (that's the `top` in the CSS).
+        const restY = Math.max(0, vh / 3 - stickyTop);
+        const translateY = (1 - enter) * 40 + shrinkProgress * restY;
+        card.style.transform = `translateY(${translateY}px) scale(${scale})`;
+        card.style.opacity = String(enter);
+        testiLastTranslateY[i] = translateY;
+      });
+
+      testiRaf = (testiInView && desktopQuery.matches) ? requestAnimationFrame(tickTesti) : null;
     }
 
-    testi.addEventListener('mouseenter', () => clearInterval(timer));
-    testi.addEventListener('mouseleave', startTimer);
+    function maybeStartTesti() {
+      if (testiRaf === null && testiInView && desktopQuery.matches) {
+        testiRaf = requestAnimationFrame(tickTesti);
+      } else if (!(testiInView && desktopQuery.matches)) {
+        if (testiRaf !== null) { cancelAnimationFrame(testiRaf); testiRaf = null; }
+        resetTesti();
+      }
+    }
 
-    startTimer();
+    const testiSectionObserver = new IntersectionObserver(
+      ([entry]) => { testiInView = entry.isIntersecting; maybeStartTesti(); },
+      { rootMargin: '200px 0px 200px 0px' }
+    );
+    testiSectionObserver.observe(testiStackEl);
+    desktopQuery.addEventListener('change', maybeStartTesti);
   }
-</script>
+
+  // ── The country: sticky photo + horizontally-scrolling card track,
+  //    cloned from Tanigro's real GSAP mechanism — confirmed by reading
+  //    their own ScrollTrigger.getAll() output on the live site rather
+  //    than guessing from a screenshot: x: 0% → -100%, ease: "none",
+  //    scrub tied straight to scroll, pinned via a runway taller than
+  //    the sticky content. Reimplemented in plain JS/rAF (no GSAP — this
+  //    project is Astro + TS only), reusing the same
+  //    IntersectionObserver-gated + matchMedia-gated rAF loop pattern as
+  //    the testimonial stack above, just driving translateX on the
+  //    track instead of translateY/scale on each card. Desktop-only: on
+  //    mobile the runway/window/track collapse to a normal stacked
+  //    column (see .hp-explore media query) and this script no-ops.
+  const exploreRunwayEl = document.getElementById('explore-runway');
+  const exploreWindowEl = document.getElementById('explore-window');
+  const exploreTrackEl  = document.getElementById('explore-track');
+  const exploreStickyEl = exploreRunwayEl?.querySelector<HTMLElement>('.hp-explore__sticky') ?? null;
+
+  if (exploreRunwayEl && exploreWindowEl && exploreTrackEl && exploreStickyEl) {
+    const exploreDesktopQuery = window.matchMedia('(min-width: 769px)');
+    let exploreRaf: number | null = null;
+    let exploreInView = false;
+
+    // Matches the `gap: 16px` set on .hp-explore__track in CSS — kept in
+    // sync here because JS needs the number in px to size the "2 cards
+    // per window" card width, not just referenced as a CSS token.
+    const EXPLORE_GAP = 16;
+
+    // Window width → card width, sized so 2 cards fill the window at
+    // once (with the 3rd starting to peek in as the 1st scrolls out) —
+    // written onto --explore-card-w, which .hp-explore__card reads via
+    // var(--explore-card-w, 420px) and inherits down from the track.
+    function measureExploreCards() {
+      const windowWidth = exploreWindowEl!.clientWidth;
+      if (windowWidth <= 0) return;
+      const cardW = Math.max(240, (windowWidth - EXPLORE_GAP) / 2);
+      exploreTrackEl!.style.setProperty('--explore-card-w', `${cardW}px`);
+    }
+
+    function tickExplore() {
+      if (!exploreDesktopQuery.matches) {
+        exploreTrackEl!.style.transform = '';
+        exploreRaf = null;
+        return;
+      }
+
+      // Standard sticky-runway progress: the sticky block pins once the
+      // runway's top scrolls up to meet `top: <stickyTop>`, and stays
+      // pinned until the runway runs out of extra height below it —
+      // i.e. over exactly (runway height − sticky height) of scrolling.
+      const runwayRect = exploreRunwayEl!.getBoundingClientRect();
+      const stickyTop = parseFloat(getComputedStyle(exploreStickyEl!).top) || 0;
+      const scrollDistance = exploreRunwayEl!.offsetHeight - exploreStickyEl!.offsetHeight;
+
+      let progress = 0;
+      if (scrollDistance > 0) {
+        progress = (stickyTop - runwayRect.top) / scrollDistance;
+      }
+      progress = Math.min(1, Math.max(0, progress));
+
+      // scrollWidth/clientWidth are layout metrics, unaffected by the
+      // transform we apply below — no feedback loop reading these back.
+      const maxScroll = Math.max(0, exploreTrackEl!.scrollWidth - exploreWindowEl!.clientWidth);
+      exploreTrackEl!.style.transform = `translateX(${-progress * maxScroll}px)`;
+
+      exploreRaf = (exploreInView && exploreDesktopQuery.matches) ? requestAnimationFrame(tickExplore) : null;
+    }
+
+    function maybeStartExplore() {
+      if (exploreRaf === null && exploreInView && exploreDesktopQuery.matches) {
+        exploreRaf = requestAnimationFrame(tickExplore);
+      } else if (!(exploreInView && exploreDesktopQuery.matches)) {
+        if (exploreRaf !== null) { cancelAnimationFrame(exploreRaf); exploreRaf = null; }
+        exploreTrackEl!.style.transform = '';
+      }
+    }
+
+    measureExploreCards();
+    window.addEventListener('resize', measureExploreCards);
+    exploreDesktopQuery.addEventListener('change', () => { measureExploreCards(); maybeStartExplore(); });
+
+    const exploreSectionObserver = new IntersectionObserver(
+      ([entry]) => { exploreInView = entry.isIntersecting; maybeStartExplore(); },
+      { rootMargin: '200px 0px 200px 0px' }
+    );
+    exploreSectionObserver.observe(exploreRunwayEl);
+  }</script>

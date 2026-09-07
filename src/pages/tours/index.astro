@@ -12,6 +12,14 @@ const SAPA_HUB_ONLY = new Set([
 ]);
 const visibleTours = tours.filter((t: any) => !SAPA_HUB_ONLY.has(t.slug));
 const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-trip');
+
+// These 4 stay off the default grid — they already have their own hub page
+// at /tours/sapa-lai-chau — but we still render them (hidden by default,
+// via the `hub-only` filter script below) so the homepage's "Hiking &
+// Trekking" card can deep-link to /tours?filter=hiking and actually show
+// something. hubOnly on TourCard sets data-hub-only="true", which the
+// filter script uses to keep them out of "All tours" and every other pill.
+const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
 ---
 
 <BaseLayout
@@ -38,6 +46,9 @@ const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-tri
       <button class="filter-pill active" data-filter="all">All tours</button>
       <button class="filter-pill" data-filter="north">North Vietnam</button>
       <button class="filter-pill" data-filter="central">Central Vietnam</button>
+      <button class="filter-pill" data-filter="south">South Vietnam</button>
+      <button class="filter-pill" data-filter="mekong-delta">Mekong Delta</button>
+      <button class="filter-pill" data-filter="hiking">Hiking &amp; Trekking</button>
       <button class="filter-pill" data-filter="soon">Coming Soon</button>
     </div>
   </div>
@@ -67,6 +78,9 @@ const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-tri
             </article>
           )}
         </>
+      ))}
+      {hubOnlyTours.map((tour: any, i: number) => (
+        <TourCard tour={tour} index={i} hubOnly />
       ))}
     </div>
   </section>
@@ -168,6 +182,14 @@ const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-tri
     gap: 24px;
     max-width: var(--max-width);
     margin: 0 auto;
+  }
+
+  /* Hub-only cards (Sa Pa · Lai Châu treks) start hidden — the filter
+     script below only reveals them when their tag ("hiking") is the
+     active filter. Prevents a flash-of-unfiltered-content before the
+     script runs on load. */
+  .tours-grid :global([data-hub-only="true"]) {
+    display: none;
   }
 
   @media (max-width: 1024px) {
@@ -381,16 +403,31 @@ const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-tri
   const allCards = Array.from(document.querySelectorAll<HTMLElement>('[data-tour-region]'));
   const originalOrder = [...allCards];
 
+  // A card matches a filter via its region OR any of its extra `tags`
+  // (e.g. Mũi Đôi is region="central" but also tags="hiking" — it shows
+  // under both). Cards marked data-hub-only="true" (the Sa Pa · Lai Châu
+  // hub tours) are the one exception: they never match on region, only on
+  // tags — that's what keeps them out of "All tours" and "North Vietnam"
+  // and reachable only via their own filter (currently "hiking").
+  function cardMatches(card: HTMLElement, filter: string): boolean {
+    const region = card.dataset.tourRegion ?? '';
+    const tags = (card.dataset.tourTags ?? '').split(' ').filter(Boolean);
+    if (card.dataset.hubOnly === 'true') return tags.includes(filter);
+    return region === filter || tags.includes(filter) || region === 'bespoke';
+  }
+
   function applyFilter(filter: string) {
     pills.forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
 
     if (filter === 'all') {
       originalOrder.forEach(card => {
+        const hubOnly = card.dataset.hubOnly === 'true';
         grid!.appendChild(card);
         card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        card.style.opacity = '1';
-        card.style.transform = 'scale(1)';
-        card.style.pointerEvents = '';
+        card.style.opacity = hubOnly ? '0' : '1';
+        card.style.transform = hubOnly ? 'scale(0.97)' : 'scale(1)';
+        card.style.pointerEvents = hubOnly ? 'none' : '';
+        card.style.display = hubOnly ? 'none' : '';
       });
       return;
     }
@@ -398,8 +435,7 @@ const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-tri
     const matched: HTMLElement[] = [];
     const unmatched: HTMLElement[] = [];
     allCards.forEach(card => {
-      const region = card.dataset.tourRegion ?? '';
-      (region === filter || region === 'bespoke' ? matched : unmatched).push(card);
+      (cardMatches(card, filter) ? matched : unmatched).push(card);
     });
 
     [...matched, ...unmatched].forEach(card => grid!.appendChild(card));
@@ -408,12 +444,15 @@ const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-tri
       card.style.opacity = '1';
       card.style.transform = 'scale(1)';
       card.style.pointerEvents = '';
+      card.style.display = '';
     });
     unmatched.forEach(card => {
+      const hubOnly = card.dataset.hubOnly === 'true';
       card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-      card.style.opacity = '0.2';
+      card.style.opacity = hubOnly ? '0' : '0.2';
       card.style.transform = 'scale(0.97)';
       card.style.pointerEvents = 'none';
+      card.style.display = hubOnly ? 'none' : '';
     });
   }
 

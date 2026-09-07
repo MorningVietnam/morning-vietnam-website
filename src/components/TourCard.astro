@@ -3,6 +3,7 @@ interface Tour {
   slug: string;
   name: string;
   region: string;
+  tags?: string[];
   duration: string[];
   price: string;
   priceUSD?: number | null;
@@ -18,9 +19,14 @@ interface Tour {
 interface Props {
   tour: Tour;
   index: number;
+  /** True for tours that should stay out of the default "All tours" /
+   *  region-filtered views on /tours (e.g. the Sa Pa · Lai Châu hub-only
+   *  tours) and surface only when one of their `tags` is the active
+   *  filter. See the filter script at the bottom of tours/index.astro. */
+  hubOnly?: boolean;
 }
 
-const { tour, index } = Astro.props;
+const { tour, index, hubOnly = false } = Astro.props;
 
 const THEMES = ['java', 'light-cyan', 'nordic', 'riptide'] as const;
 type Theme = typeof THEMES[number];
@@ -35,7 +41,13 @@ const regionLabel: Record<string, string> = {
 };
 ---
 
-<article class="tour-card reveal" data-tour-region={tour.region} data-theme={theme}>
+<article
+  class="tour-card reveal"
+  data-tour-region={tour.region}
+  data-tour-tags={tour.tags?.join(' ') ?? ''}
+  data-hub-only={hubOnly ? 'true' : undefined}
+  data-theme={theme}
+>
   {tour.comingSoon ? (
     <div class="tour-card__inner tour-card__inner--soon">
       <div class="tour-card__image">

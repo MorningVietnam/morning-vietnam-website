@@ -41,6 +41,9 @@ export interface Tour {
   slug:              string;
   name:              string;
   region:            string;
+  tags?:             string[];   // additional discovery tags for cross-listing, e.g. ["hiking"] —
+                                  // does NOT replace `region` (which still drives the region badge on
+                                  // tour cards/detail pages); purely additive filter reachability.
   duration:          string[];
   price:             string;
   tagline:           string;
@@ -1346,6 +1349,7 @@ export const tours: Tour[] = [
     name:        "Vietnam's Easternmost Point",
     subtitle:    "Trek & Camp to Vietnam's Easternmost Point — First Sunrise at Mũi Đôi",
     region:      "central",
+    tags:        ["hiking"],
     duration:    ["2D1N"],
     price:       "From $134/person",
     priceUSD:    134,
@@ -1918,6 +1922,7 @@ export const tours: Tour[] = [
     slug:        "mekong-delta",
     name:        "Mekong Delta",
     region:      "soon",
+    tags:        ["mekong-delta"],
     duration:    ["3D2N"],
     price:       "Coming Q4 2026",
     tagline:     "The river that feeds a nation. Coming Q4 2026.",
@@ -1942,11 +1947,44 @@ export const tours: Tour[] = [
     unlockChallenge: null,
   },
 
+  {
+    // Added for the homepage "Vietnam, five ways in" section (Sept 2026) — no
+    // itinerary/pricing exists yet, this is a coming-soon placeholder only.
+    // TODO(Thế Anh): replace tagline/description/image once the route is real.
+    slug:        "south-vietnam",
+    name:        "South Vietnam",
+    region:      "soon",
+    tags:        ["south"],
+    duration:    ["4D3N"],
+    price:       "Coming 2026",
+    tagline:     "Ho Chi Minh City and the delta beyond it. Coming 2026.",
+    description: "Saigon's layered history, then south into the delta — Morning Vietnam's next inbound region.",
+    highlights:  [],
+    included:    [],
+    hub:         "Ho Chi Minh City",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  true,
+    image:       "https://images.unsplash.com/photo-1521019795854-14e15f600980?w=800&q=80", // Saigon skyline at Nguyễn Huệ (Unsplash, tagged "Saigon Skyline" / "Nguyen Hue, Vietnam") — swap once we have a real MVN photo
+    itinerary:   [],
+    priceUSD:    null,
+    gallery:     [],
+    pitch:       { headline: "Coming 2026.", paragraphs: [], closingLine: "" },
+    valueAnchor: { headline: "", paragraphs: [], compareTable: [] },
+    storytelling:{ headline: "Coming 2026.", paragraphs: [], pullImage: "" },
+    elevationProfile: [],
+    activityCards: [],
+    welcomePack: DEFAULT_WELCOME_PACK,
+    seasonality: DEFAULT_SEASONALITY_NORTH,
+    faqs:        DEFAULT_FAQS,
+    unlockChallenge: null,
+  },
+
   // ── Sa Pa Trekking Classic ───────────────────────────────────────────────
   {
     slug:        "sapa-trekking-classic",
     name:        "Sa Pa Trekking Classic",
     region:      "north",
+    tags:        ["hiking"],
     duration:    ["2D1N"],
     price:       "from $67",
     priceUSD:    67,
@@ -2209,6 +2247,7 @@ export const tours: Tour[] = [
     slug:        "sapa-nam-cang",
     name:        "Sa Pa · Nậm Cang",
     region:      "north",
+    tags:        ["hiking"],
     duration:    ["1 Day", "2D1N"],
     price:       "from $52",
     priceUSD:    52,
@@ -2588,6 +2627,7 @@ export const tours: Tour[] = [
     slug:        "into-nam-luc",
     name:        "Into Nậm Lúc Waterfall",
     region:      "north",
+    tags:        ["hiking"],
     duration:    ["1 Day"],
     price:       "from $63",
     priceUSD:    63,
@@ -2843,6 +2883,7 @@ export const tours: Tour[] = [
     slug:        "unlock-lai-chau",
     name:        "Unlock Lai Châu",
     region:      "north",
+    tags:        ["hiking"],
     duration:    ["2D1N"],
     price:       "from $160",
     priceUSD:    160,

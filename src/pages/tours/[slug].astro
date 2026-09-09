@@ -40,6 +40,7 @@ const mergedTypical: string = allTypicalSame ? compareRows[0].typical : '';
 const overview     = tour.storytelling;
 const elevation    = tour.elevationProfile;
 const elevMax: number = (tour as any).elevationMax ?? 1500;
+const isMultiDay: boolean = !!(elevation && elevation.some((p: any) => (p.day ?? 0) > 1));
 const activityCards = tour.activityCards;
 const welcomePack  = tour.welcomePack;
 const unlock       = tour.unlockChallenge;
@@ -468,7 +469,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   <section class="td-timeline">
     <div class="td-timeline__inner">
       <p class="section-label">The journey</p>
-      <h2 class="td-timeline__heading">A day, mapped.</h2>
+      <h2 class="td-timeline__heading">{isMultiDay ? 'The journey, mapped.' : 'A day, mapped.'}</h2>
       <p class="td-timeline__sub">Time across, elevation up. Every spike is a moment worth remembering.</p>
 
       {elevation && elevation.length > 0 ? (
@@ -616,13 +617,15 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                         const [line1, line2] = labelLines(p.label);
                         const fw = p.highlight ? '700' : '500';
                         const baseY = 340;
+                        const dense = total > 14;
+                        const showLabel = !dense || p.highlight;
                         return (
                           <g class={`td-timeline__point${p.highlight ? ' is-highlight' : ''}`}>
                             <circle cx={p.x} cy={p.y} r={dotR} fill={dotColor} stroke="white" stroke-width="2.5" />
-                            <text x={p.x} y={p.y - 18} text-anchor="middle" font-size="10" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>
-                            <text x={p.x} y={baseY} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>
-                            {line2 && <text x={p.x} y={baseY + 13} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
-                            <text x={p.x} y={baseY + (line2 ? 26 : 13)} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>
+                            {showLabel && <text x={p.x} y={p.y - 18} text-anchor="middle" font-size="10" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>}
+                            {showLabel && <text x={p.x} y={baseY} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>}
+                            {showLabel && line2 && <text x={p.x} y={baseY + 13} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
+                            {showLabel && <text x={p.x} y={baseY + (line2 ? 26 : 13)} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>}
                           </g>
                         );
                       })}

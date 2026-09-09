@@ -8,6 +8,7 @@ const SAPA_SLUGS = [
   'sa-pa-lai-chau',
   'into-nam-luc',
   'unlock-lai-chau',
+  'lai-chau-loop',
 ];
 
 const sapaTours = SAPA_SLUGS
@@ -25,7 +26,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
 
 <BaseLayout
   title="Sa Pa · Lai Châu Tours — Morning Vietnam"
-  description="Five ways into Vietnam's highest mountains. Small group, max 12. From 1 day to 2D1N."
+  description="Six ways into Vietnam's highest mountains. Small group, max 12. From 1 day to 3D2N."
 >
 
   <!-- ══════════════════════════════════════════════════════
@@ -43,15 +44,15 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
       </nav>
       <div class="hub-hero__region">North Vietnam · Mountain Region</div>
       <h1>Sa Pa · Lai Châu</h1>
-      <p class="hub-hero__sub">Vietnam's highest pass. Five routes in. Choose yours below.</p>
+      <p class="hub-hero__sub">Vietnam's highest pass. Six routes in. Choose yours below.</p>
       <div class="hub-hero__stats">
         <div class="hub-stat">
           <span class="hub-stat__num">2,050m</span>
           <span class="hub-stat__label">O Quy Hồ Pass</span>
         </div>
         <div class="hub-stat">
-          <span class="hub-stat__num">5</span>
-          <span class="hub-stat__label">Routes · 1 day → 2D1N</span>
+          <span class="hub-stat__num">6</span>
+          <span class="hub-stat__label">Routes · 1 day → 3D2N</span>
         </div>
         <div class="hub-stat">
           <span class="hub-stat__num">Max 12</span>
@@ -73,13 +74,13 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
     <div class="container">
       <div class="hub-tours__header">
         <span class="section-eyebrow">Choose your route</span>
-        <h2>Five ways into the northwest.</h2>
+        <h2>Six ways into the northwest.</h2>
         <p class="hub-tours__sub">Different depths, different paces. All for small group.</p>
       </div>
 
       <div class="hub-grid">
         {sapaTours.map((tour, i) => {
-          const bgtype = CARD_BGTYPES[i];
+          const bgtype = CARD_BGTYPES[i % CARD_BGTYPES.length];
           const href = `/tours/${tour.slug}`;
           const durationLabel = tour.duration.join(' / ');
 

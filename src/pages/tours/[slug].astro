@@ -806,25 +806,20 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   <!-- ═══ S7 · b-welcome (Welcome pack) ════════════════════════ -->
   <section class="td-welcome">
     <div class="td-welcome__inner">
-      <p class="section-label">Your welcome pack</p>
-      <h2 class="td-welcome__heading">{welcomePack?.subheading || "Everything in your bag has a reason."}</h2>
-      <p class="td-welcome__intro">{welcomePack?.intro || "On the road, your guide hands you a Morning Vietnam pack. Not merch. Each item was chosen for what the day asks of you."}</p>
-      <div class="td-welcome__grid">
-        {(welcomePack?.items || []).map((item: {icon: string; name: string; why: string}) => (
-          <div class="td-welcome__card">
-            <div class="td-welcome__icon">{item.icon}</div>
-            <div class="td-welcome__name">{item.name}</div>
-            <div class="td-welcome__why">{item.why}</div>
-          </div>
-        ))}
-        <div class="td-welcome__card-img">
-          <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=600&q=80" alt="Welcome pack" />
+      <div class="td-welcome__cols">
+        <div class="td-welcome__photo">
+          <img src="/welcome-gift.png" alt="Morning Vietnam welcome pack" />
+        </div>
+        <div class="td-welcome__text">
+          <p class="section-label">Your welcome pack</p>
+          <h2 class="td-welcome__heading">{welcomePack?.subheading || "Everything in your bag has a reason."}</h2>
+          <p class="td-welcome__intro">{welcomePack?.intro || "On the road, your guide hands you a Morning Vietnam pack. Not merch. Each item was chosen for what the day asks of you."}</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ S10 · b-departures ═══════════════════════════════════ -->
+  {/* ═══ S10 · b-departures — tạm ẩn, bật lại khi có lịch khởi hành ═══
   {upcomingDates && upcomingDates.length > 0 && (
     <section class="td-departures">
       <div class="td-departures__inner">
@@ -845,6 +840,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       </div>
     </section>
   )}
+  */}
 
   <!-- ═══ S6 · b-unlock (the secret game) ═══════════════════════ -->
   {unlock && (
@@ -2072,7 +2068,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── S7 td-welcome ─────────────────────────────── */
   .td-welcome {
     background: #ffffff;
-    padding: 60px 0;
+    padding: 80px 0;
   }
 
   .td-welcome__inner {
@@ -2081,78 +2077,63 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     padding: 0 48px;
   }
 
+  .td-welcome__cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .td-welcome__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
   .td-welcome__heading {
     font-family: var(--font-heading);
-    font-size: clamp(36px, 5vw, 64px);
+    font-size: clamp(32px, 4vw, 56px);
     font-weight: 700;
     line-height: 1.05;
     letter-spacing: -0.02em;
     color: var(--color-nordic);
-    margin: 12px 0 20px;
+    margin: 12px 0 24px;
   }
 
   .td-welcome__intro {
     font-size: 17px;
-    line-height: 1.7;
+    line-height: 1.75;
     color: var(--color-nordic);
-    opacity: 0.75;
-    max-width: 640px;
-    margin-bottom: 56px;
+    opacity: 0.72;
+    margin: 0;
   }
 
-  .td-welcome__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
-  }
-
-  .td-welcome__card {
-    background: var(--color-light-cyan);
-    border-radius: 16px;
-    padding: 24px 20px;
-    text-align: center;
-    border-top: 4px solid #a08f1d;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .td-welcome__card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(4,51,65,0.10);
-  }
-
-  .td-welcome__icon { font-size: 36px; margin-bottom: 12px; }
-
-  .td-welcome__name {
-    font-family: var(--font-heading);
-    font-size: 14px;
-    font-weight: 700;
-    color: #413d04;
-    margin-bottom: 8px;
-  }
-
-  .td-welcome__why {
-    font-size: 12px;
-    line-height: 1.55;
-    color: rgba(65,61,4,0.7);
-  }
-
-  .td-welcome__card-img {
-    border-radius: 16px;
+  .td-welcome__photo {
+    border-radius: 24px;
     overflow: hidden;
-    aspect-ratio: 3 / 4;
+    box-shadow: 0 24px 64px rgba(4, 51, 65, 0.14);
   }
 
-  .td-welcome__card-img img {
+  .td-welcome__photo img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
     display: block;
+  }
+
+  @media (max-width: 900px) {
+    .td-welcome__cols {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    .td-welcome__photo {
+      max-width: 480px;
+      margin: 0 auto;
+    }
   }
 
   @media (max-width: 768px) {
     .td-welcome__inner { padding: 0 24px; }
-    .td-welcome__grid  { grid-template-columns: repeat(2, 1fr); }
-    .td-welcome        { padding: 40px 0; }
+    .td-welcome        { padding: 56px 0; }
   }
 
   /* ── S6 td-unlock ──────────────────────────────── */

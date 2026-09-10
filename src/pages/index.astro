@@ -916,7 +916,7 @@ const exploreCategories = [
 
   .hp-explore__sticky {
     position: sticky;
-    top: 120px;
+    top: max(120px, calc(50vh - 235px));
     display: grid;
     grid-template-columns: minmax(240px, 34%) 1fr;
     gap: 24px;

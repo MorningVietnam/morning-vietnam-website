@@ -9,6 +9,7 @@ const SAPA_HUB_ONLY = new Set([
   'sapa-nam-cang',
   'into-nam-luc',
   'unlock-lai-chau',
+  'lai-chau-loop',
 ]);
 const visibleTours = tours.filter((t: any) => !SAPA_HUB_ONLY.has(t.slug));
 const catBaIdx = visibleTours.findIndex((t: any) => t.slug === 'mai-moc-in-1-trip');

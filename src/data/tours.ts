@@ -1662,18 +1662,6 @@ export const tours: Tour[] = [
 
     selectorMode: 'vehicle-only',
 
-    discountPolicy: {
-      rules: [
-        { label: "Own bike · 3–5 people",    value: "$161 / 4,200,000 ₫ per person" },
-        { label: "Own bike · 6–9 people",    value: "$149 / 3,900,000 ₫ per person" },
-        { label: "Own bike · 10+ people",    value: "$141 / 3,690,000 ₫ per person" },
-        { label: "Easy-rider · 3–5 people",  value: "$207 / 5,400,000 ₫ per person" },
-        { label: "Easy-rider · 6–9 people",  value: "$199 / 5,200,000 ₫ per person" },
-        { label: "Easy-rider · 10+ people",  value: "$197 / 5,130,000 ₫ per person" },
-        { label: "Pickup from Sa Pa",        value: "−$19 / −500,000 ₫ per person" },
-      ],
-    },
-
     panoramicImage: "/tours/lai-chau-loop/panorama.webp",
 
     gallery: [

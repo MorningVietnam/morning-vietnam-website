@@ -6,7 +6,7 @@ import Marquee from '../components/Marquee.astro';
 import TravelGuidePopup from '../components/TravelGuidePopup.astro';
 import { tours, type Tour } from '../data/tours.ts';
 
-const FEATURED_SLUGS = ['sapa-nam-cang', 'sa-pa-lai-chau', 'ho-chi-minh-a-life', 'mui-doi-first-sunrise'];
+const FEATURED_SLUGS = ['lai-chau-loop', 'sapa-nam-cang', 'ho-chi-minh-a-life', 'mui-doi-first-sunrise'];
 const featuredTours = FEATURED_SLUGS.map(s => tours.find(t => t.slug === s)).filter((t): t is Tour => !!t);
 
 const team = [

@@ -127,7 +127,7 @@ const exploreCategories = [
         <div class="hp-showcase2__index">
           <span id="showcase-current">01</span><span class="hp-showcase2__index-total">/0{featuredTours.length}</span>
         </div>
-        <p class="hp-showcase2__desc" id="showcase-desc">{featuredTours[0].description?.slice(0, 220) ?? featuredTours[0].tagline}</p>
+        <p class="hp-showcase2__desc" id="showcase-desc">{featuredTours[0].description ?? featuredTours[0].tagline}</p>
 
         <div class="hp-showcase2__meta">
           <div class="hp-showcase2__meta-row">
@@ -1718,7 +1718,7 @@ const exploreCategories = [
         if (els.heading)  els.heading.textContent  = t.name;
         if (els.image)  { els.image.src = t.image; els.image.alt = t.name; }
         if (els.current)  els.current.textContent  = String(idx + 1).padStart(2, '0');
-        if (els.desc)     els.desc.textContent      = (t.description?.slice(0, 220) ?? t.tagline);
+        if (els.desc)     els.desc.textContent      = (t.description ?? t.tagline);
         if (els.duration) els.duration.textContent  = t.duration.join(' / ');
         if (els.lang)     els.lang.textContent      = t.languages.join(' · ');
         if (els.link)     els.link.href             = `/tours/${t.slug}`;

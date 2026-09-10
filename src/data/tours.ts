@@ -1633,9 +1633,9 @@ export const tours: Tour[] = [
     name:        "Lai Châu Loop",
     region:      "north",
     duration:    ["3D2N"],
-    price:       "Contact for pricing",
-    priceUSD:    0,
-    priceVND:    0,
+    price:       "From $161",
+    priceUSD:    161,
+    priceVND:    4200000,
     tagline:     "3 cultures. 1 stone plateau. The Black River, from the road and from the water.",
     description: "Three days through a Tây Bắc most tours skip — Sìn Hồ's high roads, Mường Lay's flooded-valley lake town, the stone plateau of Tùa Chùa, a boat crossing on the Da River, and Sì Thâu Chải at sunset. Thai, H'Mông, and Red Dao in one loop.",
     highlights: [
@@ -1661,6 +1661,18 @@ export const tours: Tour[] = [
     image:      "/tours/lai-chau-loop/1.webp",
 
     selectorMode: 'vehicle-only',
+
+    discountPolicy: {
+      rules: [
+        { label: "Own bike · 3–5 people",    value: "$161 / 4,200,000 ₫ per person" },
+        { label: "Own bike · 6–9 people",    value: "$149 / 3,900,000 ₫ per person" },
+        { label: "Own bike · 10+ people",    value: "$141 / 3,690,000 ₫ per person" },
+        { label: "Easy-rider · 3–5 people",  value: "$207 / 5,400,000 ₫ per person" },
+        { label: "Easy-rider · 6–9 people",  value: "$199 / 5,200,000 ₫ per person" },
+        { label: "Easy-rider · 10+ people",  value: "$197 / 5,130,000 ₫ per person" },
+        { label: "Pickup from Sa Pa",        value: "−$19 / −500,000 ₫ per person" },
+      ],
+    },
 
     panoramicImage: "/tours/lai-chau-loop/panorama.webp",
 
@@ -1688,22 +1700,54 @@ export const tours: Tour[] = [
 
     durationOptions: [
       {
-        id:       "3d2n",
-        label:    "3D2N",
-        price:    null,
-        priceVND: null,
+        id:       "self-ride",
+        label:    "Own motorbike",
+        price:    161,
+        priceVND: 4200000,
         tagline:  "Hanoi → Tam Đường · Sìn Hồ · Mường Lay · Tùa Chùa · Pa Phồng · Da River Boat · Sì Thâu Chải → Hanoi",
         ctaLabel: "Enquire →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
-        waText:   "Hi Morning Vietnam — I'd like to enquire about the Lai Châu Loop (3D2N)",
+        waText:   "Hi Morning Vietnam — I'd like to enquire about the Lai Châu Loop (3D2N, own motorbike)",
+        paxTiers: [
+          { id: "1-2",  label: "1–2 people",  price: 161, priceVND: 4200000, note: "This trip joins an existing group — we depart once at least 3 guests confirm the same date." },
+          { id: "3-5",  label: "3–5 people",  price: 161, priceVND: 4200000 },
+          { id: "6-9",  label: "6–9 people",  price: 149, priceVND: 3900000 },
+          { id: "10+",  label: "10+ people",  price: 141, priceVND: 3690000 },
+        ],
+      },
+      {
+        id:       "easy-rider",
+        label:    "Easy-rider",
+        price:    207,
+        priceVND: 5400000,
+        tagline:  "Hanoi → Tam Đường · Sìn Hồ · Mường Lay · Tùa Chùa · Pa Phồng · Da River Boat · Sì Thâu Chải → Hanoi",
+        ctaLabel: "Enquire →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to enquire about the Lai Châu Loop (3D2N, Easy-rider)",
+        paxTiers: [
+          { id: "1-2",   label: "1–2 people",   price: 207, priceVND: 5400000, note: "This trip joins an existing group — we depart once at least 3 guests confirm the same date." },
+          { id: "3-5",   label: "3–5 people",   price: 207, priceVND: 5400000 },
+          { id: "6-9",   label: "6–9 people",   price: 199, priceVND: 5200000 },
+          { id: "10-13", label: "10–13 people", price: 197, priceVND: 5130000 },
+        ],
       },
     ],
 
     tripInfo: {
-      "3d2n": [
-        { icon: "map-pin",         label: "Pickup",     value: "Hanoi · 22:00 the night before Day 1" },
-        { icon: "users",           label: "Group size", value: "Max 8 people · joined group · private departure 5+" },
-        { icon: "car",             label: "Transport",  value: "Overnight van Hanoi ↔ Lai Châu · van on route · boat Day 3" },
+      "self-ride": [
+        { icon: "map-pin",         label: "Pickup",     value: "Hanoi · 22:00 the night before Day 1 · or Sa Pa (−$19/person)" },
+        { icon: "users",           label: "Group size", value: "Min 3 people · groups of 14+ split into smaller teams" },
+        { icon: "car",             label: "Transport",  value: "Overnight van Hanoi ↔ Lai Châu · your own motorbike on route · boat Day 3" },
+        { icon: "tools-kitchen-2", label: "Meals",      value: "3 breakfasts · 3 lunches · 2 dinners" },
+        { icon: "home",            label: "Sleep",      value: "Night 1: Thai family homestay · Mường Lay   Night 2: Pa Phồng bridge homestay" },
+        { icon: "mountain",        label: "Terrain",    value: "Mountain roads · stone plateau · Da River lake · highland forest" },
+        { icon: "users",           label: "Cultures",   value: "3 ethnic groups: Thai · H'Mông · Red Dao" },
+        { icon: "fish",            label: "Fishing",    value: "Evening trap & net fishing on the Da River lake · optional · Day 1" },
+      ],
+      "easy-rider": [
+        { icon: "map-pin",         label: "Pickup",     value: "Hanoi · 22:00 the night before Day 1 · or Sa Pa (−$19/person)" },
+        { icon: "users",           label: "Group size", value: "Min 3 · max 13 people · larger groups not recommended" },
+        { icon: "car",             label: "Transport",  value: "Overnight van Hanoi ↔ Lai Châu · experienced local easy-rider driver · boat Day 3" },
         { icon: "tools-kitchen-2", label: "Meals",      value: "3 breakfasts · 3 lunches · 2 dinners" },
         { icon: "home",            label: "Sleep",      value: "Night 1: Thai family homestay · Mường Lay   Night 2: Pa Phồng bridge homestay" },
         { icon: "mountain",        label: "Terrain",    value: "Mountain roads · stone plateau · Da River lake · highland forest" },
@@ -1723,7 +1767,7 @@ export const tours: Tour[] = [
     },
 
     valueAnchor: {
-      "3d2n": {
+      "self-ride": {
         headline: "Three days through a Tây Bắc most tours never reach.",
         paragraphs: [
           "This route links Sìn Hồ's high plateau roads, Mường Lay's lake-town, and the stone plateau of Tùa Chùa into a circular loop that starts and ends in Hanoi. Most northwest itineraries skip it: the roads are longer, the distances require real driving time, and none of the destinations have international hotel infrastructure. That's exactly the point.",
@@ -1734,7 +1778,22 @@ export const tours: Tour[] = [
           { metric: "Mường Lay",                typical: "Drive-through between Điện Biên and Lai Châu",    us: "Overnight · sunset on the lake · fishing" },
           { metric: "Da River boat crossing",   typical: "Not offered on any tour",                         us: "Morning boat · Điện Biên → Lai Châu side · Day 3" },
           { metric: "Ethnic groups",            typical: "Usually one — H'Mông near Sa Pa",                 us: "Thai · H'Mông · Red Dao across 3 days" },
-          { metric: "Group size",               typical: "20 – 45 people",                                  us: "Max 8 — your group only" },
+          { metric: "Group size",               typical: "20 – 45 people",                                  us: "Min 3 · groups of 14+ split into teams" },
+          { metric: "Homestay",                 typical: "Tourist guesthouse",                              us: "Working family homes — 2 nights" },
+        ],
+      },
+      "easy-rider": {
+        headline: "Three days through a Tây Bắc most tours never reach.",
+        paragraphs: [
+          "This route links Sìn Hồ's high plateau roads, Mường Lay's lake-town, and the stone plateau of Tùa Chùa into a circular loop that starts and ends in Hanoi. Most northwest itineraries skip it: the roads are longer, the distances require real driving time, and none of the destinations have international hotel infrastructure. That's exactly the point.",
+          "Two nights in working homestays — a Thai family in Mường Lay, a family at Pa Phồng suspension bridge above the Da River. Morning on the water: a boat crossing of the Da River reservoir through submerged valley between two provinces, a route used by local families and not found in any tour catalogue. Three cultures across three days: Thai in Mường Lay, H'Mông on the Tùa Chùa plateau, Red Dao at Sì Thâu Chải.",
+        ],
+        compareTable: [
+          { metric: "Tùa Chùa stone plateau",  typical: "Not visited — off all standard routes",           us: "Full afternoon + sunset at the plateau" },
+          { metric: "Mường Lay",                typical: "Drive-through between Điện Biên and Lai Châu",    us: "Overnight · sunset on the lake · fishing" },
+          { metric: "Da River boat crossing",   typical: "Not offered on any tour",                         us: "Morning boat · Điện Biên → Lai Châu side · Day 3" },
+          { metric: "Ethnic groups",            typical: "Usually one — H'Mông near Sa Pa",                 us: "Thai · H'Mông · Red Dao across 3 days" },
+          { metric: "Group size",               typical: "20 – 45 people",                                  us: "Min 3 · max 13 · with a local easy-rider driver" },
           { metric: "Homestay",                 typical: "Tourist guesthouse",                              us: "Working family homes — 2 nights" },
         ],
       },

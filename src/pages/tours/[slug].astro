@@ -150,21 +150,42 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                 </div>
               ) : selectorMode === 'vehicle-only' ? (
                 /* ── Single dropdown: choose vehicle (hidden if only 1 option) ── */
-                <div class="td-selector__q" style={tour.durationOptions.length <= 1 ? 'display:none' : ''}>
-                  <label class="td-selector__label" for="td-sel-vehicle-only">
-                    How do you want to explore?
-                  </label>
-                  <div class="td-selector__wrap">
-                    <select id="td-sel-vehicle-only" class="td-selector__select">
-                      {tour.durationOptions.map((opt: {id: string; label: string}) => (
-                        <option value={opt.id}>{opt.label}</option>
-                      ))}
-                    </select>
-                    <svg class="td-selector__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                <>
+                  <div class="td-selector__q" style={tour.durationOptions.length <= 1 ? 'display:none' : ''}>
+                    <label class="td-selector__label" for="td-sel-vehicle-only">
+                      How do you want to explore?
+                    </label>
+                    <div class="td-selector__wrap">
+                      <select id="td-sel-vehicle-only" class="td-selector__select">
+                        {tour.durationOptions.map((opt: {id: string; label: string}) => (
+                          <option value={opt.id}>{opt.label}</option>
+                        ))}
+                      </select>
+                      <svg class="td-selector__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
                   </div>
-                </div>
+
+                  {/* Pax-tier selector — only rendered when first option carries paxTiers */}
+                  {(tour.durationOptions as any)[0]?.paxTiers && (
+                    <div class="td-selector__q" id="td-sel-pax-wrap">
+                      <label class="td-selector__label" for="td-sel-pax">
+                        How many people in your group?
+                      </label>
+                      <div class="td-selector__wrap">
+                        <select id="td-sel-pax" class="td-selector__select">
+                          {((tour.durationOptions as any)[0].paxTiers as any[]).map((tier: any, i: number) => (
+                            <option value={i} selected={i === 1}>{tier.label}</option>
+                          ))}
+                        </select>
+                        <svg class="td-selector__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                    </div>
+                  )}
+                </>
               ) : (
                 /* ── Two dropdowns: pickup × vehicle ── */
                 <>
@@ -234,6 +255,9 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
             {(tour as any).priceNote && (
               <p class="td-product__price-note">{(tour as any).priceNote}</p>
             )}
+
+            {/* Joined-group note — shown by JS when pax tier "1-2" is selected */}
+            <p class="td-product__pax-note" id="td-pax-note" hidden></p>
 
             <!-- Cabin upgrade — vehicle-only mode (always visible, no pickup condition) -->
             {cabinUpgrade && selectorMode === 'vehicle-only' && (
@@ -1242,6 +1266,17 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     font-weight: 600;
     margin-top: 4px;
     opacity: 0.9;
+  }
+
+  .td-product__pax-note {
+    font-size: 12px;
+    color: var(--color-nordic);
+    background: var(--color-light-cyan);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    line-height: 1.5;
+    opacity: 0.85;
   }
 
   .td-product__tagline {
@@ -3168,6 +3203,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     const selPickup    = document.getElementById('td-sel-pickup')       as HTMLSelectElement | null;
     const selVehicle   = document.getElementById('td-sel-vehicle')      as HTMLSelectElement | null;
     const selVehicleOnly = document.getElementById('td-sel-vehicle-only') as HTMLSelectElement | null;
+    const selPax         = document.getElementById('td-sel-pax')           as HTMLSelectElement | null;
+    const paxNoteEl      = document.getElementById('td-pax-note')          as HTMLElement | null;
     const priceAmountEl = document.getElementById('td-price-amount');
     const taglineEl = document.getElementById('td-tagline-display');
     const ctaBtn = document.getElementById('td-cta-btn') as HTMLAnchorElement | null;
@@ -3361,13 +3398,55 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       });
     }
 
+    // ── Pax-tier: rebuild options + apply price when active option changes ──
+    function rebuildPaxOptions(opt: any) {
+      if (!selPax || !opt.paxTiers) return;
+      selPax.innerHTML = opt.paxTiers.map((t: any, i: number) =>
+        `<option value="${i}"${i === 1 ? ' selected' : ''}>${t.label}</option>`
+      ).join('');
+    }
+
+    function applyPaxTier(opt: any) {
+      if (!selPax || !opt.paxTiers) {
+        if (paxNoteEl) paxNoteEl.hidden = true;
+        return;
+      }
+      const idx  = parseInt(selPax.value, 10) || 0;
+      const tier = opt.paxTiers[idx];
+      if (!tier) return;
+      updatePriceDisplay(tier.price, tier.priceVND ?? null, false, 0, 0);
+      if (paxNoteEl) {
+        if (tier.note) {
+          paxNoteEl.textContent = tier.note;
+          paxNoteEl.hidden = false;
+        } else {
+          paxNoteEl.hidden = true;
+        }
+      }
+    }
+
     // Dropdown listeners — re-selectable at any time
-    selVehicleOnly?.addEventListener('change', () => switchDuration(resolveId()));
-    selPickup?.addEventListener('change',      () => switchDuration(resolveId()));
-    selVehicle?.addEventListener('change',     () => switchDuration(resolveId()));
+    selVehicleOnly?.addEventListener('change', () => {
+      const id = resolveId();
+      switchDuration(id);
+      const opt = durationOptions.find((o: any) => o.id === id);
+      if (opt) { rebuildPaxOptions(opt); applyPaxTier(opt); }
+    });
+    selPax?.addEventListener('change', () => {
+      const id  = resolveId();
+      const opt = durationOptions.find((o: any) => o.id === id);
+      if (opt) applyPaxTier(opt);
+    });
+    selPickup?.addEventListener('change',  () => switchDuration(resolveId()));
+    selVehicle?.addEventListener('change', () => switchDuration(resolveId()));
 
     // Init on page load — sync UI state to default dropdown values
-    switchDuration(resolveId());
+    {
+      const initId  = resolveId();
+      switchDuration(initId);
+      const initOpt = durationOptions.find((o: any) => o.id === initId);
+      if (initOpt) applyPaxTier(initOpt);
+    }
   })();
 
   // ── Sticky bar: show after hero CTA scrolls out of view ──────────

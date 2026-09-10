@@ -175,9 +175,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                       </label>
                       <div class="td-selector__wrap">
                         <select id="td-sel-pax" class="td-selector__select">
-                          {((tour.durationOptions as any)[0].paxTiers as any[]).map((tier: any, i: number) => (
-                            <option value={i} selected={i === 1}>{tier.label}</option>
-                          ))}
+                          {/* JS generates individual-number options on page load */}
                         </select>
                         <svg class="td-selector__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
                           <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -3398,12 +3396,19 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       });
     }
 
-    // ── Pax-tier: rebuild options + apply price when active option changes ──
+    // ── Pax-tier: individual-number options, price mapped from min/max ranges ──
+    function findTierForPax(tiers: any[], pax: number) {
+      return tiers.find((t: any) => pax >= t.min && pax <= t.max) ?? null;
+    }
+
     function rebuildPaxOptions(opt: any) {
       if (!selPax || !opt.paxTiers) return;
-      selPax.innerHTML = opt.paxTiers.map((t: any, i: number) =>
-        `<option value="${i}"${i === 1 ? ' selected' : ''}>${t.label}</option>`
-      ).join('');
+      const maxPax   = Math.max(...opt.paxTiers.map((t: any) => t.max));
+      const prevVal  = parseInt(selPax.value, 10) || 3;
+      const newVal   = Math.min(Math.max(prevVal, 1), maxPax);
+      selPax.innerHTML = Array.from({ length: maxPax }, (_, i) => i + 1)
+        .map(n => `<option value="${n}"${n === newVal ? ' selected' : ''}>${n} ${n === 1 ? 'person' : 'people'}</option>`)
+        .join('');
     }
 
     function applyPaxTier(opt: any) {
@@ -3411,8 +3416,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
         if (paxNoteEl) paxNoteEl.hidden = true;
         return;
       }
-      const idx  = parseInt(selPax.value, 10) || 0;
-      const tier = opt.paxTiers[idx];
+      const pax  = parseInt(selPax.value, 10) || 3;
+      const tier = findTierForPax(opt.paxTiers, pax);
       if (!tier) return;
       updatePriceDisplay(tier.price, tier.priceVND ?? null, false, 0, 0);
       if (paxNoteEl) {
@@ -3445,7 +3450,11 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       const initId  = resolveId();
       switchDuration(initId);
       const initOpt = durationOptions.find((o: any) => o.id === initId);
-      if (initOpt) applyPaxTier(initOpt);
+      if (initOpt) {
+        rebuildPaxOptions(initOpt);   // populate numbers first
+        if (selPax && !selPax.value) selPax.value = '3'; // default to 3 people
+        applyPaxTier(initOpt);
+      }
     }
   })();
 

@@ -1701,7 +1701,7 @@ export const tours: Tour[] = [
     durationOptions: [
       {
         id:       "self-ride",
-        label:    "Own motorbike",
+        label:    "Self-ride",
         price:    161,
         priceVND: 4200000,
         tagline:  "Hanoi → Tam Đường · Sìn Hồ · Mường Lay · Tùa Chùa · Pa Phồng · Da River Boat · Sì Thâu Chải → Hanoi",

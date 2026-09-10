@@ -1649,7 +1649,7 @@ export const tours: Tour[] = [
     included: [
       "Transport Hanoi → Tam Đường (overnight van, Day 0) and Sì Thâu Chải → Hanoi (overnight, Day 3)",
       "All meals: 3 breakfasts · 3 lunches · 3 dinners",
-      "2 nights accommodation: Thai family homestay (Mường Lay) + Pa Phồng bridge homestay",
+      "2 nights accommodation: Thai family homestay (Mường Lay) + Pa Phông bridge homestay",
       "Boat transfer on the Da River lake (Day 3 morning)",
       "Local guide and Morning Vietnam host",
       "Fishing equipment for evening activity (Day 1, optional)",
@@ -1666,10 +1666,10 @@ export const tours: Tour[] = [
 
     gallery: [
       { src: "/tours/lai-chau-loop/1.webp",  alt: "Da River reservoir at Mường Lay — flooded valley lake town at 270m in the northwest" },
-      { src: "/tours/lai-chau-loop/2.webp",  alt: "Suspension bridge at Pa Phồng above the Da River lake at dusk" },
+      { src: "/tours/lai-chau-loop/2.webp",  alt: "Suspension bridge at Pa Phông above the Da River lake at dusk" },
       { src: "/tours/lai-chau-loop/3.webp",  alt: "Stone karst plateau of Tùa Chùa — bare limestone at 1,300m, Điện Biên province" },
       { src: "/tours/lai-chau-loop/4.webp",  alt: "Thác Bay waterfall in primary jungle near Sìn Hồ at 1,450m" },
-      { src: "/tours/lai-chau-loop/5.webp",  alt: "Morning mist over the Da River lake — view from the Pa Phồng homestay at dawn" },
+      { src: "/tours/lai-chau-loop/5.webp",  alt: "Morning mist over the Da River lake — view from the Pa Phông homestay at dawn" },
       { src: "/tours/lai-chau-loop/6.webp",  alt: "Red Dao women at Sì Thâu Chải village — embroidered headdress and traditional dress" },
       { src: "/tours/lai-chau-loop/7.webp",  alt: "Boat crossing the Da River reservoir — drowned valley between Điện Biên and Lai Châu" },
       { src: "/tours/lai-chau-loop/8.webp",  alt: "San Thàng cultural market at dawn — local produce and Thai minority vendors" },
@@ -1682,7 +1682,7 @@ export const tours: Tour[] = [
       { src: "/tours/lai-chau-loop/15.webp", alt: "Sì Thâu Chải village at 1,450m — Red Dao settlement with Lai Châu valley below" },
       { src: "/tours/lai-chau-loop/16.webp", alt: "Lao Chải 1 community village — lunch stop beside the river after the Da River boat crossing" },
       { src: "/tours/lai-chau-loop/17.webp", alt: "Thác Tác Tình waterfall in highland forest at 1,000m — Lai Châu province" },
-      { src: "/tours/lai-chau-loop/18.webp", alt: "Pa Phồng suspension bridge at first light — mist over the Da River lake" },
+      { src: "/tours/lai-chau-loop/18.webp", alt: "Pa Phông suspension bridge at first light — mist over the Da River lake" },
       { src: "/tours/lai-chau-loop/19.webp", alt: "Small group on the Tùa Chùa stone plateau — bare karst landscape unique in northwest Vietnam" },
     ],
 
@@ -1692,7 +1692,7 @@ export const tours: Tour[] = [
         label:    "Self-ride",
         price:    161,
         priceVND: 4200000,
-        tagline:  "Hanoi → Tam Đường · Sìn Hồ · Mường Lay · Tùa Chùa · Pa Phồng · Da River Boat · Sì Thâu Chải → Hanoi",
+        tagline:  "Hanoi → Tam Đường · Sìn Hồ · Mường Lay · Tùa Chùa · Pa Phông · Da River Boat · Sì Thâu Chải → Hanoi",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
         waText:   "Hi Morning Vietnam — I'd like to book the Lai Châu Loop (3D2N, self-ride)",
@@ -1708,7 +1708,7 @@ export const tours: Tour[] = [
         label:    "Easy-rider",
         price:    207,
         priceVND: 5400000,
-        tagline:  "Hanoi → Tam Đường · Sìn Hồ · Mường Lay · Tùa Chùa · Pa Phồng · Da River Boat · Sì Thâu Chải → Hanoi",
+        tagline:  "Hanoi → Tam Đường · Sìn Hồ · Mường Lay · Tùa Chùa · Pa Phông · Da River Boat · Sì Thâu Chải → Hanoi",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
         waText:   "Hi Morning Vietnam — I'd like to book the Lai Châu Loop (3D2N, Easy-rider)",
@@ -1759,7 +1759,7 @@ export const tours: Tour[] = [
         headline: "Three days through a Tây Bắc most tours never reach.",
         paragraphs: [
           "This route links Sìn Hồ's high plateau roads, Mường Lay's lake-town, and the stone plateau of Tùa Chùa into a circular loop that starts and ends in Hanoi. Most northwest itineraries skip it: the roads are longer, the distances require real driving time, and none of the destinations have international hotel infrastructure. That's exactly the point.",
-          "Two nights in working homestays — a Thai family in Mường Lay, a family at Pa Phồng suspension bridge above the Da River. Morning on the water: a boat crossing of the Da River reservoir through submerged valley between two provinces, a route used by local families and not found in any tour catalogue. Three cultures across three days: Thai in Mường Lay, H'Mông on the Tùa Chùa plateau, Red Dao at Sì Thâu Chải.",
+          "Two nights in working homestays — a Thai family in Mường Lay, a family at Pa Phông suspension bridge above the Da River. Morning on the water: a boat crossing of the Da River reservoir through submerged valley between two provinces, a route used by local families and not found in any tour catalogue. Three cultures across three days: Thai in Mường Lay, H'Mông on the Tùa Chùa plateau, Red Dao at Sì Thâu Chải.",
         ],
         compareTable: [
           { metric: "Tùa Chùa stone plateau",  typical: "Not visited — off all standard routes",           us: "Full afternoon + sunset at the plateau" },
@@ -1774,7 +1774,7 @@ export const tours: Tour[] = [
         headline: "Three days through a Tây Bắc most tours never reach.",
         paragraphs: [
           "This route links Sìn Hồ's high plateau roads, Mường Lay's lake-town, and the stone plateau of Tùa Chùa into a circular loop that starts and ends in Hanoi. Most northwest itineraries skip it: the roads are longer, the distances require real driving time, and none of the destinations have international hotel infrastructure. That's exactly the point.",
-          "Two nights in working homestays — a Thai family in Mường Lay, a family at Pa Phồng suspension bridge above the Da River. Morning on the water: a boat crossing of the Da River reservoir through submerged valley between two provinces, a route used by local families and not found in any tour catalogue. Three cultures across three days: Thai in Mường Lay, H'Mông on the Tùa Chùa plateau, Red Dao at Sì Thâu Chải.",
+          "Two nights in working homestays — a Thai family in Mường Lay, a family at Pa Phông suspension bridge above the Da River. Morning on the water: a boat crossing of the Da River reservoir through submerged valley between two provinces, a route used by local families and not found in any tour catalogue. Three cultures across three days: Thai in Mường Lay, H'Mông on the Tùa Chùa plateau, Red Dao at Sì Thâu Chải.",
         ],
         compareTable: [
           { metric: "Tùa Chùa stone plateau",  typical: "Not visited — off all standard routes",           us: "Full afternoon + sunset at the plateau" },
@@ -1815,9 +1815,9 @@ export const tours: Tour[] = [
       { time: "12:00", label: "Lunch · Tùa Chùa",               elevation: 950,  icon: "food",     highlight: false, day: 2 },
       { time: "14:00", label: "Cao nguyên đá Tả Phìn",          elevation: 1300, icon: "hike",     highlight: true,  day: 2 },
       { time: "15:30", label: "Thành Lống Vàng",                elevation: 1250, icon: "landmark", highlight: false, day: 2 },
-      { time: "17:30", label: "Pa Phồng suspension bridge",     elevation: 380,  icon: "resort",   highlight: true,  day: 2 },
+      { time: "17:30", label: "Pa Phông suspension bridge",     elevation: 380,  icon: "resort",   highlight: true,  day: 2 },
 
-      { time: "07:30", label: "Pa Phồng · morning photos",      elevation: 380,  icon: "hike",     highlight: false, day: 3 },
+      { time: "07:30", label: "Pa Phông · morning photos",      elevation: 380,  icon: "hike",     highlight: false, day: 3 },
       { time: "09:00", label: "Boat · Da River lake",           elevation: 265,  icon: "van",      highlight: true,  day: 3 },
       { time: "11:30", label: "Lao Chải 1 · lunch",             elevation: 1160, icon: "food",     highlight: false, day: 3 },
       { time: "14:00", label: "Thác Tác Tình",                  elevation: 1000, icon: "hike",     highlight: false, day: 3 },
@@ -1880,16 +1880,16 @@ export const tours: Tour[] = [
       {
         badgeLabel: "Food",
         time: "Sunset · Day 2",
-        title: "Pa Phồng Suspension Bridge — Sunset and Overnight",
-        desc: "The final stop of Day 2 is the suspension bridge at Pa Phồng, above the Da River lake. The homestay is a working family home at a viewpoint that catches the last light across the reservoir. Dinner: Da River specialties — river fish, local vegetables, rice wine if you want it. Sleep beside the lake.",
+        title: "Pa Phông Suspension Bridge — Sunset and Overnight",
+        desc: "The final stop of Day 2 is the suspension bridge at Pa Phông, above the Da River lake. The homestay is a working family home at a viewpoint that catches the last light across the reservoir. Dinner: Da River specialties — river fish, local vegetables, rice wine if you want it. Sleep beside the lake.",
         highlight: true,
       },
       // ── Day 3 ──────────────────────────────────────────────────────────────
       {
         badgeLabel: "Trek",
         time: "Morning · Day 3",
-        title: "Pa Phồng Flycam Point + Boat Across the Da River Lake",
-        desc: "The Pa Phồng bridge at first light — mist over the reservoir, mountain ridges emerging in layers. Time for photography and drone shots before departure. Then the boat: a crossing of the Da River lake along the waterway between Điện Biên and Lai Châu provinces, through a submerged valley accessible only by water.",
+        title: "Pa Phông Flycam Point + Boat Across the Da River Lake",
+        desc: "The Pa Phông bridge at first light — mist over the reservoir, mountain ridges emerging in layers. Time for photography and drone shots before departure. Then the boat: a crossing of the Da River lake along the waterway between Điện Biên and Lai Châu provinces, through a submerged valley accessible only by water.",
         highlight: true,
       },
       {
@@ -1943,23 +1943,23 @@ export const tours: Tour[] = [
       },
       {
         day: 2,
-        title: "Day 2 — Mường Lay → Hang Khó Chua La → Tùa Chùa → Cao Nguyên Đá → Pa Phồng   140km",
+        title: "Day 2 — Mường Lay → Hang Khó Chua La → Tùa Chùa → Cao Nguyên Đá → Pa Phông   140km",
         slots: [
           "08:00  Breakfast at Mường Lay · depart",
           "10:00  Hang Khó Chua La cave",
           "12:00  Lunch in Tùa Chùa town",
           "13:30  Cao nguyên đá Tả Phìn — stone plateau exploration",
           "15:30  Thành Lống Vàng viewpoint",
-          "17:30  Arrive Pa Phồng suspension bridge · check in · sunset on the lake",
+          "17:30  Arrive Pa Phông suspension bridge · check in · sunset on the lake",
           "18:30  Dinner — Da River specialties at the homestay",
-          "Overnight at Pa Phồng · beside the Da River",
+          "Overnight at Pa Phông · beside the Da River",
         ],
       },
       {
         day: 3,
-        title: "Day 3 — Pa Phồng → Boat on Da River → Lao Chải 1 → Thác Tác Tình → Sì Thâu Chải   90km",
+        title: "Day 3 — Pa Phông → Boat on Da River → Lao Chải 1 → Thác Tác Tình → Sì Thâu Chải   90km",
         slots: [
-          "07:30  Breakfast at Pa Phồng · photography at the bridge",
+          "07:30  Breakfast at Pa Phông · photography at the bridge",
           "09:00  Board the boat — Da River lake crossing (Điện Biên → Lai Châu)",
           "11:30  Arrive Lao Chải 1 · lunch at the village",
           "13:30  Continue by road toward Thác Tác Tình",
@@ -1998,7 +1998,7 @@ export const tours: Tour[] = [
       { q: "Where does the tour start and end?", a: "Departs Hanoi at 22:00 the night before Day 1 (overnight van to Tam Đường). Returns to Hanoi the morning after Day 3 (overnight van from Sì Thâu Chải). Net time away from Hanoi: 3 days, 2 nights, plus two overnight travel periods." },
       { q: "How fit do I need to be?", a: "Moderate. The itinerary is primarily driving with walking stops — no sustained trekking or technical terrain. The longest walk is across the Tùa Chùa plateau and the waterfall sections. If you can walk comfortably for 2–3 hours, you're fine." },
       { q: "What is the optional fishing on Night 1?", a: "Thả đó and thả lưới are traditional trap-fishing and net-casting techniques used by Thai fishing families on the Da River reservoir. After dinner we go out with a local fisherman — around 1.5 hours on the water. Optional and weather-dependent. You can stay at the homestay if you prefer." },
-      { q: "What is the boat crossing on Day 3?", a: "A working boat crossing of the Da River reservoir from the Pa Phồng / Điện Biên side to the Lai Châu side, through the drowned valley between mountain ranges. Around 1.5–2 hours on the water. We use local boat operators. No commercial tour offers this route." },
+      { q: "What is the boat crossing on Day 3?", a: "A working boat crossing of the Da River reservoir from the Pa Phông / Điện Biên side to the Lai Châu side, through the drowned valley between mountain ranges. Around 1.5–2 hours on the water. We use local boat operators. No commercial tour offers this route." },
       { q: "Can I join as a solo traveller?", a: "Yes — the tour runs as a joined small group of up to 8 people. If you want a private departure, groups of 5+ can book on any dates. Contact us with your dates and group size." },
       { q: "What languages does the host speak?", a: "English (full trip). Local guides at Mường Lay, Tùa Chùa, and Sì Thâu Chải speak Vietnamese and the relevant local language. French and German hosts available on request." },
     ],

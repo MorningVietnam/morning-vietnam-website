@@ -2,37 +2,28 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { tours } from '../../data/tours.ts';
 
-const SAPA_SLUGS = [
-  'sapa-trekking-classic',
-  'sapa-nam-cang',
-  'sa-pa-lai-chau',
-  'into-nam-luc',
-  'unlock-lai-chau',
-  'lai-chau-loop',
+const HIKING_SLUGS = [
   'fansipan-3d2n',
   'fansipan-trekking',
+  'sapa-trekking-classic',
+  'sapa-nam-cang',
+  'into-nam-luc',
 ];
 
-const sapaTours = SAPA_SLUGS
+const hikingTours = HIKING_SLUGS
   .map(slug => tours.find(t => t.slug === slug))
   .filter(Boolean) as typeof tours;
 
-// Brand guide combinations (logo colour guide V1.0):
-// c1: Light Cyan text on Java bg
-// c2: Nordic text on Riptide bg
-// c3: Java text on Light Cyan bg
-// c4: Riptide text on Nordic bg
-// c5: Lucky text on White Nectar bg
-const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
+const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4'] as const;
 ---
 
 <BaseLayout
-  title="Sa Pa · Lai Châu Tours — Morning Vietnam"
-  description="Eight ways into Vietnam's highest mountains. Small group, max 12. From 1 day to 3D2N."
+  title="Hiking & Trekking — Morning Vietnam"
+  description="From Mường Hoa valley treks to the 3,143m summit of Fansipan. Five hiking tours in northern Vietnam's highest mountains."
 >
 
   <!-- ══════════════════════════════════════════════════════
-       HERO — compact
+       HERO
   ══════════════════════════════════════════════════════ -->
   <section class="hub-hero">
     <div class="hub-hero__bg"></div>
@@ -42,23 +33,23 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
         <span>›</span>
         <a href="/tours">Tours</a>
         <span>›</span>
-        <span>Sa Pa · Lai Châu</span>
+        <span>Hiking & Trekking</span>
       </nav>
-      <div class="hub-hero__region">North Vietnam · Mountain Region</div>
-      <h1>Sa Pa · Lai Châu</h1>
-      <p class="hub-hero__sub">Vietnam's highest pass — and its highest peak. Eight routes in. Choose yours below.</p>
+      <div class="hub-hero__region">North Vietnam · Hoàng Liên Sơn Range</div>
+      <h1>Hiking &amp; Trekking</h1>
+      <p class="hub-hero__sub">From valley treks through H'Mông villages to the 3,143m summit of Indochina. Choose your trail.</p>
       <div class="hub-hero__stats">
         <div class="hub-stat">
-          <span class="hub-stat__num">2,050m</span>
-          <span class="hub-stat__label">O Quy Hồ Pass</span>
+          <span class="hub-stat__num">3,143m</span>
+          <span class="hub-stat__label">Fansipan · Roof of Indochina</span>
         </div>
         <div class="hub-stat">
-          <span class="hub-stat__num">8</span>
-          <span class="hub-stat__label">Routes · 1 day → 3D2N</span>
+          <span class="hub-stat__num">5</span>
+          <span class="hub-stat__label">Hiking routes · 1 day → 3D2N</span>
         </div>
         <div class="hub-stat">
-          <span class="hub-stat__num">Max 12</span>
-          <span class="hub-stat__label">People per group</span>
+          <span class="hub-stat__num">Small group</span>
+          <span class="hub-stat__label">Only</span>
         </div>
       </div>
     </div>
@@ -70,18 +61,18 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   </section>
 
   <!-- ══════════════════════════════════════════════════════
-       TOUR CARDS — primary content, right after hero
+       TOUR CARDS
   ══════════════════════════════════════════════════════ -->
   <section class="hub-tours" id="routes">
     <div class="container">
       <div class="hub-tours__header">
-        <span class="section-eyebrow">Choose your route</span>
-        <h2>Eight ways into the northwest.</h2>
-        <p class="hub-tours__sub">Different depths, different paces. All for small group.</p>
+        <span class="section-eyebrow">Choose your trail</span>
+        <h2>Five hiking routes. Different depths.</h2>
+        <p class="hub-tours__sub">Valley treks, jungle trails, and a 3,143m summit. All for small groups, all done properly.</p>
       </div>
 
       <div class="hub-grid">
-        {sapaTours.map((tour, i) => {
+        {hikingTours.map((tour, i) => {
           const bgtype = CARD_BGTYPES[i % CARD_BGTYPES.length];
           const href = `/tours/${tour.slug}`;
           const durationLabel = tour.duration.join(' / ');
@@ -90,18 +81,14 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
             <article class={`hub-card hub-card--${bgtype} reveal`}>
               <a href={href} class="hub-card__inner">
 
-                <!-- Image -->
                 <div class="hub-card__image">
                   <img src={tour.image} alt={tour.name} loading={i < 2 ? 'eager' : 'lazy'} />
-                  <!-- Duration badge — top left, prominent -->
                   <span class="hub-card__duration">{durationLabel}</span>
-                  <!-- Departs badge — top right -->
                   <span class="hub-card__departs">
                     {tour.hub === 'Sa Pa' ? '📍 From Sa Pa' : '📍 From Hanoi'}
                   </span>
                 </div>
 
-                <!-- Body -->
                 <div class="hub-card__body">
                   <h3 class="hub-card__name">{tour.name}</h3>
                   <p class="hub-card__tagline">{tour.tagline}</p>
@@ -128,7 +115,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
                   <div class="hub-card__footer">
                     {tour.price
                       ? <span class="hub-card__price">{tour.price}</span>
-                      : <span class="hub-card__price hub-card__price--tbd">Price on request</span>
+                      : <span class="hub-card__price hub-card__price--tbd">Enquire for price</span>
                     }
                     <span class="hub-card__cta">View tour →</span>
                   </div>
@@ -143,35 +130,37 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   </section>
 
   <!-- ══════════════════════════════════════════════════════
-       REGION CONTEXT — compact, after cards
+       TRAIL OVERVIEW
   ══════════════════════════════════════════════════════ -->
-  <section class="region-strip">
-    <div class="container region-strip__inner">
-      <div class="region-strip__text">
-        <span class="section-eyebrow">The region</span>
-        <h2>Sa Pa vs Lai Châu — what's the difference?</h2>
+  <section class="trail-strip">
+    <div class="container trail-strip__inner">
+      <div class="trail-strip__text">
+        <span class="section-eyebrow">The terrain</span>
+        <h2>From valley floors to Vietnam's highest summit.</h2>
         <p>
-          <strong>Sa Pa</strong> sits at 1,600m — rice terraces, H'Mông and Dao villages, beautiful but increasingly visited.
-          We go to the parts that aren't on the standard circuit.
+          The trails around <strong>Sa Pa</strong> run through the Mường Hoa valley — rice terraces,
+          H'Mông and Giáy villages, paths that have been walked by locals for generations. No infrastructure,
+          no artificial experience. The valley sits at 1,000–1,500m.
         </p>
         <p>
-          Cross <strong>O Quy Hồ Pass</strong> into Lai Châu and the crowds disappear entirely.
-          No cable car. No pedestrian street. Villages that have never appeared on a booking platform.
-          A glass bridge that opened in 2023 with no English-language operator running it properly — until now.
+          <strong>Fansipan</strong> is in a different category. The north-face route from Trạm Tôn
+          (1,900m) gains 1,200m to the summit at 3,143m — through cloud forest, bamboo, and alpine
+          scrub. A wilderness camp at 2,800m. A 4:30am summit push. The cable car climbs the south face.
+          The trail climbs the mountain.
         </p>
       </div>
-      <div class="region-strip__facts">
+      <div class="trail-strip__facts">
         <div class="rfact">
-          <div class="rfact__num">2,050m</div>
-          <div class="rfact__label">O Quy Hồ — Vietnam's highest pass</div>
+          <div class="rfact__num">1,000 – 1,500m</div>
+          <div class="rfact__label">Mường Hoa valley — rice terraces, H'Mông and Giáy villages</div>
         </div>
         <div class="rfact">
-          <div class="rfact__num">Trek in</div>
-          <div class="rfact__label">Nậm Lúc Waterfall — no road access</div>
+          <div class="rfact__num">1,900m</div>
+          <div class="rfact__label">Trạm Tôn — Fansipan north-face trailhead</div>
         </div>
         <div class="rfact">
-          <div class="rfact__num">900m</div>
-          <div class="rfact__label">Rồng Mây Glass Bridge — opened 2023</div>
+          <div class="rfact__num">3,143m</div>
+          <div class="rfact__label">Fansipan — Roof of Indochina</div>
         </div>
       </div>
     </div>
@@ -182,8 +171,8 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   ══════════════════════════════════════════════════════ -->
   <section class="dna-section">
     <div class="container">
-      <span class="section-eyebrow" style="color:var(--color-riptide)">Every route includes</span>
-      <h2>Different itineraries. Same standard.</h2>
+      <span class="section-eyebrow" style="color:var(--color-riptide)">Every hiking tour includes</span>
+      <h2>Different trails. Same standard.</h2>
       <div class="dna-grid">
         <div class="dna-item">
           <span class="dna-icon">👥</span>
@@ -193,22 +182,22 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
         <div class="dna-item">
           <span class="dna-icon">🎯</span>
           <h4>Unlock Challenge</h4>
-          <p>Every Morning Vietnam tour has one. A moment that turns strangers into something else. We won't spoil it.</p>
+          <p>Every Morning Vietnam trail has one — a moment that changes the character of the day. We won't spoil it.</p>
         </div>
         <div class="dna-item">
           <span class="dna-icon">🏡</span>
           <h4>Real village access</h4>
-          <p>H'Mông and Dao communities we know personally — not demonstration villages with gift shops at the exit.</p>
-        </div>
-        <div class="dna-item">
-          <span class="dna-icon">🎁</span>
-          <h4>Welcome pack</h4>
-          <p>Curated for what that specific day asks of you. Every item has a reason.</p>
+          <p>H'Mông, Dao, Giáy communities we know personally — not demonstration villages with gift shops at the exit.</p>
         </div>
         <div class="dna-item">
           <span class="dna-icon">🌧️</span>
           <h4>Rain plan included</h4>
-          <p>Mountain weather changes fast. Every route has a wet-weather alternative built in. No day is ever cancelled.</p>
+          <p>Mountain weather changes fast. Every route has a wet-weather backup. No day is ever cancelled without an alternative.</p>
+        </div>
+        <div class="dna-item">
+          <span class="dna-icon">🎁</span>
+          <h4>Welcome pack</h4>
+          <p>Curated for what that specific trail asks of you. Every item has a reason — especially on the mountain ones.</p>
         </div>
         <div class="dna-item">
           <span class="dna-icon">💳</span>
@@ -220,7 +209,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   </section>
 
   <!-- ══════════════════════════════════════════════════════
-       SEASON — compact bar
+       SEASON
   ══════════════════════════════════════════════════════ -->
   <section class="season-section">
     <div class="container">
@@ -228,10 +217,10 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
       <h2>Best season: Oct – Apr.</h2>
       <div class="season-bar">
         {[
-          {m:'Jan',l:'best'},{m:'Feb',l:'best'},{m:'Mar',l:'best'},
-          {m:'Apr',l:'good'},{m:'May',l:'wet'}, {m:'Jun',l:'wet'},
+          {m:'Jan',l:'good'},{m:'Feb',l:'good'},{m:'Mar',l:'best'},
+          {m:'Apr',l:'best'},{m:'May',l:'wet'}, {m:'Jun',l:'wet'},
           {m:'Jul',l:'wet'}, {m:'Aug',l:'wet'}, {m:'Sep',l:'good'},
-          {m:'Oct',l:'best'},{m:'Nov',l:'best'},{m:'Dec',l:'best'},
+          {m:'Oct',l:'best'},{m:'Nov',l:'best'},{m:'Dec',l:'good'},
         ].map(({m,l}) => (
           <div class={`smonth smonth--${l}`}>
             <span class="smonth__m">{m}</span>
@@ -244,7 +233,12 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
         <span><i class="leg leg--good"></i>Good</span>
         <span><i class="leg leg--wet"></i>Wet season</span>
       </div>
-      <p class="season-note">Rice terraces turn gold Oct–Nov. Cloud inversion over Mường Hoa valley most Jan–Feb mornings. Wet season (May–Aug) the pass can be slippery but the jungle is vivid — we check conditions every morning and always have an alternative plan.</p>
+      <p class="season-note">
+        Oct–Nov: clearest skies, golden rice terraces in the valley, strongest summit views on Fansipan.
+        Mar–Apr: blossom season, reliable weather. Jan–Feb: coldest — can be below freezing at Fansipan summit,
+        but the views when it clears are the best of the year. Wet season (May–Aug): valley treks are muddier
+        but doable; Fansipan summit trek is not operated.
+      </p>
     </div>
   </section>
 
@@ -253,11 +247,11 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   ══════════════════════════════════════════════════════ -->
   <section class="hub-cta">
     <div class="container hub-cta__inner">
-      <h2>Not sure which route fits?</h2>
-      <p>Tell us your dates, group size, and how many days you have — we'll give you an honest answer. No sales pitch.</p>
+      <h2>Not sure which trail fits?</h2>
+      <p>Tell us your fitness level, how many days you have, and whether you want the summit or the valley. We'll give you an honest answer.</p>
       <div class="hub-cta__btns">
         <a
-          href={`https://wa.me/84961836611?text=${encodeURIComponent("Hi Morning Vietnam — I'm looking at the Sa Pa · Lai Châu routes. Can you help me choose?")}`}
+          href={`https://wa.me/84961836611?text=${encodeURIComponent("Hi Morning Vietnam — I'm looking at the hiking and trekking routes. Can you help me choose?")}`}
           class="btn-cta"
           target="_blank"
           rel="noopener"
@@ -305,7 +299,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   inset: 0;
   background:
     linear-gradient(to bottom, rgba(4,51,65,0.15) 0%, rgba(4,51,65,0.72) 60%, rgba(4,51,65,0.97) 100%),
-    url('/tours/lai-chau-motortour/17.webp') center/cover no-repeat;
+    url('/tours/fansipan/2.webp') center/cover no-repeat;
 }
 
 .hub-hero__content {
@@ -347,7 +341,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   font-size: clamp(15px, 1.8vw, 18px);
   color: rgba(255,255,255,0.68);
   margin-bottom: 36px;
-  max-width: 480px;
+  max-width: 520px;
 }
 
 .hub-hero__stats {
@@ -393,9 +387,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   padding: 72px 0 80px;
 }
 
-.hub-tours__header {
-  margin-bottom: 44px;
-}
+.hub-tours__header { margin-bottom: 44px; }
 
 .hub-tours__header h2 {
   font-family: var(--font-heading);
@@ -411,7 +403,6 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   color: rgba(4,51,65,0.55);
 }
 
-/* Grid: 3 columns */
 .hub-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -439,7 +430,6 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   height: 100%;
 }
 
-/* Image */
 .hub-card__image {
   position: relative;
   aspect-ratio: 16/10;
@@ -454,11 +444,9 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
 }
 .hub-card:hover .hub-card__image img { transform: scale(1.06); }
 
-/* Duration badge — top left, big & readable */
 .hub-card__duration {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 12px; left: 12px;
   background: var(--color-nordic);
   color: white;
   font-family: var(--font-heading);
@@ -470,11 +458,9 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   z-index: 2;
 }
 
-/* Departs badge — top right */
 .hub-card__departs {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 12px; right: 12px;
   background: rgba(255,255,255,0.88);
   color: var(--color-nordic);
   font-size: 11px;
@@ -485,7 +471,6 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   backdrop-filter: blur(4px);
 }
 
-/* Body themes — brand guide combinations V1.0 */
 .hub-card__body {
   padding: 22px 20px 18px;
   display: flex;
@@ -494,31 +479,25 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   flex: 1;
 }
 
-/* c1: Light Cyan text / Java bg */
+/* c1: Light Cyan / Java */
 .hub-card--c1 .hub-card__body { background: var(--color-java); color: var(--color-light-cyan); }
-/* c2: Nordic text / Riptide bg */
+/* c2: Nordic / Riptide */
 .hub-card--c2 .hub-card__body { background: var(--color-riptide); color: var(--color-nordic); }
-/* c3: Nordic text / Light Cyan bg */
+/* c3: Nordic / Light Cyan */
 .hub-card--c3 .hub-card__body { background: var(--color-light-cyan); color: var(--color-nordic); }
-/* c4: Light Cyan text / Nordic bg */
+/* c4: Light Cyan / Nordic */
 .hub-card--c4 .hub-card__body { background: var(--color-nordic); color: var(--color-light-cyan); }
-/* c5: Light Cyan text / Java bg — same as c1 (Sa Pa Day) */
-.hub-card--c5 .hub-card__body { background: var(--color-java); color: var(--color-light-cyan); }
 
 .hub-card__name {
   font-family: var(--font-heading);
   font-size: 20px;
   font-weight: 700;
   line-height: 1.2;
-  color: inherit;
 }
-
-/* Per-combo explicit name colours */
 .hub-card--c1 .hub-card__name { color: var(--color-light-cyan); }
 .hub-card--c2 .hub-card__name { color: var(--color-nordic); }
 .hub-card--c3 .hub-card__name { color: var(--color-nordic); }
 .hub-card--c4 .hub-card__name { color: var(--color-light-cyan); }
-.hub-card--c5 .hub-card__name { color: var(--color-light-cyan); }
 
 .hub-card__tagline {
   font-size: 13px;
@@ -529,8 +508,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
 
 .hub-card__highlights {
   list-style: none;
-  padding: 0;
-  margin: 4px 0 0;
+  padding: 0; margin: 4px 0 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -544,35 +522,16 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
 }
 .hub-card__highlights li::before { content: '→'; position: absolute; left: 0; }
 
-.hub-card__dates {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-top: 4px;
-}
-
+.hub-card__dates { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
 .hub-card__dates-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.5;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5;
 }
-
-.hub-card__dates-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
+.hub-card__dates-list { display: flex; flex-wrap: wrap; gap: 5px; }
 .hub-card__date-pill {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 9px;
-  border-radius: 100px;
-  border: 1px solid currentColor;
-  opacity: 0.75;
-  white-space: nowrap;
+  font-size: 10px; font-weight: 600;
+  padding: 2px 9px; border-radius: 100px;
+  border: 1px solid currentColor; opacity: 0.75; white-space: nowrap;
 }
 
 .hub-card__footer {
@@ -583,16 +542,10 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   padding-top: 12px;
   gap: 8px;
 }
-
-/* Footer separators */
 .hub-card--c1 .hub-card__footer { border-top: 1px solid rgba(217,247,245,0.25); }
 .hub-card--c2 .hub-card__footer { border-top: 1px solid rgba(4,51,65,0.15); }
-.hub-card--c3 .hub-card__footer { border-top: 1px solid rgba(29,160,160,0.2); }
-.hub-card--c4 .hub-card__footer { border-top: 1px solid rgba(125,226,209,0.18); }
-.hub-card--c5 .hub-card__footer { border-top: 1px solid rgba(160,143,29,0.2); }
-
-/* Footer separator for c3 — dark-on-light needs darker border */
 .hub-card--c3 .hub-card__footer { border-top: 1px solid rgba(4,51,65,0.15); }
+.hub-card--c4 .hub-card__footer { border-top: 1px solid rgba(125,226,209,0.18); }
 
 .hub-card__price {
   font-family: var(--font-heading);
@@ -608,20 +561,20 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   opacity: 0.8;
 }
 
-/* ─── Region Strip ──────────────────────────────────────── */
-.region-strip {
+/* ─── Trail Strip ───────────────────────────────────────── */
+.trail-strip {
   background: white;
   padding: 72px 0;
 }
 
-.region-strip__inner {
+.trail-strip__inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
 }
 
-.region-strip__text h2 {
+.trail-strip__text h2 {
   font-family: var(--font-heading);
   font-size: clamp(22px, 2.8vw, 36px);
   font-weight: 700;
@@ -630,14 +583,14 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   margin-bottom: 20px;
 }
 
-.region-strip__text p {
+.trail-strip__text p {
   font-size: 15px;
   color: #444;
   line-height: 1.75;
   margin-bottom: 14px;
 }
 
-.region-strip__facts {
+.trail-strip__facts {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -738,27 +691,15 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   border-radius: 8px;
 }
 
-.smonth__m {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.smonth__dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.smonth__m { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.smonth__dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
 .smonth--best { background: var(--color-java);    color: white; }
 .smonth--best .smonth__dot { background: var(--color-riptide); }
-
 .smonth--good { background: var(--color-riptide); color: var(--color-nordic); }
 .smonth--good .smonth__dot { background: var(--color-java); }
-
 .smonth--wet  { background: #c2e4e2;              color: #2a5a5a; }
-.smonth--wet .smonth__dot { background: #82b8b5; }
+.smonth--wet .smonth__dot  { background: #82b8b5; }
 
 .season-legend {
   display: flex;
@@ -768,13 +709,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
   margin-bottom: 20px;
 }
 
-.leg {
-  display: inline-block;
-  width: 10px; height: 10px;
-  border-radius: 2px;
-  margin-right: 5px;
-  vertical-align: middle;
-}
+.leg { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
 .leg--best { background: var(--color-java); }
 .leg--good { background: var(--color-riptide); }
 .leg--wet  { background: #c2e4e2; border: 1px solid #82b8b5; }
@@ -850,9 +785,7 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
 /* ─── Responsive ────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .hub-grid { grid-template-columns: repeat(2, 1fr); }
-  .hub-grid > *:nth-child(4),
-  .hub-grid > *:nth-child(5) { grid-column: auto; }
-  .region-strip__inner { grid-template-columns: 1fr; gap: 40px; }
+  .trail-strip__inner { grid-template-columns: 1fr; gap: 40px; }
   .dna-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -865,7 +798,6 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
 </style>
 
 <script>
-  // Reveal on scroll
   const io = new IntersectionObserver(
     entries => entries.forEach(e => {
       if (e.isIntersecting) {

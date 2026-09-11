@@ -28,7 +28,8 @@ export interface SeasonNote      { title: string; desc: string }
 export interface Seasonality     { intro: string; months: SeasonMonth[]; notes: SeasonNote[] }
 export interface UnlockStep      { num: number; title: string; desc: string }
 export interface UnlockChallenge { sectionLabel: string; headline: string; intro: string; steps: UnlockStep[]; note: string; teaser: string }
-export interface DurationOption  { id: string; label: string; price: number | null; priceVND?: number | null; tagline: string; ctaLabel: string; ctaNote: string; waText: string }
+export interface PaxTier         { min: number; max: number; price: number; priceVND: number; note?: string }
+export interface DurationOption  { id: string; label: string; price: number | null; priceVND?: number | null; tagline: string; ctaLabel: string; ctaNote: string; waText: string; paxTiers?: PaxTier[] }
 export interface ElevationPoint  { time: string; label: string; elevation: number; icon?: string; highlight?: boolean; durationOnly?: string; day?: number }
 export interface TripInfoItem    { icon: string; label: string; value: string }
 export interface ActivityCard    { badges?: string[]; badge?: string; badgeLabel?: string; time: string; title: string; desc: string; highlight: boolean; durationOnly?: string }
@@ -1999,7 +2000,7 @@ export const tours: Tour[] = [
       { q: "How fit do I need to be?", a: "Moderate. The itinerary is primarily driving with walking stops — no sustained trekking or technical terrain. The longest walk is across the Tủa Chùa plateau and the waterfall sections. If you can walk comfortably for 2–3 hours, you're fine." },
       { q: "What is the optional fishing on Night 1?", a: "Thả đó and thả lưới are traditional trap-fishing and net-casting techniques used by Thai fishing families on the Da River reservoir. After dinner we go out with a local fisherman — around 1.5 hours on the water. Optional and weather-dependent. You can stay at the homestay if you prefer." },
       { q: "What is the boat crossing on Day 3?", a: "A working boat crossing of the Da River reservoir from the Pa Phông / Điện Biên side to the Lai Châu side, through the drowned valley between mountain ranges. Around 1.5–2 hours on the water. We use local boat operators. No commercial tour offers this route." },
-      { q: "Can I join as a solo traveller?", a: "Yes — the tour runs as a joined small group of up to 8 people. If you want a private departure, groups of 5+ can book on any dates. Contact us with your dates and group size." },
+      { q: "Can I join as a solo traveller?", a: "Yes — the tour runs as a joined small group. If you want a private departure, groups of 5+ can book on any dates. Contact us with your dates and group size." },
       { q: "What languages does the host speak?", a: "English (full trip). Local guides at Mường Lay, Tủa Chùa, and Sì Thâu Chải Village speak Vietnamese and the relevant local language. French and German hosts available on request." },
     ],
 
@@ -2381,7 +2382,7 @@ export const tours: Tour[] = [
       "Day 2: Giàng Tả Chải — bamboo forest, valley views, lunch in the village",
       "Full circuit: Hanoi → Sa Pa → valley trek → homestay → Giàng Tả Chải → Hanoi",
       "Unlock Challenge somewhere in the valley",
-      "Max 8 people — no joined groups",
+      "Small group only — no joined groups",
     ],
     included: [
       "Sleeper bus Hanoi ↔ Sa Pa (both ways)",
@@ -2502,7 +2503,7 @@ export const tours: Tour[] = [
         headline: "$67. Two days in the Mường Hoa valley — Hanoi, three villages, homestay, all meals included.",
         paragraphs: [
           "Included: sleeper bus Hanoi ↔ Sa Pa (both ways), private car where needed, all meals from Day 1 lunch through Day 2 lunch, H'Mông homestay at Tả Van, dedicated host both days, Unlock Challenge, welcome pack. No hidden fees.",
-          "The standard market for this format — 2 days, Hanoi bus, homestay, guide — runs $56–89 depending on operator and group size. Morning Vietnam runs max 8 people, no joined groups, local host (not a hired agency guide). The price sits in the middle of the market for a product that's built differently.",
+          "The standard market for this format — 2 days, Hanoi bus, homestay, guide — runs $56–89 depending on operator and group size. Morning Vietnam runs small groups only, no joined groups, local host (not a hired agency guide). The price sits in the middle of the market for a product that's built differently.",
         ],
         compareTable: [
           { metric: "Group size",       typical: "Up to 20+ (joined groups)", us: "Max 12 · no joined groups" },
@@ -2618,7 +2619,7 @@ export const tours: Tour[] = [
       { q: "How difficult is the trekking?", a: "Moderate. Day 1 is roughly 8–10km downhill through the Mường Hoa valley — 3 hours of walking with elevation loss of about 430m. Day 2 is shorter (5–6km, 75 min to Giàng Tả Chải). Paths are mostly dirt and uneven in places, particularly after rain. Suitable for anyone with normal fitness. Not recommended for people with knee issues (Day 1 descent). Trekking poles are useful but not required." },
       { q: "What is the homestay like?", a: "A local H'Mông family home in Tả Van village — wooden construction, basic facilities, communal sleeping area. Not a guesthouse or bungalow. You eat with the family, sleep under the same roof, and leave in the morning. If you're expecting hotel-style amenities, this isn't the right tour. If you want to understand what Tả Van actually is, this is the only way to do it." },
       { q: "What's included in the price?", a: "Sleeper bus Hanoi ↔ Sa Pa (both ways), private car where needed, all meals from Day 1 lunch through Day 2 lunch (4 meals total), H'Mông homestay at Tả Van, dedicated Morning Vietnam host for both days, all entrance and activity fees, Unlock Challenge, welcome pack. The only extras are personal spending and tips." },
-      { q: "Can I join this tour solo?", a: "Yes — we run joined groups of up to 8 people, so solo travelers book the same way as groups. Minimum 3 people to confirm departure. If you're traveling alone and want to guarantee a specific date, contact us and we'll confirm availability." },
+      { q: "Can I join this tour solo?", a: "Yes — we run small joined groups, so solo travelers book the same way as groups. Minimum 3 people to confirm departure. If you're traveling alone and want to guarantee a specific date, contact us and we'll confirm availability." },
       { q: "What's the best time of year?", a: "Sep–Oct for golden rice terraces. May–Jun for flooded mirror fields. Mar–Apr for blossom season and clear skies. The route is walkable year-round — Dec–Feb is cold (3–7°C at night in the valley) but doable with layers." },
     ],
 
@@ -3558,6 +3559,497 @@ export const tours: Tour[] = [
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
     upcomingDates: ["Fri 24 Jul"],
+  },
+
+  // ── Fansipan 3D2N ─────────────────────────────────────────────────────────
+  {
+    slug:        "fansipan-3d2n",
+    name:        "Fansipan 3D2N",
+    region:      "north",
+    tags:        ["hiking"],
+    duration:    ["3D2N"],
+    price:       "From $169",
+    priceUSD:    180,
+    priceVND:    4700000,
+    tagline:     "Three days from Hanoi to the roof of Indochina — village trekking on Day 1, a 2,800m wilderness camp on Day 2, and a 3,143m summit at dawn on Day 3.",
+    description: "The full Fansipan experience from Hanoi, on the north-face Trạm Tôn route — the most established trekking approach to the highest point in Indochina. Day 1 eases you in: sleeper bus to Sa Pa, afternoon trek through Ý Linh Hồ, Lao Chải and Tả Van — Black H'Mông and Giáy villages in the Mường Hoa valley — before returning to Sa Pa for the night. Day 2 is the climb: drive to Trạm Tôn trailhead (1,900m — top of O Quy Hồ Pass, Vietnam's highest mountain pass) and trek 6km through cloud forest and bamboo to a wilderness camp at 2,800m. Fall asleep above the cloud layer. Day 3 starts at 4:30am — summit push to 3,143m as the sun rises over the Hoàng Liên range. At this hour, before the cable car starts running, Fansipan is one of the most extraordinary places in Indochina to watch a sunrise. Collect your summit certificate, descend, soak in a Red Dao herbal bath in Sa Pa, and board the overnight bus back to Hanoi. All national park permits, forest ranger clearances, and licensed guide requirements are arranged — mandatory since 2026.",
+    highlights: [
+      "Day 1 valley trek: Ý Linh Hồ → Lao Chải → Tả Van — three villages, rice terraces, real H'Mông life",
+      "Night at 2,800m wilderness camp — stars above the cloud layer, no infrastructure",
+      "4:30am summit push to Fansipan 3,143m — roof of Indochina, certificate included",
+      "Red Dao herbal bath in Sa Pa after descent — traditional medicinal soak",
+      "Full circuit from Hanoi — sleeper bus both ways, nothing to arrange",
+      "Small group only · no joined groups · dedicated host across all 3 days",
+    ],
+    included: [
+      "Welcome gift — Morning Vietnam signature pack",
+      "Drinking water throughout the tour",
+      "Rain poncho",
+      "All entrance & national park permit fees",
+      "Travel insurance",
+      "Personalised commemorative medal · Fansipan 3,143m",
+      "Sanitation fee",
+      "Licensed trek guide + porter",
+      "All transportation within itinerary (sleeper bus HN ↔ Sa Pa · private car Sa Pa ↔ Trạm Tôn)",
+      "1 night in Sa Pa guesthouse (Day 1)",
+      "1 night wilderness shelter at 2,800m (tent, sleeping bag, mat)",
+      "All meals: Day 1 lunch + dinner · Day 2 & 3 full board",
+      "Red Dao herbal bath (Day 3)",
+    ],
+    hub:         "Hanoi",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/fansipan/1.webp",
+
+    panoramicImage: "/tours/fansipan/panorama2.webp",
+
+    gallery: [
+      { src: "/tours/fansipan/1.webp",  alt: "Fansipan trekking — mountain trail through cloud forest" },
+      { src: "/tours/fansipan/2.webp",  alt: "Fansipan — trekkers on the north-face trail" },
+      { src: "/tours/fansipan/3.webp",  alt: "Fansipan — bamboo forest section of the route" },
+      { src: "/tours/fansipan/4.webp",  alt: "Fansipan — alpine zone above 2,500m" },
+      { src: "/tours/fansipan/5.webp",  alt: "Fansipan — camp at 2,800m with cloud layer below" },
+      { src: "/tours/fansipan/6.webp",  alt: "Fansipan — ridge views from the high camp" },
+      { src: "/tours/fansipan/7.webp",  alt: "Fansipan — sunrise summit push at 4:30am" },
+      { src: "/tours/fansipan/8.webp",  alt: "Fansipan — reaching 3,143m, roof of Indochina" },
+      { src: "/tours/fansipan/9.webp",  alt: "Fansipan — summit views over the Hoàng Liên range" },
+      { src: "/tours/fansipan/10.webp", alt: "Fansipan — descent through the cloud forest" },
+      { src: "/tours/fansipan/11.webp", alt: "Mường Hoa valley — rice terraces, Day 1 trek" },
+      { src: "/tours/fansipan/13.webp", alt: "Fansipan — trekking group with Morning Vietnam host" },
+    ],
+
+    selectorMode: 'vehicle-only',
+    durationOptions: [
+      {
+        id:       "3d2n",
+        label:    "3D2N from Hanoi",
+        price:    180,
+        priceVND: 4700000,
+        tagline:  "Hanoi → Sa Pa → valley trek Day 1 → Trạm Tôn → 2,800m camp Day 2 → Fansipan summit 3,143m → Sa Pa → Hanoi Day 3.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Fansipan 3D2N. Can you tell me more about available dates?",
+        paxTiers: [
+          { min: 1, max: 2, price: 180, priceVND: 4700000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
+          { min: 3, max: 3, price: 180, priceVND: 4700000 },
+          { min: 4, max: 5, price: 178, priceVND: 4650000 },
+          { min: 6, max: 7, price: 173, priceVND: 4500000 },
+          { min: 8, max: 12, price: 169, priceVND: 4400000 },
+        ],
+      },
+    ],
+
+    tripInfo: {
+      "3d2n": [
+        { icon: "map-pin",         label: "Pickup",        value: "Old Quarter, Hanoi · 06:30 sleeper bus · Day 1" },
+        { icon: "users",           label: "Group size",    value: "3 – 12 people · joined or private group" },
+        { icon: "car",             label: "Transport",     value: "Sleeper bus (HN ↔ Sa Pa) · private car · trekking" },
+        { icon: "tools-kitchen-2", label: "Meals",         value: "Day 1: lunch + dinner · Day 2 & 3: full board" },
+        { icon: "home",            label: "Accommodation", value: "Day 1: Sa Pa guesthouse · Day 2: 2,800m wilderness shelter" },
+        { icon: "mountain",        label: "Summit",        value: "Fansipan 3,143m · Roof of Indochina" },
+        { icon: "trending-up",     label: "Trek",          value: "~15km return · 1,700m accumulated gain" },
+        { icon: "calendar-check",  label: "Duration",      value: "3 days 2 nights · departs Hanoi Day 1" },
+        { icon: "id",              label: "Required",      value: "Original passport · checked at ranger checkpoints" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Day 1 — Hanoi → Sa Pa → Mường Hoa Valley",
+        slots: [
+          "06:30  Sleeper bus departs · Old Quarter, Hanoi",
+          "13:30  Arrive Sa Pa · check in · lunch",
+          "14:30  Trek begins — Ý Linh Hồ (Black H'Mông) → Lao Chải → Tả Van (Giáy)",
+          "19:00  Back to Sa Pa · dinner · explore town (Stone Church, town square)",
+          "22:00  Overnight · Sa Pa guesthouse",
+        ],
+      },
+      {
+        day: 2,
+        title: "Day 2 — Sa Pa → Trạm Tôn → 2,800m Shelter",
+        slots: [
+          "07:30  Breakfast at hotel · Sa Pa",
+          "09:00  Drive to Trạm Tôn (1,900m) · meet porters · gear check · trek departs",
+          "12:00  Rest stop + lunch on trail",
+          "18:00  Arrive camp · 2,800m · dinner · stars above the old-growth forest",
+          "21:00  Overnight · wilderness camp · 2,800m",
+        ],
+      },
+      {
+        day: 3,
+        title: "Day 3 — Fansipan Summit → Sa Pa → Hanoi",
+        slots: [
+          "04:00  Wake up · breakfast at camp",
+          "04:30  Summit push begins · ~2km from camp to peak",
+          "06:30  Fansipan 3,143m · summit · commemorative medal · cloud sea",
+          "08:00  Descend to shelter (~2km)",
+          "11:00  Shelter · pack up · lunch · continue descent to Trạm Tôn",
+          "16:00  Car back to Sa Pa · rest",
+          "17:00  Red Dao herbal bath · Sa Pa",
+          "18:30  Farewell dinner · Sa Pa",
+          "20:00  Sa Pa night market",
+          "23:00  Sleeper bus to Hanoi",
+          "~05:00 (Day 4)  Arrive Hanoi Old Quarter · end of tour",
+        ],
+      },
+    ],
+
+    pitch: {
+      headline: "Fansipan is 3,143m. The cable car takes 20 minutes. The trail takes three days — and those three days are the point.",
+      bullets: [
+        "Day 1 is not a warm-up — it's the valley trek most Fansipan packages skip: Black H'Mông and Giáy villages in the Mường Hoa, rice terraces, a real afternoon on foot before you've even seen the mountain",
+        "The 2,800m camp on the Trạm Tôn ridge is the rarest overnight in North Vietnam — above the cloud layer, below the summit, no infrastructure, no noise",
+        "4:30am summit push means you arrive at 3,143m as the sun breaks over the Hoàng Liên range — before the cable car runs, before the crowds. The highest point in Vietnam, Laos, and Cambodia — earned on foot",
+      ],
+      closingLine: "The summit certificate is the same whether you took the cable car or the trail. What's different is the three days before you got there.",
+    },
+
+    storytelling: {
+      headline: "The Roof of Indochina — every trekker's dream.",
+      paragraphs: [
+        "The Hoàng Liên Sơn range is the spine of northern Vietnam — a 180-kilometre ridge running northwest to southeast, marking the boundary between Lào Cai and Lai Châu provinces and forming a hard climatic wall between the Red River basin and the highlands of Lai Châu. Fansipan, at 3,143m, is its highest point and the highest in the old French Indochina territory: higher than anything in Laos or Cambodia. The name is believed to derive from a Hmong phrase meaning 'the huge rocky mountain split in the middle' — a description accurate enough to use as a map. The range is part of Hoàng Liên Sơn National Park, one of Vietnam's most biodiverse protected areas, covering over 29,000 hectares of primary and old-growth forest.",
+        "Sa Pa sits at 1,500m on the eastern slope of the range. The French identified it as a hill station site in 1903 and built a resort town here — sanatoriums, villas, a church — exploiting the altitude to escape lowland heat. Most of that architecture is gone. What survived and grew is the town's position as the commercial and social hub for a dozen ethnic minority communities spread across the surrounding valleys: Black H'Mông, Red Dao, Giáy, Tày, Xa Phó. The Mường Hoa valley below Sa Pa to the south contains some of the most extensively cultivated rice terrace landscapes in Southeast Asia — terraces built by H'Mông and Giáy communities over centuries, following the contour lines of slopes that would otherwise be unusable farmland. At the right light and season, the valley floor looks like stacked mirrors.",
+        "The vegetation on Fansipan changes completely with every 200m of altitude. Below 2,000m, the north-facing slope is cloud forest: dense, dark, permanent mist, every surface covered in moss, tree ferns growing where they haven't changed since before the road existed. Above 2,000m the forest opens into bamboo — tall, straight, hollow-stemmed, rattling constantly in the wind that comes over the pass. Above 2,500m the bamboo gives way to alpine scrub: dwarf rhododendrons, exposed granite, and a horizon that finally opens. Hoàng Liên Sơn is home to more than 40 rhododendron species — among them ancient trees that bloom between March and April in red, yellow, and deep purple along the upper trail sections and the ridge at 2,800m. Botanists began cataloguing the range's flora seriously only in the 1990s; new species are still being described.",
+        "The Red Dao — Người Dao Đỏ — are among the largest ethnic groups in the Sa Pa district and the most visible in the market town. Their red-embroidered headdresses and distinctive tattoo traditions mark them apart even within the already-diverse community of highland peoples here. The Dao are also the keepers of an extensive tradition of medicinal plant knowledge: the herbal bath — tắm thuốc — is not a spa concept but a functional practice, using a specific blend of mountain plants gathered from the forest to treat exhaustion, joint pain, and skin conditions. The formula varies by family but typically includes a dozen or more species, some of which grow only above 1,500m. It is a practice passed down within Dao communities for generations, now available to outsiders through a handful of trusted families in Sa Pa who run the baths the traditional way.",
+      ],
+      pullImage: "/tours/fansipan/storytelling.webp",
+    },
+
+    elevationProfile: [
+      { time: "06:30", label: "Depart Hanoi",          elevation: 20,   icon: "van",     highlight: false, day: 1 },
+      { time: "13:30", label: "Sa Pa · check in",      elevation: 1500, icon: "food",    highlight: false, day: 1 },
+      { time: "14:30", label: "Ý Linh Hồ · trek",     elevation: 1330, icon: "hike",    highlight: false, day: 1 },
+      { time: "16:00", label: "Lao Chải Village",      elevation: 1020, icon: "village", highlight: false, day: 1 },
+      { time: "17:30", label: "Tả Van · Giáy village", elevation: 1070, icon: "village", highlight: true,  day: 1 },
+      { time: "19:00", label: "Sa Pa · dinner",        elevation: 1500, icon: "resort",  highlight: false, day: 1 },
+
+      { time: "07:30", label: "Breakfast · Sa Pa",     elevation: 1500, icon: "food",    highlight: false, day: 2 },
+      { time: "09:00", label: "Trạm Tôn · trek begins",elevation: 1900, icon: "hike",    highlight: false, day: 2 },
+      { time: "12:00", label: "Lunch on trail",        elevation: 2400, icon: "food",    highlight: false, day: 2 },
+      { time: "17:00", label: "Forest · 2,600m",       elevation: 2600, icon: "hike",    highlight: false, day: 2 },
+      { time: "18:00", label: "Shelter · 2,800m",       elevation: 2800, icon: "resort",  highlight: true,  day: 2 },
+
+      { time: "04:00", label: "Wake up · breakfast",   elevation: 2800, icon: "hike",    highlight: false, day: 3 },
+      { time: "04:30", label: "Summit push",           elevation: 2800, icon: "hike",    highlight: false, day: 3 },
+      { time: "06:30", label: "Fansipan · 3,143m",    elevation: 3143, icon: "mountain", highlight: true,  day: 3 },
+      { time: "08:00", label: "Begin descent",         elevation: 2971, icon: "hike",    highlight: false, day: 3 },
+      { time: "11:00", label: "Shelter · pack up · lunch", elevation: 2800, icon: "food", highlight: false, day: 3 },
+      { time: "16:00", label: "Trạm Tôn · car",       elevation: 1900, icon: "van",     highlight: false, day: 3 },
+      { time: "17:00", label: "Sa Pa · herbal bath",  elevation: 1500, icon: "resort",  highlight: true,  day: 3 },
+      { time: "18:30", label: "Dinner · Sa Pa",        elevation: 1500, icon: "food",    highlight: false, day: 3 },
+      { time: "23:00", label: "Sleeper bus · Hanoi",  elevation: 1500, icon: "return",  highlight: false, day: 3 },
+    ],
+    elevationMax: 3300,
+
+    activityCards: [
+      {
+        badge: "hike", badgeLabel: "Valley Trek",
+        time: "14:30 – 18:00 · Day 1",
+        title: "Mường Hoa Valley — H'Mông and Giáy Villages",
+        desc: "Day 1's afternoon is a 3.5-hour trek through the Mường Hoa valley south of Sa Pa — through Ý Linh Hồ (Black H'Mông), Lao Chải, and on to Tả Van, a Giáy village at the valley floor. The route descends through rice terraces that step in layers down the hillside, passing between fields still farmed by hand. The valley is quieter than Sa Pa town above it, and the light in the late afternoon catches the terraces differently depending on the season. The host introduces you to people and places.",
+        highlight: true,
+      },
+      {
+        badge: "hike", badgeLabel: "Trek",
+        time: "08:00 – 16:00 · Day 2",
+        title: "Trạm Tôn → Cloud Forest → 2,800m Shelter",
+        desc: "The main climb starts at Trạm Tôn (1,900m) on the northern face of the massif — the same trailhead used by serious trekkers since before the cable car existed. The first section runs through cloud forest: mossy trees, hanging lichen, dense canopy. Above 2,200m the bamboo opens up and the views extend across the Hoàng Liên range. The path steepens as you enter the alpine zone above 2,500m — scrub vegetation, exposed rock, the summit visible above. Total gain is roughly 900m over 6km. The shelter at 2,800m sits on a small flat ridge — tents pitched with a clear view to the west. Time at the shelter: late afternoon to pre-dawn. On a clear night, the cloud layer fills the valley below and you're above it.",
+        highlight: true,
+      },
+      {
+        badge: "mountain", badgeLabel: "Summit",
+        time: "04:45 – 06:30 · Day 3",
+        title: "Fansipan 3,143m — Sunrise at the Roof of Indochina",
+        desc: "The final 343m of elevation gain starts before dawn — head torches on, temperature well below Sa Pa, the mountain in silence. The summit of Fansipan sits at 3,143m: the highest point in Vietnam, Laos, and Cambodia combined. The temple complex built after the cable car is there, but at this hour, in these conditions, it reads differently. The sunrise over the Hoàng Liên range happens fast — a hard line of light moving across the ridges below. Summit certificate is included. The cable car doesn't run until 7:30am; most mornings you'll have the top to yourselves before the crowds arrive.",
+        highlight: true,
+      },
+      {
+        badge: "resort", badgeLabel: "Recovery",
+        time: "11:30 – 12:30 · Day 3",
+        title: "Red Dao Herbal Bath — Sa Pa",
+        desc: "The Red Dao herbal bath is a traditional medicinal soak used by Dao communities in the Sa Pa highlands for recovery after physical exertion — a blend of over a dozen mountain plants including bark, roots, and leaves gathered from the forest. The bath runs at roughly 40°C for 45 minutes. After three days of trekking, the effect on the muscles is immediate. Not a spa treatment — a practical recovery method that has existed in these hills for generations. The farewell lunch follows directly after.",
+        highlight: false,
+      },
+    ],
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "Your host meets you in Sa Pa with a Morning Vietnam pack before the valley trek. One item was chosen for a night spent above the clouds.",
+    },
+
+    seasonality: {
+      intro: "Fansipan trekking is seasonal. The summit ridge is exposed, and conditions above 2,500m change fast. We monitor forecasts daily and build rain plans for every departure.",
+      months: [
+        { name: "Jan", level: "good" },
+        { name: "Feb", level: "good" },
+        { name: "Mar", level: "best" },
+        { name: "Apr", level: "best" },
+        { name: "May", level: "wet"  },
+        { name: "Jun", level: "wet"  },
+        { name: "Jul", level: "wet"  },
+        { name: "Aug", level: "wet"  },
+        { name: "Sep", level: "good" },
+        { name: "Oct", level: "best" },
+        { name: "Nov", level: "best" },
+        { name: "Dec", level: "good" },
+      ],
+      notes: [
+        { title: "Best season (Oct – Apr)", desc: "Oct–Nov: the most reliable window — post-monsoon clarity, golden rice terraces in the Mường Hoa valley on Day 1, and cloud inversions at camp are most frequent, the valley disappearing below a white layer while you're above it. Mar–Apr: rhododendron season — over 40 species of ancient rhododendron bloom red, yellow, and purple along the route from 2,000m up, making this the most spectacular time for colour on the trail. Jan–Feb: coldest months, below freezing at the summit, snow on the ridge in some years — extraordinary conditions but requires cold-weather gear briefing." },
+        { title: "Wet season (May – Sep)", desc: "We do not operate this tour May–August. Cloud cover is persistent above 2,000m, the trail gets slippery, and since 2026 national park rangers also close the summit section during severe weather. September can open if a stable weather window appears — we monitor and confirm 48 hours in advance." },
+      ],
+    },
+
+    faqs: [
+      { q: "How fit do I need to be?", a: "High fitness required for Day 2 and Day 3. Day 2 is a full day's trek gaining 900m over 6km on uneven mountain trail — expect 6–8 hours of walking. Day 3 starts at 4:30am and requires another 343m of gain in the dark before the summit. No technical climbing, but this is genuine mountain trekking. Minimum age 16. People who do regular hiking or running will be comfortable. Gym-only fitness is not enough — the altitude affects everyone differently." },
+      { q: "What does the camp at 2,800m look like?", a: "Basic tents on a flat ridge — sleeping bags and mats are provided. No running water at camp (we carry what we need), basic camp toilet. The altitude means the temperature drops significantly after sunset — expect 5–10°C at night even in warm seasons, below freezing in winter. The experience is the sky and the silence, not the comfort. If you're expecting a mountain hut, this is different." },
+      { q: "What if the summit is clouded over?", a: "Cloud cover is part of mountain trekking in Vietnam — we cannot guarantee clear views. On cloudy summit days, the experience is still the 4:30am walk in the dark, the thinning air, and the ridge at 3,143m. We track conditions and give you an honest forecast 48 hours ahead. The trail and camp experience are unaffected by summit weather." },
+      { q: "Can I take the cable car down instead of trekking?", a: "No — the cable car only goes from the Sa Pa valley station to the summit station on the south face. The trek approaches from the north face (Trạm Tôn). You cannot exit via cable car from the trekking route. Descent is the same trail." },
+      { q: "What's the difference between this and the Fansipan Only Trekking (2D1N)?", a: "The 2D1N version skips Day 1 entirely — no valley trek, no Sa Pa guesthouse night. You start from Sa Pa in the morning, trek to camp, summit the next day, and return to Sa Pa. It's shorter and cheaper, but you miss the Mường Hoa valley section. If you're already based in Sa Pa or pressed for time, the 2D1N is the right choice." },
+      { q: "Do I need a permit?", a: "Yes — since 2026, independent trekking to Fansipan is no longer permitted. A licensed guide and an official permit from Hoàng Liên Sơn National Park are mandatory. Your passport or ID is checked at forest ranger stations on the trail. Going without a permit results in a fine and being turned back. We handle all permits and guide certification as part of the tour — nothing to arrange separately." },
+      { q: "What gear do I need to bring?", a: "Ankle-support waterproof hiking boots are essential — the trail is uneven and the camp is exposed and cold. Trekking poles are strongly recommended for the descent: they reduce knee load significantly on the 900m drop from summit to trailhead. Bring a layering system (moisture-wicking base, fleece, waterproof outer), a headlamp for the 4:30am summit push, grip gloves for the rocky sections near the top, and high socks to guard against leeches in the lower forest. Pack weight: aim for 5–7kg in your daypack. Camp gear (sleeping bag, mat, tent) is provided." },
+      ...DEFAULT_FAQS.slice(2),
+    ],
+
+    unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+  },
+
+  // ── Fansipan — Only Trekking (2D1N) ──────────────────────────────────────
+  {
+    slug:        "fansipan-trekking",
+    name:        "Fansipan — Only Trekking",
+    region:      "north",
+    tags:        ["hiking"],
+    duration:    ["2D1N"],
+    price:       "From $117",
+    priceUSD:    125,
+    priceVND:    3250000,
+    tagline:     "Summit Fansipan the right way — two days on the trail from Trạm Tôn, a 2,800m wilderness camp, and a dawn ascent to 3,143m.",
+    description: "The trekking-only version of the Fansipan route — for those already in Sa Pa who want to go straight to the mountain. Day 1 drives from Sa Pa to Trạm Tôn trailhead at 1,900m — the top of O Quy Hồ Pass, Vietnam's highest mountain pass — and climbs 6km through three vegetation zones: cloud forest, bamboo above 2,000m, and alpine scrub approaching 2,600m. Camp at 2,800m on an exposed ridge, above the cloud layer. Day 2 starts at 4:30am: summit push to Fansipan 3,143m — the highest point in Vietnam, Laos, and Cambodia — as the sun rises over the Hoàng Liên range, summit certificate, then descent back to Sa Pa. All national park permits, forest ranger clearances, and licensed guide requirements are included — mandatory since 2026. Hanoi pickup available (+450,000₫/person).",
+    highlights: [
+      "Trek from Trạm Tôn (1,900m) — the original trailhead, north face approach",
+      "Night at 2,800m wilderness camp — above the cloud layer",
+      "4:30am summit push to Fansipan 3,143m — the roof of Indochina",
+      "Summit certificate included",
+      "Optional: Red Dao herbal bath in Sa Pa after descent",
+      "Hanoi pickup available (+450,000₫/person)",
+    ],
+    included: [
+      "Welcome gift — Morning Vietnam signature pack",
+      "Drinking water throughout the tour",
+      "Rain poncho",
+      "All entrance & national park permit fees",
+      "Travel insurance",
+      "Personalised commemorative medal · Fansipan 3,143m",
+      "Sanitation fee",
+      "Licensed trek guide + porter",
+      "All transportation within itinerary (private car Sa Pa ↔ Trạm Tôn)",
+      "1 night wilderness shelter at 2,800m (tent, sleeping bag, mat)",
+      "All meals: Day 1 lunch + dinner · Day 2 full board",
+    ],
+    hub:         "Sa Pa",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/fansipan/5.webp",
+
+    panoramicImage: "/tours/fansipan/panorama.webp",
+
+    gallery: [
+      { src: "/tours/fansipan/1.webp",  alt: "Fansipan trekking — mountain trail through cloud forest" },
+      { src: "/tours/fansipan/2.webp",  alt: "Fansipan — trekkers on the north-face trail" },
+      { src: "/tours/fansipan/3.webp",  alt: "Fansipan — bamboo forest section of the route" },
+      { src: "/tours/fansipan/4.webp",  alt: "Fansipan — alpine zone above 2,500m" },
+      { src: "/tours/fansipan/5.webp",  alt: "Fansipan — camp at 2,800m with cloud layer below" },
+      { src: "/tours/fansipan/6.webp",  alt: "Fansipan — ridge views from the high camp" },
+      { src: "/tours/fansipan/7.webp",  alt: "Fansipan — sunrise summit push at 4:30am" },
+      { src: "/tours/fansipan/8.webp",  alt: "Fansipan — reaching 3,143m, roof of Indochina" },
+      { src: "/tours/fansipan/9.webp",  alt: "Fansipan — summit views over the Hoàng Liên range" },
+      { src: "/tours/fansipan/10.webp", alt: "Fansipan — descent through the cloud forest" },
+      { src: "/tours/fansipan/13.webp", alt: "Fansipan — trekking group with Morning Vietnam host" },
+    ],
+
+    selectorMode: 'vehicle-only',
+    durationOptions: [
+      {
+        id:       "2d1n",
+        label:    "2D1N from Sa Pa",
+        price:    125,
+        priceVND: 3250000,
+        tagline:  "Sa Pa → Trạm Tôn (1,900m) → 2,800m camp Day 1 → Fansipan 3,143m summit at dawn → Sa Pa Day 2.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then · Hanoi pickup +450,000₫/person",
+        waText:   "Hi Morning Vietnam — I'd like to book Fansipan Only Trekking (2D1N). Can you tell me about available dates?",
+        paxTiers: [
+          { min: 1, max: 2, price: 125, priceVND: 3250000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
+          { min: 3, max: 3, price: 125, priceVND: 3250000 },
+          { min: 4, max: 5, price: 123, priceVND: 3200000 },
+          { min: 6, max: 7, price: 121, priceVND: 3150000 },
+          { min: 8, max: 12, price: 117, priceVND: 3050000 },
+        ],
+      },
+    ],
+
+    tripInfo: {
+      "2d1n": [
+        { icon: "map-pin",         label: "Pickup",        value: "Sa Pa · morning · or Hanoi pickup +450,000₫/person" },
+        { icon: "users",           label: "Group size",    value: "3 – 12 people · joined or private group" },
+        { icon: "car",             label: "Transport",     value: "Private car Sa Pa ↔ Trạm Tôn · trekking" },
+        { icon: "tools-kitchen-2", label: "Meals",         value: "Day 1: lunch + dinner · Day 2: full board" },
+        { icon: "home",            label: "Accommodation", value: "2,800m wilderness shelter (tent, sleeping bag, mat)" },
+        { icon: "mountain",        label: "Summit",        value: "Fansipan 3,143m · Roof of Indochina" },
+        { icon: "trending-up",     label: "Trek",          value: "~15km return · 1,700m accumulated gain" },
+        { icon: "calendar-check",  label: "Duration",      value: "2 days 1 night · starts Sa Pa morning" },
+        { icon: "id",              label: "Required",      value: "Original passport · checked at ranger checkpoints" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Day 1 — Sa Pa → Trạm Tôn → 2,800m Shelter",
+        slots: [
+          "07:30  Breakfast at hotel · Sa Pa",
+          "09:00  Car to Trạm Tôn trailhead · 1,900m · meet porters · water and gear check · trek departs",
+          "12:00  Mid-trail stop at a small shelter · lunch · rest before the steeper section",
+          "13:00  Continue climbing — cloud forest, rocky switchbacks, views opening above 2,000m",
+          "17:00  Arrive camp · 2,800m · dinner · stars above the old-growth forest",
+          "21:00  Sleep at 2,800m",
+          "Overnight · wilderness camp · 2,800m",
+        ],
+      },
+      {
+        day: 2,
+        title: "Day 2 — Fansipan 3,143m → Red Dao Bath → Sa Pa Night",
+        slots: [
+          "04:00  Wake up · breakfast in the cold · head torches on",
+          "04:30  Summit push begins · 2km from camp to the peak",
+          "06:30  Fansipan 3,143m · roof of Indochina · commemorative medal · sea of clouds below",
+          "09:30  Descent to shelter · ~2km back down",
+          "11:00  Pack up · lunch at shelter · begin full descent to Trạm Tôn",
+          "15:00  Car from Trạm Tôn back to Sa Pa",
+          "15:30 – 17:00  Red Dao herbal bath · Sa Pa — traditional leaf bath, 40°C, 45 minutes",
+          "17:00 – 18:30  Dinner at a local restaurant · Sa Pa town centre",
+          "20:00 – 23:00  Town square and Sa Pa night market",
+          "23:00  Check in to hotel in Sa Pa · or overnight bus to Hanoi",
+        ],
+      },
+    ],
+
+    pitch: {
+      headline: "Two days. One night at 2,800m. One sunrise at 3,143m. The direct route — for those already in Sa Pa who want the mountain without anything else.",
+      bullets: [
+        "Trạm Tôn approach: the original north-face route, starting at 1,900m on Vietnam's highest mountain pass — wide, well-marked, and the most reliable trail to the summit",
+        "2,800m camp: a ridge above the cloud layer — the rarest overnight in North Vietnam, with spring water, mountain-rated sleeping bags, and the kind of sky you don't see from Sa Pa town",
+        "4:30am summit push to 3,143m — the highest point in Vietnam, Laos, and Cambodia — at the moment the Hoàng Liên range catches the first light, before the cable car starts running",
+      ],
+      closingLine: "If you're already in Sa Pa and you have two days, the trail is the only version worth taking.",
+    },
+
+    storytelling: {
+      headline: "The Roof of Indochina — every trekker's dream.",
+      paragraphs: [
+        "O Quy Hồ is Vietnam's highest mountain pass — a 50-kilometre road that crosses the Hoàng Liên Sơn range at roughly 1,900m, connecting Sa Pa on the eastern side with the Lai Châu basin to the west. The pass has been a trade and migration route for highland communities for centuries; the modern road was built during the French colonial period and improved repeatedly since. Trạm Tôn, the checkpoint station near the top, is the northern trailhead for Fansipan — the point where the route into the national park begins. The pass itself is one of the most dramatic road sections in Vietnam: cloud-covered most mornings, cleared by wind in the afternoon, with views east across the Sa Pa valley and west toward the Lai Châu lowlands on clear days.",
+        "Hoàng Liên Sơn National Park covers 29,845 hectares across the range — established in 1996 and listed as a UNESCO Biosphere Reserve candidate for its exceptional biodiversity. The northern face of Fansipan, where the trekking route runs, is primary forest that has never been logged commercially. The cloud forest below 2,000m supports over 2,000 recorded plant species, among them 20+ orchid species endemic to the range. Above 2,000m, a bamboo belt — Fargesia and Yushania species — forms a near-continuous cover that has historically made navigation above the treeline difficult without a guide. This is part of why independent trekking was restricted: the forest disorients, trails divide, and the weather shifts within minutes at altitude.",
+        "The Hoàng Liên Sơn range is geologically part of the same uplift system that produced the Himalayas — formed by the collision of the Indian and Eurasian plates beginning roughly 50 million years ago, continuing to rise at a measurable rate. The rock exposed on Fansipan's upper sections is mainly granite and gneiss, grey and fractured, warm to the touch in the afternoon sun even when the air is cold. The summit area at 3,143m is wind-scoured and exposed: a small plateau of boulders where the Buddhist temple complex was built after the cable car opened in 2016. Below zero temperatures occur at the summit even in April; the daily temperature range from valley floor to peak can exceed 20°C.",
+        "Sa Pa town sits at 1,500m and has been the commercial hub for a cluster of highland ethnic communities for over a century — Black H'Mông, Red Dao, Giáy, Tày, Xa Phó. The Saturday market that draws people down from the surrounding villages is one of the oldest in the region, predating the tourist economy. The Red Dao community — known for their red-embroidered headdresses and extensive medicinal plant knowledge — practice tắm thuốc, the herbal bath: a blend of a dozen or more forest plants, boiled and used as a therapeutic soak after physical exertion or illness. The recipe is family-specific and passed down orally. Several Dao families in Sa Pa offer the bath to outsiders using traditional preparations, without the spa-hotel packaging. After two days on the mountain, 40°C water and the specific smell of Dao medicinal plants is something you'll remember longer than the summit.",
+      ],
+      pullImage: "/tours/fansipan/storytelling.webp",
+    },
+
+    elevationProfile: [
+      { time: "07:30", label: "Breakfast · Sa Pa hotel",  elevation: 1500, icon: "food",    highlight: false, day: 1 },
+      { time: "09:00", label: "Trạm Tôn · trek begins",  elevation: 1900, icon: "hike",    highlight: false, day: 1 },
+      { time: "12:00", label: "Mid-trail lunch",          elevation: 2400, icon: "food",    highlight: false, day: 1 },
+      { time: "17:00", label: "Shelter · 2,800m",          elevation: 2800, icon: "resort",  highlight: true,  day: 1 },
+
+      { time: "04:00", label: "Wake up · breakfast",      elevation: 2800, icon: "hike",    highlight: false, day: 2 },
+      { time: "06:30", label: "Fansipan · 3,143m",        elevation: 3143, icon: "mountain",highlight: true,  day: 2 },
+      { time: "08:00", label: "Begin descent",             elevation: 2971, icon: "hike",    highlight: false, day: 2 },
+      { time: "11:00", label: "Shelter · pack up · lunch",elevation: 2800, icon: "food",    highlight: false, day: 2 },
+      { time: "17:00", label: "Sa Pa · herbal bath",      elevation: 1500, icon: "resort",  highlight: true,  day: 2 },
+      { time: "18:30", label: "Dinner · Sa Pa",           elevation: 1500, icon: "food",    highlight: false, day: 2 },
+      { time: "20:00", label: "Night market · Sa Pa",     elevation: 1500, icon: "village", highlight: false, day: 2 },
+      { time: "23:00", label: "Hotel or bus to Hanoi",    elevation: 1500, icon: "return",  highlight: false, day: 2 },
+    ],
+    elevationMax: 3300,
+
+    activityCards: [
+      {
+        badge: "hike", badgeLabel: "Trek",
+        time: "09:00 – 17:00 · Day 1",
+        title: "Trạm Tôn → Cloud Forest → 2,800m",
+        desc: "The climb starts at Trạm Tôn trailhead (1,900m) and gains 900m over 6km to the high camp. The route passes through three distinct vegetation zones: dense cloud forest in the lower section, bamboo above 2,000m, and alpine scrub as you approach 2,600m. There are fixed ropes on some steeper sections. Total walking time is 7–8 hours including stops. The trail is uneven, rocky in places, and muddy after rain. Trekking poles are strongly recommended.",
+        highlight: true,
+      },
+      {
+        badge: "resort", badgeLabel: "Shelter",
+        time: "17:00 – 04:00 · Night",
+        title: "2,800m Wilderness Shelter",
+        desc: "The shelter sits on a flat section of ridge at 2,800m — tents, sleeping bags rated for mountain temperatures, and a shelter dinner cooked by your host. On clear nights the valley below is invisible under cloud, and the sky is the widest you've seen. On overcast nights the experience is different: the wind in the tents, the cold, the darkness below the summit. Both are part of this mountain. The alarm goes at 4:00am.",
+        highlight: true,
+      },
+      {
+        badge: "mountain", badgeLabel: "Summit",
+        time: "04:30 – 06:30 · Day 2",
+        title: "Fansipan 3,143m — Roof of Indochina",
+        desc: "The final 2km from camp to the peak starts in darkness — head torch, cold air, the path steep and familiar by now. The last section includes some scrambling on rocky terrain; your host guides every step. At 3,143m the horizon is a ring of ridgelines. The sunrise moves from east to west across the Hoàng Liên range in about 20 minutes — if the sky is clear. Commemorative medal included. At this hour, before the cable car starts running, the top is yours.",
+        highlight: true,
+      },
+      {
+        badge: "resort", badgeLabel: "Recovery",
+        time: "15:30 – 17:00 · Day 2",
+        title: "Red Dao Herbal Bath — Sa Pa",
+        desc: "After two days on the mountain — 900m of gain, a night at 2,800m, the summit before dawn, and the full descent — the Red Dao herbal bath is not a luxury addition. It's a traditional medicinal practice used by the Red Dao people of the Sa Pa highlands for recovery after physical exertion. The bath is a blend of over a dozen mountain plants: bark, roots, and leaves gathered from the surrounding forest, brewed into a dark aromatic soak at roughly 40°C. The practice improves circulation and accelerates muscle recovery — the Dao communities have used it this way for generations. Forty-five minutes in the water. Every muscle understands the value.",
+        highlight: false,
+      },
+      {
+        badge: "village", badgeLabel: "Sa Pa Night",
+        time: "17:00 – 23:00 · Day 2",
+        title: "Sa Pa Evening — Dinner, Square, Night Market",
+        desc: "The last hours in Sa Pa. Dinner at a local restaurant in the town centre — the kind of meal after a summit that tastes different from any other. After: the stone church square, the night market, the mix of H'Mông vendors, travellers, and locals that give Sa Pa its after-dark character. The market runs until the streets empty. For those taking the overnight bus, departure is 23:00 and the journey arrives in Hanoi by early morning. For those staying: Sa Pa's hotels are quiet after midnight, and the mountain is still there in the window.",
+        highlight: false,
+      },
+    ],
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "Your host meets you in Sa Pa with a Morning Vietnam pack before departure to Trạm Tôn. One item was chosen for a night at 2,800m.",
+    },
+
+    seasonality: {
+      intro: "Fansipan trekking is seasonal. Conditions above 2,500m change fast and the summit ridge is fully exposed. We monitor forecasts 48 hours ahead.",
+      months: [
+        { name: "Jan", level: "good" },
+        { name: "Feb", level: "good" },
+        { name: "Mar", level: "best" },
+        { name: "Apr", level: "best" },
+        { name: "May", level: "wet"  },
+        { name: "Jun", level: "wet"  },
+        { name: "Jul", level: "wet"  },
+        { name: "Aug", level: "wet"  },
+        { name: "Sep", level: "good" },
+        { name: "Oct", level: "best" },
+        { name: "Nov", level: "best" },
+        { name: "Dec", level: "good" },
+      ],
+      notes: [
+        { title: "Best season (Oct – Apr)", desc: "Oct–Nov: clearest skies, post-monsoon air, and cloud inversions most frequent — the valley disappears below a white layer while you're at camp above it. Mar–Apr: rhododendron season — over 40 species of ancient rhododendron bloom red, yellow, and purple along the trail from 2,000m up; the camp ridge has views into the blooming forest below. Jan–Feb: coldest months, below freezing at the summit, ice on the rocky sections near the top — extraordinary conditions, but cold-weather gear briefing required." },
+        { title: "Wet season (May – Sep)", desc: "We do not operate this tour May–August. Cloud cover is persistent above 2,000m, the trail is slippery, and since 2026 national park rangers close the summit section during severe weather. Leeches are more active in wet season — high socks are always advised regardless. September can open if a stable window appears — we confirm 48 hours ahead." },
+      ],
+    },
+
+    faqs: [
+      { q: "How fit do I need to be?", a: "High fitness required. Day 1 is 900m of elevation gain over 6km on mountain trail — 7–8 hours of walking. Day 2 adds another 343m before dawn. No technical climbing, but this is serious trekking. Minimum age 16. Regular hikers will be fine. Gym-only fitness is not enough preparation." },
+      { q: "What does the camp look like?", a: "Basic tents on a ridge at 2,800m. Sleeping bags and mats are provided (rated for mountain conditions). No running water at camp. Expect 5–10°C at night in warm months, below freezing in winter. The view is the point, not the comfort." },
+      { q: "Can I pick up from Hanoi?", a: "Yes — Hanoi pickup is available at an additional cost of 450,000₫ per person. This means a sleeper bus or private transfer to Sa Pa the night before. We'll arrange the logistics when you enquire." },
+      { q: "What if I want to add the valley trekking day?", a: "That's the Fansipan 3D2N tour — it adds a full Day 1 in the Mường Hoa valley (Ý Linh Hồ, Lao Chải, Tả Van) and an extra night in Sa Pa before the mountain section. Same mountain route, but with the cultural context built in." },
+      { q: "Can I take the cable car down?", a: "No — the cable car is on the south face and can only be used from the summit station to the valley station on that side. The trekking route is on the north face (Trạm Tôn). Descent is the same trail you climbed." },
+      { q: "Do I need a permit?", a: "Yes — since 2026, independent trekking on Fansipan is no longer permitted. A licensed guide and a national park permit from Hoàng Liên Sơn National Park are mandatory. Your passport is checked at forest ranger stations on the trail. We handle all permits and guide certification — nothing to arrange on your side. Trekking without a permit results in a fine and being turned back." },
+      { q: "What gear should I bring?", a: "Ankle-support waterproof hiking boots are non-negotiable — the trail is rocky and the camp is exposed. Trekking poles reduce knee load significantly on the 900m descent and are strongly recommended. Bring a layering system (moisture-wicking base, fleece, waterproof outer), a headlamp for the 4:30am push, grip gloves for the rocky sections near the top, and high socks to guard against leeches in the lower forest. Pack weight target: 5–7kg. Sleeping bags, mats, and tents are provided at camp." },
+      ...DEFAULT_FAQS.slice(2),
+    ],
+
+    unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
   },
 ];
 

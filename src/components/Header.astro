@@ -3,6 +3,23 @@ import LangSwitcher from './LangSwitcher.astro';
 import { getLangFromPath, stripLang, navPath, type Lang } from '../i18n/config';
 import { useTranslations } from '../i18n/ui';
 
+interface Props {
+  navTheme?: 'on-image-dark' | 'on-nordic' | 'on-cyan' | 'on-java' | 'on-riptide' | 'on-sorbus' | 'on-white';
+}
+const { navTheme = 'on-image-dark' } = Astro.props;
+
+const LOGO_MAP = {
+  'on-image-dark': '/logo/logo-dark.png',
+  'on-nordic':     '/logo/logo-riptide.png',
+  'on-cyan':       '/logo/logo-java.png',
+  'on-java':       '/logo/logo-light.png',
+  'on-riptide':    '/logo/logo-dark.png',
+  'on-sorbus':     '/logo/logo-dark.png',
+  'on-white':      '/logo/logo-dark.png',
+} as const;
+
+const logoTopSrc = LOGO_MAP[navTheme];
+
 const path = Astro.url.pathname;
 
 // Ngôn ngữ hiện tại + hàm dịch. `t('nav.tours')` sẽ trả về "Tours" hoặc "Tour"
@@ -34,7 +51,7 @@ const marqueeItems = [
 ---
 
 <!-- ═══ SITE HEADER WRAPPER (fixed) ═══════════════════════════════════════ -->
-<div class="header" id="site-header">
+<div class="header" id="site-header" data-nav-theme={navTheme}>
 
   <!-- 1. Marquee banner -->
   <div class="b-marquee" aria-hidden="true">
@@ -54,7 +71,8 @@ const marqueeItems = [
 
       <!-- Logo -->
       <a href={l('/')} class="header__logo" aria-label="Morning Vietnam — home">
-        <img src="/logo.png" alt="Morning Vietnam" class="header__logo-img" />
+        <img src={logoTopSrc}          alt="Morning Vietnam" class="header__logo-img header__logo-img--top"      />
+        <img src="/logo/logo-dark.png" alt="Morning Vietnam" class="header__logo-img header__logo-img--scrolled" />
       </a>
 
       <!-- Desktop nav -->
@@ -272,12 +290,65 @@ const marqueeItems = [
   }
 
   /* ── Nav bar ─────────────────────────────────────────────────────── */
-  .header__bar {
-    height: var(--nav-height);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+  /* ── Nav theme: CSS variables per variant ───────────────────────── */
+  .header {
+    --nav-text:        rgba(255, 255, 255, 0.88);   /* default = on-image-dark */
+    --nav-text-hover:  var(--color-riptide);
+    --nav-active:      var(--color-riptide);
+    --nav-hamburger:   rgba(255, 255, 255, 0.9);
   }
 
-  /* Scrolled: frosted glass */
+  .header[data-nav-theme="on-nordic"] {
+    --nav-text:       var(--color-riptide);
+    --nav-text-hover: var(--color-light-cyan);
+    --nav-active:     var(--color-sorbus);
+    --nav-hamburger:  var(--color-riptide);
+  }
+
+  .header[data-nav-theme="on-cyan"] {
+    --nav-text:       var(--color-java);
+    --nav-text-hover: var(--color-nordic);
+    --nav-active:     var(--color-sorbus);
+    --nav-hamburger:  var(--color-java);
+  }
+
+  .header[data-nav-theme="on-java"] {
+    --nav-text:       var(--color-light-cyan);
+    --nav-text-hover: rgba(255, 255, 255, 0.95);
+    --nav-active:     var(--color-sorbus);
+    --nav-hamburger:  var(--color-light-cyan);
+  }
+
+  .header[data-nav-theme="on-riptide"],
+  .header[data-nav-theme="on-sorbus"],
+  .header[data-nav-theme="on-white"] {
+    --nav-text:       var(--color-nordic);
+    --nav-text-hover: var(--color-java);
+    --nav-active:     var(--color-sorbus);
+    --nav-hamburger:  var(--color-nordic);
+  }
+
+  /* Scrolled state: frosted white + nordic text, tous les variants */
+  .header.scrolled {
+    --nav-text:       var(--color-nordic);
+    --nav-text-hover: var(--color-java);
+    --nav-active:     var(--color-sorbus);
+    --nav-hamburger:  var(--color-nordic);
+  }
+
+  /* ── Header bar ─────────────────────────────────────────────────── */
+  .header__bar {
+    height: var(--nav-height);
+    background: transparent;
+    transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+  }
+
+  /* Subtle scrim ONLY for on-image-dark — hero ảnh có vùng sáng bất ngờ */
+  .header[data-nav-theme="on-image-dark"]:not(.scrolled) .header__bar {
+    background: linear-gradient(to bottom, rgba(4, 51, 65, 0.25) 0%, transparent 100%);
+  }
+
+  /* Scrolled: frosted glass — applies to ALL variants */
   .header.scrolled .header__bar {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px);
@@ -292,23 +363,31 @@ const marqueeItems = [
     gap: 32px;
   }
 
-  /* ── Logo ────────────────────────────────────────────────────────── */
+  /* ── Logo swap: --top (per variant) vs --scrolled (always dark) ─── */
   .header__logo {
     flex-shrink: 0;
     display: flex;
     align-items: center;
+    transition: opacity 0.3s ease;
   }
+
+  .header__logo:hover { opacity: 0.8; }
 
   .header__logo-img {
     height: 65px;
     width: auto;
     display: block;
-    transition: opacity 0.3s ease;
   }
 
-  .header__logo:hover .header__logo-img {
-    opacity: 0.8;
-  }
+  .header__logo-img--top      { display: block; }
+  .header__logo-img--scrolled { display: none; }
+
+  .header.scrolled .header__logo-img--top      { display: none; }
+  .header.scrolled .header__logo-img--scrolled { display: block; }
+
+  /* Mobile nav open: always show top logo (dark nav bg handles contrast) */
+  .header.open .header__logo-img--top      { display: block; }
+  .header.open .header__logo-img--scrolled { display: none; }
 
   /* ── Desktop nav ─────────────────────────────────────────────────── */
   .header__nav {
@@ -325,7 +404,7 @@ const marqueeItems = [
     margin: 0; padding: 0;
   }
 
-  /* Nav link — white on transparent, nordic on scrolled */
+  /* ── Apply CSS variables to nav elements ────────────────────────── */
   .nav-link {
     display: inline-flex;
     align-items: center;
@@ -335,7 +414,7 @@ const marqueeItems = [
     font-family: var(--font-heading);
     font-size: 15px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.88);
+    color: var(--nav-text);
     cursor: pointer;
     transition: color 0.25s ease, background 0.25s ease;
     white-space: nowrap;
@@ -343,22 +422,13 @@ const marqueeItems = [
     user-select: none;
   }
 
-  .header.scrolled .nav-link {
-    color: var(--color-nordic);
-  }
-
   .nav-link:hover {
-    color: var(--color-java);
+    color: var(--nav-text-hover);
     background: rgba(29, 160, 160, 0.12);
   }
 
-  .header.scrolled .nav-link:hover {
-    background: rgba(29, 160, 160, 0.1);
-  }
-
-  /* Active state: sorbus underline */
   .nav-link--active {
-    color: var(--color-riptide) !important;
+    color: var(--nav-active) !important;
     position: relative;
   }
 
@@ -369,16 +439,8 @@ const marqueeItems = [
     left: 16px;
     right: 16px;
     height: 2px;
-    background: var(--color-riptide);
+    background: var(--nav-active);
     border-radius: 1px;
-  }
-
-  .header.scrolled .nav-link--active {
-    color: var(--color-sorbus) !important;
-  }
-
-  .header.scrolled .nav-link--active::after {
-    background: var(--color-sorbus);
   }
 
   /* ── Explore dropdown (exact Happly spec) ────────────────────────── */
@@ -489,20 +551,17 @@ const marqueeItems = [
     transition: background 0.2s ease;
   }
 
-  .hamburger:hover { background: rgba(255,255,255,0.12); }
-  .header.scrolled .hamburger:hover { background: rgba(4,51,65,0.08); }
+  .hamburger:hover { background: rgba(29, 160, 160, 0.12); }
 
   .hamburger__line {
     display: block;
     width: 22px;
     height: 2px;
-    background: rgba(255,255,255,0.9);
+    background: var(--nav-hamburger);
     border-radius: 2px;
     transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
     transform-origin: center;
   }
-
-  .header.scrolled .hamburger__line { background: var(--color-nordic); }
 
   .hamburger.open .hamburger__line:nth-child(1) { transform: translateY(7px) rotate(45deg);  }
   .hamburger.open .hamburger__line:nth-child(2) { opacity: 0; transform: scaleX(0); }
@@ -690,14 +749,7 @@ const marqueeItems = [
     .b-marquee__sep { font-size: 0.7em; }
   }
 
-  /* ─ Khi menu mở: logo chuyển sang light-cyan (#d9f7f5)
-     PNG → dùng filter để tint. Giá trị tính qua công cụ "PNG to filter".
-     Mục tiêu: brand teal + nordic của logo thành 1 tông light-cyan sáng. */
-  .header.open .header__logo-img {
-    filter: brightness(0) saturate(100%) invert(95%) sepia(8%) saturate(660%) hue-rotate(135deg) brightness(102%) contrast(95%);
-    transition: filter 0.3s ease;
-  }
-  .header__logo-img { transition: filter 0.3s ease; }
+  /* Logo swap khi menu mở — xử lý bằng show/hide rule ở trên (open state) */
 
   /* ── Page offset helper ──────────────────────────────────────────── */
   .page-offset {

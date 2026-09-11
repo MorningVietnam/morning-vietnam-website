@@ -67,7 +67,7 @@ const firstOptionId  = tour.durationOptions?.[0]?.id ?? '';
 const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOptionId ? `&option=${firstOptionId}` : ''}`;
 ---
 
-<BaseLayout title={tour.name} description={tour.tagline}>
+<BaseLayout title={tour.name} description={tour.tagline} navTheme="on-cyan">
 
   <!-- ═══ S1 · b-product (split hero) ════════════════════════════ -->
   <section class="td-product page-offset">
@@ -295,18 +295,6 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               </div>
             )}
 
-            <!-- Upcoming dates (compact strip) -->
-            {upcomingDates && upcomingDates.length > 0 && (
-              <div class="td-upcoming">
-                <p class="td-upcoming__label">Next departures</p>
-                <div class="td-upcoming__pills">
-                  {upcomingDates.map((d: string) => (
-                    <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(d)}`} class="td-upcoming__pill">{d}</a>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <!-- Trip Info cards -->
             {hasTripInfo && (
               <div class="td-tripinfo" id="td-tripinfo-section"
@@ -377,18 +365,6 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                   Notify me when live
                 </button>
                 <p class="td-product__cta-note">{tour.price}</p>
-              </div>
-            )}
-
-            <!-- Upcoming dates (compact strip) -->
-            {upcomingDates && upcomingDates.length > 0 && (
-              <div class="td-upcoming">
-                <p class="td-upcoming__label">Next departures</p>
-                <div class="td-upcoming__pills">
-                  {upcomingDates.map((d: string) => (
-                    <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(d)}`} class="td-upcoming__pill">{d}</a>
-                  ))}
-                </div>
               </div>
             )}
 
@@ -640,11 +616,11 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                         const fw = p.highlight ? '700' : '500';
                         const baseY = 340;
                         const dense = total > 14;
-                        const showLabel = !dense || p.highlight;
+                        const showLabel = true;
                         return (
                           <g class={`td-timeline__point${p.highlight ? ' is-highlight' : ''}`}>
                             <circle cx={p.x} cy={p.y} r={dotR} fill={dotColor} stroke="white" stroke-width="2.5" />
-                            {showLabel && <text x={p.x} y={p.y - 18} text-anchor="middle" font-size="10" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>}
+                            {p.time && <text x={p.x} y={p.y - 18} text-anchor="middle" font-size="10" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>}
                             {showLabel && <text x={p.x} y={baseY} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>}
                             {showLabel && line2 && <text x={p.x} y={baseY + 13} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
                             {showLabel && <text x={p.x} y={baseY + (line2 ? 26 : 13)} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>}
@@ -743,6 +719,9 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
           <strong>Timeline data pending.</strong>
           <p>Elevation profile for {tour.name} will be added once the route is finalized.</p>
         </div>
+      )}
+      {elevation && elevation.length > 0 && (
+        <p class="td-timeline__disclaimer">⏱ Time markers are estimates — actual pace depends on each group's fitness level.</p>
       )}
       {activityCards && activityCards.length > 0 && (
         <div class="td-timeline__cards">
@@ -1878,6 +1857,14 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     opacity: 0.6;
     font-size: 15px;
     line-height: 1.6;
+  }
+
+  .td-timeline__disclaimer {
+    margin-top: 12px;
+    font-size: 13px;
+    color: rgba(4, 51, 65, 0.5);
+    text-align: center;
+    font-style: italic;
   }
 
   /* ── td-timeline activity cards ─────────────────── */

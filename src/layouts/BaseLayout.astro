@@ -13,6 +13,7 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  navTheme?: 'on-image-dark' | 'on-nordic' | 'on-cyan' | 'on-java' | 'on-riptide' | 'on-sorbus' | 'on-white';
 }
 
 const siteURL = 'https://morningvietnam.co';
@@ -39,6 +40,7 @@ const {
   title,
   description = DEFAULT_DESCRIPTION[currentLang],
   image = "/og-default.jpg",
+  navTheme = 'on-image-dark',
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? siteURL);
@@ -119,7 +121,7 @@ const alternates = getAlternates(Astro.url.pathname);
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   End Google Tag Manager noscript -->
 
-  <Header />
+  <Header navTheme={navTheme} />
   <main id="main-content">
     <slot />
   </main>

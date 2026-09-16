@@ -48,6 +48,10 @@ const season       = tour.seasonality;
 const faqs         = tour.faqs;
 const upcomingDates = (tour as any).upcomingDates as string[] | undefined;
 
+function fmtDate(iso: string) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
 // Trekking-specific modules (only present on hiking/trekking tours)
 const tripGrading  = (tour as any).tripGrading || null;
 const safetyInfo   = (tour as any).safetyInfo || null;
@@ -1200,9 +1204,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     </div>
   </section>
 
-  {/* ═══ S10 · b-departures — tạm ẩn, bật lại khi có lịch khởi hành ═══
   {upcomingDates && upcomingDates.length > 0 && (
-    <section class="td-departures">
+    <section class="td-departures" data-dates-wrap>
       <div class="td-departures__inner">
         <div class="td-departures__left">
           <p class="section-label">Upcoming Departures</p>
@@ -1212,16 +1215,15 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
         </div>
         <div class="td-departures__list">
           {upcomingDates.map((date: string) => (
-            <div class="td-departures__item">
-              <span class="td-departures__date">{date}</span>
-              <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(date)}`} class="td-departures__book">Reserve spot →</a>
+            <div class="td-departures__item" data-date={date}>
+              <span class="td-departures__date">{fmtDate(date)}</span>
+              <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(fmtDate(date))}`} class="td-departures__book">Reserve spot →</a>
             </div>
           ))}
         </div>
       </div>
     </section>
   )}
-  */}
 
   <!-- ═══ S6 · b-unlock (the secret game) ═══════════════════════ -->
   {unlock && (

@@ -447,4 +447,20 @@ document.addEventListener('DOMContentLoaded', () => {
   initTourFilter();
   initSmoothScroll();
   initCtaImages();
+  prunePastDates();
 });
+
+function prunePastDates() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  document.querySelectorAll('[data-date]').forEach(el => {
+    const d = new Date(el.dataset.date + 'T12:00:00');
+    if (d < today) el.hidden = true;
+  });
+
+  document.querySelectorAll('[data-dates-wrap]').forEach(wrap => {
+    const items = wrap.querySelectorAll('[data-date]');
+    if (items.length > 0 && [...items].every(el => el.hidden)) wrap.hidden = true;
+  });
+}

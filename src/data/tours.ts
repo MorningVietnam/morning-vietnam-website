@@ -115,7 +115,7 @@ export interface Tour {
   seasonality?:      Seasonality;
   faqs?:             FAQ[];
   unlockChallenge?:  UnlockChallenge | null;
-  upcomingDates?:    string[];   // e.g. ["Wed 22 Jul", "Sun 26 Jul"] — displayed on tour detail
+  upcomingDates?:    string[];   // ISO dates "YYYY-MM-DD" — past dates auto-hidden client-side
   subtitle?:         string;     // Secondary line shown under h1 on hero, smaller font
   priceNote?:        string;     // Small note shown below price block on hero
 
@@ -443,7 +443,7 @@ export const tours: Tour[] = [
       ...DEFAULT_FAQS.slice(0, 2),
     ],
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
-    upcomingDates: ["Tue 21 Jul", "Tue 28 Jul"],
+    upcomingDates: ["2026-07-21", "2026-07-28"],
   },
 
   // ── Sa Pa · Lai Châu ──────────────────────────────────────────────────────
@@ -829,7 +829,7 @@ export const tours: Tour[] = [
       ...DEFAULT_FAQS.slice(2),
     ],
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
-    upcomingDates: ["Fri 24 Jul"],
+    upcomingDates: ["2026-07-24"],
   },
 
   // ── Unlock Mai Châu ──────────────────────────────────────────────────────
@@ -1171,7 +1171,7 @@ export const tours: Tour[] = [
     seasonality: DEFAULT_SEASONALITY_NORTH,
     faqs: DEFAULT_FAQS,
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
-    upcomingDates: ["Sat 25 Jul", "Thu 30 Jul", "Sun 2 Aug"],
+    upcomingDates: ["2026-07-25", "2026-07-30", "2026-08-02"],
   },
 
   // ── Mai – Mộc in 1 Trip ──────────────────────────────────────────────────
@@ -2670,7 +2670,7 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
-    upcomingDates: ["Wed 22 Jul", "Sun 26 Jul", "Mon 27 Jul", "Sun 2 Aug"],
+    upcomingDates: ["2026-07-22", "2026-07-26", "2026-07-27", "2026-08-02"],
   },
 
   // ── Sa Pa · Nậm Cang ─────────────────────────────────────────────────────
@@ -3050,7 +3050,7 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
-    upcomingDates: ["Wed 22 Jul", "Sun 26 Jul", "Mon 27 Jul", "Sun 2 Aug"],
+    upcomingDates: ["2026-07-22", "2026-07-26", "2026-07-27", "2026-08-02"],
   },
 
   // ── Into Nậm Lúc Waterfall ───────────────────────────────────────────────
@@ -3306,7 +3306,7 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
-    upcomingDates: ["Wed 22 Jul", "Thu 23 Jul"],
+    upcomingDates: ["2026-07-22", "2026-07-23"],
   },
 
   // ── Unlock Lai Châu ──────────────────────────────────────────────────────
@@ -3604,7 +3604,7 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
-    upcomingDates: ["Fri 24 Jul"],
+    upcomingDates: ["2026-07-24"],
   },
 
   // ── Fansipan 3D2N ─────────────────────────────────────────────────────────
@@ -3645,6 +3645,7 @@ export const tours: Tour[] = [
     hub:         "Hanoi",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
+    upcomingDates: ["2026-09-20", "2026-09-25"],
     image:       "/tours/fansipan/1.webp",
 
     panoramicImage: "/tours/fansipan/panorama2.webp",
@@ -3973,6 +3974,7 @@ export const tours: Tour[] = [
     hub:         "Sa Pa",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
+    upcomingDates: ["2026-09-21", "2026-09-26"],
     image:       "/tours/fansipan/5.webp",
 
     panoramicImage: "/tours/fansipan/panorama.webp",
@@ -4274,6 +4276,7 @@ export const tours: Tour[] = [
     hub:         "Hanoi",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
+    upcomingDates: ["2026-10-09"],
     image:       "/tours/putaleng/1.webp",
 
     panoramicImage: "/tours/putaleng/panorama.webp",
@@ -4584,6 +4587,7 @@ export const tours: Tour[] = [
     hub:         "Sa Pa",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
+    upcomingDates: ["2026-10-10"],
     image:       "/tours/putaleng/4.webp",
 
     panoramicImage: "/tours/putaleng/panorama.webp",

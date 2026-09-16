@@ -18,6 +18,10 @@ const hikingTours = HIKING_SLUGS
   .filter(Boolean) as typeof tours;
 
 const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4', 'c1', 'c2', 'c3'] as const;
+
+function fmtDate(iso: string) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
 ---
 
 <BaseLayout
@@ -100,6 +104,15 @@ const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4', 'c1', 'c2', 'c3'] as const;
                         <li>{h}</li>
                       ))}
                     </ul>
+                  )}
+
+                  {tour.upcomingDates && tour.upcomingDates.length > 0 && (
+                    <div class="hub-card__dates" data-dates-wrap>
+                      <p class="hub-card__dates-label">Next departures</p>
+                      <div class="hub-card__dates-list">
+                        {tour.upcomingDates.map((d: string) => <span class="hub-card__date-pill" data-date={d}>{fmtDate(d)}</span>)}
+                      </div>
+                    </div>
                   )}
 
                   <div class="hub-card__footer">
@@ -522,6 +535,34 @@ const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4', 'c1', 'c2', 'c3'] as const;
   font-size: 10px; font-weight: 600;
   padding: 2px 9px; border-radius: 100px;
   border: 1px solid currentColor; opacity: 0.75; white-space: nowrap;
+}
+
+.hub-card__dates {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.hub-card__dates-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.hub-card__dates-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.hub-card__date-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid currentColor;
+  opacity: 0.7;
+  white-space: nowrap;
 }
 
 .hub-card__footer {

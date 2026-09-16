@@ -5,21 +5,24 @@ import { tours } from '../../data/tours.ts';
 const HIKING_SLUGS = [
   'fansipan-3d2n',
   'fansipan-trekking',
+  'putaleng-3d2n',
+  'putaleng-trekking',
   'sapa-trekking-classic',
   'sapa-nam-cang',
   'into-nam-luc',
+  'mui-doi-first-sunrise',
 ];
 
 const hikingTours = HIKING_SLUGS
   .map(slug => tours.find(t => t.slug === slug))
   .filter(Boolean) as typeof tours;
 
-const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4'] as const;
+const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4', 'c1', 'c2', 'c3'] as const;
 ---
 
 <BaseLayout
   title="Hiking & Trekking — Morning Vietnam"
-  description="From Mường Hoa valley treks to the 3,143m summit of Fansipan. Five hiking tours in northern Vietnam's highest mountains."
+  description="From Mường Hoa valley treks to Fansipan's 3,143m summit, Putaleng's rhododendron ridge, and Vietnam's easternmost coastline at Mũi Đôi. Eight hiking tours."
 >
 
   <!-- ══════════════════════════════════════════════════════
@@ -44,7 +47,7 @@ const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4'] as const;
           <span class="hub-stat__label">Fansipan · Roof of Indochina</span>
         </div>
         <div class="hub-stat">
-          <span class="hub-stat__num">5</span>
+          <span class="hub-stat__num">8</span>
           <span class="hub-stat__label">Hiking routes · 1 day → 3D2N</span>
         </div>
         <div class="hub-stat">
@@ -67,8 +70,8 @@ const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4'] as const;
     <div class="container">
       <div class="hub-tours__header">
         <span class="section-eyebrow">Choose your trail</span>
-        <h2>Five hiking routes. Different depths.</h2>
-        <p class="hub-tours__sub">Valley treks, jungle trails, and a 3,143m summit. All for small groups, all done properly.</p>
+        <h2>Eight hiking routes. Different depths.</h2>
+        <p class="hub-tours__sub">Valley treks, jungle trails, a 3,143m summit — and Vietnam's easternmost sunrise. All small groups, all done properly.</p>
       </div>
 
       <div class="hub-grid">
@@ -84,9 +87,7 @@ const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4'] as const;
                 <div class="hub-card__image">
                   <img src={tour.image} alt={tour.name} loading={i < 2 ? 'eager' : 'lazy'} />
                   <span class="hub-card__duration">{durationLabel}</span>
-                  <span class="hub-card__departs">
-                    {tour.hub === 'Sa Pa' ? '📍 From Sa Pa' : '📍 From Hanoi'}
-                  </span>
+                  <span class="hub-card__departs">📍 From {tour.hub}</span>
                 </div>
 
                 <div class="hub-card__body">
@@ -99,17 +100,6 @@ const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4'] as const;
                         <li>{h}</li>
                       ))}
                     </ul>
-                  )}
-
-                  {tour.upcomingDates && tour.upcomingDates.length > 0 && (
-                    <div class="hub-card__dates">
-                      <span class="hub-card__dates-label">Next departures</span>
-                      <div class="hub-card__dates-list">
-                        {tour.upcomingDates.map((d: string) => (
-                          <span class="hub-card__date-pill">{d}</span>
-                        ))}
-                      </div>
-                    </div>
                   )}
 
                   <div class="hub-card__footer">

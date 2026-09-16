@@ -114,17 +114,6 @@ const CARD_BGTYPES = ['c1', 'c2', 'c3', 'c4', 'c5'] as const;
                     </ul>
                   )}
 
-                  {tour.upcomingDates && tour.upcomingDates.length > 0 && (
-                    <div class="hub-card__dates">
-                      <span class="hub-card__dates-label">Next departures</span>
-                      <div class="hub-card__dates-list">
-                        {tour.upcomingDates.map((d: string) => (
-                          <span class="hub-card__date-pill">{d}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   <div class="hub-card__footer">
                     {tour.price
                       ? <span class="hub-card__price">{tour.price}</span>

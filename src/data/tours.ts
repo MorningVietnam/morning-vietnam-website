@@ -14,6 +14,35 @@
  *   welcomePack        — { headline, subheading, intro, items[] } — S7
  *   seasonality        — { intro, months[], notes[] } — S9
  *   faqs[]             — { q, a }
+ *
+ * ── Mountain difficulty reference (Morning Vietnam's own chart, shared 2026-09-16) ──
+ *   Source: Thế Anh's "Mountain Difficulty Rating Chart" infographic — the
+ *   operator's own 5-tier classification of Vietnam's top-15 peaks by height.
+ *   Use this to set `tripGrading.level` (1–5) / `tripGrading.label` on any
+ *   trekking tour, rather than guessing from height or trail description —
+ *   difficulty here does NOT track height 1:1 (Fansipan is the tallest peak
+ *   on the list but only tier 2, thanks to its maintained trail/cable-car
+ *   infrastructure; Putaleng, lower than Fansipan, is tier 4).
+ *
+ *   1. Basic (Easy)              — Lảo Thẩn 2,860m · Tà Xùa/Phu Sa Phìn 2,865m
+ *   2. Advanced (Moderate)       — Fansipan 3,143m · Lùng Cúng ~2,813–2,913m
+ *                                   (source graphic disagrees with itself) ·
+ *                                   Tà Chì Nhù 2,979m · Tả Liên Sơn 2,996m
+ *   3. Challenging (Hard)        — Ngũ Chỉ Sơn ~2,858–2,958m (source graphic
+ *                                   disagrees with itself) · Nhìu Cồ San 2,955m
+ *   4. Hard (Hard)                — Ky Quan San 3,046m · Khang Su Văn 3,012m ·
+ *                                   Putaleng 3,049m
+ *   5. Extremely Hard (Very Hard) — Pusilung 3,083m · Nam Kang Ho Tao 2,881m ·
+ *                                   Pờ Ma Lung – Chung Nhía Vũ (combo route)
+ *
+ *   Status on this site: fansipan-3d2n / fansipan-trekking → tier 2 "Advanced".
+ *   putaleng-3d2n → tier 4 "Hard" (relabeled 2026-09-16 from "Challenging",
+ *   which was tier 3's name — level: 4 itself was already correct).
+ *   putaleng-trekking (2D1N) has no tripGrading block at all yet (no route
+ *   map / safetyInfo / packingList section renders for it) — not added here
+ *   since that's a bigger scope-add than a label/data fix; flagging for
+ *   Thế Anh to decide whether it should get the same trekking layout as its
+ *   3D2N sibling.
  */
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -36,7 +65,17 @@ export interface ActivityCard    { badges?: string[]; badge?: string; badgeLabel
 export interface PitchBlock      { headline: string; paragraphs?: string[]; bullets?: string[]; closingLine?: string }
 export interface ValueAnchorBlock { headline: string; paragraphs: string[]; compareTable: CompareRow[] }
 export interface Storytelling    { headline: string; paragraphs: string[]; pullImage?: string }
-export interface ItineraryDay    { day: number; title: string; slots: string[] }
+export interface DayStats        { hours: string; distanceKm: number; up?: number; down?: number }
+export interface ItineraryDay    { day: number; title: string; slots: string[]; stats?: DayStats; accommodation?: string; meals?: string; narrative?: string }
+
+// ── Trekking-specific (optional — only rendered when present, e.g. tags includes "hiking") ──
+export interface GradingCriterion { id: string; label: string; score: number; summary: string }
+export interface TripGrading      { level: number; label: string; summary: string; criteria: GradingCriterion[] }
+export interface RescueStep       { title: string; detail: string }
+export interface SafetyInfo       { medicalAccessTime: string; phoneSignal?: string; guideRatio: string; commsNote?: string; insuranceNote: string; rescueSteps: RescueStep[] }
+export interface PackingCategory  { icon: string; label: string; items: string[] }
+export interface RouteMarker      { lat: number; lon: number; ele: number; label: string; desc: string }
+export interface RouteMarkers     { start: RouteMarker; summit: RouteMarker; shelter: RouteMarker; end: RouteMarker }
 
 export interface Tour {
   slug:              string;
@@ -79,6 +118,13 @@ export interface Tour {
   upcomingDates?:    string[];   // e.g. ["Wed 22 Jul", "Sun 26 Jul"] — displayed on tour detail
   subtitle?:         string;     // Secondary line shown under h1 on hero, smaller font
   priceNote?:        string;     // Small note shown below price block on hero
+
+  // Trekking-specific modules (optional — page renders these only when present)
+  tripGrading?:      TripGrading;
+  safetyInfo?:       SafetyInfo;
+  packingList?:      PackingCategory[];
+  gpxFile?:          string;   // path to .gpx track file, e.g. "/tours/putaleng/putaleng-3d2n.gpx" — renders an interactive route map when present
+  routeMarkers?:     RouteMarkers;  // the 4 map markers (start/summit/shelter/end) for the gpxFile route map above — required if gpxFile is set, otherwise the map renders with no markers
 }
 
 // ── Shared defaults ────────────────────────────────────────────────────────
@@ -3811,6 +3857,83 @@ export const tours: Tour[] = [
       ...DEFAULT_FAQS.slice(2),
     ],
 
+    // Level/label follow Morning Vietnam's own "Mountain Difficulty Rating Chart"
+    // (see the reference note at the top of this file) — Fansipan is tier 2
+    // "Advanced (Moderate)" on that chart despite being the tallest peak listed,
+    // because of its maintained trail and nearby infrastructure.
+    tripGrading: {
+      level: 2,
+      label: "Advanced",
+      summary: "Vietnam's tallest peak, but also its most established route — a maintained trail, ranger checkpoints, and the cable car option nearby keep this at Morning Vietnam's 'Advanced' tier, not our hardest. Still two genuine trekking days with a high-altitude overnight, right for reasonably fit walkers without technical mountain experience.",
+      criteria: [
+        { id: "physical",   label: "Physical demand", score: 3, summary: "6–8 hours of trekking on Day 2 gaining 900m over 6km, plus another 343m of gain before dawn on Day 3. ~15km return, ~1,700m accumulated gain across the two days. No technical climbing — a well-trodden trail, not a bushwhack." },
+        { id: "altitude",   label: "Altitude & terrain", score: 3, summary: "Summit at 3,143m and an overnight camp at 2,800m — genuinely cold overnight (often 5–10°C, below freezing in winter), but on a well-established route with rangers and infrastructure nearby, unlike a true wilderness ascent." },
+        { id: "remoteness", label: "Remoteness", score: 2, summary: "Trạm Tôn is Vietnam's most established high-mountain trailhead — a ranger-patrolled route inside Hoàng Liên Sơn National Park, with the summit cable car station just over the ridge. The 2,800m camp itself has no facilities, but this is the least remote of Morning Vietnam's mountain treks." },
+      ],
+    },
+
+    // DRAFT — medicalAccessTime, guideRatio and commsNote below are estimates
+    // written from the route's general geography (Trạm Tôn/Sa Pa are far more
+    // road-accessible than Putaleng's Lai Châu side) and from Putaleng's stated
+    // operating policy, not an operator-confirmed figure for this specific
+    // route — flagged for Thế Anh to confirm before this is treated as final.
+    safetyInfo: {
+      medicalAccessTime: "~2–3 hours from the 2,800m camp to hospital-level care in Sa Pa — shorter than the Lai Châu side treks, since Trạm Tôn sits on a paved road (O Quy Hồ Pass).",
+      guideRatio: "A lead guide travels with every group, and porter support scales up with group size — roughly one extra porter for every 2–4 additional guests, up to 3 dedicated porters on our largest groups (12 people).",
+      commsNote: "Phone signal is unreliable above the mid-trail rest stop and not available at camp or the summit. Your guide carries the group's primary means of communication — let family know not to expect contact for most of Day 2 and part of Day 3.",
+      insuranceNote: "Travel insurance is included for every guest, with coverage up to 100,000,000₫ per person per incident — including emergency evacuation costs.",
+      rescueSteps: [
+        { title: "On-site response", detail: "Your guide carries a first-aid kit and is trained in wilderness first response. Minor injuries, blisters, and early altitude symptoms are treated on the trail and the group's pace is adjusted immediately." },
+        { title: "Assisted evacuation", detail: "If a guest can't continue but isn't in danger, the guide and porters organise a supported descent — using trekking poles or an improvised carry — to the nearest ranger checkpoint or the closest point a vehicle can reach on the O Quy Hồ Pass road." },
+        { title: "Medical evacuation", detail: "For serious cases, the guide contacts local emergency support and coordinates transport to the nearest hospital-level facility (Sa Pa or Lào Cai City). Travel insurance covering emergency evacuation is required for every booking." },
+      ],
+    },
+
+    packingList: [
+      { icon: "shirt",            label: "Clothing",         items: ["Quick-dry hiking clothes (avoid cotton)", "Warm mid-layer for the 2,800m camp night", "Waterproof rain jacket", "High socks — leech protection in lower forest"] },
+      { icon: "shoe",             label: "Footwear",         items: ["Broken-in waterproof hiking boots with ankle support", "Camp sandals for the shelter"] },
+      { icon: "first-aid-kit",    label: "Health & comfort", items: ["Personal medication", "Blister plasters", "Insect repellent", "Sunscreen and a hat", "Hand sanitiser", "Grip gloves for rocky sections near the summit"] },
+      { icon: "moon-stars",       label: "Shelter nights",   items: ["Headlamp with spare batteries — needed for the 4:30am summit push", "Sleeping bag, mat and tent are provided at camp"] },
+      { icon: "id",               label: "Documents & extras", items: ["Original passport or national ID", "Portable power bank", "Cash for tips (not included in tour price)"] },
+    ],
+
+    // Real GPS track recorded on this exact route (Trạm Tôn ⇄ Fansipan summit,
+    // out-and-back) — covers the Day 2–3 mountain section of this itinerary.
+    // Same file also used on fansipan-trekking (2D1N), since it's the identical
+    // trekking route.
+    gpxFile: "/tours/fansipan/fansipan-tram-ton.gpx",
+    // Waypoints for the GPX route map — 4 distinct markers, all read directly off
+    // the real .gpx track above (an out-and-back route, so start and end sit at
+    // nearly the same spot):
+    //   start/end = Trạm Tôn trailhead (first/last trkpt — ~40m apart, GPS drift
+    //               in the parking area)
+    //   summit    = highest point on track (idx 5145, km 11.1 — raw GPX read
+    //               3,146m; shown here as 3,143m to match the figure used
+    //               throughout this tour's copy, within normal GPS rounding)
+    //   shelter   = point on the ascending leg closest to 2,800m elevation,
+    //               confirmed against the near-identical point on the descent
+    //               leg (~40m apart) — i.e. the same out-and-back camp spot
+    //               named "shelter" here to match the marker schema, though
+    //               this tour's camp is tents, not a structure.
+    routeMarkers: {
+      start: {
+        lat: 22.352808, lon: 103.774855, ele: 1900,
+        label: 'Trailhead — Trạm Tôn', desc: 'Top of Ô Quy Hồ Pass, where the trek begins, ~1,900m.'
+      },
+      summit: {
+        lat: 22.303283, lon: 103.775233, ele: 3143,
+        label: 'Fansipan Summit', desc: '3,143m — the roof of Indochina.'
+      },
+      shelter: {
+        lat: 22.313683, lon: 103.765556, ele: 2800,
+        label: 'Wilderness Camp', desc: 'Overnight camp above the cloud layer, ~2,800m.'
+      },
+      end: {
+        lat: 22.353013, lon: 103.774809, ele: 1900,
+        label: 'Finish — Trạm Tôn', desc: 'Same trailhead — this route is an out-and-back.'
+      }
+    },
+
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
   },
 
@@ -4049,7 +4172,644 @@ export const tours: Tour[] = [
       ...DEFAULT_FAQS.slice(2),
     ],
 
+    // Level/label follow Morning Vietnam's own "Mountain Difficulty Rating Chart"
+    // (see the reference note at the top of this file) — Fansipan is tier 2
+    // "Advanced (Moderate)" on that chart despite being the tallest peak listed,
+    // because of its maintained trail and nearby infrastructure.
+    tripGrading: {
+      level: 2,
+      label: "Advanced",
+      summary: "Vietnam's tallest peak, but also its most established route — a maintained trail, ranger checkpoints, and the cable car option nearby keep this at Morning Vietnam's 'Advanced' tier, not our hardest. Still two genuine trekking days with a high-altitude overnight, right for reasonably fit walkers without technical mountain experience.",
+      criteria: [
+        { id: "physical",   label: "Physical demand", score: 3, summary: "7–8 hours of trekking on Day 1 gaining 900m over 6km, plus another 343m of gain before dawn on Day 2. ~15km return, ~1,700m accumulated gain across the two days. No technical climbing — a well-trodden trail, not a bushwhack." },
+        { id: "altitude",   label: "Altitude & terrain", score: 3, summary: "Summit at 3,143m and an overnight camp at 2,800m — genuinely cold overnight (often 5–10°C, below freezing in winter), but on a well-established route with rangers and infrastructure nearby, unlike a true wilderness ascent." },
+        { id: "remoteness", label: "Remoteness", score: 2, summary: "Trạm Tôn is Vietnam's most established high-mountain trailhead — a ranger-patrolled route inside Hoàng Liên Sơn National Park, with the summit cable car station just over the ridge. The 2,800m camp itself has no facilities, but this is the least remote of Morning Vietnam's mountain treks." },
+      ],
+    },
+
+    // DRAFT — same estimated safety figures as fansipan-3d2n (identical
+    // mountain route and operating policy) — flagged for Thế Anh to confirm.
+    safetyInfo: {
+      medicalAccessTime: "~2–3 hours from the 2,800m camp to hospital-level care in Sa Pa — shorter than the Lai Châu side treks, since Trạm Tôn sits on a paved road (O Quy Hồ Pass).",
+      guideRatio: "A lead guide travels with every group, and porter support scales up with group size — roughly one extra porter for every 2–4 additional guests, up to 3 dedicated porters on our largest groups (12 people).",
+      commsNote: "Phone signal is unreliable above the mid-trail rest stop and not available at camp or the summit. Your guide carries the group's primary means of communication — let family know not to expect contact for most of Day 1 and part of Day 2.",
+      insuranceNote: "Travel insurance is included for every guest, with coverage up to 100,000,000₫ per person per incident — including emergency evacuation costs.",
+      rescueSteps: [
+        { title: "On-site response", detail: "Your guide carries a first-aid kit and is trained in wilderness first response. Minor injuries, blisters, and early altitude symptoms are treated on the trail and the group's pace is adjusted immediately." },
+        { title: "Assisted evacuation", detail: "If a guest can't continue but isn't in danger, the guide and porters organise a supported descent — using trekking poles or an improvised carry — to the nearest ranger checkpoint or the closest point a vehicle can reach on the O Quy Hồ Pass road." },
+        { title: "Medical evacuation", detail: "For serious cases, the guide contacts local emergency support and coordinates transport to the nearest hospital-level facility (Sa Pa or Lào Cai City). Travel insurance covering emergency evacuation is required for every booking." },
+      ],
+    },
+
+    packingList: [
+      { icon: "shirt",            label: "Clothing",         items: ["Quick-dry hiking clothes (avoid cotton)", "Warm mid-layer for the 2,800m camp night", "Waterproof rain jacket", "High socks — leech protection in lower forest"] },
+      { icon: "shoe",             label: "Footwear",         items: ["Broken-in waterproof hiking boots with ankle support", "Camp sandals for the shelter"] },
+      { icon: "first-aid-kit",    label: "Health & comfort", items: ["Personal medication", "Blister plasters", "Insect repellent", "Sunscreen and a hat", "Hand sanitiser", "Grip gloves for rocky sections near the summit"] },
+      { icon: "moon-stars",       label: "Shelter nights",   items: ["Headlamp with spare batteries — needed for the 4:30am summit push", "Sleeping bag, mat and tent are provided at camp"] },
+      { icon: "id",               label: "Documents & extras", items: ["Original passport or national ID", "Portable power bank", "Cash for tips (not included in tour price)"] },
+    ],
+
+    // Same real GPS track as fansipan-3d2n — this tour is exactly that trekking route.
+    gpxFile: "/tours/fansipan/fansipan-tram-ton.gpx",
+    routeMarkers: {
+      start: {
+        lat: 22.352808, lon: 103.774855, ele: 1900,
+        label: 'Trailhead — Trạm Tôn', desc: 'Top of Ô Quy Hồ Pass, where the trek begins, ~1,900m.'
+      },
+      summit: {
+        lat: 22.303283, lon: 103.775233, ele: 3143,
+        label: 'Fansipan Summit', desc: '3,143m — the roof of Indochina.'
+      },
+      shelter: {
+        lat: 22.313683, lon: 103.765556, ele: 2800,
+        label: 'Wilderness Camp', desc: 'Overnight camp above the cloud layer, ~2,800m.'
+      },
+      end: {
+        lat: 22.353013, lon: 103.774809, ele: 1900,
+        label: 'Finish — Trạm Tôn', desc: 'Same trailhead — this route is an out-and-back.'
+      }
+    },
+
     unlockChallenge: DEFAULT_UNLOCK_CHALLENGE,
+  },
+
+  // ── Putaleng 3D2N ─────────────────────────────────────────────────────────
+  {
+    slug:        "putaleng-3d2n",
+    name:        "Putaleng 3D2N",
+    region:      "north",
+    tags:        ["hiking"],
+    duration:    ["3D2N"],
+    price:       "From $155",
+    priceUSD:    163,
+    priceVND:    4250000,
+    tagline:     "Three days from Hanoi into the densest primary forest on any top-10 Vietnamese peak — Lai Châu culture on Day 1, a full summit traverse on Days 2–3, finishing in a Red Dao village with a herbal bath.",
+    description: "Putaleng is 3,049m and Vietnam's third highest peak — but what makes it different from every other peak on that list is the forest. The Tà Lèng approach on the Lai Châu side of the Hoàng Liên Sơn range is primary old-growth that has never been commercially logged: cloud forest below 2,000m, a bamboo belt above it, and above that a rhododendron ridge so dense the sub-summit at 2,400m is simply called Rhododendron Peak. Day 1 is Lai Châu: sleeper bus from Hanoi, Pusamcap cave, and an evening in Lao Chải 1 — an H'Mông village at the foot of the mountain. Day 2 is the climb: motorbike taxi to the trailhead, a full day through old-growth forest, shelter and lunch at 2,522m, summit at 3,049m in the afternoon, sleep at the shelter. Day 3 is the descent — not back the way you came, but a traverse: down through the rhododendron ridge at Rhododendron Peak, through old-growth all the way to Sì Thâu Chải village — a Red Dao community where the herbal bath closes the journey. Two mountain communities, two different slopes, one summit in between.",
+    highlights: [
+      "Day 1 in Lai Châu — Pusamcap cave and Lao Chải 1 H'Mông village before the trek begins",
+      "Tà Lèng trailhead approach — primary old-growth, the wilder Lai Châu side of the massif",
+      "Summit Putaleng 3,049m — Vietnam's third highest peak, afternoon summit on Day 2",
+      "Post-summit reward at the shelter (~2,522m) — sturgeon and beef hotpot, not the plain chicken hotpot most trekking tours serve",
+      "Rhododendron Peak ridge (~2,400m) on Day 3 — especially in Mar–Apr bloom",
+      "True traverse: H'Mông Tà Lèng valley → summit → Red Dao Sì Thâu Chải village",
+      "Red Dao herbal bath in Sì Thâu Chải — a functional Dao recovery practice, not a spa",
+      "Small group only · max 12 people · no joined groups",
+    ],
+    included: [
+      "Welcome gift — Morning Vietnam signature pack",
+      "Drinking water throughout the tour",
+      "Rain poncho",
+      "All entrance & forest permit fees",
+      "Travel insurance",
+      "Personalised commemorative medal · Putaleng 3,049m",
+      "Sanitation fee",
+      "Licensed trek guide + porter",
+      "All transportation within itinerary (sleeper bus HN → Lai Châu · minibus Lai Châu → Tà Lèng · motorbike taxi to trailhead · bus Sì Thâu Chải → Hanoi)",
+      "1 night H'Mông homestay in Lao Chải 1 (Day 1)",
+      "1 night mountain shelter (~2,522m) (Day 2)",
+      "All meals: Day 1 lunch + dinner · Day 2 & 3 full board",
+      "Post-summit hotpot dinner — sturgeon and beef, cooked at the shelter (~2,522m)",
+      "Red Dao herbal bath in Sì Thâu Chải (Day 3)",
+    ],
+    hub:         "Hanoi",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/putaleng/1.webp",
+
+    panoramicImage: "/tours/putaleng/panorama.webp",
+
+    gallery: [
+      { src: "/tours/putaleng/1.webp",  alt: "Putaleng — cloud forest on the Tà Lèng approach trail" },
+      { src: "/tours/putaleng/2.webp",  alt: "Putaleng — ancient rhododendron trees in full bloom" },
+      { src: "/tours/putaleng/3.webp",  alt: "Putaleng — mossy old-growth forest below 2,000m" },
+      { src: "/tours/putaleng/4.webp",  alt: "Putaleng summit 3,049m — views over the Hoàng Liên range" },
+      { src: "/tours/putaleng/5.webp",  alt: "Putaleng — bamboo forest above 2,000m" },
+      { src: "/tours/putaleng/6.webp",  alt: "Rhododendron Peak — the rhododendron ridge on descent" },
+      { src: "/tours/putaleng/7.webp",  alt: "Putaleng — stream crossing in the primary forest" },
+      { src: "/tours/putaleng/9.webp",  alt: "Putaleng — trekking through old-growth forest" },
+      { src: "/tours/putaleng/10.webp", alt: "Putaleng — morning mist over the Hoàng Liên Sơn range" },
+      { src: "/tours/putaleng/11.webp", alt: "Putaleng — camp shelter at 2,522m" },
+      { src: "/tours/putaleng/12.webp", alt: "Sì Thâu Chải — Red Dao village at the foot of the descent" },
+      { src: "/tours/putaleng/13.webp", alt: "Putaleng — herbal bath at Sì Thâu Chải village" },
+      { src: "/tours/putaleng/14.webp", alt: "Putaleng — mountain views on the descent trail" },
+      { src: "/tours/putaleng/15.webp",    alt: "Putaleng — H'Mông community in Lao Chải village" },
+      { src: "/tours/putaleng/17.webp",    alt: "Putaleng — rhododendron forest at Rhododendron Peak" },
+      { src: "/tours/putaleng/18.webp",    alt: "Putaleng — trekking through primary cloud forest" },
+      { src: "/tours/putaleng/done-5.webp", alt: "Putaleng — summit push on Day 2" },
+      { src: "/tours/putaleng/done-6.webp", alt: "Putaleng — descent through the rhododendron ridge" },
+    ],
+
+    selectorMode: 'vehicle-only',
+    durationOptions: [
+      {
+        id:       "3d2n",
+        label:    "3D2N from Hanoi",
+        price:    163,
+        priceVND: 4250000,
+        tagline:  "Hanoi → Lai Châu · cave + H'Mông village Day 1 → Tà Lèng trailhead → summit 3,049m Day 2 → Đỉnh Đỗ Quyên → Sì Thâu Chải · herbal bath Day 3.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Putaleng 3D2N. Can you tell me about available dates?",
+        paxTiers: [
+          { min: 1, max: 2, price: 163, priceVND: 4250000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
+          { min: 3, max: 3, price: 163, priceVND: 4250000 },
+          { min: 4, max: 5, price: 159, priceVND: 4150000 },
+          { min: 6, max: 7, price: 157, priceVND: 4100000 },
+          { min: 8, max: 12, price: 155, priceVND: 4050000 },
+        ],
+      },
+    ],
+
+    tripInfo: {
+      "3d2n": [
+        { icon: "map-pin",         label: "Pickup",        value: "Mỹ Đình bus station, Hanoi · 07:30 sleeper bus · Day 1" },
+        { icon: "users",           label: "Group size",    value: "3 – 12 people · joined or private group" },
+        { icon: "car",             label: "Transport",     value: "Sleeper bus (HN → Lai Châu) · minibus · motorbike taxi to trailhead · night bus return" },
+        { icon: "tools-kitchen-2", label: "Meals",         value: "Day 1: lunch + dinner\nDay 2 & 3: full board" },
+        { icon: "home",            label: "Accommodation", value: "Day 1: H'Mông homestay (Lao Chải 1) · Day 2: mountain shelter (~2,522m)" },
+        { icon: "mountain",        label: "Summit",        value: "Putaleng 3,049m · 3rd highest in Vietnam" },
+        { icon: "trending-up",     label: "Trek",          value: "~23km traverse\n1,300m gain (Day 2)\n~1,200m net descent (Day 3)" },
+        { icon: "calendar-check",  label: "Duration",      value: "3 days 2 nights · departs Hanoi Day 1" },
+        { icon: "id",              label: "Required",      value: "Original passport or national ID · may be checked at forest checkpoints" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Day 1 — Hanoi → Lai Châu → Lao Chải 1",
+        accommodation: "H'Mông homestay, Lao Chải 1",
+        meals: "Lunch + Dinner",
+        narrative: "Day 1 ends in Lai Châu, not at a hotel. Pusamcap cave is a limestone cavern above the Nậm Na river — a short walk from the road, cool and quiet, with the specific silence of karst geology that the granite of the Hoàng Liên range above it doesn't have. Lao Chải 1 is the H'Mông village where the night is spent: stone walls, a homestay dinner cooked over wood, and a view toward the mountain that starts the next morning.",
+        slots: [
+          "07:30  Sleeper bus departs · Mỹ Đình bus station, Hanoi",
+          "15:30  Pusamcap cave · limestone cavern above the Nậm Na river · Lai Châu",
+          "17:30  Lao Chải 1 · H'Mông village · settle in, meet hosts",
+          "19:30  Dinner at homestay",
+          "21:00  Overnight · Lao Chải 1 homestay",
+        ],
+      },
+      {
+        day: 2,
+        title: "Day 2 — Tà Lèng → Summit Putaleng 3,049m → Shelter",
+        stats: { hours: "8–9 hrs trekking", distanceKm: 10, up: 1300, down: 850 },
+        accommodation: "Mountain shelter, ~2,522m",
+        meals: "Full board (B/L/D)",
+        narrative: "The motorbike taxi ride to the trailhead at 1,700m is itself a transition — from the valley road to the forest edge, in 30 minutes of steep mountain track. The trek from there gains 1,300m over roughly 10km to the summit, through primary cloud forest and open bamboo. The summit at 3,049m is reached in the afternoon — the light across the Hoàng Liên range at this hour is different from a dawn push. Descent back to the shelter takes around two hours, for a hot sturgeon-and-beef hotpot — not the plain chicken most trekking shelters serve, even this high up.",
+        slots: [
+          "07:00  Breakfast at homestay",
+          "07:30  Drive Lao Chải 1 → Tà Lèng village",
+          "08:30  Motorbike taxi to trailhead · briefing · porter handover · trek departs",
+          "12:30  Shelter at ~2,522m · lunch · rest",
+          "16:00  Putaleng summit · 3,049m · photos · 360° views",
+          "19:00  Return to shelter · sturgeon & beef hotpot dinner · overnight (~2,522m)",
+        ],
+      },
+      {
+        day: 3,
+        title: "Day 3 — Shelter → Rhododendron Peak → Sì Thâu Chải → Hanoi",
+        stats: { hours: "8–9 hrs trekking", distanceKm: 13, up: 200, down: 1400 },
+        accommodation: "Night bus",
+        meals: "Full board (B/L/D)",
+        narrative: "The descent follows the Sì Thâu Chải route, not the way up — this is a true traverse. The trail crosses Rhododendron Peak ridge at roughly 2,400m, where more than 30 rhododendron species grow, densest between late February and mid-April. The route ends in Sì Thâu Chải village, a Red Dao community most visitors never reach, where a traditional herbal bath closes out two days in the forest before the night bus back to Hanoi.",
+        slots: [
+          "06:30  Breakfast at shelter",
+          "07:00  Descent begins · Sì Thâu Chải route · old-growth forest",
+          "11:00  Rhododendron Peak ridge · ~2,400m",
+          "12:00  Lunch at shelter",
+          "16:00  Arrive Sì Thâu Chải village · Red Dao community",
+          "17:30  Red Dao herbal bath · traditional medicinal soak",
+          "19:00  Chicken & beef hotpot dinner · Sì Thâu Chải",
+          "22:00  Night bus to Hanoi · arrive Hanoi ~05:00 (Day 4) · end of tour",
+        ],
+      },
+    ],
+
+    pitch: {
+      headline: "3,049m — and the summit isn't the point.",
+      bullets: [
+        "The Tà Lèng approach is a full-elevation traverse — from the valley floor through primary old-growth to the summit, then down through the rhododendron ridge at Rhododendron Peak to a Red Dao village that most visitors to the region never reach",
+        "Day 1 in Lai Châu adds what most Putaleng packages skip: Pusamcap cave and a night in an H'Mông village at the foot of the mountain — context that changes what the forest means when you enter it on Day 2",
+        "Rhododendron density on this massif is exceptional — 30+ species, ancient specimens above 2,200m, and a named ridge (Rhododendron Peak) on the descent that turns the trek into something genuinely different February through April",
+      ],
+      closingLine: "The summit is the midpoint. The forest is the point.",
+    },
+
+    storytelling: {
+      headline: "The Kingdom of Rhododendrons — Vietnam's wildest trail.",
+      paragraphs: [
+        "Putaleng stands at 3,049m in the southern arm of the Hoàng Liên Sơn range, on the Lai Châu side of the massif — 20 kilometres northwest of Fansipan but in a fundamentally different world. Where Fansipan faces northeast toward the Sa Pa valley and the tourist infrastructure that has grown around it, Putaleng faces west toward the Lai Châu basin and the Đà River drainage — a wetter, more isolated exposure that has kept the primary forest intact far longer and far denser than anything on the Sa Pa side. The mountain sits within Tả Lèng commune, Tam Đường district — a name most travellers to the region have never encountered, which is part of what makes it worth knowing. The road from Lai Châu city reaches the village at the valley bottom, and above that, the trail begins on its own terms.",
+        "The forest on Putaleng is the main reason climbers who have done both peaks describe the experience differently. Below 2,000m: cloud forest typical of the Hoàng Liên range — dense, dark, every surface covered in moss and lichen, streams cold and constant, the bamboo belt above it so thick it disorients. What Putaleng has that other peaks in the range do not, at least not to the same density, is its rhododendron population. More than 30 species have been recorded within the massif — including ancient specimens several centuries old, with trunks broader than a person's armspan, growing along the ridge between 2,200m and 2,600m. The sub-summit on the descent route — Rhododendron Peak, at approximately 2,400m — has given Putaleng the informal title \"kingdom of rhododendrons,\" earned between late February and mid-April when the blooms cover the ridgeline in red, pink, and white in a display with few parallels in Southeast Asia. The peak was not shaped for visitors; it was named by the people who lived beneath it.",
+        "The route from Tả Lèng to Sì Thâu Chải is not simply a traverse — it is a passage between two entirely distinct ethnic worlds. The approach side is H'Mông territory: stone-walled fields, the distinctive roof lines of H'Mông houses, an agricultural economy oriented to the valley floor. The descent side — Sì Thâu Chải village — is a Red Dao (Người Dao Đỏ) community, recognisable by its weaving traditions and the aromatic steam that rises from the houses where herbal baths are prepared. These two communities occupy opposite slopes of the same mountain, speak different languages, and have different material cultures — separated by a summit at 3,049m that both treat as a presence in the landscape rather than a destination. The trek covers both slopes because the trail goes where the people went first.",
+      ],
+      pullImage: "/tours/putaleng/storytelling.webp",
+    },
+
+    elevationProfile: [
+      { time: "07:30", label: "Depart Hanoi",             elevation: 20,   icon: "van",     highlight: false, day: 1 },
+      { time: "15:30", label: "Pusamcap cave",             elevation: 650,  icon: "hike",    highlight: true,  day: 1 },
+      { time: "17:30", label: "Lao Chải 1 · H'Mông village", elevation: 900, icon: "village", highlight: false, day: 1 },
+      { time: "21:00", label: "Sleep · Lao Chải 1",        elevation: 900,  icon: "resort",  highlight: false, day: 1 },
+
+      { time: "07:00", label: "Breakfast · homestay",      elevation: 900,  icon: "food",    highlight: false, day: 2 },
+      { time: "07:30", label: "Drive · Tà Lèng village",   elevation: 800,  icon: "van",     highlight: false, day: 2 },
+      { time: "08:30", label: "Motorbike taxi · trailhead",  elevation: 1700, icon: "hike",    highlight: false, day: 2 },
+      { time: "09:00", label: "Trek begins",                elevation: 1700, icon: "hike",    highlight: false, day: 2 },
+      { time: "12:30", label: "Shelter · lunch",            elevation: 2522, icon: "food",    highlight: false, day: 2 },
+      { time: "16:00", label: "Putaleng",                   elevation: 3049, icon: "mountain",highlight: true,  day: 2 },
+      { time: "19:00", label: "Dinner · sleep at shelter",  elevation: 2522, icon: "resort",  highlight: false, day: 2 },
+
+      { time: "06:30", label: "Breakfast · shelter",        elevation: 2522, icon: "food",    highlight: false, day: 3 },
+      { time: "07:00", label: "Descent · Sì Thâu Chải route", elevation: 2522, icon: "hike", highlight: false, day: 3 },
+      { time: "11:00", label: "Rhododendron Peak",          elevation: 2400, icon: "mountain",highlight: true,  day: 3 },
+      { time: "12:00", label: "Lunch · shelter",            elevation: 2100, icon: "food",    highlight: false, day: 3 },
+      { time: "16:00", label: "Sì Thâu Chải village",       elevation: 1000, icon: "village", highlight: false, day: 3 },
+      { time: "17:30", label: "Red Dao herbal bath",         elevation: 1000, icon: "resort",  highlight: true,  day: 3 },
+      { time: "19:00", label: "Dinner · Sì Thâu Chải",      elevation: 1000, icon: "food",    highlight: false, day: 3 },
+      { time: "22:00", label: "Night bus · Hanoi",           elevation: 1000, icon: "return",  highlight: false, day: 3 },
+    ],
+    elevationMax: 3200,
+
+    // activityCards intentionally omitted — day-level narrative now lives on
+    // each `itinerary` day (accommodation/meals/narrative) and is rendered
+    // in place of activityCards in "The Journey" section (see useDayCards
+    // in [slug].astro) to avoid duplicating the same content twice.
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "Your host meets you at Mỹ Đình or in Lai Châu with a Morning Vietnam pack before the trek. One item was chosen for a night at altitude in a mountain shelter.",
+    },
+
+    seasonality: {
+      intro: "Putaleng is a year-round mountain for experienced trekkers — but the experience is dramatically different depending on the season. The rhododendron bloom is the defining seasonal event, and the post-monsoon window offers the clearest conditions.",
+      months: [
+        { name: "Jan", level: "good" },
+        { name: "Feb", level: "best" },
+        { name: "Mar", level: "best" },
+        { name: "Apr", level: "best" },
+        { name: "May", level: "wet"  },
+        { name: "Jun", level: "wet"  },
+        { name: "Jul", level: "wet"  },
+        { name: "Aug", level: "wet"  },
+        { name: "Sep", level: "good" },
+        { name: "Oct", level: "best" },
+        { name: "Nov", level: "best" },
+        { name: "Dec", level: "good" },
+      ],
+      notes: [
+        { title: "Rhododendron season (Feb – Apr)", desc: "The Putaleng massif hosts over 30 rhododendron species — and the bloom on the Rhododendron Peak ridge and the upper trail is the reason experienced trekkers time their visit. Peak colour is mid-March to mid-April: the ridge between 2,200m and 2,600m turns red, pink, and white under continuous canopy of blooms on trees several centuries old. February marks the beginning — earlier than Fansipan, because the Lai Châu side of the range is warmer and wetter. This is the most visually striking window in the Vietnamese trekking calendar." },
+        { title: "Post-monsoon best (Oct – Nov)", desc: "Oct–Nov is the clearest weather window: post-monsoon skies, strong light, the summit views extending across the Hoàng Liên range. The forest is at its greenest from the wet season rainfall, the streams are full, and the temperature at shelter altitude (~2,522m) is cold enough at night to make the sleeping bags earn their rating — roughly 8–12°C — without the below-freezing conditions of winter." },
+        { title: "Wet season (May – Sep)", desc: "We operate this route May–August only for experienced groups who understand the conditions: persistent cloud above 2,000m, slippery trail, leeches active in the lower forest (high socks essential). The primary forest in wet season has its own character — the moss is saturated, the streams are loud, the light inside the canopy is extraordinary — but the summit views are rarely clear. September often transitions to stable weather; we monitor and confirm 48 hours ahead." },
+        { title: "Winter (Jan, Dec)", desc: "Cold and dry. Below freezing at the shelter and summit in some years. The forest is still, visibility excellent on clear days, and the trail is at its quietest. Cold-weather sleeping bags and layering are required. Snow is rare but has occurred on the upper ridge — a memorable experience if conditions align." },
+      ],
+    },
+
+    faqs: [
+      { q: "How fit do I need to be?", a: "High fitness required for Day 2. The main climb gains 1,300m over approximately 10km from the trailhead — expect 6–7 hours of ascent on uneven mountain trail, much of it in dense forest with roots and stream crossings. The descent on Day 3 is 900m over 13km with a partial re-ascent to Rhododendron Peak. No technical climbing, but this is serious mountain trekking. Minimum age 16. Regular hikers and runners will manage. Gym-only fitness is not adequate preparation." },
+      { q: "What is the shelter like?", a: "A basic wooden mountain shelter at approximately 2,522m — sleeping on mats or wooden bunks, blankets provided. There are basic toilet facilities. The shelter is not heated — temperature at this altitude drops to 8–15°C at night in warm seasons, below freezing in winter. Bring a layering system and expect cold. The shelter is shared between your group and the porter team." },
+      { q: "What makes Putaleng different from Fansipan?", a: "Different mountain, different approach, completely different forest. Fansipan has more infrastructure and a well-established tourist route; Putaleng's Tà Lèng approach is primary old-growth that has seen far fewer visitors. Putaleng also involves a true traverse — you start in one valley and finish in another, crossing two ethnic communities (H'Mông and Red Dao) in the process. The rhododendron forest on the descent route is exceptional and has no equivalent on the Fansipan trail." },
+      { q: "Is the rhododendron bloom guaranteed?", a: "No — bloom timing varies by year and altitude. The Rhododendron Peak ridge typically blooms between late February and mid-April, with peak colour in mid-March. Earlier and later in that window the blooms are partial. We give honest forecasts based on conditions that year. Outside bloom season the forest is still remarkable — ancient specimens, dense rhododendron coverage, extraordinary moss and lichen. The forest earns the name even when nothing is flowering." },
+      { q: "Do I need a permit?", a: "A local forest permit is required and is included in the tour fee. The Putaleng route does not require the same national park permitting as Fansipan, but the forest is managed and trekking without a registered guide and permit is not permitted. Your guide handles all paperwork." },
+      { q: "What gear do I need to bring?", a: "Ankle-support waterproof hiking boots are essential — the Tà Lèng trail has frequent stream crossings and the lower forest is wet. Trekking poles are strongly recommended for the 900m descent on Day 3. Bring a layering system (moisture-wicking base, fleece, waterproof outer), high socks against leeches in the lower forest, and a headlamp. Pack weight: aim for 5–7kg in your daypack — the porter carries your overnight gear. Blankets are provided at the shelter but bring a light sleeping bag liner if you run cold." },
+      { q: "Is Putaleng harder than Fansipan?", a: "Yes — on our difficulty scale, Fansipan sits at 'Advanced' and Putaleng at 'Hard,' a real step up. It's not really about elevation (Fansipan is actually 94m taller); it comes down to infrastructure and remoteness. Fansipan's Trạm Tôn route is Vietnam's most established high-mountain trailhead, with rangers, a maintained trail, and the cable car nearby. The Tà Lèng trailhead has none of that — you're in primary forest from the first step, and phone signal is unreliable above 2,000m. The descent traverse via Rhododendron Peak and Sì Thâu Chải also adds distance compared to Fansipan's out-and-back, making Day 3 the longest day of either trek. Both are achievable for fit, experienced walkers — Fansipan suits a first big mountain, Putaleng rewards those who've already done at least one serious multi-day trek." },
+      { q: "What's the guide-to-guest ratio?", a: "A lead guide travels with every group, and porter support scales up with group size — roughly one extra porter for every 2–4 additional guests, up to 3 dedicated porters on our largest groups (12 people)." },
+      { q: "What's dinner like on the mountain?", a: "Sturgeon and beef hotpot at the shelter on Day 2 — not the plain chicken hotpot most trekking tours serve, even this high up. It's a genuine reward after the summit push, and easier eating for international guests unfamiliar with Vietnamese-style whole-bird cuts. Day 3's closing dinner in Sì Thâu Chải is chicken and beef hotpot, alongside the Red Dao herbal bath." },
+      ...DEFAULT_FAQS.slice(2),
+    ],
+
+    tripGrading: {
+      level: 4,
+      label: "Hard",
+      summary: "Consistently demanding trekking days through primary forest, on a trail with far less infrastructure than Fansipan's. Right for fit, experienced walkers — not a beginner's first mountain.",
+      criteria: [
+        { id: "physical",   label: "Physical demand", score: 4, summary: "6–9 hours of trekking on both Day 2 and Day 3, on uneven mountain trail with stream crossings and root-covered ground. ~23km total, 1,300m of ascent and roughly 1,200m of net descent." },
+        { id: "altitude",   label: "Altitude & terrain", score: 3, summary: "Summit at 3,049m is high enough to feel, but the overnight shelter sits at ~2,522m — well below the range where altitude sickness becomes a major risk. No technical climbing; the challenge is distance and terrain, not exposure." },
+        { id: "remoteness", label: "Remoteness", score: 4, summary: "Primary forest with no road access between the Tà Lèng trailhead and Sì Thâu Chải. Phone signal is unreliable above roughly 2,000m. This is genuine backcountry, not a marked park trail." },
+      ],
+    },
+
+    safetyInfo: {
+      medicalAccessTime: "~6 hours from the furthest point on the route to hospital-level care in Lai Châu — consistent with the benchmark used across Hoàng Liên Sơn treks on this side of the range.",
+      phoneSignal: "Unreliable above ~2,000m · no signal at the shelter or summit · your guide carries the group's primary means of communication",
+      guideRatio: "A lead guide travels with every group, and porter support scales up with group size — roughly one extra porter for every 2–4 additional guests, up to 3 dedicated porters on our largest groups (12 people).",
+      commsNote: "Phone signal becomes unreliable above roughly 2,000m and is not available at the summit or the shelter. Your guide carries the group's primary means of communication — let family know not to expect contact for most of Day 2 and part of Day 3.",
+      insuranceNote: "Travel insurance is included for every guest, with coverage up to 100,000,000₫ per person per incident — including emergency evacuation costs.",
+      rescueSteps: [
+        { title: "On-site response", detail: "Your guide carries a first-aid kit and is trained in wilderness first response. Minor injuries, blisters, and early altitude symptoms are treated on the trail and the group's pace is adjusted immediately." },
+        { title: "Assisted evacuation", detail: "If a guest can't continue but isn't in danger, the guide and porters organise a supported descent — using trekking poles, a improvised carry, or the nearest point a motorbike can reach — to the closest village or ranger checkpoint." },
+        { title: "Medical evacuation", detail: "For serious cases, the guide contacts local emergency support and coordinates transport to the nearest hospital-level facility (Lai Châu or Sa Pa). Travel insurance covering emergency evacuation is required for every booking." },
+      ],
+    },
+
+    packingList: [
+      { icon: "shirt",            label: "Clothing",         items: ["Quick-dry hiking clothes (avoid cotton)", "Warm mid-layer for shelter nights", "Waterproof rain jacket", "High socks — leech protection in lower forest"] },
+      { icon: "shoe",             label: "Footwear",         items: ["Broken-in waterproof hiking boots with ankle support", "Camp sandals for the shelter"] },
+      { icon: "first-aid-kit",    label: "Health & comfort", items: ["Personal medication", "Blister plasters", "Insect repellent", "Sunscreen and a hat", "Hand sanitiser"] },
+      { icon: "moon-stars",       label: "Shelter nights",   items: ["Sleeping bag liner if you run cold (blankets provided)", "Headlamp with spare batteries"] },
+      { icon: "id",               label: "Documents & extras", items: ["Original passport or national ID", "Portable power bank", "Cash for tips (not included in tour price)"] },
+    ],
+
+    // Real GPS track recorded on this exact route (Tà Lèng → Putaleng summit
+    // → Sì Thâu Chải) — covers Days 2–3 of this itinerary. Same file also
+    // used on putaleng-trekking (2D1N), since it's the identical trekking route.
+    gpxFile: "/tours/putaleng/putaleng-ta-leng-si-thau-chai.gpx",
+    // Waypoints for the GPX route map — 4 distinct markers, all read directly off
+    // the real .gpx track above:
+    //   start   = first trkpt (Tà Lèng trailhead)
+    //   end     = last trkpt (Sì Thâu Chải)
+    //   summit  = highest point on track (idx 4463, km 8.28 — matches the
+    //             "Dist 8.1km, Elev 3,063m" tooltip within GPS/measurement rounding)
+    //   shelter = the point where the descent-from-summit path re-converges with
+    //             the ascent path (a ~370m stretch walked twice, up and down — a
+    //             classic out-and-back spur to the peak).
+    // Shelter elevation confirmed by Thế Anh at ~2,522m (raw GPX at this point
+    // measured ~2,590m — GPS altitude error on a wooded ridge; the confirmed
+    // figure is used here and matches the itinerary text above).
+    routeMarkers: {
+      start: {
+        lat: 22.427720, lon: 103.562473, ele: 1629,
+        label: 'Trailhead — Tả Lèng', desc: 'Where the trek begins, ~1,629m.'
+      },
+      summit: {
+        lat: 22.422901, lon: 103.603916, ele: 3067,
+        label: 'Putaleng Summit', desc: '3,067m — the roof of Lai Châu.'
+      },
+      shelter: {
+        lat: 22.414010, lon: 103.603200, ele: 2522,
+        label: 'Mountain Shelter', desc: 'Trail fork — lunch stop on the way up, dinner & overnight after the summit push.'
+      },
+      end: {
+        lat: 22.361411, lon: 103.601976, ele: 1546,
+        label: 'Finish — Sì Thâu Chải', desc: 'Where the trek ends, ~1,546m.'
+      }
+    },
+
+    unlockChallenge: null,
+  },
+
+  // ── Putaleng — Only Trekking (2D1N) ──────────────────────────────────────
+  {
+    slug:        "putaleng-trekking",
+    name:        "Putaleng — Only Trekking",
+    region:      "north",
+    tags:        ["hiking"],
+    duration:    ["2D1N"],
+    price:       "From $103",
+    priceUSD:    113,
+    priceVND:    2950000,
+    tagline:     "Two days, one summit, and a descent through the densest rhododendron forest in the northwestern highlands — the direct Putaleng route from Sa Pa.",
+    description: "The trekking-only version of the Putaleng traverse — for those already in Sa Pa who want to go straight to the mountain. Day 1 picks up from Sa Pa hotel, drives to Tà Lèng on the Lai Châu side of the Hoàng Liên range, motorbike taxi to the trailhead at 1,700m, and climbs through primary old-growth to a mountain shelter at 2,522m and the summit at 3,049m in the afternoon. Day 2 descends via the Sì Thâu Chải route — not back the way you came — crossing Rhododendron Peak ridge at 2,400m and finishing in a Red Dao village with a traditional herbal bath before returning to Sa Pa. No out-and-back: the route traverses the full mountain from one valley to another, crossing two ethnic communities in the process.",
+    highlights: [
+      "Tà Lèng trailhead (1,700m) — the wilder, Lai Châu side approach to the summit",
+      "Summit Putaleng 3,049m — Vietnam's third highest peak — afternoon Day 1",
+      "Rhododendron Peak (~2,400m) on the Day 2 descent",
+      "True traverse — H'Mông valley approach, Red Dao village descent",
+      "Red Dao herbal bath in Sì Thâu Chải — traditional Dao recovery practice",
+      "For those already in Sa Pa — no sleeper bus required",
+    ],
+    included: [
+      "Welcome gift — Morning Vietnam signature pack",
+      "Drinking water throughout the tour",
+      "Rain poncho",
+      "All entrance & forest permit fees",
+      "Travel insurance",
+      "Personalised commemorative medal · Putaleng 3,049m",
+      "Sanitation fee",
+      "Licensed trek guide + porter",
+      "All transportation within itinerary (private car Sa Pa → Tà Lèng · motorbike taxi to trailhead · car Sì Thâu Chải → Sa Pa)",
+      "1 night mountain shelter (~2,522m)",
+      "All meals: Day 1 lunch + dinner · Day 2 full board",
+      "Red Dao herbal bath in Sì Thâu Chải (Day 2)",
+    ],
+    hub:         "Sa Pa",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/putaleng/4.webp",
+
+    panoramicImage: "/tours/putaleng/panorama.webp",
+
+    gallery: [
+      { src: "/tours/putaleng/1.webp",  alt: "Putaleng — cloud forest on the Tà Lèng approach trail" },
+      { src: "/tours/putaleng/2.webp",  alt: "Putaleng — ancient rhododendron trees in full bloom" },
+      { src: "/tours/putaleng/3.webp",  alt: "Putaleng — mossy old-growth forest below 2,000m" },
+      { src: "/tours/putaleng/4.webp",  alt: "Putaleng summit 3,049m — views over the Hoàng Liên range" },
+      { src: "/tours/putaleng/5.webp",  alt: "Putaleng — bamboo forest above 2,000m" },
+      { src: "/tours/putaleng/6.webp",  alt: "Rhododendron Peak — the rhododendron ridge on descent" },
+      { src: "/tours/putaleng/7.webp",  alt: "Putaleng — stream crossing in the primary forest" },
+      { src: "/tours/putaleng/9.webp",  alt: "Putaleng — trekking through old-growth forest" },
+      { src: "/tours/putaleng/10.webp", alt: "Putaleng — morning mist over the Hoàng Liên Sơn range" },
+      { src: "/tours/putaleng/11.webp", alt: "Putaleng — camp shelter at 2,522m" },
+      { src: "/tours/putaleng/12.webp", alt: "Sì Thâu Chải — Red Dao village at the foot of the descent" },
+      { src: "/tours/putaleng/13.webp", alt: "Putaleng — herbal bath at Sì Thâu Chải village" },
+      { src: "/tours/putaleng/14.webp", alt: "Putaleng — mountain views on the descent trail" },
+      { src: "/tours/putaleng/15.webp", alt: "Putaleng — H'Mông community in Lao Chải village" },
+      { src: "/tours/putaleng/17.webp", alt: "Putaleng — rhododendron forest at Rhododendron Peak" },
+    ],
+
+    selectorMode: 'vehicle-only',
+    durationOptions: [
+      {
+        id:       "2d1n",
+        label:    "2D1N from Sa Pa",
+        price:    113,
+        priceVND: 2950000,
+        tagline:  "Sa Pa → Tà Lèng (motorbike taxi to trailhead) → summit 3,049m Day 1 → Rhododendron Peak → Red Dao herbal bath → Sa Pa Day 2.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then · Hanoi pickup +450,000₫/person",
+        waText:   "Hi Morning Vietnam — I'd like to book Putaleng Only Trekking (2D1N). Can you tell me about available dates?",
+        paxTiers: [
+          { min: 1, max: 2, price: 113, priceVND: 2950000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
+          { min: 3, max: 3, price: 113, priceVND: 2950000 },
+          { min: 4, max: 5, price: 109, priceVND: 2850000 },
+          { min: 6, max: 7, price: 106, priceVND: 2780000 },
+          { min: 8, max: 12, price: 103, priceVND: 2700000 },
+        ],
+      },
+    ],
+
+    tripInfo: {
+      "2d1n": [
+        { icon: "map-pin",         label: "Pickup",        value: "Sa Pa hotel · 06:15 · or Hanoi pickup +450,000₫/person" },
+        { icon: "users",           label: "Group size",    value: "3 – 12 people · joined or private group" },
+        { icon: "car",             label: "Transport",     value: "Private car Sa Pa → Tà Lèng · motorbike taxi to trailhead · car Sì Thâu Chải → Sa Pa" },
+        { icon: "tools-kitchen-2", label: "Meals",         value: "Day 1: lunch + dinner · Day 2: full board" },
+        { icon: "home",            label: "Accommodation", value: "Mountain shelter (~2,522m) · mat, blanket provided" },
+        { icon: "mountain",        label: "Summit",        value: "Putaleng 3,049m · 3rd highest in Vietnam" },
+        { icon: "trending-up",     label: "Trek",          value: "~23km traverse · 1,300m gain Day 1 · 900m gain Day 2" },
+        { icon: "calendar-check",  label: "Duration",      value: "2 days 1 night · starts Sa Pa morning" },
+        { icon: "id",              label: "Required",      value: "Original passport or national ID · may be checked at forest checkpoints" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Day 1 — Sa Pa → Tà Lèng → Summit Putaleng 3,049m → Shelter",
+        slots: [
+          "06:15  Pickup from Sa Pa hotel",
+          "08:30  Motorbike taxi to trailhead · briefing · porter handover · trek departs",
+          "09:00  Trek begins · 1,700m · primary old-growth",
+          "12:30  Shelter at ~2,522m · lunch · rest",
+          "16:00  Putaleng summit · 3,049m · views across the Hoàng Liên range",
+          "19:00  Return to shelter · dinner · overnight at shelter (~2,522m)",
+        ],
+      },
+      {
+        day: 2,
+        title: "Day 2 — Shelter → Rhododendron Peak → Sì Thâu Chải → Sa Pa",
+        slots: [
+          "06:30  Breakfast at shelter",
+          "07:00  Descent begins · Sì Thâu Chải route",
+          "11:00  Rhododendron Peak ridge · ~2,400m",
+          "12:00  Lunch at shelter",
+          "16:00  Arrive Sì Thâu Chải village · Red Dao community",
+          "17:30  Red Dao herbal bath · traditional medicinal soak",
+          "18:30  Car back to Sa Pa · end of tour",
+        ],
+      },
+    ],
+
+    pitch: {
+      headline: "Two days. One summit. The wildest forest trek in Vietnam.",
+      bullets: [
+        "The Tà Lèng approach from the Lai Châu side is wilder and less infrastructure-heavy than any other route up a top-10 Vietnamese peak — motorbike taxi to the trailhead, then primary old-growth all the way to 3,049m",
+        "Descent via Rhododendron Peak ridge (~2,400m) adds a second high point and changes the route completely — this is a true traverse through 30+ rhododendron species, not an out-and-back",
+        "Finish in Sì Thâu Chải — a Red Dao village — with a traditional herbal bath: a functional recovery practice that the Dao have used for generations after physical exertion in these mountains",
+      ],
+      closingLine: "If Fansipan is the most famous Vietnamese summit, Putaleng is the one serious trekkers describe differently.",
+    },
+
+    storytelling: {
+      headline: "The Kingdom of Rhododendrons — Vietnam's wildest trail.",
+      paragraphs: [
+        "Putaleng stands at 3,049m in the southern arm of the Hoàng Liên Sơn range, on the Lai Châu side of the massif — 20 kilometres northwest of Fansipan but in a fundamentally different world. Where Fansipan faces northeast toward the Sa Pa valley and the infrastructure that has grown around it, Putaleng faces west toward the Lai Châu basin and the Đà River drainage — a wetter, more isolated exposure that has kept the primary forest intact far longer and far denser than anything on the Sa Pa side. The mountain sits within Tả Lèng commune, Tam Đường district — a name most travellers to the region have never encountered, which is part of what makes it worth knowing. The road from Lai Châu reaches the village at the valley bottom, and above that, the trail begins on its own terms.",
+        "The forest on Putaleng is the main reason climbers who have done both peaks describe the experience differently. Below 2,000m: cloud forest typical of the Hoàng Liên range — dense, dark, every surface covered in moss and lichen, streams cold and constant, the bamboo belt above it so thick it disorients. What Putaleng has that other peaks in the range do not, at least not to the same density, is its rhododendron population. More than 30 species have been recorded within the massif — including ancient specimens several centuries old, with trunks broader than a person's armspan, growing along the ridge between 2,200m and 2,600m. The sub-summit on the descent route — Rhododendron Peak, at approximately 2,400m — has given Putaleng the informal title \"kingdom of rhododendrons,\" earned between late February and mid-April when the blooms cover the ridgeline in red, pink, and white. The peak was not shaped for visitors; it was named by the people who lived beneath it.",
+        "The route from Tả Lèng to Sì Thâu Chải is a passage between two entirely distinct ethnic worlds. The approach side is H'Mông territory: stone-walled fields, the distinctive roof lines of H'Mông houses, an agricultural economy oriented to the valley floor. The descent side — Sì Thâu Chải village — is a Red Dao (Người Dao Đỏ) community, recognisable by its weaving traditions and the aromatic steam that rises from the houses where herbal baths are prepared. These two communities occupy opposite slopes of the same mountain, speak different languages, and have different material cultures — separated by a summit at 3,049m that both treat as a presence in the landscape rather than a destination. The trek covers both slopes because the trail goes where the people went first.",
+        "Sa Pa sits at 1,500m on the eastern side of the Hoàng Liên range — and the drive from Sa Pa to Tả Lèng crosses the range via tunnel or the O Quy Hồ pass, dropping from 1,500m down to the Lai Châu basin before climbing again to the trailhead. This transition is physical and visible: the air changes, the vegetation changes, the light changes. The Lai Châu side is wetter and less visited — the same mountain range, the opposite face. The Red Dao herbal bath that closes the trek at Sì Thâu Chải is a traditional medicinal practice passed down within Dao families for generations: a blend of over a dozen mountain plants gathered from the surrounding forest, brewed into a dark aromatic soak at roughly 40°C. After two days in the primary forest, the bath makes a practical kind of sense that no description does justice to.",
+      ],
+      pullImage: "/tours/putaleng/storytelling.webp",
+    },
+
+    elevationProfile: [
+      { time: "06:15", label: "Pickup · Sa Pa hotel",      elevation: 1500, icon: "van",     highlight: false, day: 1 },
+      { time: "08:30", label: "Motorbike taxi · trailhead",  elevation: 1700, icon: "hike",    highlight: false, day: 1 },
+      { time: "09:00", label: "Trek begins",                elevation: 1700, icon: "hike",    highlight: false, day: 1 },
+      { time: "12:30", label: "Shelter · lunch",            elevation: 2522, icon: "food",    highlight: false, day: 1 },
+      { time: "16:00", label: "Putaleng",                   elevation: 3049, icon: "mountain",highlight: true,  day: 1 },
+      { time: "19:00", label: "Dinner · sleep at shelter",  elevation: 2522, icon: "resort",  highlight: false, day: 1 },
+
+      { time: "06:30", label: "Breakfast · shelter",        elevation: 2522, icon: "food",    highlight: false, day: 2 },
+      { time: "07:00", label: "Descent · Sì Thâu Chải route", elevation: 2522, icon: "hike", highlight: false, day: 2 },
+      { time: "11:00", label: "Rhododendron Peak",          elevation: 2400, icon: "mountain",highlight: true,  day: 2 },
+      { time: "12:00", label: "Lunch · shelter",            elevation: 2100, icon: "food",    highlight: false, day: 2 },
+      { time: "16:00", label: "Sì Thâu Chải village",       elevation: 1000, icon: "village", highlight: false, day: 2 },
+      { time: "17:30", label: "Red Dao herbal bath",         elevation: 1000, icon: "resort",  highlight: true,  day: 2 },
+      { time: "18:30", label: "Car back to Sa Pa",           elevation: 1000, icon: "return",  highlight: false, day: 2 },
+    ],
+    elevationMax: 3200,
+
+    activityCards: [
+      {
+        badge: "hike", badgeLabel: "Trek",
+        time: "09:00 – 16:00 · Day 1",
+        title: "Tà Lèng → Primary Forest → Putaleng 3,049m",
+        desc: "The motorbike taxi ride to the trailhead at 1,700m is itself a transition — from the valley road to the forest edge in 30 minutes of steep mountain track. From there the trek gains 1,300m over roughly 10km to the summit. The lower section runs through primary cloud forest: mossy, dense, the canopy continuous, streams crossing the trail. The bamboo opens above 2,000m. Above the shelter at 2,522m the forest thins into alpine scrub and the views begin. The summit at 3,049m is an afternoon summit — the light across the Hoàng Liên range at this hour is different from dawn. Descent back to the shelter takes 2 hours.",
+        highlight: true,
+      },
+      {
+        badge: "resort", badgeLabel: "Shelter",
+        time: "19:00 – 06:30 · Night",
+        title: "Mountain Shelter — ~2,522m",
+        desc: "The shelter at 2,522m is a basic wooden structure — mats, blankets, basic toilet facilities. The temperature at this altitude drops to 8–15°C at night in warm months, below freezing in winter. The forest is quiet at this elevation after dark; the sound is wind and the occasional stream. Breakfast is ready at 06:30. The descent begins at 07:00.",
+        highlight: false,
+      },
+      {
+        badge: "mountain", badgeLabel: "Rhododendron Ridge",
+        time: "07:00 – 12:00 · Day 2",
+        title: "Rhododendron Peak — descent ridge at 2,400m",
+        desc: "The descent from the shelter follows the Sì Thâu Chải route — not the way up, which makes this a true traverse. The trail crosses Rhododendron Peak, a secondary ridge at approximately 2,400m. More than 30 rhododendron species grow on this massif; the concentration along this ridge is the densest. Between late February and mid-April the blooms are red, pink, and white — covering the ridge in continuous colour on trees several centuries old. Outside bloom season the ridge is still extraordinary: ancient gnarled trunks, dense lichen, the specific silence of old forest.",
+        highlight: true,
+      },
+      {
+        badge: "resort", badgeLabel: "Recovery",
+        time: "17:30 – 18:30 · Day 2",
+        title: "Red Dao Herbal Bath — Sì Thâu Chải village",
+        desc: "The descent ends in Sì Thâu Chải, a Red Dao village most visitors to the region never reach. The herbal bath is prepared the traditional Dao way: a blend of over a dozen mountain plants — bark, roots, leaves — gathered from the surrounding forest and boiled into a dark aromatic soak at roughly 40°C. This is a functional recovery practice used by the Red Dao for generations after physical exertion. After a full day of climbing and a second day of descent — 1,300m up, 900m down — 45 minutes in that water is not optional.",
+        highlight: false,
+      },
+    ],
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "Your host meets you at your Sa Pa hotel with a Morning Vietnam pack before the drive to Tà Lèng. One item was chosen for a night at altitude.",
+    },
+
+    seasonality: {
+      intro: "Putaleng is a year-round mountain for experienced trekkers — but the rhododendron bloom (Feb–Apr) and the post-monsoon window (Oct–Nov) are the seasons that define the experience.",
+      months: [
+        { name: "Jan", level: "good" },
+        { name: "Feb", level: "best" },
+        { name: "Mar", level: "best" },
+        { name: "Apr", level: "best" },
+        { name: "May", level: "wet"  },
+        { name: "Jun", level: "wet"  },
+        { name: "Jul", level: "wet"  },
+        { name: "Aug", level: "wet"  },
+        { name: "Sep", level: "good" },
+        { name: "Oct", level: "best" },
+        { name: "Nov", level: "best" },
+        { name: "Dec", level: "good" },
+      ],
+      notes: [
+        { title: "Rhododendron season (Feb – Apr)", desc: "The Putaleng massif hosts over 30 rhododendron species — and the bloom on the Rhododendron Peak ridge and the upper trail is the reason experienced trekkers time their visit. Peak colour is mid-March to mid-April: the ridge between 2,200m and 2,600m turns red, pink, and white under a continuous canopy of blooms on trees several centuries old. February marks the start — earlier than Fansipan, because the Lai Châu side of the range is warmer and wetter." },
+        { title: "Post-monsoon best (Oct – Nov)", desc: "Oct–Nov: clearest skies, post-monsoon air, the summit views extending across the Hoàng Liên range. The forest is at its greenest, the streams full. Temperature at the shelter (~2,522m) drops to 8–12°C at night — cold enough to matter, not cold enough to be a problem with proper layering." },
+        { title: "Wet season (May – Sep)", desc: "We operate this route in wet season only for experienced groups: persistent cloud above 2,000m, slippery trail, leeches active in the lower forest (high socks essential). The primary forest in wet season is extraordinary in a different way — saturated moss, loud streams, green light. September often transitions; we confirm conditions 48 hours ahead." },
+      ],
+    },
+
+    faqs: [
+      { q: "How fit do I need to be?", a: "High fitness required. Day 1 gains 1,300m over approximately 10km from the trailhead — expect 6–7 hours of ascent on uneven mountain trail. Day 2 descends 900m over 13km with a partial re-ascent to Rhododendron Peak. No technical climbing, but this is serious mountain trekking. Minimum age 16." },
+      { q: "What is the shelter like?", a: "A basic wooden mountain shelter at approximately 2,522m — mats or wooden bunks, blankets provided. Basic toilet facilities. Not heated — expect 8–15°C at night in warm months, colder in winter. Pack a layering system regardless of season." },
+      { q: "Can I pick up from Hanoi?", a: "Yes — Hanoi pickup available at an additional cost of 450,000₫ per person. This means a sleeper bus or private transfer to Sa Pa the night before. We arrange logistics when you enquire." },
+      { q: "What makes this different from the Putaleng 3D2N?", a: "The 3D2N version adds Day 1 in Lai Châu: Pusamcap cave and a night in Lao Chải 1 H'Mông village at the foot of the mountain. The mountain trekking is identical. If you're already in Sa Pa and want to go straight to the mountain, the 2D1N is the right choice. If you want the full Lai Châu context and a slower approach, take the 3D2N." },
+      { q: "Is the rhododendron bloom guaranteed?", a: "No — bloom timing varies by year and altitude. The Rhododendron Peak ridge typically blooms between late February and mid-April, with peak colour in mid-March. We give honest forecasts based on current conditions. Outside bloom season the forest is still exceptional — ancient specimens, dense coverage, extraordinary moss and lichen." },
+      { q: "What gear do I need?", a: "Ankle-support waterproof hiking boots are essential. Trekking poles are strongly recommended for the 900m descent on Day 2. Bring a layering system (moisture-wicking base, fleece, waterproof outer), high socks against leeches in the lower forest, and a headlamp. Pack weight: 5–7kg daypack. Blankets are provided at the shelter; bring a light sleeping bag liner if you run cold." },
+      ...DEFAULT_FAQS.slice(2),
+    ],
+
+    tripGrading: {
+      level: 4,
+      label: "Challenging",
+      summary: "Two big trekking days through primary old-growth forest on a trail with no tourist infrastructure. Right for fit, experienced walkers — not a beginner's first mountain.",
+      criteria: [
+        { id: "physical",   label: "Physical demand", score: 4, summary: "Day 1 gains 1,300m over ~10km from trailhead to summit, then descends to the shelter — expect 8–9 hours total. Day 2 descends 900m over 13km with a partial re-ascent to Rhododendron Peak. ~23km total traverse." },
+        { id: "altitude",   label: "Altitude & terrain", score: 3, summary: "Summit at 3,049m is high enough to feel, but the overnight shelter sits at ~2,522m — well below the range where altitude sickness becomes a serious risk. No technical climbing; the challenge is distance and terrain." },
+        { id: "remoteness", label: "Remoteness", score: 4, summary: "Primary forest with no road access between the Tà Lèng trailhead and Sì Thâu Chải. Phone signal unreliable above roughly 2,000m. Genuine backcountry — not a marked park trail." },
+      ],
+    },
+
+    // Same real GPS track as putaleng-3d2n — this tour is exactly that trekking route.
+    gpxFile: "/tours/putaleng/putaleng-ta-leng-si-thau-chai.gpx",
+    routeMarkers: {
+      start: {
+        lat: 22.427720, lon: 103.562473, ele: 1629,
+        label: 'Trailhead — Tả Lèng', desc: 'Where the trek begins, ~1,629m.'
+      },
+      summit: {
+        lat: 22.422901, lon: 103.603916, ele: 3067,
+        label: 'Putaleng Summit', desc: '3,067m — the roof of Lai Châu.'
+      },
+      shelter: {
+        lat: 22.414010, lon: 103.603200, ele: 2522,
+        label: 'Mountain Shelter', desc: 'Trail fork — lunch stop on the way up, dinner & overnight after the summit push.'
+      },
+      end: {
+        lat: 22.361411, lon: 103.601976, ele: 1546,
+        label: 'Finish — Sì Thâu Chải', desc: 'Where the trek ends, ~1,546m.'
+      }
+    },
+
+    unlockChallenge: null,
   },
 ];
 

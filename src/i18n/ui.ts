@@ -60,6 +60,7 @@ export const ui = {
     'marquee.4': 'From strangers to family',
     'marquee.5': 'Active but accessible',
     'marquee.6': 'EN / FR / DE',
+    'marquee.7': 'Best Price/Performance ratio',
 
     // ── Footer ──
     'footer.heading.line1': 'Vietnam deeper.',

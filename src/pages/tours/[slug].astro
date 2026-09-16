@@ -48,6 +48,23 @@ const season       = tour.seasonality;
 const faqs         = tour.faqs;
 const upcomingDates = (tour as any).upcomingDates as string[] | undefined;
 
+// Trekking-specific modules (only present on hiking/trekking tours)
+const tripGrading  = (tour as any).tripGrading || null;
+const safetyInfo   = (tour as any).safetyInfo || null;
+const packingList  = (tour as any).packingList || null;
+const itineraryDays = tour.itinerary || null;
+const useDayCards  = !!(itineraryDays && itineraryDays.some((d: any) => d.narrative));
+const gpxFile      = (tour as any).gpxFile || null;
+// Waypoints for the GPX route map — 4 distinct markers (start/summit/shelter/end),
+// one map icon each. This used to be hardcoded here for Putaleng only; now it's
+// per-tour data from tours.ts (`routeMarkers`) so each trekking tour's map shows
+// its own real coordinates instead of accidentally reusing Putaleng's.
+const routeMarkers = gpxFile ? ((tour as any).routeMarkers || null) : null;
+// Gated on tripGrading (not just the "hiking" tag) so the new trekking layout
+// only appears on tours that have opted in with the new data — keeps
+// Fansipan etc. untouched until they're upgraded too.
+const isTrekkingTour = !!tripGrading;
+
 const tripInfoData   = (tour.tripInfo as any) || null;
 const hasTripInfo    = !!tripInfoData;
 const defaultTripKey = (tour.durationOptions as any)?.[0]?.id || 'default';
@@ -463,6 +480,300 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     </section>
   )}
 
+  <!-- ═══ S-grading · trip difficulty grading (trekking tours only) ═══ -->
+  {tripGrading && (
+    <section class="td-grading">
+      <div class="td-grading__inner">
+        <p class="section-label">How tough is it?</p>
+        <div class="td-grading__head">
+          <div class="td-grading__badge">
+            <span class="td-grading__badge-level">{tripGrading.level}</span>
+            <span class="td-grading__badge-max">/5</span>
+          </div>
+          <div class="td-grading__head-text">
+            <h2 class="td-grading__label">{tripGrading.label}</h2>
+            <p class="td-grading__summary">{tripGrading.summary}</p>
+          </div>
+        </div>
+        <div class="td-grading__gauge" role="img" aria-label={`Difficulty ${tripGrading.level} of 5`}>
+          {Array.from({ length: 5 }, (_, i) => (
+            <span class={`td-grading__gauge-seg${i < tripGrading.level ? ' is-filled' : ''}`}></span>
+          ))}
+        </div>
+        <div class="td-grading__criteria">
+          {tripGrading.criteria.map((c: any) => (
+            <div class="td-grading__crit-card">
+              <div class="td-grading__crit-top">
+                <p class="td-grading__crit-label">{c.label}</p>
+                <div class="td-grading__crit-gauge">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <span class={`td-grading__crit-seg${i < c.score ? ' is-filled' : ''}`}></span>
+                  ))}
+                </div>
+              </div>
+              <p class="td-grading__crit-summary">{c.summary}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ═══ S-routemap · interactive GPX route map (trekking tours) ═══ -->
+  {isTrekkingTour && (
+    <section class="td-routemap">
+      <div class="td-routemap__inner">
+        <p class="section-label">Route map</p>
+        <h2 class="td-routemap__heading">Where the trail actually goes.</h2>
+        {gpxFile ? (
+          <>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+            {/* Do not remove: this stylesheet is what gives every MapLibre marker
+                `position: absolute` in the first place. Without it the 4 summit/
+                shelter/start/end marker <div>s fall into normal document flow
+                instead of being pinned to their projected map coordinate — they
+                silently stack up and push the 3D map's internal container taller
+                than its visible box, landing every marker off-screen below the
+                fold. (Found this the hard way while debugging "markers invisible
+                in 3D".) */}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+
+            <div class="td-routemap__toolbar">
+              <div class="td-routemap__viewtoggle" role="group" aria-label="Map view">
+                <button type="button" class="td-routemap__viewbtn is-active" data-view="2d">2D map</button>
+                <button type="button" class="td-routemap__viewbtn" data-view="3d">3D terrain</button>
+              </div>
+              <p class="td-routemap__hint"><i class="ti ti-command" aria-hidden="true"></i> + scroll to zoom</p>
+            </div>
+
+            <div class="td-routemap__mapwrap">
+              <div id="td-gpx-map" class="td-routemap__map" data-gpx={gpxFile} data-markers={JSON.stringify(routeMarkers)}></div>
+              <div id="td-gpx-map-3d" class="td-routemap__map td-routemap__map--3d" data-gpx={gpxFile} data-markers={JSON.stringify(routeMarkers)}></div>
+              <p class="td-routemap__rotatehint" id="td-rotate-hint">↻ Drag compass to rotate</p>
+            </div>
+
+            <p class="td-routemap__note">Satellite imagery via Esri · actual GPS track recorded on this route</p>
+
+            <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+            <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.2.0/gpx.min.js"></script>
+            <script is:inline src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+            <script is:inline>
+              (function () {
+                var mapEl = document.getElementById('td-gpx-map');
+                var mapEl3d = document.getElementById('td-gpx-map-3d');
+                var rotateHint = document.getElementById('td-rotate-hint');
+                if (!mapEl || typeof L === 'undefined' || !mapEl.dataset.gpx) return;
+
+                var markers = {};
+                try { markers = JSON.parse(mapEl.dataset.markers || '{}') || {}; } catch (e) { markers = {}; }
+
+                /* One icon per marker kind so all 4 are easy to tell apart at a glance. */
+                var MARKER_ICONS = {
+                  start:   'ti-player-play-filled',
+                  summit:  'ti-mountain',
+                  shelter: 'ti-home',
+                  end:     'ti-flag-2-filled'
+                };
+
+                function markerDotHtml(kind) {
+                  return '<span class="td-routemap__marker-dot"><i class="ti ' + (MARKER_ICONS[kind] || 'ti-map-pin') + '" aria-hidden="true"></i></span>';
+                }
+
+                function markerIcon(kind) {
+                  return L.divIcon({
+                    className: 'td-routemap__marker td-routemap__marker--' + kind,
+                    html: markerDotHtml(kind),
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16],
+                    popupAnchor: [0, -16]
+                  });
+                }
+
+                /* ── 2D map (Leaflet) ──────────────────────────────────── */
+                /* Give the map a real view from frame one (roughly centred on the
+                   route) — markers added before a view exists can fail to
+                   position correctly on some browsers. fitBounds() below
+                   re-centers precisely once the GPX has actually loaded. */
+                var map = L.map(mapEl, { scrollWheelZoom: false }).setView([22.415, 103.603], 13);
+
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                  maxZoom: 18,
+                  attribution: 'Tiles &copy; Esri'
+                }).addTo(map);
+
+                /* Place-name labels overlay (roads, villages, peaks) — its own pane,
+                   stacked ABOVE the satellite tiles (200) but BELOW the orange GPX
+                   track (overlayPane, 400) so boundary/label lines never cover it. */
+                map.createPane('labelsPane');
+                map.getPane('labelsPane').style.zIndex = 350;
+                map.getPane('labelsPane').style.pointerEvents = 'none';
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                  maxZoom: 18,
+                  pane: 'labelsPane'
+                }).addTo(map);
+
+                new L.GPX(mapEl.dataset.gpx, {
+                  async: true,
+                  /* We draw our own start/end/summit/shelter markers below —
+                     turn off leaflet-gpx's built-in blue pins (its "markers"
+                     option, not "marker_options", is what actually controls
+                     whether they get created). */
+                  markers: { startIcon: false, endIcon: false },
+                  polyline_options: { color: '#ea6739', weight: 4, opacity: 0.9 }
+                }).on('loaded', function (e) {
+                  map.fitBounds(e.target.getBounds());
+                }).addTo(map);
+
+                Object.keys(markers).forEach(function (key) {
+                  var m = markers[key];
+                  if (!m) return;
+                  L.marker([m.lat, m.lon], { icon: markerIcon(key) })
+                    .bindPopup('<strong>' + m.label + '</strong><br>' + m.desc)
+                    .addTo(map);
+                });
+
+                /* Cmd/Ctrl + scroll to zoom — plain scroll moves the page, like Strava's route maps */
+                mapEl.addEventListener('wheel', function (e) {
+                  if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    var delta = e.deltaY < 0 ? 1 : -1;
+                    map.setZoomAround(map.mouseEventToContainerPoint(e), map.getZoom() + delta, { animate: true });
+                  }
+                }, { passive: false });
+
+                /* ── 3D map (MapLibre GL) — built lazily on first switch ── */
+                var map3d = null;
+                function init3d() {
+                  if (map3d || typeof maplibregl === 'undefined' || !mapEl3d) return;
+
+                  map3d = new maplibregl.Map({
+                    container: mapEl3d,
+                    cooperativeGestures: true,
+                    style: {
+                      version: 8,
+                      sources: {
+                        'esri-imagery': {
+                          type: 'raster',
+                          tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+                          tileSize: 256,
+                          attribution: 'Tiles &copy; Esri'
+                        },
+                        'esri-labels': {
+                          type: 'raster',
+                          tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'],
+                          tileSize: 256
+                        },
+                        'dem': {
+                          type: 'raster-dem',
+                          tiles: ['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],
+                          tileSize: 256,
+                          encoding: 'terrarium'
+                        }
+                      },
+                      layers: [
+                        { id: 'satellite', type: 'raster', source: 'esri-imagery' },
+                        { id: 'labels', type: 'raster', source: 'esri-labels' }
+                      ],
+                      terrain: { source: 'dem', exaggeration: 1.4 }
+                    },
+                    center: [103.603916, 22.422901],
+                    zoom: 12,
+                    pitch: 65,
+                    bearing: -20
+                  });
+
+                  map3d.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+
+                  map3d.on('load', function () {
+                    /* The container was display:none an instant ago, so the very
+                       first size MapLibre read at construction time can be stale.
+                       Force a resize and let that reflow settle for one frame
+                       before placing markers — otherwise their projected screen
+                       position is computed against the wrong container size and
+                       they land far outside the visible map. */
+                    map3d.resize();
+
+                    fetch(mapEl3d.dataset.gpx)
+                      .then(function (r) { return r.text(); })
+                      .then(function (xml) {
+                        var doc = new DOMParser().parseFromString(xml, 'text/xml');
+                        var pts = Array.prototype.slice.call(doc.getElementsByTagName('trkpt')).map(function (pt) {
+                          return [parseFloat(pt.getAttribute('lon')), parseFloat(pt.getAttribute('lat'))];
+                        });
+                        if (!pts.length) return;
+
+                        map3d.addSource('track', {
+                          type: 'geojson',
+                          data: { type: 'Feature', geometry: { type: 'LineString', coordinates: pts } }
+                        });
+                        map3d.addLayer({
+                          id: 'track-line',
+                          type: 'line',
+                          source: 'track',
+                          layout: { 'line-join': 'round', 'line-cap': 'round' },
+                          paint: { 'line-color': '#ea6739', 'line-width': 4 }
+                        });
+
+                        var bounds = pts.reduce(function (b, c) { return b.extend(c); }, new maplibregl.LngLatBounds(pts[0], pts[0]));
+                        map3d.fitBounds(bounds, { padding: 40, pitch: 65, bearing: -20, duration: 0 });
+                      });
+
+                    requestAnimationFrame(function () {
+                      Object.keys(markers).forEach(function (key) {
+                        var m = markers[key];
+                        if (!m) return;
+                        var el = document.createElement('div');
+                        /* --lg = bigger dot for the 3D view, where markers sit against
+                           a huge photoreal terrain and a 32px dot reads as tiny. */
+                        el.className = 'td-routemap__marker td-routemap__marker--' + key + ' td-routemap__marker--lg';
+                        el.innerHTML = markerDotHtml(key);
+                        new maplibregl.Marker({ element: el })
+                          .setLngLat([m.lon, m.lat])
+                          .setPopup(new maplibregl.Popup({ offset: 26 }).setHTML('<strong>' + m.label + '</strong><br>' + m.desc))
+                          .addTo(map3d);
+                      });
+                    });
+                  });
+                }
+
+                /* ── 2D / 3D toggle ─────────────────────────────────────── */
+                var buttons = document.querySelectorAll('.td-routemap__viewbtn');
+                buttons.forEach(function (btn) {
+                  btn.addEventListener('click', function () {
+                    buttons.forEach(function (b) { b.classList.remove('is-active'); });
+                    btn.classList.add('is-active');
+                    var view = btn.dataset.view;
+                    if (view === '3d') {
+                      mapEl.style.display = 'none';
+                      mapEl3d.style.display = 'block';
+                      if (rotateHint) rotateHint.classList.add('is-visible');
+                      /* Wait a frame so the browser has actually laid out the
+                         now-visible container before MapLibre reads its size —
+                         see the matching note by map3d.resize() above. */
+                      requestAnimationFrame(function () {
+                        if (map3d) { map3d.resize(); } else { init3d(); }
+                      });
+                    } else {
+                      mapEl3d.style.display = 'none';
+                      mapEl.style.display = 'block';
+                      if (rotateHint) rotateHint.classList.remove('is-visible');
+                      setTimeout(function () { map.invalidateSize(); }, 50);
+                    }
+                  });
+                });
+              })();
+            </script>
+          </>
+        ) : (
+          <div class="td-routemap__placeholder">
+            <strong>Route map pending.</strong>
+            <p>GPX track for {tour.name} will be added once the file is available.</p>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
   <!-- ═══ S4 · b-timeline (SVG elevation chart) ═════════════════ -->
   <section class="td-timeline">
     <div class="td-timeline__inner">
@@ -723,7 +1034,29 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       {elevation && elevation.length > 0 && (
         <p class="td-timeline__disclaimer">⏱ Time markers are estimates — actual pace depends on each group's fitness level.</p>
       )}
-      {activityCards && activityCards.length > 0 && (
+      {useDayCards ? (
+        <div class="td-timeline__cards">
+          {itineraryDays.map((day: any) => (
+            <div class="td-timeline__act-card td-timeline__act-card--day">
+              <div class="td-timeline__act-badges">
+                <span class="td-timeline__act-badge td-timeline__act-badge--day">Day {day.day}</span>
+                {day.accommodation && <span class="td-timeline__act-badge td-timeline__act-badge--accommodation"><i class="ti ti-home" aria-hidden="true"></i> {day.accommodation}</span>}
+                {day.meals && <span class="td-timeline__act-badge td-timeline__act-badge--meal"><i class="ti ti-tools-kitchen-2" aria-hidden="true"></i> {day.meals}</span>}
+              </div>
+              <div class="td-timeline__act-title">{day.title}</div>
+              {day.stats && (
+                <div class="td-timeline__act-stats">
+                  <span><i class="ti ti-clock" aria-hidden="true"></i>{day.stats.hours}</span>
+                  <span><i class="ti ti-route" aria-hidden="true"></i>{day.stats.distanceKm}km</span>
+                  {day.stats.up != null && <span><i class="ti ti-trending-up" aria-hidden="true"></i>{day.stats.up}m up</span>}
+                  {day.stats.down != null && <span><i class="ti ti-trending-down" aria-hidden="true"></i>{day.stats.down}m down</span>}
+                </div>
+              )}
+              {day.narrative && <p class="td-timeline__act-desc">{day.narrative}</p>}
+            </div>
+          ))}
+        </div>
+      ) : activityCards && activityCards.length > 0 && (
         <div class="td-timeline__cards">
           {activityCards.map((c: {badges?: string[]; badge?: string; badgeLabel?: string; time: string; title: string; desc: string; highlight: boolean; durationOnly?: string}) => (
             <div
@@ -745,8 +1078,6 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     </div>
   </section>
 
-
-  <!-- ═══ S-pan · panoramic image break ══════════════════════════ -->
   <!-- ═══ S-pan · panoramic image break ══════════════════════════ -->
   <div class="td-panoramic">
     {panoramicImage ? (
@@ -760,27 +1091,98 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   </div>
 
   <!-- ═══ S5 · b-overview (More about the destination) ══════════ -->
-  <section class="td-overview">
-    <div class="td-overview__inner">
-      <div class="td-overview__left">
-        <p class="section-label">More about the destination</p>
-        <h2 class="td-overview__headline">{overview?.headline || tour.tagline}</h2>
-        <div class="td-overview__body">
-          {(overview?.paragraphs?.length ? overview.paragraphs : [tour.description]).map((p: string | undefined) => p ? <p>{p}</p> : null)}
+  {(() => {
+    const paras: string[] = overview?.paragraphs?.length ? overview.paragraphs : [tour.description].filter(Boolean) as string[];
+    const firstPara = paras[0];
+    const restParas = paras.slice(1);
+    return (
+      <section class="td-overview">
+        <div class="td-overview__inner">
+          <div class="td-overview__top">
+            <div class="td-overview__left">
+              <p class="section-label">More about the destination</p>
+              <h2 class="td-overview__headline">{overview?.headline || tour.tagline}</h2>
+              {firstPara && <div class="td-overview__body"><p>{firstPara}</p></div>}
+            </div>
+            <div class="td-overview__right">
+              {overview?.pullImage ? (
+                <img src={overview.pullImage} alt={tour.name} loading="lazy" />
+              ) : (
+                <div class="td-overview__photo-pending">
+                  <strong>PHOTO PENDING</strong>
+                  <p>Wide environmental shot for {tour.name} — landscape or activity moment, vertical orientation preferred (3:4 or 4:5).</p>
+                </div>
+              )}
+            </div>
+          </div>
+          {restParas.length > 0 && (
+            <div class="td-overview__cols">
+              {restParas.map((p: string) => <p>{p}</p>)}
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  })()}
+
+  <!-- ═══ S5b · b-safety (Safety & remote access, trekking tours) ═══ -->
+  {safetyInfo && (
+    <section class="td-safety">
+      <div class="td-safety__inner">
+        <p class="section-label">Safety & remote access</p>
+        <h2 class="td-safety__heading">Know before you go.</h2>
+        <div class="td-safety__stats">
+          <div class="td-safety__stat-card">
+            <i class="ti ti-first-aid-kit" aria-hidden="true"></i>
+            <p class="td-safety__stat-label">Medical access time</p>
+            <p class="td-safety__stat-value">{safetyInfo.medicalAccessTime}</p>
+          </div>
+          {safetyInfo.phoneSignal && (
+            <div class="td-safety__stat-card">
+              <i class="ti ti-antenna-bars-1" aria-hidden="true"></i>
+              <p class="td-safety__stat-label">Phone signal</p>
+              <p class="td-safety__stat-value">{safetyInfo.phoneSignal}</p>
+            </div>
+          )}
+        </div>
+        {safetyInfo.commsNote && !safetyInfo.phoneSignal && <p class="td-safety__note"><i class="ti ti-antenna-bars-1" aria-hidden="true"></i>{safetyInfo.commsNote}</p>}
+        <h3 class="td-safety__sub">If something goes wrong</h3>
+        <div class="td-safety__steps">
+          {safetyInfo.rescueSteps.map((step: any, i: number) => (
+            <div class="td-safety__step">
+              <span class="td-safety__step-num">{i + 1}</span>
+              <div>
+                <p class="td-safety__step-title">{step.title}</p>
+                <p class="td-safety__step-detail">{step.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="td-safety__insurance"><i class="ti ti-shield-check" aria-hidden="true"></i>{safetyInfo.insuranceNote}</p>
+      </div>
+    </section>
+  )}
+
+  <!-- ═══ S5c · b-packing (What to pack, trekking tours) ═══════════ -->
+  {packingList && packingList.length > 0 && (
+    <section class="td-packing">
+      <div class="td-packing__inner">
+        <p class="section-label">Before you go</p>
+        <h2 class="td-packing__heading">What to pack.</h2>
+        <div class="td-packing__grid">
+          {packingList.map((cat: any) => (
+            <div class="td-packing__card">
+              <div class="td-packing__icon-wrap"><i class={`ti ti-${cat.icon}`} aria-hidden="true"></i></div>
+              <p class="td-packing__cat-label">{cat.label}</p>
+              <ul class="td-packing__items">
+                {cat.items.map((item: string) => <li>{item}</li>)}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
-      <div class="td-overview__right">
-        {overview?.pullImage ? (
-          <img src={overview.pullImage} alt={tour.name} loading="lazy" />
-        ) : (
-          <div class="td-overview__photo-pending">
-            <strong>PHOTO PENDING</strong>
-            <p>Wide environmental shot for {tour.name} — landscape or activity moment, vertical orientation preferred (3:4 or 4:5).</p>
-          </div>
-        )}
-      </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <!-- ═══ S7 · b-welcome (Welcome pack) ════════════════════════ -->
   <section class="td-welcome">
@@ -1479,6 +1881,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     color: #888780;
     margin: 0;
     line-height: 1.4;
+    white-space: pre-line;
   }
 
   /* ── td-upcoming (compact dates strip in hero) ──── */
@@ -1734,10 +2137,30 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     max-width: var(--max-width);
     margin: 0 auto;
     padding: 0 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .td-overview__top {
     display: grid;
     grid-template-columns: 1.1fr 1fr;
     gap: 80px;
-    align-items: center;
+    align-items: start;
+  }
+
+  .td-overview__cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .td-overview__cols p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--color-nordic);
+    opacity: 0.85;
+    margin: 0;
   }
 
   .td-overview__headline {
@@ -1870,7 +2293,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   /* ── td-timeline activity cards ─────────────────── */
   .td-timeline__cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 16px;
     margin-top: 40px;
   }
@@ -2029,7 +2452,9 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     .td-product__thumb         { width: 100%; height: auto; aspect-ratio: 1/1; }
     .td-gallery__arrow         { width: 30px; height: 30px; }
     .td-product__panel         { padding: 40px 24px; }
-    .td-overview__inner        { grid-template-columns: 1fr; gap: 48px; padding: 0 24px; }
+    .td-overview__inner        { padding: 0 24px; gap: 32px; }
+    .td-overview__top          { grid-template-columns: 1fr; gap: 32px; }
+    .td-overview__cols         { grid-template-columns: 1fr; gap: 24px; }
     .td-overview               { padding: 40px 0 30px; }
     .td-timeline__inner        { padding: 0 24px; }
     .td-timeline               { padding: 40px 0; }
@@ -3053,6 +3478,544 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   @media (max-width: 480px) {
     .td-sticky-bar__name { max-width: 160px; }
     .td-sticky-bar__vnd  { display: none; }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     Trekking-specific modules — only rendered when tour data
+     includes tripGrading / safetyInfo / packingList / itinerary
+     with per-day stats. Reuses existing design tokens only.
+  ═══════════════════════════════════════════════════════════════ */
+
+  /* ── S-grading · trip difficulty ─────────────────────────────── */
+  .td-grading { background: var(--color-surface); padding: 60px 0; }
+  .td-grading__inner { max-width: var(--max-width); margin: 0 auto; padding: 0 48px; }
+
+  .td-grading__head {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+
+  .td-grading__badge {
+    flex-shrink: 0;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: var(--color-light-cyan);
+    border: 2px solid var(--color-java);
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .td-grading__badge-level {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-java);
+  }
+
+  .td-grading__badge-max {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(4,51,65,0.5);
+  }
+
+  .td-grading__label {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 6px;
+  }
+
+  .td-grading__summary {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(4,51,65,0.7);
+    max-width: 640px;
+  }
+
+  .td-grading__gauge {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 40px;
+  }
+
+  .td-grading__gauge-seg {
+    flex: 1;
+    max-width: 90px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: rgba(4,51,65,0.10);
+  }
+
+  .td-grading__gauge-seg.is-filled { background: var(--color-java); }
+
+  .td-grading__criteria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .td-grading__crit-card {
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .td-grading__crit-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .td-grading__crit-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--color-nordic);
+  }
+
+  .td-grading__crit-gauge { display: flex; gap: 3px; }
+
+  .td-grading__crit-seg {
+    width: 14px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: rgba(4,51,65,0.12);
+  }
+
+  .td-grading__crit-seg.is-filled { background: var(--color-java); }
+
+  .td-grading__crit-summary {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: rgba(4,51,65,0.7);
+  }
+
+  /* ── S-routemap · interactive GPX route map ───────────────────── */
+  .td-routemap { background: var(--color-surface); padding: 60px 0; }
+  .td-routemap__inner { max-width: var(--max-width); margin: 0 auto; padding: 0 48px; }
+
+  .td-routemap__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 24px;
+  }
+
+  .td-routemap__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .td-routemap__viewtoggle {
+    display: inline-flex;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-full);
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .td-routemap__viewbtn {
+    border: none;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    padding: 8px 18px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .td-routemap__viewbtn.is-active {
+    background: var(--color-java);
+    color: white;
+  }
+
+  .td-routemap__viewbtn:not(.is-active):hover { color: var(--color-nordic); }
+
+  .td-routemap__hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: rgba(4,51,65,0.45);
+    margin: 0;
+  }
+
+  .td-routemap__mapwrap {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    background: var(--color-light-cyan);
+  }
+
+  .td-routemap__map {
+    width: 100%;
+    height: 100%;
+  }
+
+  .td-routemap__map--3d {
+    position: absolute;
+    inset: 0;
+    display: none;
+  }
+
+  /* Persistent caption explaining the compass control — it looks like a
+     plain button but actually needs a press-and-drag, which people don't
+     discover on their own. Only shown while the 3D view is active (toggled
+     in JS alongside #td-gpx-map-3d's own visibility). */
+  .td-routemap__rotatehint {
+    display: none;
+    position: absolute;
+    top: 118px;
+    right: 10px;
+    z-index: 5;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 5px 10px;
+    background: rgba(255,255,255,0.92);
+    color: var(--color-nordic);
+    font-size: 11.5px;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+    pointer-events: none;
+  }
+
+  .td-routemap__rotatehint.is-visible {
+    display: flex;
+  }
+
+  /* Give MapLibre's own rotate/compass control (created by its JS, not our
+     template — hence :global()) a visible highlight ring + a slow pulse so
+     it reads as "drag me" rather than blending in with the plain +/- zoom
+     buttons right above it. */
+  @keyframes td-compass-pulse {
+    0%, 100%  { box-shadow: 0 0 0 2px var(--color-java); }
+    50%       { box-shadow: 0 0 0 5px rgba(29, 160, 160, 0.35); }
+  }
+
+  :global(.maplibregl-ctrl-compass) {
+    border-radius: 4px;
+    animation: td-compass-pulse 2.2s ease-in-out infinite;
+  }
+
+  /* These marker elements are created client-side via document.createElement
+     (by Leaflet's L.divIcon and by MapLibre's Marker) — Astro's scoped CSS
+     tags every rule below with a [data-astro-cid-*] attribute that only
+     elements present in this file's own template actually carry, so a plain
+     scoped rule NEVER matches a marker built in plain JS at runtime (the
+     marker exists and is positioned correctly, just invisible — no size, no
+     colour, nothing). :global() opts these specific rules out of that
+     scoping so they apply to the real DOM regardless of how it was built. */
+
+  /* Leaflet's default .leaflet-div-icon ships a white box + grey border —
+     strip that so only our own circle shows. */
+  :global(.td-routemap__marker.leaflet-div-icon) {
+    background: transparent;
+    border: none;
+  }
+
+  /* MapLibre gives marker elements no size of their own — as a block-level
+     <div> it stretches to the map's full width, which throws off MapLibre's
+     -50%/-50% centering transform and pushes the dot off-screen entirely.
+     inline-block shrinks it back to the size of the dot it wraps. */
+  :global(.td-routemap__marker) {
+    display: inline-block;
+  }
+
+  :global(.td-routemap__marker-dot) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-java);
+    color: white;
+    box-shadow: 0 2px 8px rgba(4,51,65,0.35), 0 0 0 3px white;
+    font-size: 15px;
+  }
+
+  /* One colour per marker kind, on top of one icon per kind (set in JS) —
+     the two together make all 4 markers easy to tell apart at a glance. */
+  :global(.td-routemap__marker--start)   :global(.td-routemap__marker-dot) { background: var(--color-java); }
+  :global(.td-routemap__marker--summit)  :global(.td-routemap__marker-dot) { background: var(--color-sorbus); }
+  :global(.td-routemap__marker--shelter) :global(.td-routemap__marker-dot) { background: var(--color-lucky); }
+  :global(.td-routemap__marker--end)     :global(.td-routemap__marker-dot) { background: var(--color-nordic); }
+
+  /* 3D terrain view marker size — half of an earlier, bulkier 44px pass
+     (per Thế Anh: markers were reading too large against the terrain). */
+  :global(.td-routemap__marker--lg) :global(.td-routemap__marker-dot) {
+    width: 22px;
+    height: 22px;
+    font-size: 10.5px;
+    box-shadow: 0 1.5px 5px rgba(4,51,65,0.45), 0 0 0 2px white;
+  }
+
+  .td-routemap__note {
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: rgba(4,51,65,0.5);
+    text-align: center;
+  }
+
+  .td-routemap__placeholder {
+    background: rgba(29, 160, 160, 0.06);
+    border: 2px dashed var(--color-java);
+    border-radius: 16px;
+    padding: 64px 40px;
+    text-align: center;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── S4 · itinerary day-cards (merged into "The Journey" cards grid) ── */
+  .td-timeline__act-card--day { border-left-color: var(--color-java); }
+
+  .td-timeline__act-badge--day {
+    background: var(--color-java);
+    color: white;
+  }
+
+  .td-timeline__act-badge--accommodation,
+  .td-timeline__act-badge--meal {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+    font-size: 11px;
+  }
+
+  .td-timeline__act-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 10px 0 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(4,51,65,0.10);
+  }
+
+  .td-timeline__act-stats span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--color-nordic);
+  }
+
+  .td-timeline__act-stats i { color: var(--color-java); font-size: 14px; }
+
+  /* ── S5b · safety & remote access ─────────────────────────────── */
+  .td-safety { background: var(--color-light-cyan); padding: 70px 0; }
+  .td-safety__inner { max-width: 900px; margin: 0 auto; padding: 0 48px; }
+
+  .td-safety__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 32px;
+  }
+
+  .td-safety__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .td-safety__stat-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .td-safety__stat-card i { font-size: 22px; color: var(--color-java); margin-bottom: 10px; display: block; }
+
+  .td-safety__stat-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(4,51,65,0.55);
+    margin-bottom: 6px;
+  }
+
+  .td-safety__stat-value {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--color-nordic);
+  }
+
+
+  .td-safety__note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: rgba(4,51,65,0.75);
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin-bottom: 36px;
+  }
+
+  .td-safety__note i { flex-shrink: 0; color: var(--color-java); margin-top: 2px; }
+
+  .td-safety__sub {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 18px;
+  }
+
+  .td-safety__steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .td-safety__step {
+    display: flex;
+    gap: 16px;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .td-safety__step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-java);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .td-safety__step-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 4px;
+  }
+
+  .td-safety__step-detail {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: rgba(4,51,65,0.75);
+  }
+
+  .td-safety__insurance {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--color-nordic);
+    font-weight: 500;
+  }
+
+  .td-safety__insurance i { flex-shrink: 0; color: var(--color-java); margin-top: 2px; }
+
+  /* ── S5c · packing checklist ──────────────────────────────────── */
+  .td-packing { background: var(--color-surface); padding: 70px 0; }
+  .td-packing__inner { max-width: var(--max-width); margin: 0 auto; padding: 0 48px; }
+
+  .td-packing__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 36px;
+  }
+
+  .td-packing__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .td-packing__card {
+    background: var(--color-bg);
+    border-radius: var(--radius-lg);
+    padding: 26px 24px;
+  }
+
+  .td-packing__icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .td-packing__icon-wrap i { font-size: 20px; color: var(--color-java); }
+
+  .td-packing__cat-label {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin-bottom: 10px;
+  }
+
+  .td-packing__items {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .td-packing__items li {
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(4,51,65,0.75);
+  }
+
+  @media (max-width: 720px) {
+    .td-grading__head { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .td-daybyday__card { padding: 22px 20px; }
+    .td-safety__inner { padding: 0 24px; }
   }
 </style>
 

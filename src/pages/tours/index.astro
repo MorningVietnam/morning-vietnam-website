@@ -9,18 +9,14 @@ const SAPA_HUB_ONLY = new Set([
   'sapa-nam-cang',
   'into-nam-luc',
   'unlock-lai-chau',
-  'lai-chau-loop',
   'fansipan-3d2n',
   'fansipan-trekking',
+  'putaleng-3d2n',
+  'putaleng-trekking',
 ]);
-const visibleTours = tours.filter((t: any) => !SAPA_HUB_ONLY.has(t.slug));
-
-// These 4 stay off the default grid — they already have their own hub page
-// at /tours/sapa-lai-chau — but we still render them (hidden by default,
-// via the `hub-only` filter script below) so the homepage's "Hiking &
-// Trekking" card can deep-link to /tours?filter=hiking and actually show
-// something. hubOnly on TourCard sets data-hub-only="true", which the
-// filter script uses to keep them out of "All tours" and every other pill.
+// Lai Châu Loop is pinned as the first visible card — not hub-only
+const laiChauLoop = tours.find((t: any) => t.slug === 'lai-chau-loop');
+const visibleTours = tours.filter((t: any) => !SAPA_HUB_ONLY.has(t.slug) && t.slug !== 'lai-chau-loop');
 const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
 ---
 
@@ -59,15 +55,18 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
   <!-- Grid -->
   <section class="tours-section">
     <div class="tours-grid">
-      <!-- Hiking & Trekking hub card — first in grid -->
-      <article class="hh reveal" data-tour-region="hiking" data-tour-tags="hiking">
+      <!-- Lai Châu Loop — pinned first -->
+      {laiChauLoop && <TourCard tour={laiChauLoop} index={0} />}
+
+      <!-- Hiking & Trekking hub card -->
+      <article class="hh reveal" data-tour-region="hiking" data-tour-tags="hiking north">
         <a href="/tours/hiking-trekking" class="hh__inner">
           <div class="hh__image">
             <img src="/tours/fansipan/2.webp" alt="Hiking & Trekking" loading="eager" />
             <span class="hh__badge">Hiking &amp; Trekking</span>
           </div>
           <div class="hh__body">
-            <div class="hh__region">North Vietnam · Hoàng Liên Sơn Range</div>
+            <div class="hh__region">North Vietnam</div>
             <h3 class="hh__name">Hiking &amp; Trekking</h3>
             <p class="hh__tagline">From Mường Hoa valley treks to Fansipan's 3,143m summit. Five trails. All done differently.</p>
             <div class="hh__footer">
@@ -273,27 +272,27 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
     flex-direction: column;
     gap: 8px;
     flex: 1;
-    background: var(--color-java);
+    background: var(--color-nordic);
   }
   .hh__region {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(217, 247, 245, 0.65);
+    color: rgba(255, 255, 255, 0.45);
   }
   .hh__name {
     font-family: var(--font-heading);
     font-size: 22px;
     font-weight: 700;
     line-height: 1.2;
-    color: var(--color-light-cyan);
+    color: white;
   }
   .hh__tagline {
     font-size: 14px;
     line-height: 1.55;
     flex: 1;
-    color: rgba(217, 247, 245, 0.78);
+    color: rgba(255, 255, 255, 0.72);
   }
   .hh__footer {
     display: flex;
@@ -301,7 +300,7 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
     justify-content: flex-end;
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid rgba(217, 247, 245, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
   }
   .hh__cta {
     font-size: 13px;
@@ -548,19 +547,16 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
 
     [...matched, ...unmatched].forEach(card => grid!.appendChild(card));
     matched.forEach(card => {
-      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      card.style.display = '';
       card.style.opacity = '1';
       card.style.transform = 'scale(1)';
       card.style.pointerEvents = '';
-      card.style.display = '';
     });
     unmatched.forEach(card => {
-      const hubOnly = card.dataset.hubOnly === 'true';
-      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-      card.style.opacity = hubOnly ? '0' : '0.2';
-      card.style.transform = 'scale(0.97)';
+      card.style.display = 'none';
+      card.style.opacity = '0';
+      card.style.transform = '';
       card.style.pointerEvents = 'none';
-      card.style.display = hubOnly ? 'none' : '';
     });
   }
 

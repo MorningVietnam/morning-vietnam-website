@@ -75,16 +75,6 @@ const regionLabel: Record<string, string> = {
         <div class="tour-card__region-tag">{regionLabel[tour.region] ?? tour.region}</div>
         <h3 class="tour-card__name">{tour.name}</h3>
         <p class="tour-card__tagline">{tour.tagline}</p>
-        {tour.upcomingDates && tour.upcomingDates.length > 0 && (
-          <div class="tour-card__dates">
-            <span class="tour-card__dates-label">Next departures</span>
-            <div class="tour-card__dates-list">
-              {tour.upcomingDates.map((d: string) => (
-                <span class="tour-card__date-pill">{d}</span>
-              ))}
-            </div>
-          </div>
-        )}
         <div class="tour-card__footer">
           {tour.priceUSD && <span class="tour-card__price">From ${tour.priceUSD}</span>}
           <span class="tour-card__cta">View tour →</span>

@@ -293,8 +293,20 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               </div>
             )}
 
-            <!-- Dynamic tagline -->
-            <p class="td-product__tagline" id="td-tagline-display">{tour.durationOptions[0].tagline}</p>
+            <!-- Next departures or tagline -->
+            {upcomingDates && upcomingDates.length > 0 ? (
+              <div class="td-upcoming" data-dates-wrap>
+                <p class="td-upcoming__label">Next departures</p>
+                <div class="td-upcoming__pills">
+                  {upcomingDates.map((d: string) => (
+                    <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(fmtDate(d))}`}
+                       class="td-upcoming__pill" data-date={d}>{fmtDate(d)}</a>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p class="td-product__tagline" id="td-tagline-display">{tour.durationOptions[0].tagline}</p>
+            )}
 
             {!tour.comingSoon ? (
               <div class="td-product__cta" id="td-cta-display">
@@ -368,7 +380,19 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               </span>
               <span class="td-product__price-unit">/person</span>
             </div>
-            <p class="td-product__tagline">{tour.tagline}</p>
+            {upcomingDates && upcomingDates.length > 0 ? (
+              <div class="td-upcoming" data-dates-wrap>
+                <p class="td-upcoming__label">Next departures</p>
+                <div class="td-upcoming__pills">
+                  {upcomingDates.map((d: string) => (
+                    <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(fmtDate(d))}`}
+                       class="td-upcoming__pill" data-date={d}>{fmtDate(d)}</a>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p class="td-product__tagline">{tour.tagline}</p>
+            )}
 
             {!tour.comingSoon ? (
               <div class="td-product__cta">

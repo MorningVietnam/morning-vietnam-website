@@ -4316,7 +4316,7 @@ export const tours: Tour[] = [
         paxTiers: [
           { min: 1, max: 2, price: 163, priceVND: 4250000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
           { min: 3, max: 3, price: 163, priceVND: 4250000 },
-          { min: 4, max: 5, price: 159, priceVND: 4150000 },
+          { min: 4, max: 5, price: 161, priceVND: 4200000 },
           { min: 6, max: 7, price: 157, priceVND: 4100000 },
           { min: 8, max: 12, price: 155, priceVND: 4050000 },
         ],
@@ -4624,8 +4624,8 @@ export const tours: Tour[] = [
         paxTiers: [
           { min: 1, max: 2, price: 113, priceVND: 2950000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
           { min: 3, max: 3, price: 113, priceVND: 2950000 },
-          { min: 4, max: 5, price: 109, priceVND: 2850000 },
-          { min: 6, max: 7, price: 106, priceVND: 2780000 },
+          { min: 4, max: 5, price: 111, priceVND: 2900000 },
+          { min: 6, max: 7, price: 103, priceVND: 2700000 },
           { min: 8, max: 12, price: 103, priceVND: 2700000 },
         ],
       },

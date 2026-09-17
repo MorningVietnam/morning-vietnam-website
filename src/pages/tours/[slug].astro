@@ -851,21 +851,20 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               function ptY(elev: number) { return 320 - (elev / elevMax) * 270; }
 
               // --- build label lines ---
-              function labelLines(label: string): [string, string] {
-                if (label.includes(' · ')) {
-                  const idx = label.indexOf(' · ');
-                  return [label.substring(0, idx), label.substring(idx + 3)];
-                }
+              function labelLines(label: string): [string, string, string] {
+                const parts = label.split(' · ');
+                if (parts.length >= 3) return [parts[0], parts[1], parts.slice(2).join(' · ')];
+                if (parts.length === 2) return [parts[0], parts[1], ''];
                 if (label.includes(' — ')) {
                   const idx = label.indexOf(' — ');
-                  return [label.substring(0, idx), label.substring(idx + 3)];
+                  return [label.substring(0, idx), label.substring(idx + 3), ''];
                 }
                 if (label.length > 14) {
                   const mid = Math.floor(label.length / 2);
                   const spaceIdx = label.lastIndexOf(' ', mid + 4);
-                  if (spaceIdx > 0) return [label.substring(0, spaceIdx), label.substring(spaceIdx + 1)];
+                  if (spaceIdx > 0) return [label.substring(0, spaceIdx), label.substring(spaceIdx + 1), ''];
                 }
-                return [label, ''];
+                return [label, '', ''];
               }
 
               // ── CASE A: day-colored segments (lai-chau-motortour style) ──
@@ -951,18 +950,19 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                         const isDay2 = (p.day ?? 1) === 2;
                         const dotColor = isDay2 ? 'var(--color-sorbus)' : 'var(--color-java)';
                         const dotR = p.highlight ? 10 : 7;
-                        const [line1, line2] = labelLines(p.label);
+                        const [line1, line2, line3] = labelLines(p.label);
                         const fw = p.highlight ? '700' : '500';
                         const baseY = 340;
-                        const dense = total > 14;
                         const showLabel = true;
+                        const elevY = baseY + (line3 ? 39 : line2 ? 26 : 13);
                         return (
                           <g class={`td-timeline__point${p.highlight ? ' is-highlight' : ''}`}>
                             <circle cx={p.x} cy={p.y} r={dotR} fill={dotColor} stroke="white" stroke-width="2.5" />
                             {p.time && <text x={p.x} y={p.y - 18} text-anchor="middle" font-size="10" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>}
                             {showLabel && <text x={p.x} y={baseY} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>}
                             {showLabel && line2 && <text x={p.x} y={baseY + 13} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
-                            {showLabel && <text x={p.x} y={baseY + (line2 ? 26 : 13)} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>}
+                            {showLabel && line3 && <text x={p.x} y={baseY + 26} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line3}</text>}
+                            {showLabel && <text x={p.x} y={elevY} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>}
                           </g>
                         );
                       })}
@@ -1019,16 +1019,18 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                 return pts.map((p: any, i: number) => {
                   const x = ptX(i, pts.length);
                   const y = ptY(p.elevation);
-                  const [line1, line2] = labelLines(p.label);
+                  const [line1, line2, line3] = labelLines(p.label);
                   const fw = p.highlight ? '700' : '500';
                   const baseY = 340;
+                  const elevY = baseY + (line3 ? 39 : line2 ? 26 : 13);
                   return (
                     <g class={`td-timeline__point ${durClass}${p.highlight ? ' is-highlight' : ''}`} data-duration={p.durationOnly || 'all'}>
                       <circle cx={x} cy={y} r={p.highlight ? 10 : 7} fill={p.highlight ? 'var(--color-sorbus)' : 'var(--color-java)'} stroke="white" stroke-width="2.5" />
                       <text x={x} y={y - 18} text-anchor="middle" font-size="10" font-weight="700" fill="var(--color-nordic)" font-family="Commissioner, sans-serif">{p.time}</text>
                       <text x={x} y={baseY} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line1}</text>
                       {line2 && <text x={x} y={baseY + 13} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line2}</text>}
-                      <text x={x} y={baseY + (line2 ? 26 : 13)} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>
+                      {line3 && <text x={x} y={baseY + 26} text-anchor="middle" font-size="10" fill="var(--color-nordic)" font-family="Commissioner, sans-serif" font-weight={fw}>{line3}</text>}
+                      <text x={x} y={elevY} text-anchor="middle" font-size="9" fill="rgba(4,51,65,0.45)" font-family="Commissioner, sans-serif">{p.elevation}m</text>
                     </g>
                   );
                 });

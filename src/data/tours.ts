@@ -1846,30 +1846,30 @@ export const tours: Tour[] = [
     },
 
     elevationProfile: [
-      { time: "22:00", label: "Depart Hanoi",                elevation: 12,   icon: "van",      highlight: false, day: 0 },
+      { time: "22:00", label: "Depart · Hanoi",              elevation: 12,   icon: "van",      highlight: false, day: 0 },
 
       { time: "07:00", label: "Tam Đường · freshen up",      elevation: 900,  icon: "resort",   highlight: false, day: 1 },
       { time: "07:30", label: "Breakfast",                   elevation: 880,  icon: "food",     highlight: false, day: 1 },
-      { time: "09:00", label: "Đình Cát Chùa Sì",            elevation: 1200, icon: "landmark", highlight: false, day: 1 },
-      { time: "10:30", label: "Bay waterfall · Sìn Hồ",      elevation: 1450, icon: "hike",     highlight: true,  day: 1 },
+      { time: "09:00", label: "Cát Chùa Sì · Peak",          elevation: 1200, icon: "landmark", highlight: false, day: 1 },
+      { time: "10:30", label: "Sìn Hồ · Flying · Waterfall", elevation: 1450, icon: "hike",     highlight: true,  day: 1 },
       { time: "12:00", label: "Lunch",                       elevation: 1500, icon: "food",     highlight: false, day: 1 },
-      { time: "15:30", label: "Lai Hà bridge · Hang Tôm bridge", elevation: 290, icon: "landmark", highlight: false, day: 1 },
+      { time: "15:30", label: "Lai Hà & · Hang Tôm · Bridge", elevation: 290, icon: "landmark", highlight: false, day: 1 },
       { time: "17:00", label: "Mường Lay · sunset",          elevation: 265,  icon: "resort",   highlight: true,  day: 1 },
       { time: "20:00", label: "Fishing · (optional)",        elevation: 265,  icon: "hike",     highlight: false, day: 1 },
 
       { time: "08:00", label: "Depart · Mường Lay",          elevation: 265,  icon: "van",      highlight: false, day: 2 },
       { time: "10:00", label: "Khó Chua La · cave",          elevation: 520,  icon: "landmark", highlight: false, day: 2 },
       { time: "12:00", label: "Lunch",                       elevation: 950,  icon: "food",     highlight: false, day: 2 },
-      { time: "14:00", label: "Tả Phìn · stone plateau",    elevation: 1300, icon: "hike",     highlight: true,  day: 2 },
+      { time: "14:00", label: "Tả Phìn · stone plateau",     elevation: 1300, icon: "hike",     highlight: true,  day: 2 },
       { time: "15:30", label: "Thành Lống Vàng",             elevation: 1250, icon: "landmark", highlight: false, day: 2 },
-      { time: "17:30", label: "Pa Phông · suspension bridge", elevation: 380, icon: "resort",   highlight: true,  day: 2 },
+      { time: "17:30", label: "Pa Phông · suspension · bridge", elevation: 380, icon: "resort",  highlight: true,  day: 2 },
 
       { time: "07:30", label: "Pa Phông · morning",          elevation: 380,  icon: "hike",     highlight: false, day: 3 },
       { time: "09:00", label: "Boat · Da River",             elevation: 265,  icon: "van",      highlight: true,  day: 3 },
       { time: "11:30", label: "Lunch",                       elevation: 1160, icon: "food",     highlight: false, day: 3 },
       { time: "14:00", label: "Tác Tình · waterfall",        elevation: 1000, icon: "hike",     highlight: false, day: 3 },
       { time: "17:00", label: "Sì Thâu Chải · sunset",      elevation: 1450, icon: "resort",   highlight: true,  day: 3 },
-      { time: "22:00", label: "Depart → Hanoi",              elevation: 1450, icon: "van",      highlight: false, day: 3 },
+      { time: "22:00", label: "Back to Hanoi",               elevation: 1450, icon: "van",      highlight: false, day: 3 },
     ],
 
     activityCards: [

@@ -4625,7 +4625,7 @@ export const tours: Tour[] = [
           { min: 1, max: 2, price: 113, priceVND: 2950000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
           { min: 3, max: 3, price: 113, priceVND: 2950000 },
           { min: 4, max: 5, price: 111, priceVND: 2900000 },
-          { min: 6, max: 7, price: 103, priceVND: 2700000 },
+          { min: 6, max: 7, price: 107, priceVND: 2800000 },
           { min: 8, max: 12, price: 103, priceVND: 2700000 },
         ],
       },

@@ -1193,6 +1193,14 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     </section>
   )}
 
+  <!-- ═══ S5b · trekking tips photos ═══════════════════════════════ -->
+  {packingList && packingList.length > 0 && (
+    <div class="td-trek-tips">
+      <img src="/trekking-tips-1.jpg" alt="Trekking tips" loading="lazy" class="td-trek-tips__img" />
+      <img src="/trekking-tips-2.jpg" alt="Trekking tips" loading="lazy" class="td-trek-tips__img" />
+    </div>
+  )}
+
   <!-- ═══ S5c · b-packing (What to pack, trekking tours) ═══════════ -->
   {packingList && packingList.length > 0 && (
     <section class="td-packing">
@@ -3981,6 +3989,22 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   .td-safety__insurance i { flex-shrink: 0; color: var(--color-java); margin-top: 2px; }
 
   /* ── S5c · packing checklist ──────────────────────────────────── */
+  /* ── td-trek-tips (side-by-side photos before packing) ── */
+  .td-trek-tips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .td-trek-tips__img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+  @media (max-width: 640px) {
+    .td-trek-tips { grid-template-columns: 1fr; }
+  }
+
   .td-packing { background: var(--color-surface); padding: 70px 0; }
   .td-packing__inner { max-width: var(--max-width); margin: 0 auto; padding: 0 48px; }
 

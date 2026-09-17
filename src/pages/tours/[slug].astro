@@ -3993,15 +3993,21 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   .td-trek-tips {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0;
+    gap: 10px;
+    max-width: 50%;
+    margin: 0 auto;
+    padding: 40px 0;
   }
   .td-trek-tips__img {
     width: 100%;
     height: auto;
     display: block;
   }
+  @media (max-width: 900px) {
+    .td-trek-tips { max-width: 90%; }
+  }
   @media (max-width: 640px) {
-    .td-trek-tips { grid-template-columns: 1fr; }
+    .td-trek-tips { grid-template-columns: 1fr; max-width: 100%; padding: 24px 16px; }
   }
 
   .td-packing { background: var(--color-surface); padding: 70px 0; }

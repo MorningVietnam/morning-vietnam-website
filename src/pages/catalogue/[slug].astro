@@ -330,36 +330,36 @@ const peekMap = cat.peekBehind ?? {};
   }
   .flip-page[data-type="portfolio"] { background: var(--color-light-cyan); }
 
-  /* Portfolio: đổi tất cả text/controls từ trắng → nordic (dễ đọc trên nền sáng) */
+  /* Portfolio: text/controls dùng Sorbus trên nền light-cyan */
   .flip-page[data-type="portfolio"] .flip-bar {
-    border-bottom-color: rgba(4, 51, 65, 0.12);
+    border-bottom-color: rgba(234, 103, 57, 0.18);
   }
   .flip-page[data-type="portfolio"] .flip-back {
-    color: var(--color-nordic);
-    background: rgba(4, 51, 65, 0.08);
+    color: var(--color-sorbus);
+    background: rgba(234, 103, 57, 0.1);
   }
   .flip-page[data-type="portfolio"] .flip-back:hover {
-    background: rgba(4, 51, 65, 0.15);
-    color: var(--color-nordic);
+    background: rgba(234, 103, 57, 0.18);
+    color: var(--color-sorbus);
   }
-  .flip-page[data-type="portfolio"] .flip-bar__region { color: var(--color-java); }
-  .flip-page[data-type="portfolio"] .flip-bar__title h1 { color: var(--color-nordic); }
+  .flip-page[data-type="portfolio"] .flip-bar__region { color: var(--color-sorbus); }
+  .flip-page[data-type="portfolio"] .flip-bar__title h1 { color: var(--color-sorbus); }
   .flip-page[data-type="portfolio"] .flip-btn {
-    border-color: rgba(4, 51, 65, 0.25);
-    background: rgba(4, 51, 65, 0.08);
-    color: var(--color-nordic);
+    border-color: rgba(234, 103, 57, 0.35);
+    background: rgba(234, 103, 57, 0.08);
+    color: var(--color-sorbus);
   }
   .flip-page[data-type="portfolio"] .flip-btn:hover {
-    background: var(--color-nordic);
-    color: var(--color-light-cyan);
-    border-color: var(--color-nordic);
+    background: var(--color-sorbus);
+    color: white;
+    border-color: var(--color-sorbus);
   }
-  .flip-page[data-type="portfolio"] .flip-counter { color: var(--color-nordic); }
-  .flip-page[data-type="portfolio"] .flip-hint { color: rgba(4, 51, 65, 0.55); }
-  .flip-page[data-type="portfolio"] .flip-loading { color: rgba(4, 51, 65, 0.55); }
+  .flip-page[data-type="portfolio"] .flip-counter { color: var(--color-sorbus); }
+  .flip-page[data-type="portfolio"] .flip-hint { color: rgba(234, 103, 57, 0.65); }
+  .flip-page[data-type="portfolio"] .flip-loading { color: rgba(234, 103, 57, 0.7); }
   .flip-page[data-type="portfolio"] .flip-spinner {
-    border-color: rgba(4, 51, 65, 0.1);
-    border-top-color: var(--color-java);
+    border-color: rgba(234, 103, 57, 0.15);
+    border-top-color: var(--color-sorbus);
   }
 
   /* Top bar */

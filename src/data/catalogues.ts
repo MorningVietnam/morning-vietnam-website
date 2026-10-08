@@ -77,6 +77,14 @@ export const catalogues: Catalogue[] = [
     totalPages: 22,
     coverImage: '/catalogue/sapa-laichau/page-01.jpg',
   },
+  {
+    slug: 'b2b-portfolio',
+    title: 'B2B Portfolio',
+    region: 'Morning Vietnam',
+    tagline: 'Our full partner portfolio — tours, pricing, and operator info.',
+    totalPages: 20,
+    coverImage: '/catalogue/b2b-portfolio/page-01.jpg',
+  },
 ];
 
 /**

@@ -39,7 +39,7 @@ const peekMap = cat.peekBehind ?? {};
 
     <!-- Flipbook stage -->
     <div class="flip-stage" id="flip-stage">
-      <div id="flipbook" class="flipbook">
+      <div id="flipbook" class="flipbook" data-page-orientation={cat.pageOrientation ?? 'portrait'}>
         {pageUrls.map((url, i) => {
           const pageNum = i + 1;
           const isCoverPosition = i === 0 || i === pageUrls.length - 1;
@@ -161,19 +161,20 @@ const peekMap = cat.peekBehind ?? {};
   const currentEl = document.getElementById('flip-current')!;
   const totalEl = document.getElementById('flip-total')!;
 
-  // Tỉ lệ trang khớp với ảnh nguồn (A4-ish portrait)
+  // Tỉ lệ trang khớp ảnh nguồn: portrait = A4 dọc (500×707), landscape = A4 ngang (500×354)
+  const isLandscape = container.dataset.pageOrientation === 'landscape';
   const PAGE_W = 500;
-  const PAGE_H = 707;
+  const PAGE_H = isLandscape ? 354 : 707;
 
   // @ts-ignore
   const pf = new PageFlip(container, {
     width: PAGE_W,
     height: PAGE_H,
     size: 'stretch',
-    minWidth: 280,
+    minWidth: isLandscape ? 200 : 280,
     maxWidth: 700,
-    minHeight: 396,
-    maxHeight: 990,
+    minHeight: isLandscape ? 141 : 396,
+    maxHeight: isLandscape ? 495 : 990,
     drawShadow: true,
     flippingTime: 700,
     // Layout brochure chuẩn: trang 1 + trang cuối là trang ĐƠN (single),
@@ -347,6 +348,11 @@ const peekMap = cat.peekBehind ?? {};
     object-fit: cover;
     pointer-events: none;
     -webkit-user-drag: none;
+  }
+
+  /* Landscape: fill để không bị crop — tỉ lệ ảnh đã khớp container */
+  .flipbook[data-page-orientation="landscape"] .flip-page-leaf img {
+    object-fit: fill;
   }
 
   /* ── Cut-out page (PNG alpha) ──────────

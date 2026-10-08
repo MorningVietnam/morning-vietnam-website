@@ -34,7 +34,7 @@ const peekMap = cat.peekBehind ?? {};
     </div>
   </section>
 
-  <div class="flip-page">
+  <div class="flip-page" data-type={cat.type ?? 'catalogue'}>
 
     <!-- Top bar: back + title -->
     <header class="flip-bar">
@@ -327,6 +327,39 @@ const peekMap = cat.peekBehind ?? {};
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+  }
+  .flip-page[data-type="portfolio"] { background: var(--color-light-cyan); }
+
+  /* Portfolio: đổi tất cả text/controls từ trắng → nordic (dễ đọc trên nền sáng) */
+  .flip-page[data-type="portfolio"] .flip-bar {
+    border-bottom-color: rgba(4, 51, 65, 0.12);
+  }
+  .flip-page[data-type="portfolio"] .flip-back {
+    color: var(--color-nordic);
+    background: rgba(4, 51, 65, 0.08);
+  }
+  .flip-page[data-type="portfolio"] .flip-back:hover {
+    background: rgba(4, 51, 65, 0.15);
+    color: var(--color-nordic);
+  }
+  .flip-page[data-type="portfolio"] .flip-bar__region { color: var(--color-java); }
+  .flip-page[data-type="portfolio"] .flip-bar__title h1 { color: var(--color-nordic); }
+  .flip-page[data-type="portfolio"] .flip-btn {
+    border-color: rgba(4, 51, 65, 0.25);
+    background: rgba(4, 51, 65, 0.08);
+    color: var(--color-nordic);
+  }
+  .flip-page[data-type="portfolio"] .flip-btn:hover {
+    background: var(--color-nordic);
+    color: var(--color-light-cyan);
+    border-color: var(--color-nordic);
+  }
+  .flip-page[data-type="portfolio"] .flip-counter { color: var(--color-nordic); }
+  .flip-page[data-type="portfolio"] .flip-hint { color: rgba(4, 51, 65, 0.55); }
+  .flip-page[data-type="portfolio"] .flip-loading { color: rgba(4, 51, 65, 0.55); }
+  .flip-page[data-type="portfolio"] .flip-spinner {
+    border-color: rgba(4, 51, 65, 0.1);
+    border-top-color: var(--color-java);
   }
 
   /* Top bar */

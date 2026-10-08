@@ -11,6 +11,12 @@ const cat = catalogues.find((c) => c.slug === slug)!;
 const pageUrls = getPageUrls(cat);
 const cutoutSet = new Set(cat.cutoutPages ?? []);
 const peekMap = cat.peekBehind ?? {};
+const isPortfolio = cat.type === 'portfolio';
+
+// CSS custom properties truyền xuống toàn bộ .flip-page qua style attribute
+const flipVars = isPortfolio
+  ? `--fa:var(--color-sorbus);--fa-bg:rgba(234,103,57,.1);--fa-bg-hover:rgba(234,103,57,.18);--fa-border:rgba(234,103,57,.35);--fa-btn-hover-bg:var(--color-sorbus);--fa-btn-hover-color:white;--fa-hint:rgba(234,103,57,.65);--fa-bar-border:rgba(234,103,57,.18);--fa-title:var(--color-sorbus);--fa-region:var(--color-sorbus);--fa-spinner-track:rgba(234,103,57,.15);--fa-spinner-tip:var(--color-sorbus);--fa-page-bg:var(--color-light-cyan)`
+  : `--fa:rgba(255,255,255,.9);--fa-bg:rgba(255,255,255,.12);--fa-bg-hover:rgba(255,255,255,.22);--fa-border:rgba(255,255,255,.35);--fa-btn-hover-bg:white;--fa-btn-hover-color:var(--color-java);--fa-hint:rgba(255,255,255,.65);--fa-bar-border:rgba(255,255,255,.12);--fa-title:white;--fa-region:var(--color-light-cyan);--fa-spinner-track:rgba(217,247,245,.15);--fa-spinner-tip:var(--color-riptide);--fa-page-bg:var(--color-java)`;
 ---
 
 <BaseLayout
@@ -34,7 +40,7 @@ const peekMap = cat.peekBehind ?? {};
     </div>
   </section>
 
-  <div class="flip-page" data-type={cat.type ?? 'catalogue'}>
+  <div class="flip-page" style={flipVars}>
 
     <!-- Top bar: back + title -->
     <header class="flip-bar">
@@ -323,49 +329,16 @@ const peekMap = cat.peekBehind ?? {};
 
   /* ── Flipbook section ───────────────────────────── */
   .flip-page {
-    background: var(--color-java);
+    background: var(--fa-page-bg);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-  }
-  .flip-page[data-type="portfolio"] { background: var(--color-light-cyan); }
-
-  /* Portfolio: text/controls dùng Sorbus trên nền light-cyan */
-  .flip-page[data-type="portfolio"] .flip-bar {
-    border-bottom-color: rgba(234, 103, 57, 0.18);
-  }
-  .flip-page[data-type="portfolio"] .flip-back {
-    color: var(--color-sorbus);
-    background: rgba(234, 103, 57, 0.1);
-  }
-  .flip-page[data-type="portfolio"] .flip-back:hover {
-    background: rgba(234, 103, 57, 0.18);
-    color: var(--color-sorbus);
-  }
-  .flip-page[data-type="portfolio"] .flip-bar__region { color: var(--color-sorbus); }
-  .flip-page[data-type="portfolio"] .flip-bar__title h1 { color: var(--color-sorbus); }
-  .flip-page[data-type="portfolio"] .flip-btn {
-    border-color: rgba(234, 103, 57, 0.35);
-    background: rgba(234, 103, 57, 0.08);
-    color: var(--color-sorbus);
-  }
-  .flip-page[data-type="portfolio"] .flip-btn:hover {
-    background: var(--color-sorbus);
-    color: white;
-    border-color: var(--color-sorbus);
-  }
-  .flip-page[data-type="portfolio"] .flip-counter { color: var(--color-sorbus); }
-  .flip-page[data-type="portfolio"] .flip-hint { color: rgba(234, 103, 57, 0.65); }
-  .flip-page[data-type="portfolio"] .flip-loading { color: rgba(234, 103, 57, 0.7); }
-  .flip-page[data-type="portfolio"] .flip-spinner {
-    border-color: rgba(234, 103, 57, 0.15);
-    border-top-color: var(--color-sorbus);
   }
 
   /* Top bar */
   .flip-bar {
     padding: 20px 0 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid var(--fa-bar-border);
   }
   .flip-bar__inner {
     display: flex;
@@ -376,25 +349,25 @@ const peekMap = cat.peekBehind ?? {};
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--fa);
     text-decoration: none;
     font-family: var(--font-heading);
     font-weight: 600;
     font-size: 14px;
     padding: 8px 14px;
     border-radius: 100px;
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--fa-bg);
     transition: background 0.2s ease, color 0.2s ease;
     flex-shrink: 0;
   }
   .flip-back:hover {
-    background: rgba(255, 255, 255, 0.22);
-    color: white;
+    background: var(--fa-bg-hover);
+    color: var(--fa);
   }
   .flip-bar__title {
     flex: 1;
     text-align: center;
-    color: white;
+    color: var(--fa-title);
   }
   .flip-bar__region {
     display: block;
@@ -403,7 +376,7 @@ const peekMap = cat.peekBehind ?? {};
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-light-cyan);
+    color: var(--fa-region);
     margin-bottom: 4px;
   }
   .flip-bar__title h1 {
@@ -478,7 +451,7 @@ const peekMap = cat.peekBehind ?? {};
     align-items: center;
     justify-content: center;
     gap: 16px;
-    color: rgba(217, 247, 245, 0.7);
+    color: var(--fa-hint);
     font-size: 14px;
     transition: opacity 0.3s ease;
   }
@@ -489,8 +462,8 @@ const peekMap = cat.peekBehind ?? {};
   .flip-spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid rgba(217, 247, 245, 0.15);
-    border-top-color: var(--color-riptide);
+    border: 3px solid var(--fa-spinner-track);
+    border-top-color: var(--fa-spinner-tip);
     border-radius: 50%;
     animation: flip-spin 0.9s linear infinite;
   }
@@ -622,9 +595,9 @@ const peekMap = cat.peekBehind ?? {};
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.14);
-    color: white;
+    border: 1.5px solid var(--fa-border);
+    background: var(--fa-bg);
+    color: var(--fa);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -632,9 +605,9 @@ const peekMap = cat.peekBehind ?? {};
     transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
   }
   .flip-btn:hover {
-    background: white;
-    color: var(--color-java);
-    border-color: white;
+    background: var(--fa-btn-hover-bg);
+    color: var(--fa-btn-hover-color);
+    border-color: var(--fa-btn-hover-bg);
     transform: scale(1.05);
   }
   .flip-btn:active { transform: scale(0.96); }
@@ -646,7 +619,7 @@ const peekMap = cat.peekBehind ?? {};
     font-family: var(--font-heading);
     font-size: 15px;
     font-weight: 600;
-    color: white;
+    color: var(--fa);
     min-width: 80px;
     justify-content: center;
     letter-spacing: 0.04em;
@@ -656,7 +629,7 @@ const peekMap = cat.peekBehind ?? {};
   .flip-hint {
     text-align: center;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--fa-hint);
     padding: 0 16px 32px;
     margin: 0;
   }

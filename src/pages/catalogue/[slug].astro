@@ -16,8 +16,24 @@ const peekMap = cat.peekBehind ?? {};
 <BaseLayout
   title={`${cat.title} — Catalogue`}
   description={`${cat.title} destination brochure for travel partners.`}
-  navTheme="on-java"
+  navTheme="on-nordic"
 >
+  <!-- Hero banner (giống trang /catalogue) -->
+  <section class="flip-hero">
+    <div class="container flip-hero__content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <a href="/catalogue">Catalogue</a>
+        <span aria-hidden="true">›</span>
+        <span>{cat.title}</span>
+      </nav>
+      <p class="flip-hero__kicker">{cat.region}</p>
+      <h1>{cat.title}</h1>
+      <p class="flip-hero__sub">{cat.tagline}</p>
+    </div>
+  </section>
+
   <div class="flip-page">
 
     <!-- Top bar: back + title -->
@@ -260,10 +276,55 @@ const peekMap = cat.peekBehind ?? {};
 </script>
 
 <style>
+  /* ── Hero banner ───────────────────────────────── */
+  .flip-hero {
+    background: var(--color-nordic);
+    padding: var(--site-header-h) 0 64px;
+    color: white;
+  }
+  .flip-hero__content { width: 100%; }
+  .flip-hero__kicker {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-riptide);
+    margin-bottom: 12px;
+  }
+  .flip-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    color: white;
+  }
+  .flip-hero__sub {
+    font-size: 17px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 560px;
+  }
+  .breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 24px;
+  }
+  .breadcrumb a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover { color: var(--color-riptide); }
+
+  /* ── Flipbook section ───────────────────────────── */
   .flip-page {
     background: var(--color-java);
     min-height: 100vh;
-    padding-top: var(--site-header-h);
     display: flex;
     flex-direction: column;
   }
@@ -569,6 +630,14 @@ const peekMap = cat.peekBehind ?? {};
 
   /* Mobile */
   @media (max-width: 720px) {
+    .flip-hero {
+      padding-top: calc(var(--site-header-h, 84px) + 24px);
+      padding-bottom: 36px;
+    }
+    .flip-hero h1 { font-size: clamp(28px, 7vw, 40px); }
+    .flip-hero__sub { font-size: 15px; }
+    .breadcrumb { display: none; }
+
     .flip-bar__spacer { display: none; }
     .flip-bar__inner { gap: 12px; }
     .flip-back span { display: none; }

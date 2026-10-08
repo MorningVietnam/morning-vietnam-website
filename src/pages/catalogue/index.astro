@@ -29,7 +29,7 @@ import { catalogues } from '../../data/catalogues.ts';
   <section class="cat-section">
     <div class="container">
       <div class="cat-grid">
-        {catalogues.map((c) => (
+        {catalogues.filter(c => c.type !== 'portfolio').map((c) => (
           <a href={`/catalogue/${c.slug}`} class="cat-card" aria-label={`Open ${c.title} catalogue`}>
             <div class="cat-card__cover">
               <img

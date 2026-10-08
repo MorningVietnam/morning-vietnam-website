@@ -39,6 +39,8 @@ export const ui = {
     'nav.travelGuide.desc': 'Visas, money, SIM cards & more',
     'nav.catalogue': 'Catalogue',
     'nav.catalogue.desc': 'Destination brochures for agents',
+    'nav.portfolio': 'Portfolio',
+    'nav.portfolio.desc': 'Full B2B partner portfolio — tours & pricing',
     'nav.partnerWithUs': 'Partner with us',
     'nav.partnerWithUs.desc': 'Pricing & commission — get in touch',
 
@@ -114,6 +116,8 @@ export const ui = {
     'nav.travelGuide.desc': 'Visa, tiền tệ, SIM card & hơn thế',
     'nav.catalogue': 'Catalogue',
     'nav.catalogue.desc': 'Brochure điểm đến cho đại lý',
+    'nav.portfolio': 'Portfolio',
+    'nav.portfolio.desc': 'Danh mục B2B đầy đủ — tour & giá',
     'nav.partnerWithUs': 'Hợp tác cùng chúng tôi',
     'nav.partnerWithUs.desc': 'Giá & hoa hồng — liên hệ ngay',
 

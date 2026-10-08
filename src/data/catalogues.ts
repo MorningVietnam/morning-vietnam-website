@@ -18,6 +18,8 @@
 export interface Catalogue {
   /** Dùng làm URL: /catalogue/<slug> */
   slug: string;
+  /** 'catalogue' (mặc định) = brochure điểm đến · 'portfolio' = tài liệu B2B riêng */
+  type?: 'catalogue' | 'portfolio';
   /** Tên hiển thị trên grid và header flipbook */
   title: string;
   /** Vùng (hiển thị nhỏ trên card) */
@@ -79,6 +81,7 @@ export const catalogues: Catalogue[] = [
   },
   {
     slug: 'b2b-portfolio',
+    type: 'portfolio',
     title: 'B2B Portfolio',
     region: 'Morning Vietnam',
     tagline: 'Our full partner portfolio — tours, pricing, and operator info.',

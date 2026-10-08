@@ -129,6 +129,10 @@ const marqueeItems = [
                 <span class="nav-dropdown__label">{t('nav.catalogue')}</span>
                 <span class="nav-dropdown__desc">{t('nav.catalogue.desc')}</span>
               </a>
+              <a href="/catalogue/b2b-portfolio" class="nav-dropdown__link" role="menuitem">
+                <span class="nav-dropdown__label">{t('nav.portfolio')}</span>
+                <span class="nav-dropdown__desc">{t('nav.portfolio.desc')}</span>
+              </a>
               <a href={l('/contact')} class="nav-dropdown__link" role="menuitem">
                 <span class="nav-dropdown__label">{t('nav.partnerWithUs')}</span>
                 <span class="nav-dropdown__desc">{t('nav.partnerWithUs.desc')}</span>
@@ -202,6 +206,7 @@ const marqueeItems = [
       <span>{t('nav.partners')}</span>
       <ul class="mobile-nav__sub">
         <li><a href={l('/catalogue')}>{t('nav.catalogue')}</a></li>
+        <li><a href="/catalogue/b2b-portfolio">{t('nav.portfolio')}</a></li>
         <li><a href={l('/contact')}>{t('nav.partnerWithUs')}</a></li>
       </ul>
     </li>

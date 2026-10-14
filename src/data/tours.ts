@@ -38,11 +38,11 @@
  *   Status on this site: fansipan-3d2n / fansipan-trekking → tier 2 "Advanced".
  *   putaleng-3d2n → tier 4 "Hard" (relabeled 2026-09-16 from "Challenging",
  *   which was tier 3's name — level: 4 itself was already correct).
- *   putaleng-trekking (2D1N) has no tripGrading block at all yet (no route
- *   map / safetyInfo / packingList section renders for it) — not added here
- *   since that's a bigger scope-add than a label/data fix; flagging for
- *   Thế Anh to decide whether it should get the same trekking layout as its
- *   3D2N sibling.
+ *   putaleng-trekking (2D1N) → tier 4 "Hard" too (it gained its own
+ *   tripGrading + gpxFile later; label was "Challenging", fixed 2026-10-12).
+ *   It still has no safetyInfo / packingList block.
+ *   hoang-lien-old-growth-forest-trek → day trek, not a ranked peak, so the
+ *   chart doesn't apply directly; graded level 2 (see its tripGrading).
  */
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -125,6 +125,7 @@ export interface Tour {
   packingList?:      PackingCategory[];
   gpxFile?:          string;   // path to .gpx track file, e.g. "/tours/putaleng/putaleng-3d2n.gpx" — renders an interactive route map when present
   routeMarkers?:     RouteMarkers;  // the 4 map markers (start/summit/shelter/end) for the gpxFile route map above — required if gpxFile is set, otherwise the map renders with no markers
+  privateRoute?:     boolean;  // true = deliberately don't publish the exact route: hides the "Route map" section AND the elevation chart, and suppresses their "pending" placeholders. Use together with tripGrading (which would otherwise show a "Route map pending" box when gpxFile is missing).
 }
 
 // ── Shared defaults ────────────────────────────────────────────────────────
@@ -4783,7 +4784,7 @@ export const tours: Tour[] = [
 
     tripGrading: {
       level: 4,
-      label: "Challenging",
+      label: "Hard",
       summary: "Two big trekking days through primary old-growth forest on a trail with no tourist infrastructure. Right for fit, experienced walkers — not a beginner's first mountain.",
       criteria: [
         { id: "physical",   label: "Physical demand", score: 4, summary: "Day 1 gains 1,300m over ~10km from trailhead to summit, then descends to the shelter — expect 8–9 hours total. Day 2 descends 900m over 13km with a partial re-ascent to Rhododendron Peak. ~23km total traverse." },
@@ -4812,6 +4813,206 @@ export const tours: Tour[] = [
         label: 'Finish — Sì Thâu Chải', desc: 'Where the trek ends, ~1,546m.'
       }
     },
+
+    unlockChallenge: null,
+  },
+
+  // ── Hoàng Liên Old-Growth Forest Trek (1 day) ─────────────────────────────
+  // Route is intentionally NOT published: no gpxFile / routeMarkers / elevationProfile,
+  // and `privateRoute: true` hides the map + chart sections. Keep place names of the
+  // trailhead out of every public string (content, slug, image names, alt text, SEO).
+  {
+    slug:        "hoang-lien-old-growth-forest-trek",
+    name:        "Hoàng Liên Old-Growth Forest Trek",
+    region:      "north",
+    tags:        ["hiking"],
+    duration:    ["1 day"],
+    price:       "From $30",
+    priceUSD:    45,
+    priceVND:    1180000,
+    tagline:     "One day inside the old-growth forest of Hoàng Liên National Park — ancient trees, a stream and a waterfall, back in Sa Pa by evening.",
+    description: "A full day on foot in the old-growth forest of Hoàng Liên National Park, half an hour from Sa Pa town. After registering at the park entrance you climb through forest ridges and rocky slopes to a sturdy rest hut at around 2,200m, where lunch is served in the forest. The afternoon goes deeper into the core of the forest, among rare trees such as trâm ổi and ancient wild tea, before a descent past a stream and a large waterfall hidden in the old growth. About 11km and 800m of climbing in total, with a guide and porter throughout and a car waiting at the end of the trail.",
+    highlights: [
+      "Old-growth forest inside Hoàng Liên National Park — one day, no overnight",
+      "Lunch in the forest at a sturdy rest hut, around 2,200m",
+      "Rare trees in the core forest: trâm ổi, ancient wild tea trees",
+      "Stream and waterfall hidden deep in the old growth, on the way down",
+      "Guide and porter included · small groups, max 15 people",
+    ],
+    included: [
+      "Welcome gift — Morning Vietnam signature pack",
+      "Drinking water throughout the tour",
+      "National park entrance ticket",
+      "Travel insurance",
+      "Licensed trek guide + porter",
+      "Transport: Sa Pa town → park entrance → Sa Pa town (motorbike for 1–2 guests, car for 3+)",
+      "Lunch in the forest",
+    ],
+    hub:         "Sa Pa",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    // Photos live in /tours/hoang-lien-forest/ (neutral folder name on purpose).
+    image:       "/tours/hoang-lien-forest/1.webp",
+
+    panoramicImage: "/tours/hoang-lien-forest/panorama.webp",
+
+    gallery: [
+      { src: "/tours/hoang-lien-forest/1.webp",  alt: "Old-growth forest — a giant tree towering over the trekking group" },
+      { src: "/tours/hoang-lien-forest/2.webp",  alt: "A forest stream crossing on the trail" },
+      { src: "/tours/hoang-lien-forest/3.webp",  alt: "Trekking group on the rocky forest trail" },
+      { src: "/tours/hoang-lien-forest/4.webp",  alt: "Looking up through the old-growth canopy" },
+      { src: "/tours/hoang-lien-forest/5.webp",  alt: "Bright green moss carpeting the forest floor" },
+      { src: "/tours/hoang-lien-forest/6.webp",  alt: "Lunch served in the forest — local dishes and sticky rice" },
+      { src: "/tours/hoang-lien-forest/7.webp",  alt: "Morning Vietnam group at the national park ranger station" },
+      { src: "/tours/hoang-lien-forest/8.webp",  alt: "Trekkers pausing above a green valley" },
+      { src: "/tours/hoang-lien-forest/9.webp",  alt: "Open green valley under big clouds" },
+      { src: "/tours/hoang-lien-forest/10.webp", alt: "Old forest canopy against the sky" },
+      { src: "/tours/hoang-lien-forest/11.webp", alt: "Rest stop on a grassy slope below the forest" },
+      { src: "/tours/hoang-lien-forest/12.webp", alt: "Distant ridge above the clouds" },
+      { src: "/tours/hoang-lien-forest/13.webp", alt: "Mountain view over forested ridges" },
+    ],
+
+    selectorMode: 'vehicle-only',
+    durationOptions: [
+      {
+        id:       "1day",
+        label:    "1 day from Sa Pa",
+        price:    45,
+        priceVND: 1180000,
+        tagline:  "Sa Pa town → park entrance → old-growth forest, rest-hut lunch, waterfall → back to Sa Pa by 16:30.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book the Hoàng Liên Old-Growth Forest Trek (1 day). Can you tell me about available dates?",
+        // USD = VND ÷ ~26,100 (same rate as the other tours), rounded to the nearest dollar.
+        paxTiers: [
+          { min: 1,  max: 1,  price: 52, priceVND: 1350000, note: "Groups of 1–2 travel by motorbike." },
+          { min: 2,  max: 2,  price: 46, priceVND: 1200000, note: "Groups of 1–2 travel by motorbike." },
+          { min: 3,  max: 3,  price: 45, priceVND: 1180000, note: "Groups of 3 or more travel by car." },
+          { min: 4,  max: 5,  price: 43, priceVND: 1120000, note: "Groups of 3 or more travel by car." },
+          { min: 6,  max: 7,  price: 38, priceVND: 1000000, note: "Groups of 3 or more travel by car." },
+          { min: 8,  max: 9,  price: 36, priceVND: 930000,  note: "Groups of 3 or more travel by car." },
+          { min: 10, max: 15, price: 30, priceVND: 790000,  note: "Groups of 3 or more travel by car." },
+        ],
+      },
+    ],
+
+    tripInfo: {
+      "1day": [
+        { icon: "map-pin",         label: "Pickup",    value: "Sa Pa town centre or your hotel · 08:30" },
+        { icon: "users",           label: "Group size", value: "1 – 15 people · small groups" },
+        { icon: "car",             label: "Transport", value: "Motorbike (1–2 guests) or car (3+ guests) · Sa Pa ↔ park entrance" },
+        { icon: "tools-kitchen-2", label: "Meals",     value: "Lunch in the forest · drinking water" },
+        { icon: "trending-up",     label: "Trek",      value: "~11km · ~800m total gain" },
+        { icon: "calendar-check",  label: "Duration",  value: "1 day · 08:30 pickup · back in Sa Pa ~16:30" },
+        { icon: "id",              label: "Required",  value: "Original passport or national ID · may be checked at the park entrance" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Into the old-growth forest — rest-hut lunch, rare trees, waterfall",
+        // stats.hours is derived from the schedule (09:15–11:45 + 13:00–~16:15 of walking);
+        // `down` deliberately omitted — not supplied.
+        stats: { hours: "5–6 hrs trekking", distanceKm: 11, up: 800 },
+        meals: "Lunch in the forest",
+        narrative: "We collect you in Sa Pa and reach Hoàng Liên National Park by 09:00 to register your group for the forest. The first stretch, about 4km and 430m of climbing, winds through forest ridges and rocky slopes to a sturdy rest hut at around 2,200m, where lunch is served. After the break the trail turns deeper into the core of the forest — roughly 3.5 to 4km, with a further 200m of climbing — passing rare trees such as trâm ổi and ancient wild tea. From mid-afternoon the way leads down, past a stream and a large waterfall tucked into the old growth, before your car meets you for the ride back to Sa Pa town centre.",
+        slots: [
+          "08:30  Pickup · Sa Pa town centre or hotel",
+          "09:00  Arrive Hoàng Liên National Park · register for the forest",
+          "09:15  Trek begins · forest ridges and rocky slopes · ~4.2km, ~430m gain to the rest hut (~2,200m)",
+          "11:45  Lunch at the rest hut",
+          "13:00  Deeper into the core forest · rare trees: trâm ổi, ancient wild tea · ~3.5–4km, ~200m gain",
+          "15:00  Descent · stream and waterfall in the old-growth forest",
+          "16:30  Car pickup · back to Sa Pa town centre",
+        ],
+      },
+    ],
+
+    pitch: {
+      headline: "A day inside the forest, not just beside it.",
+      bullets: [
+        "The trail leads into the old-growth core of Hoàng Liên National Park — rare trees, deep shade, and the specific quiet of forest that has stood for a very long time",
+        "Lunch is served at a sturdy rest hut around 2,200m, so you eat in the forest instead of hiking back out for it",
+        "The way down passes a stream and a large waterfall hidden in the old growth — the part of the day most people don't expect",
+      ],
+      closingLine: "Eleven kilometres, one day, and a forest that makes Sa Pa feel far away.",
+    },
+
+    storytelling: {
+      headline: "Old-growth forest, half an hour from Sa Pa.",
+      paragraphs: [
+        "Above Sa Pa the Hoàng Liên range is blanketed by forest that most visitors only see from a distance. Hoàng Liên National Park protects it, and the walk begins where the park registers its visitors — a quiet checkpoint, then the trail.",
+        "The climb is steady rather than brutal: forest ridges, rocky steps, a rest hut waiting around 2,200m. Beyond it the forest changes character. The trees are older, the light lower, and your guide points out rare species along the way — trâm ổi, ancient wild tea.",
+        "The descent is the reward. A stream appears first, then a large waterfall tucked into the old growth. By 16:30 the car is waiting and the day is over — a full forest day with no night away from Sa Pa.",
+      ],
+      pullImage: "/tours/hoang-lien-forest/storytelling.webp",
+    },
+
+    // No elevationProfile / activityCards on purpose — the itinerary day card above
+    // carries the story, and `privateRoute` keeps the elevation chart hidden.
+    privateRoute: true,
+
+    welcomePack: {
+      ...DEFAULT_WELCOME_PACK,
+      intro: "Your host meets you in Sa Pa with a Morning Vietnam pack before the drive to the park.",
+    },
+
+    seasonality: {
+      intro: "This forest can be trekked in every season — there is no off month for the trail.",
+      months: [
+        { name: "Jan", level: "good" }, { name: "Feb", level: "good" }, { name: "Mar", level: "good" },
+        { name: "Apr", level: "good" }, { name: "May", level: "good" }, { name: "Jun", level: "good" },
+        { name: "Jul", level: "good" }, { name: "Aug", level: "good" }, { name: "Sep", level: "good" },
+        { name: "Oct", level: "good" }, { name: "Nov", level: "good" }, { name: "Dec", level: "good" },
+      ],
+      notes: [
+        { title: "Open all year", desc: "We run this trek in every month of the year. Check the forecast with your host before you go and pack for the weather on the day." },
+      ],
+    },
+
+    faqs: [
+      { q: "How fit do I need to be?", a: "Moderate to good fitness. The day covers about 11km and roughly 800m of total climbing over 5–6 hours of walking, with a lunch break in the middle. No technical climbing, but there are rocky slopes and steady uphill sections. Regular walkers will manage comfortably." },
+      { q: "Do I travel by motorbike or car?", a: "It depends on group size. Groups of 1–2 travel by motorbike; groups of 3 or more travel by car. The trek itself is identical either way." },
+      { q: "What's included in the price?", a: "Transport from Sa Pa town and back, lunch in the forest, drinking water, national park entrance ticket, travel insurance, a licensed trek guide and porter, and the Morning Vietnam welcome kit." },
+      { q: "What's the maximum group size?", a: "Up to 15 people. Prices drop as the group grows — see the group-size selector above." },
+      { q: "What should I bring?", a: "Broken-in waterproof hiking boots with ankle support, quick-dry clothes, a rain jacket, a hat and sunscreen, insect repellent, and a small daypack. Drinking water is provided; bring a refillable bottle if you like." },
+      ...DEFAULT_FAQS.slice(4),
+    ],
+
+    // Level/label: this is a day trek, not one of the 15 ranked peaks, so the Morning
+    // Vietnam difficulty chart (see top of file) doesn't place it directly. Graded
+    // level 2 — DRAFT, for Thế Anh to confirm.
+    tripGrading: {
+      level: 2,
+      label: "Advanced",
+      summary: "A full day on forest trail with a steady climb and rocky sections, but no overnight and no technical climbing. Right for reasonably fit walkers who want real forest rather than a short stroll.",
+      criteria: [
+        { id: "physical",   label: "Physical demand", score: 3, summary: "About 11km and 800m of total climbing across 5–6 hours of walking, on forest ridges and rocky slopes, with a lunch break at the rest hut." },
+        { id: "altitude",   label: "Altitude & terrain", score: 2, summary: "The rest hut sits at around 2,200m — well below the range where altitude is a concern. No overnight at height, no technical climbing." },
+        { id: "remoteness", label: "Remoteness", score: 2, summary: "A day inside the national park with a registered entry, a guide and porter throughout, and a vehicle waiting at the end of the trail." },
+      ],
+    },
+
+    // Modelled on the Fansipan tours' safetyInfo, as instructed by Thế Anh (2026-10-12).
+    safetyInfo: {
+      medicalAccessTime: "~2–3 hours from the deepest point on the route to hospital-level care in Sa Pa.",
+      guideRatio: "A lead guide travels with every group, and porter support scales up with group size — roughly one extra porter for every 2–4 additional guests.",
+      commsNote: "Phone signal is unreliable inside the forest. Your guide carries the group's primary means of communication — let family know not to expect contact for most of the day.",
+      insuranceNote: "Travel insurance is included for every guest, with coverage up to 100,000,000₫ per person per incident — including emergency evacuation costs.",
+      rescueSteps: [
+        { title: "On-site response", detail: "Your guide carries a first-aid kit and is trained in wilderness first response. Minor injuries and blisters are treated on the trail and the group's pace is adjusted immediately." },
+        { title: "Assisted evacuation", detail: "If a guest can't continue but isn't in danger, the guide and porter organise a supported descent to the closest point a vehicle can reach." },
+        { title: "Medical evacuation", detail: "For serious cases, the guide contacts local emergency support and coordinates transport to the nearest hospital-level facility in Sa Pa." },
+      ],
+    },
+
+    packingList: [
+      { icon: "shirt",         label: "Clothing",         items: ["Quick-dry hiking clothes (avoid cotton)", "Light waterproof rain jacket", "Hat and sunscreen"] },
+      { icon: "shoe",          label: "Footwear",         items: ["Broken-in waterproof hiking boots with ankle support", "Spare socks"] },
+      { icon: "first-aid-kit", label: "Health & comfort", items: ["Personal medication", "Blister plasters", "Insect repellent", "Refillable water bottle (water provided)"] },
+      { icon: "id",            label: "Documents & extras", items: ["Original passport or national ID", "Small daypack", "Cash for tips (not included in tour price)"] },
+    ],
 
     unlockChallenge: null,
   },

@@ -68,6 +68,9 @@ const routeMarkers = gpxFile ? ((tour as any).routeMarkers || null) : null;
 // only appears on tours that have opted in with the new data — keeps
 // Fansipan etc. untouched until they're upgraded too.
 const isTrekkingTour = !!tripGrading;
+// privateRoute: deliberately don't publish the exact route → hide the route-map
+// section and the elevation chart (and their "pending" placeholders).
+const privateRoute   = !!(tour as any).privateRoute;
 
 const tripInfoData   = (tour.tripInfo as any) || null;
 const hasTripInfo    = !!tripInfoData;
@@ -548,7 +551,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   )}
 
   <!-- ═══ S-routemap · interactive GPX route map (trekking tours) ═══ -->
-  {isTrekkingTour && (
+  {isTrekkingTour && !privateRoute && (
     <section class="td-routemap">
       <div class="td-routemap__inner">
         <p class="section-label">Route map</p>
@@ -806,8 +809,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   <section class="td-timeline">
     <div class="td-timeline__inner">
       <p class="section-label">The journey</p>
-      <h2 class="td-timeline__heading">{isMultiDay ? 'The journey, mapped.' : 'A day, mapped.'}</h2>
-      <p class="td-timeline__sub">Time across, elevation up. Every spike is a moment worth remembering.</p>
+      <h2 class="td-timeline__heading">{privateRoute ? 'The day, step by step.' : (isMultiDay ? 'The journey, mapped.' : 'A day, mapped.')}</h2>
+      {!privateRoute && <p class="td-timeline__sub">Time across, elevation up. Every spike is a moment worth remembering.</p>}
 
       {elevation && elevation.length > 0 ? (
         <div class="td-timeline__chart-wrap">
@@ -1055,7 +1058,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
             <line x1="60" y1="320" x2="1160" y2="320" stroke="var(--color-nordic)" stroke-width="1" opacity="0.2" />
           </svg>
         </div>
-      ) : (
+      ) : privateRoute ? null : (
         <div class="td-timeline__placeholder">
           <strong>Timeline data pending.</strong>
           <p>Elevation profile for {tour.name} will be added once the route is finalized.</p>

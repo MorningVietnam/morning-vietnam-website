@@ -26,6 +26,7 @@ export const ui = {
     // ── Thanh điều hướng ──
     'nav.explore': 'Explore',
     'nav.tours': 'Tours',
+    'nav.journal': 'Journal',
     'nav.partners': 'For Partners',
     'nav.contact': 'Contact',
 
@@ -103,6 +104,7 @@ export const ui = {
     // ── Thanh điều hướng ──
     'nav.explore': 'Khám phá',
     'nav.tours': 'Tour',
+    'nav.journal': 'Journal',
     'nav.partners': 'Đối tác',
     'nav.contact': 'Liên hệ',
 

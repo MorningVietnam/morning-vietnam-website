@@ -37,6 +37,7 @@ const l = (p: string) => navPath(p, lang);
 const base       = stripLang(path);
 const isExplore  = base.startsWith('/explore');
 const isTours    = base === '/tours' || base.startsWith('/tours/');
+const isJournal  = base === '/blog' || base.startsWith('/blog/');
 const isContact  = base === '/contact';
 const isPartners = base.startsWith('/catalogue');
 
@@ -114,6 +115,14 @@ const marqueeItems = [
               href={l('/tours')}
               class:list={["nav-link", { "nav-link--active": isTours }]}
             >{t('nav.tours')}</a>
+          </li>
+
+          <!-- Journal (direct link) -->
+          <li class="nav-item">
+            <a
+              href={l('/blog')}
+              class:list={["nav-link", { "nav-link--active": isJournal }]}
+            >{t('nav.journal')}</a>
           </li>
 
           <!-- For Partners (dropdown — B2B) -->
@@ -202,6 +211,7 @@ const marqueeItems = [
       </ul>
     </li>
     <li><a href={l('/tours')}>{t('nav.tours')}</a></li>
+    <li><a href={l('/blog')}>{t('nav.journal')}</a></li>
     <li class="mobile-nav__group">
       <span>{t('nav.partners')}</span>
       <ul class="mobile-nav__sub">

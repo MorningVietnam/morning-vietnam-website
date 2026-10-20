@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import mdx from '@astrojs/mdx';
 
 export default defineConfig({
   site: 'https://morningvietnam.co',
@@ -20,6 +21,7 @@ export default defineConfig({
   },
 
   integrations: [
+    mdx(),
     sitemap({
       // Khai báo ngôn ngữ để sitemap tự sinh thẻ hreflang cho Google —
       // đây là thứ giúp Google hiểu /tours và /vi/tours là cùng 1 trang.

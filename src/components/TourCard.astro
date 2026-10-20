@@ -55,7 +55,7 @@ const regionLabel: Record<string, string> = {
   {tour.comingSoon ? (
     <div class="tour-card__inner tour-card__inner--soon">
       <div class="tour-card__image">
-        <img src={tour.image} alt={tour.name} loading="lazy" />
+        <img src={tour.image} alt={tour.name} loading="lazy" style={tour.imagePosition ? `object-position:${tour.imagePosition}` : undefined} />
         <div class="tour-card__overlay-soon">Coming Soon</div>
       </div>
       <div class="tour-card__body">
@@ -72,7 +72,7 @@ const regionLabel: Record<string, string> = {
   ) : (
     <a href={tour.hubUrl ?? `/tours/${tour.slug}`} class="tour-card__inner">
       <div class="tour-card__image">
-        <img src={tour.image} alt={tour.name} loading="lazy" />
+        <img src={tour.image} alt={tour.name} loading="lazy" style={tour.imagePosition ? `object-position:${tour.imagePosition}` : undefined} />
         <div class="tour-card__badge">{tour.duration.join(' / ')}</div>
       </div>
       <div class="tour-card__body">

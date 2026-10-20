@@ -64,6 +64,9 @@ const gpxFile      = (tour as any).gpxFile || null;
 // per-tour data from tours.ts (`routeMarkers`) so each trekking tour's map shows
 // its own real coordinates instead of accidentally reusing Putaleng's.
 const routeMarkers = gpxFile ? ((tour as any).routeMarkers || null) : null;
+// Optional per-day line colours: one entry per <trk> in the GPX, in order. When absent
+// (every tour before Ky Quan San) the whole track is drawn as one orange line, as before.
+const routeDays    = gpxFile ? ((tour as any).routeDays || null) : null;
 // Gated on tripGrading (not just the "hiking" tag) so the new trekking layout
 // only appears on tours that have opted in with the new data — keeps
 // Fansipan etc. untouched until they're upgraded too.
@@ -578,10 +581,18 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
             </div>
 
             <div class="td-routemap__mapwrap">
-              <div id="td-gpx-map" class="td-routemap__map" data-gpx={gpxFile} data-markers={JSON.stringify(routeMarkers)}></div>
-              <div id="td-gpx-map-3d" class="td-routemap__map td-routemap__map--3d" data-gpx={gpxFile} data-markers={JSON.stringify(routeMarkers)}></div>
+              <div id="td-gpx-map" class="td-routemap__map" data-gpx={gpxFile} data-markers={JSON.stringify(routeMarkers)} data-days={routeDays ? JSON.stringify(routeDays) : undefined}></div>
+              <div id="td-gpx-map-3d" class="td-routemap__map td-routemap__map--3d" data-gpx={gpxFile} data-markers={JSON.stringify(routeMarkers)} data-days={routeDays ? JSON.stringify(routeDays) : undefined}></div>
               <p class="td-routemap__rotatehint" id="td-rotate-hint">↻ Drag compass to rotate</p>
             </div>
+
+            {routeDays && (
+              <ul class="td-routemap__legend" aria-label="Route legend">
+                {routeDays.map((d: {label: string; color: string}) => (
+                  <li><span class="td-routemap__legend-swatch" style={`background:${d.color}`}></span>{d.label}</li>
+                ))}
+              </ul>
+            )}
 
             <p class="td-routemap__note">Satellite imagery via Esri · actual GPS track recorded on this route</p>
 
@@ -643,17 +654,47 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                   pane: 'labelsPane'
                 }).addTo(map);
 
-                new L.GPX(mapEl.dataset.gpx, {
-                  async: true,
-                  /* We draw our own start/end/summit/shelter markers below —
-                     turn off leaflet-gpx's built-in blue pins (its "markers"
-                     option, not "marker_options", is what actually controls
-                     whether they get created). */
-                  markers: { startIcon: false, endIcon: false },
-                  polyline_options: { color: '#ea6739', weight: 4, opacity: 0.9 }
-                }).on('loaded', function (e) {
-                  map.fitBounds(e.target.getBounds());
-                }).addTo(map);
+                /* Optional per-day colours (tour.routeDays → data-days). One entry per
+                   <trk> in the GPX file, in order. Without it we use leaflet-gpx and
+                   draw the whole track as a single orange line (all older tours). */
+                var dayStyles = [];
+                try { dayStyles = JSON.parse(mapEl.dataset.days || '[]') || []; } catch (e) { dayStyles = []; }
+
+                /* Read the GPX as one list of [lat, lon] points per <trk>. */
+                function readTracks(xml) {
+                  var doc = new DOMParser().parseFromString(xml, 'text/xml');
+                  return Array.prototype.slice.call(doc.getElementsByTagName('trk')).map(function (trk) {
+                    return Array.prototype.slice.call(trk.getElementsByTagName('trkpt')).map(function (pt) {
+                      return [parseFloat(pt.getAttribute('lat')), parseFloat(pt.getAttribute('lon'))];
+                    });
+                  }).filter(function (t) { return t.length; });
+                }
+
+                if (dayStyles.length) {
+                  fetch(mapEl.dataset.gpx)
+                    .then(function (r) { return r.text(); })
+                    .then(function (xml) {
+                      var all = [];
+                      readTracks(xml).forEach(function (pts, i) {
+                        var style = dayStyles[i] || dayStyles[dayStyles.length - 1];
+                        L.polyline(pts, { color: style.color, weight: 4, opacity: 0.95 }).addTo(map);
+                        all = all.concat(pts);
+                      });
+                      if (all.length) map.fitBounds(L.latLngBounds(all));
+                    });
+                } else {
+                  new L.GPX(mapEl.dataset.gpx, {
+                    async: true,
+                    /* We draw our own start/end/summit/shelter markers below —
+                       turn off leaflet-gpx's built-in blue pins (its "markers"
+                       option, not "marker_options", is what actually controls
+                       whether they get created). */
+                    markers: { startIcon: false, endIcon: false },
+                    polyline_options: { color: '#ea6739', weight: 4, opacity: 0.9 }
+                  }).on('loaded', function (e) {
+                    map.fitBounds(e.target.getBounds());
+                  }).addTo(map);
+                }
 
                 Object.keys(markers).forEach(function (key) {
                   var m = markers[key];
@@ -733,17 +774,36 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                         });
                         if (!pts.length) return;
 
-                        map3d.addSource('track', {
-                          type: 'geojson',
-                          data: { type: 'Feature', geometry: { type: 'LineString', coordinates: pts } }
-                        });
-                        map3d.addLayer({
-                          id: 'track-line',
-                          type: 'line',
-                          source: 'track',
-                          layout: { 'line-join': 'round', 'line-cap': 'round' },
-                          paint: { 'line-color': '#ea6739', 'line-width': 4 }
-                        });
+                        var lineLayout = { 'line-join': 'round', 'line-cap': 'round' };
+                        if (dayStyles.length) {
+                          /* one coloured line per <trk> (lon/lat order for MapLibre) */
+                          readTracks(xml).forEach(function (latlon, i) {
+                            var style = dayStyles[i] || dayStyles[dayStyles.length - 1];
+                            map3d.addSource('track-' + i, {
+                              type: 'geojson',
+                              data: { type: 'Feature', geometry: { type: 'LineString', coordinates: latlon.map(function (p) { return [p[1], p[0]]; }) } }
+                            });
+                            map3d.addLayer({
+                              id: 'track-line-' + i,
+                              type: 'line',
+                              source: 'track-' + i,
+                              layout: lineLayout,
+                              paint: { 'line-color': style.color, 'line-width': 4 }
+                            });
+                          });
+                        } else {
+                          map3d.addSource('track', {
+                            type: 'geojson',
+                            data: { type: 'Feature', geometry: { type: 'LineString', coordinates: pts } }
+                          });
+                          map3d.addLayer({
+                            id: 'track-line',
+                            type: 'line',
+                            source: 'track',
+                            layout: lineLayout,
+                            paint: { 'line-color': '#ea6739', 'line-width': 4 }
+                          });
+                        }
 
                         var bounds = pts.reduce(function (b, c) { return b.extend(c); }, new maplibregl.LngLatBounds(pts[0], pts[0]));
                         map3d.fitBounds(bounds, { padding: 40, pitch: 65, bearing: -20, duration: 0 });
@@ -3809,6 +3869,26 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     height: 22px;
     font-size: 10.5px;
     box-shadow: 0 1.5px 5px rgba(4,51,65,0.45), 0 0 0 2px white;
+  }
+
+  .td-routemap__legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 22px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--color-nordic);
+  }
+  .td-routemap__legend li { display: flex; align-items: center; gap: 8px; }
+  .td-routemap__legend-swatch {
+    width: 26px;
+    height: 5px;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(4,51,65,0.18);
   }
 
   .td-routemap__note {

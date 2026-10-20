@@ -8,6 +8,8 @@ const HIKING_SLUGS = [
   'fansipan-trekking',
   'putaleng-3d2n',
   'putaleng-trekking',
+  'ky-quan-san-4d3n',
+  'ky-quan-san-trekking',
   'sapa-trekking-classic',
   'sapa-nam-cang',
   'into-nam-luc',
@@ -27,7 +29,7 @@ function fmtDate(iso: string) {
 
 <BaseLayout
   title="Hiking & Trekking — Morning Vietnam"
-  description="From Mường Hoa valley treks to Fansipan's 3,143m summit, Putaleng's rhododendron ridge, and Vietnam's easternmost coastline at Mũi Đôi. Nine hiking tours."
+  description="From Mường Hoa valley treks to Fansipan's 3,143m summit, Putaleng's rhododendron ridge, and Vietnam's easternmost coastline at Mũi Đôi. Eleven hiking tours."
 >
 
   <!-- ══════════════════════════════════════════════════════
@@ -52,7 +54,7 @@ function fmtDate(iso: string) {
           <span class="hub-stat__label">Fansipan · Roof of Indochina</span>
         </div>
         <div class="hub-stat">
-          <span class="hub-stat__num">9</span>
+          <span class="hub-stat__num">11</span>
           <span class="hub-stat__label">Hiking routes · 1 day → 3D2N</span>
         </div>
         <div class="hub-stat">
@@ -75,7 +77,7 @@ function fmtDate(iso: string) {
     <div class="container">
       <div class="hub-tours__header">
         <span class="section-eyebrow">Choose your trail</span>
-        <h2>Nine hiking routes. Different depths.</h2>
+        <h2>Eleven hiking routes. Different depths.</h2>
         <p class="hub-tours__sub">Valley treks, jungle trails, a 3,143m summit — and Vietnam's easternmost sunrise. All small groups, all done properly.</p>
       </div>
 
@@ -90,7 +92,7 @@ function fmtDate(iso: string) {
               <a href={href} class="hub-card__inner">
 
                 <div class="hub-card__image">
-                  <img src={tour.image} alt={tour.name} loading={i < 2 ? 'eager' : 'lazy'} />
+                  <img src={tour.image} alt={tour.name} loading={i < 2 ? 'eager' : 'lazy'} style={tour.imagePosition ? `object-position:${tour.imagePosition}` : undefined} />
                   <span class="hub-card__duration">{durationLabel}</span>
                   <span class="hub-card__departs">📍 From {tour.hub}</span>
                 </div>

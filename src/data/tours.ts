@@ -94,6 +94,7 @@ export interface Tour {
   languages:         string[];
   comingSoon:        boolean;
   image:             string;
+  imagePosition?:    string;  // optional CSS object-position for the card thumbnail crop, e.g. "50% 90%"
   priceUSD?:         number | null;
   priceVND?:         number | null;   // lowest option, VNĐ (no formatting — display layer adds separator)
   hubUrl?:           string;
@@ -125,6 +126,7 @@ export interface Tour {
   packingList?:      PackingCategory[];
   gpxFile?:          string;   // path to .gpx track file, e.g. "/tours/putaleng/putaleng-3d2n.gpx" — renders an interactive route map when present
   routeMarkers?:     RouteMarkers;  // the 4 map markers (start/summit/shelter/end) for the gpxFile route map above — required if gpxFile is set, otherwise the map renders with no markers
+  routeDays?:        { label: string; color: string }[];  // optional per-day line colours for the route map — one entry per <trk> in gpxFile, in order. Also drives the legend under the map.
   privateRoute?:     boolean;  // true = deliberately don't publish the exact route: hides the "Route map" section AND the elevation chart, and suppresses their "pending" placeholders. Use together with tripGrading (which would otherwise show a "Route map pending" box when gpxFile is missing).
 }
 
@@ -195,6 +197,115 @@ const DEFAULT_UNLOCK_CHALLENGE = {
   note: "Travelling solo or in pairs? The challenge adapts. The valley doesn't care how many of you there are — only that you're paying attention.",
   teaser: "We won't tell you more. That's the whole point.",
 };
+
+// ── Ky Quan San (Bạch Mộc Lương Tử) — content shared by both Ky Quan San tours ──
+// Both tours walk the identical mountain route, so the route map, grading, story
+// and safety blocks live here once and are spread into each tour below.
+// Real GPS: two recordings merged into ONE continuous file with two <trk>s
+// (Day 1 trailhead → hut, Day 2 hut → summit). The recordings are ascent-only;
+// the descent follows the same trail back down, so `end` = `start`.
+// GPS spot-checks: trailhead 1,136m · hut 2,192m (stated ~2,100m — text uses Thế Anh's
+// figure) · summit 3,040m (official 3,046m — text/marker use the official figure).
+const KQS_COMMON: Partial<Tour> = {
+  gpxFile: "/tours/ky-quan-san/ky-quan-san-route.gpx",
+  routeDays: [
+    { label: "Day 1 — trailhead to Núi Muối hut", color: "#ea6739" },
+    { label: "Day 2 — hut to summit (same trail back down)", color: "#ffd23f" },
+  ],
+  routeMarkers: {
+    start:   { lat: 22.530074, lon: 103.650309, ele: 1136, label: "Trailhead — Ky Quan San village", desc: "Where the trek begins, ~1,136m." },
+    summit:  { lat: 22.507360, lon: 103.587937, ele: 3046, label: "Ky Quan San Summit", desc: "3,046m — Vietnam's fourth-highest peak." },
+    shelter: { lat: 22.505937, lon: 103.618872, ele: 2100, label: "Núi Muối hut", desc: "Mountain hut at ~2,100m — sunset, sunrise and two nights on the mountain." },
+    end:     { lat: 22.530074, lon: 103.650309, ele: 1136, label: "Finish — trailhead", desc: "Same trail down — the route is an out-and-back." },
+  },
+
+  pitch: {
+    headline: "3,046m, and the night at Núi Muối is half the story.",
+    bullets: [
+      "Ky Quan San — known to trekkers as Bạch Mộc Lương Tử — is Vietnam's fourth-highest peak, and the route gives you two nights high on the mountain at the Núi Muối hut (~2,100m), with sunset and sunrise from the ridge outside",
+      "The trail changes character almost every hour: terraced fields, bamboo and cardamom forest, dwarf bamboo, streams, moss-draped ancient forest, then the exposed \"dinosaur-spine\" ridges to the summit",
+      "Hot meals on the mountain — hotpot and Western-style dishes at the hut — with a guide and porter beside you throughout",
+    ],
+    closingLine: "The summit is the goal. The night at Núi Muối is the memory.",
+  },
+
+  storytelling: {
+    headline: "Two names, one mountain.",
+    paragraphs: [
+      "Locals call it Ky Quan San — the name French mapmakers wrote down as Ky Kouân Chan. \"Bạch Mộc Lương Tử\" arrived later, coined by the trekking community that began climbing the peak around 2013. Either way, the summit is the same 3,046m ridge on the border of Lào Cai and Lai Châu, fourth-highest in the country.",
+      "The route is a long, steady education in Vietnamese mountain forest. It starts among terraced fields, then climbs through bamboo and cardamom forest, past streams and small waterfalls, into old forest where every trunk is wrapped in moss. Higher up the trees shrink to dwarf bamboo and the path narrows onto ridgelines that trekkers nicknamed the dinosaur's backbone.",
+      "Núi Muối is where the mountain slows you down. The hut sits high enough to look down on the cloud layer, and the porters who built the first huts here, around 2015, turned a hard climb into something a group of travellers can do together — with hot food, shelter and a place to watch the light change.",
+      "Above 3,000m, cloud and mist cover the peak for much of the year. Some mornings the whole valley fills with cloud below you; some mornings you stand in it. We can't promise the view — only that the walk is worth it either way.",
+    ],
+    pullImage: "/tours/ky-quan-san/storytelling.webp",
+  },
+
+  seasonality: {
+    intro: "Ky Quan San is best from September to April, when the rains ease and the trail is firmer. Early spring adds rhododendron, and winter brings cold mornings and the chance of frost on the summit.",
+    months: [
+      { name: "Jan", level: "good" }, { name: "Feb", level: "best" }, { name: "Mar", level: "best" },
+      { name: "Apr", level: "good" }, { name: "May", level: "wet"  }, { name: "Jun", level: "wet"  },
+      { name: "Jul", level: "wet"  }, { name: "Aug", level: "wet"  }, { name: "Sep", level: "good" },
+      { name: "Oct", level: "best" }, { name: "Nov", level: "best" }, { name: "Dec", level: "good" },
+    ],
+    notes: [
+      { title: "Autumn (Sep – Nov)", desc: "The dry season starts around September: firmer trail, clearer air, and the best odds for cloud-sea mornings at Núi Muối. October and November are the sweet spot." },
+      { title: "Early spring (Feb – Mar)", desc: "Rhododendron blooms in the forest — early spring is widely described as the most beautiful time on this route. Mornings are cold." },
+      { title: "Winter (Dec – Jan)", desc: "Cold and often misty. Trekkers have reported frost and ice on the summit in the coldest weeks — pack real warm layers." },
+      { title: "Wet season (May – Aug)", desc: "Rain and storms make the steep sections muddy and slippery, and cloud-sea views are less reliable. Not our recommended window." },
+    ],
+  },
+
+  tripGrading: {
+    level: 4,
+    label: "Hard",
+    summary: "Three real trekking days from 1,136m to 3,046m: a long climb to the hut, a summit day on steep, exposed ridgelines, and the same trail back down. Right for fit, experienced walkers — not a first mountain.",
+    criteria: [
+      { id: "physical",   label: "Physical demand", score: 4, summary: "About 9km and 1,100m of climbing to the hut, a ~10km summit day with around 1,250m of ascent, then ~9km down. Roughly 28km in total, over steep, rocky and sometimes slippery trail." },
+      { id: "altitude",   label: "Altitude & terrain", score: 3, summary: "Summit at 3,046m, nights at ~2,100m — cold and high, but below the range where altitude sickness is a major risk. The ridgelines are exposed and need steady footing; no technical climbing." },
+      { id: "remoteness", label: "Remoteness", score: 3, summary: "No road beyond the trailhead village and hours from hospital-level care. The Núi Muối hut gives you a base, and your guide and porter stay with you the whole way." },
+    ],
+  },
+
+  // DRAFT — modelled on the Putaleng/Fansipan wording; the medical-access time is an
+  // estimate (not operator-confirmed for this route) — flagged for Thế Anh to confirm.
+  safetyInfo: {
+    medicalAccessTime: "~6 hours from the furthest point on the route to hospital-level care.",
+    guideRatio: "A lead guide travels with every group, and porter support scales up with group size — roughly one extra porter for every 2–4 additional guests.",
+    commsNote: "Phone signal on the mountain can be limited. Your guide carries the group's primary means of communication — let family know contact may be patchy for most of the trek.",
+    insuranceNote: "Travel insurance is included for every guest, with coverage up to 100,000,000₫ per person per incident — including emergency evacuation costs.",
+    rescueSteps: [
+      { title: "On-site response", detail: "Your guide carries a first-aid kit and is trained in wilderness first response. Minor injuries, blisters and early altitude symptoms are treated on the trail and the group's pace is adjusted immediately." },
+      { title: "Assisted evacuation", detail: "If a guest can't continue but isn't in danger, the guide and porters organise a supported descent to the Núi Muối hut or down to the closest point a vehicle can reach." },
+      { title: "Medical evacuation", detail: "For serious cases, the guide contacts local emergency support and coordinates transport to the nearest hospital-level facility. Travel insurance covering emergency evacuation is included for every booking." },
+    ],
+  },
+
+  packingList: [
+    { icon: "shirt",         label: "Clothing",         items: ["Quick-dry hiking clothes (avoid cotton)", "Warm mid-layer and a windproof jacket for the ridge and the hut", "Waterproof rain jacket (a rain poncho is provided)", "Warm hat and gloves"] },
+    { icon: "shoe",          label: "Footwear",         items: ["Broken-in waterproof hiking boots with ankle support", "Spare socks", "Trekking poles — strongly recommended for the descent"] },
+    { icon: "first-aid-kit", label: "Health & comfort", items: ["Personal medication", "Blister plasters", "Sunscreen and a hat", "Insect repellent"] },
+    { icon: "moon-stars",    label: "Hut nights",       items: ["Headlamp with spare batteries — needed for the 05:30 sunrise start", "Power bank", "Cash for hot water at the hut and for tips (not included)"] },
+    { icon: "id",            label: "Documents & extras", items: ["Original passport or national ID"] },
+  ],
+
+  welcomePack: {
+    ...DEFAULT_WELCOME_PACK,
+    intro: "Your host meets you with a Morning Vietnam pack before the drive to the mountain. One item was chosen for cold nights at altitude.",
+  },
+
+  unlockChallenge: null,
+};
+
+const KQS_FAQS: FAQ[] = [
+  { q: "Is Ky Quan San the same as Bạch Mộc Lương Tử?", a: "Yes. Ky Quan San is the local name of the mountain (French maps wrote it Ky Kouân Chan). Bạch Mộc Lương Tử is the name the trekking community gave it from around 2013, and it stuck. Same 3,046m peak, fourth-highest in Vietnam." },
+  { q: "How fit do I need to be?", a: "High fitness required. The trek is about 28km over three days, climbing from 1,136m to 3,046m, with a 6–7 hour walking day to the hut and a long summit day on steep, rocky and exposed ridgelines. No technical climbing, but this is serious mountain trekking. Gym-only fitness is not enough — regular hikers and runners will manage." },
+  { q: "What is the hut at Núi Muối like?", a: "A basic mountain hut at around 2,100m, where you sleep two nights. The hut stay is included in the price. Hot water is available to buy for yourself. It is cold at night, so bring warm layers." },
+  { q: "What do we eat on the mountain?", a: "All meals in the itinerary are included. Lunch is served in the forest by a stream on the way up. Dinner at the hut is hotpot and Western-style dishes, and breakfast on summit day is instant noodles and bread. Hot water for tea or coffee you buy yourself." },
+  { q: "Will I see the sea of clouds?", a: "Not guaranteed — cloud and mist cover the peak for much of the year, and some mornings you stand inside the cloud rather than above it. Autumn (Oct–Nov) and early spring give the best chances. The walk, forest and hut are worth it either way." },
+  { q: "Is it harder than Fansipan or Putaleng?", a: "On our difficulty scale, Fansipan is 'Advanced' (tier 2) while Ky Quan San is 'Hard' (tier 4) — the same tier as Putaleng. The route is longer and more rugged than Fansipan, with steep, exposed ridgelines near the top." },
+  { q: "Do I carry my own bag?", a: "You carry a light daypack with water, a rain jacket and your personal items. A porter carries the group's food and heavier gear." },
+];
 
 // ── Tours ──────────────────────────────────────────────────────────────────
 
@@ -5015,6 +5126,388 @@ export const tours: Tour[] = [
     ],
 
     unlockChallenge: null,
+  },
+
+  // ── Ky Quan San 4D3N — from Hanoi (Bạch Mộc Lương Tử) ─────────────────────
+  // Prices set (VND from Thế Anh; USD = VND / 26,100 rounded, same rate as Putaleng).
+  {
+    slug:        "ky-quan-san-4d3n",
+    name:        "Ky Quan San 4D3N",
+    region:      "north",
+    tags:        ["hiking"],
+    duration:    ["4D3N"],
+    price:       "From $178",
+    priceUSD:    199,
+    priceVND:    5200000,
+    tagline:     "Four days from Hanoi to Vietnam's fourth-highest peak (Bạch Mộc Lương Tử, 3,046m) — Giáy villages near Sa Pa, two nights at the Núi Muối hut, and a Dao herbal bath to finish.",
+    description: "Ky Quan San — known to trekkers as Bạch Mộc Lương Tử — is 3,046m on the Lào Cai–Lai Châu border and the fourth-highest peak in Vietnam. This four-day version starts easy: a premium sleeper bus from Hanoi to Sa Pa, and an afternoon walk through the villages of Y Linh Hồ, Lao Chải and Tả Van to meet Giáy culture. Day 2 is the climb from the Ky Quan San trailhead (1,136m), through cardamom and bamboo forest, to the Núi Muối hut at around 2,100m for sunset and a hot dinner. Day 3 is the summit: moss forest, bamboo forest and the exposed dinosaur-spine ridges up to the 3,046m marker, then back to the hut for a second night. Day 4 descends the same trail, finishing in Sa Pa with a traditional Dao herbal bath before the night bus home.",
+    highlights: [
+      "Ky Quan San 3,046m — Vietnam's fourth-highest peak, also known as Bạch Mộc Lương Tử",
+      "Two nights at the Núi Muối hut (~2,100m) — sunset and sunrise above the cloud layer when the weather allows",
+      "Hot dinner at the hut — hotpot and Western-style dishes",
+      "Day 1 in Sa Pa's valleys — Y Linh Hồ, Lao Chải and Tả Van, with Giáy culture",
+      "Dinosaur-spine ridges, moss forest and bamboo forest on summit day",
+      "Dao herbal bath in Sa Pa to finish — recovery after the descent",
+      "Personalised commemorative medal · Ky Quan San 3,046m",
+    ],
+    included: [
+      "Welcome gift — Morning Vietnam signature pack",
+      "Drinking water throughout the tour",
+      "Rain poncho",
+      "Travel insurance",
+      "Personalised commemorative medal · Ky Quan San 3,046m",
+      "Licensed trek guide + porter",
+      "All transportation within itinerary (premium sleeper bus Hanoi ↔ Sa Pa · private car · motorbike taxi from the end of the car road to the trailhead)",
+      "1 night Sa Pa hotel (Day 1)",
+      "2 nights Núi Muối mountain hut (~2,100m) — hut stay is free",
+      "All meals in the itinerary",
+      "Dao herbal bath in Sa Pa (Day 4)",
+    ],
+    hub:         "Hanoi",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/ky-quan-san/9.webp",
+
+    panoramicImage: "/tours/ky-quan-san/panorama.webp",
+
+    gallery: [
+      { src: "/tours/ky-quan-san/7.webp", alt: "Trekkers on a rocky ridge above a sea of clouds" },
+      { src: "/tours/ky-quan-san/3.webp", alt: "Núi Muối hut in a golden valley under a blue sky" },
+      { src: "/tours/ky-quan-san/9.webp", alt: "Trekking group at the Núi Muối hut and its reflection pond" },
+      { src: "/tours/ky-quan-san/15.webp", alt: "Holding the setting sun above a sea of clouds" },
+      { src: "/tours/ky-quan-san/4.webp", alt: "Trekkers resting among moss-covered trees above the clouds" },
+      { src: "/tours/ky-quan-san/5.webp", alt: "Mossy, twisted trees against a deep blue sky" },
+      { src: "/tours/ky-quan-san/16.webp", alt: "Scrambling along an exposed rock face near the summit" },
+      { src: "/tours/ky-quan-san/17.webp", alt: "Trekker watching the sun above a cloud-filled valley" },
+      { src: "/tours/ky-quan-san/12.webp", alt: "Trekker silhouetted on a rock at sunrise" },
+      { src: "/tours/ky-quan-san/10.webp", alt: "Núi Muối hut and pond below the rocky ridge" },
+      { src: "/tours/ky-quan-san/8.webp", alt: "Frosted grass on a ridge under a clear sky" },
+      { src: "/tours/ky-quan-san/11.webp", alt: "Trekker sitting at a lookout as the sun rises over the clouds" },
+      { src: "/tours/ky-quan-san/14.webp", alt: "Resting on the ridge at golden hour above the clouds" },
+      { src: "/tours/ky-quan-san/13.webp", alt: "Sunrise glow over layered mountain ridges" },
+      { src: "/tours/ky-quan-san/6.webp", alt: "Looking up through the moss forest canopy" },
+      { src: "/tours/ky-quan-san/2.webp", alt: "Night sky and a headlamp beam beside the summit swing" },
+      { src: "/tours/ky-quan-san/1.webp", alt: "Milky Way over the Ky Quan San summit marker" },
+    ],
+
+    selectorMode: 'vehicle-only',
+    durationOptions: [
+      {
+        id:       "4d3n",
+        label:    "4D3N from Hanoi",
+        price:    199,
+        priceVND: 5200000,
+        tagline:  "Hanoi → Sa Pa · valley walk Day 1 → Núi Muối hut Day 2 → Ky Quan San summit 3,046m Day 3 → descent + Dao herbal bath → night bus Day 4.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Ky Quan San 4D3N. Can you tell me about prices and available dates?",
+        paxTiers: [
+          { min: 1, max: 3, price: 199, priceVND: 5200000, note: "This tour departs from a minimum of 4 guests. Booking as 1–3 — we'll confirm your date once the group reaches 4." },
+          { min: 4, max: 5, price: 199, priceVND: 5200000 },
+          { min: 6, max: 7, price: 191, priceVND: 4990000 },
+          { min: 8, max: 9, price: 182, priceVND: 4750000 },
+          { min: 10, max: 11, price: 180, priceVND: 4700000 },
+          { min: 12, max: 12, price: 178, priceVND: 4650000 },
+        ],
+      },
+    ],
+
+    tripInfo: {
+      "4d3n": [
+        { icon: "map-pin",         label: "Pickup",        value: "Old Quarter, Hanoi · 06:30 premium sleeper bus · Day 1" },
+        { icon: "users",           label: "Group size",    value: "Small group · departs from 4 guests" },
+        { icon: "car",             label: "Transport",     value: "Premium sleeper bus (HN ↔ Sa Pa) · private car (4–16 seats) · motorbike taxi to trailhead" },
+        { icon: "tools-kitchen-2", label: "Meals",         value: "Day 1: lunch + dinner\nDay 2–4: full board" },
+        { icon: "home",            label: "Accommodation", value: "Day 1: Sa Pa hotel · Day 2–3: Núi Muối mountain hut (~2,100m)" },
+        { icon: "mountain",        label: "Summit",        value: "Ky Quan San 3,046m · 4th highest in Vietnam" },
+        { icon: "trending-up",     label: "Trek",          value: "~28km over 3 trekking days\n1,136m → 3,046m" },
+        { icon: "calendar-check",  label: "Duration",      value: "4 days 3 nights · departs Hanoi Day 1" },
+        { icon: "id",              label: "Required",      value: "Original passport or national ID" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Day 1 — Hanoi → Sa Pa → Y Linh Hồ · Lao Chải · Tả Van",
+        accommodation: "Sa Pa hotel",
+        meals: "Lunch + Dinner",
+        narrative: "An easy first day to get your legs under you. The premium sleeper bus brings you to Sa Pa by early afternoon, with time to check in and eat lunch. In the afternoon, a gentle hike links the villages of Y Linh Hồ, Lao Chải and Tả Van — with a language guide and a taste of Giáy culture along the way. Back in Sa Pa for dinner, then the evening is yours: Sa Pa's old stone church and the central square are a short walk away.",
+        slots: [
+          "06:30  Premium sleeper bus departs · Old Quarter, Hanoi",
+          "13:30  Hotel check-in · lunch · Sa Pa",
+          "14:30  Light hike through Y Linh Hồ · Lao Chải · Tả Van · Giáy culture",
+          "19:00  Back in Sa Pa · dinner · free evening in town (Stone Church, Sa Pa Square)",
+          "22:00  Overnight · Sa Pa town centre hotel",
+        ],
+      },
+      {
+        day: 2,
+        title: "Day 2 — Sa Pa → Ky Quan San village → Núi Muối hut (~2,100m)",
+        stats: { hours: "6–7 hrs trekking", distanceKm: 9, up: 1100 },
+        accommodation: "Núi Muối mountain hut, ~2,100m",
+        meals: "Full board (B/L/D)",
+        narrative: "After breakfast in Sa Pa, a car (and a motorbike taxi for the last rough stretch) takes you to the Ky Quan San trailhead at about 1,136m. From there it is a steady climb: forest of cardamom and bamboo, streams, and a lunch stop beside the water. You reach the Núi Muối hut around 16:00 — in time for sunset around the Núi Muối ridge, then a hot dinner of hotpot and Western-style dishes and the first night on the mountain.",
+        slots: [
+          "06:30  Breakfast at hotel",
+          "07:00  Transfer to Ky Quan San village · trailhead 1 (4–16 seat car + motorbike taxi)",
+          "09:00  Trek begins · cardamom forest and bamboo forest",
+          "12:00  Lunch in the forest, beside a stream",
+          "16:00  Arrive at the Núi Muối hut (~2,100m)",
+          "16:30  Sunset around the Núi Muối peak",
+          "18:30  Dinner at the hut · hotpot and Western-style dishes",
+          "21:00  Overnight at the hut",
+        ],
+      },
+      {
+        day: 3,
+        title: "Day 3 — Núi Muối → Ky Quan San summit 3,046m → Núi Muối",
+        stats: { hours: "8–9 hrs trekking", distanceKm: 10, up: 1250, down: 1250 },
+        accommodation: "Núi Muối mountain hut, ~2,100m",
+        meals: "Full board (B/L/D)",
+        narrative: "An early start: sunrise check-in at Núi Muối at 05:30, then a quick breakfast of instant noodles and bread before setting off at 07:00. The trail runs through moss forest, bamboo forest and the exposed \"dinosaur-spine\" ridges before reaching the 3,046m summit marker at around 12:30. The way back to the hut is the same trail; you reach Núi Muối for dinner and a second night on the mountain.",
+        slots: [
+          "05:30  Sunrise check-in · Núi Muối",
+          "06:00  Breakfast at the hut · instant noodles, bread",
+          "07:00  Trek begins · moss forest, \"dinosaur-spine\" ridges, bamboo forest",
+          "12:30  Summit · Ky Quan San 3,046m",
+          "16:00  Descent · back to Núi Muối",
+          "21:00  Dinner and overnight at the hut",
+        ],
+      },
+      {
+        day: 4,
+        title: "Day 4 — Núi Muối → Sa Pa → Hanoi",
+        stats: { hours: "6–7 hrs trekking", distanceKm: 9, up: 60, down: 1100 },
+        accommodation: "Night bus",
+        meals: "Full board (B/L/D)",
+        narrative: "Breakfast at the hut, then the long walk down the same trail, with lunch on the way. By 14:00 you reach the foot of the mountain and drive back to Sa Pa, where a traditional Dao herbal bath is waiting around 16:30 — a soak the Dao use to ease tired muscles and speed up recovery. Dinner is a farewell meal at a local restaurant in the centre, a stroll through the night market, and the premium sleeper bus back to Hanoi at 23:00.",
+        slots: [
+          "06:30  Breakfast at the hut",
+          "07:00  Descent begins",
+          "12:00  Lunch on the way down",
+          "14:00  Reach the foot of the mountain · transfer to Sa Pa",
+          "16:30  Arrive Sa Pa · Dao herbal bath",
+          "18:00  Farewell dinner · local restaurant in the town centre",
+          "20:00  Night market stroll · rest",
+          "23:00  Premium sleeper bus to Hanoi · end of tour",
+        ],
+      },
+    ],
+
+    elevationProfile: [
+      // Day 1 valley figure (~1,000m) is approximate — not from the GPS recordings.
+      { time: "06:30", label: "Depart Hanoi",             elevation: 20,   icon: "van",      highlight: false, day: 1 },
+      { time: "13:30", label: "Sa Pa · lunch",            elevation: 1500, icon: "food",     highlight: false, day: 1 },
+      { time: "14:30", label: "Lao Chải · Tả Van",        elevation: 1000, icon: "village",  highlight: false, day: 1 },
+      { time: "22:00", label: "Sleep · Sa Pa",            elevation: 1500, icon: "resort",   highlight: false, day: 1 },
+
+      { time: "07:00", label: "Transfer · trailhead",     elevation: 1136, icon: "van",      highlight: false, day: 2 },
+      { time: "09:00", label: "Trek begins",              elevation: 1136, icon: "hike",     highlight: false, day: 2 },
+      { time: "16:00", label: "Núi Muối hut",             elevation: 2100, icon: "resort",   highlight: true,  day: 2 },
+      { time: "18:30", label: "Dinner · hut",             elevation: 2100, icon: "food",     highlight: false, day: 2 },
+
+      { time: "05:30", label: "Sunrise · Núi Muối",       elevation: 2100, icon: "mountain", highlight: true,  day: 3 },
+      { time: "07:00", label: "Trek to summit",           elevation: 2100, icon: "hike",     highlight: false, day: 3 },
+      { time: "12:30", label: "Ky Quan San",              elevation: 3046, icon: "mountain", highlight: true,  day: 3 },
+      { time: "16:00", label: "Back at Núi Muối",         elevation: 2100, icon: "resort",   highlight: false, day: 3 },
+
+      { time: "07:00", label: "Descent begins",           elevation: 2100, icon: "hike",     highlight: false, day: 4 },
+      { time: "14:00", label: "Foot of the mountain",     elevation: 1136, icon: "village",  highlight: false, day: 4 },
+      { time: "16:30", label: "Dao herbal bath",          elevation: 1500, icon: "resort",   highlight: true,  day: 4 },
+      { time: "23:00", label: "Night bus · Hanoi",        elevation: 1500, icon: "return",   highlight: false, day: 4 },
+    ],
+    elevationMax: 3200,
+
+    ...KQS_COMMON,
+
+    faqs: [
+      ...KQS_FAQS,
+      { q: "Is the sleeper bus included?", a: "Yes — on the 4D3N, the premium sleeper bus between Hanoi and Sa Pa (outbound on Day 1, return on Day 4) is included. If you are already in Sa Pa, take the Only Trekking version instead." },
+      { q: "How many people are needed for the tour to run?", a: "The tour departs with a minimum of 4 guests. If you book alone or in a smaller group, we'll confirm your date once the group reaches 4 — and you pay nothing until then." },
+      ...DEFAULT_FAQS.slice(4),
+    ],
+  },
+
+  // ── Ky Quan San — Only Trekking (3D2N from Sa Pa) ─────────────────────────
+  // Prices set — see note on the 4D3N tour above. Price excludes the Hanoi sleeper bus.
+  {
+    slug:        "ky-quan-san-trekking",
+    name:        "Ky Quan San — Only Trekking",
+    region:      "north",
+    tags:        ["hiking"],
+    duration:    ["3D2N"],
+    price:       "From $109",
+    priceUSD:    138,
+    priceVND:    3600000,
+    tagline:     "Three days from Sa Pa to Vietnam's fourth-highest peak (Bạch Mộc Lương Tử, 3,046m) — two nights at the Núi Muối hut and a Dao herbal bath on the way home.",
+    description: "The trekking-only version of Ky Quan San, for travellers already in Sa Pa. Known to trekkers as Bạch Mộc Lương Tử, the 3,046m peak on the Lào Cai–Lai Châu border is the fourth-highest in Vietnam. Day 1 climbs from the Ky Quan San trailhead (1,136m) through cardamom and bamboo forest to the Núi Muối hut at around 2,100m for sunset and a hot dinner. Day 2 is the summit: moss forest, bamboo forest and the exposed dinosaur-spine ridges up to the 3,046m marker, then back to the hut. Day 3 descends the same trail to Sa Pa, with a Dao herbal bath and dinner before an optional night bus to Hanoi (not included).",
+    highlights: [
+      "Ky Quan San 3,046m — Vietnam's fourth-highest peak, also known as Bạch Mộc Lương Tử",
+      "Two nights at the Núi Muối hut (~2,100m) — sunset and sunrise above the cloud layer when the weather allows",
+      "Hot dinner at the hut — hotpot and Western-style dishes",
+      "Dinosaur-spine ridges, moss forest and bamboo forest on summit day",
+      "Dao herbal bath in Sa Pa to finish — recovery after the descent",
+      "For those already in Sa Pa — no sleeper bus included",
+      "Personalised commemorative medal · Ky Quan San 3,046m",
+    ],
+    included: [
+      "Welcome gift — Morning Vietnam signature pack",
+      "Drinking water throughout the tour",
+      "Rain poncho",
+      "Travel insurance",
+      "Personalised commemorative medal · Ky Quan San 3,046m",
+      "Licensed trek guide + porter",
+      "Transport: Sa Pa ↔ Ky Quan San village by private car, plus a motorbike taxi from the end of the car road to the trailhead",
+      "2 nights Núi Muối mountain hut (~2,100m) — hut stay is free",
+      "All meals in the itinerary",
+      "Dao herbal bath in Sa Pa (Day 3)",
+    ],
+    hub:         "Sa Pa",
+    languages:   ["EN", "FR", "DE"],
+    comingSoon:  false,
+    image:       "/tours/ky-quan-san/7.webp",
+    imagePosition: "50% 92%", // card crop: keep the trekkers on the rock in view
+
+    panoramicImage: "/tours/ky-quan-san/panorama.webp",
+
+    gallery: [
+      { src: "/tours/ky-quan-san/7.webp", alt: "Trekkers on a rocky ridge above a sea of clouds" },
+      { src: "/tours/ky-quan-san/3.webp", alt: "Núi Muối hut in a golden valley under a blue sky" },
+      { src: "/tours/ky-quan-san/9.webp", alt: "Trekking group at the Núi Muối hut and its reflection pond" },
+      { src: "/tours/ky-quan-san/15.webp", alt: "Holding the setting sun above a sea of clouds" },
+      { src: "/tours/ky-quan-san/4.webp", alt: "Trekkers resting among moss-covered trees above the clouds" },
+      { src: "/tours/ky-quan-san/5.webp", alt: "Mossy, twisted trees against a deep blue sky" },
+      { src: "/tours/ky-quan-san/16.webp", alt: "Scrambling along an exposed rock face near the summit" },
+      { src: "/tours/ky-quan-san/17.webp", alt: "Trekker watching the sun above a cloud-filled valley" },
+      { src: "/tours/ky-quan-san/12.webp", alt: "Trekker silhouetted on a rock at sunrise" },
+      { src: "/tours/ky-quan-san/10.webp", alt: "Núi Muối hut and pond below the rocky ridge" },
+      { src: "/tours/ky-quan-san/8.webp", alt: "Frosted grass on a ridge under a clear sky" },
+      { src: "/tours/ky-quan-san/11.webp", alt: "Trekker sitting at a lookout as the sun rises over the clouds" },
+      { src: "/tours/ky-quan-san/14.webp", alt: "Resting on the ridge at golden hour above the clouds" },
+      { src: "/tours/ky-quan-san/13.webp", alt: "Sunrise glow over layered mountain ridges" },
+      { src: "/tours/ky-quan-san/6.webp", alt: "Looking up through the moss forest canopy" },
+      { src: "/tours/ky-quan-san/2.webp", alt: "Night sky and a headlamp beam beside the summit swing" },
+      { src: "/tours/ky-quan-san/1.webp", alt: "Milky Way over the Ky Quan San summit marker" },
+    ],
+
+    selectorMode: 'vehicle-only',
+    durationOptions: [
+      {
+        id:       "3d2n",
+        label:    "3D2N from Sa Pa",
+        price:    138,
+        priceVND: 3600000,
+        tagline:  "Sa Pa → Núi Muối hut Day 1 → Ky Quan San summit 3,046m Day 2 → descent + Dao herbal bath → Sa Pa Day 3.",
+        ctaLabel: "I'm in →",
+        ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
+        waText:   "Hi Morning Vietnam — I'd like to book Ky Quan San Only Trekking (3D2N). Can you tell me about prices and available dates?",
+        paxTiers: [
+          { min: 1, max: 3, price: 138, priceVND: 3600000, note: "This tour departs from a minimum of 4 guests. Booking as 1–3 — we'll confirm your date once the group reaches 4." },
+          { min: 4, max: 5, price: 138, priceVND: 3600000 },
+          { min: 6, max: 7, price: 123, priceVND: 3200000 },
+          { min: 8, max: 9, price: 111, priceVND: 2900000 },
+          { min: 10, max: 11, price: 109, priceVND: 2850000 },
+          { min: 12, max: 12, price: 109, priceVND: 2850000 },
+        ],
+      },
+    ],
+
+    tripInfo: {
+      "3d2n": [
+        { icon: "map-pin",         label: "Pickup",        value: "Sa Pa hotel or town centre · Day 1 morning" },
+        { icon: "users",           label: "Group size",    value: "Small group · departs from 4 guests" },
+        { icon: "car",             label: "Transport",     value: "Private car (4–16 seats) · motorbike taxi to trailhead\nSleeper bus to Hanoi not included" },
+        { icon: "tools-kitchen-2", label: "Meals",         value: "Full board, Day 1–3" },
+        { icon: "home",            label: "Accommodation", value: "Day 1–2: Núi Muối mountain hut (~2,100m)" },
+        { icon: "mountain",        label: "Summit",        value: "Ky Quan San 3,046m · 4th highest in Vietnam" },
+        { icon: "trending-up",     label: "Trek",          value: "~28km over 3 trekking days\n1,136m → 3,046m" },
+        { icon: "calendar-check",  label: "Duration",      value: "3 days 2 nights · starts Sa Pa morning" },
+        { icon: "id",              label: "Required",      value: "Original passport or national ID" },
+      ],
+    },
+
+    itinerary: [
+      {
+        day: 1,
+        title: "Day 1 — Sa Pa → Ky Quan San village → Núi Muối hut (~2,100m)",
+        stats: { hours: "6–7 hrs trekking", distanceKm: 9, up: 1100 },
+        accommodation: "Núi Muối mountain hut, ~2,100m",
+        meals: "Full board (B/L/D)",
+        narrative: "After breakfast at your Sa Pa hotel, a car (and a motorbike taxi for the last rough stretch) takes you to the Ky Quan San trailhead at about 1,136m. From there it is a steady climb: forest of cardamom and bamboo, streams, and a lunch stop beside the water. You reach the Núi Muối hut around 16:00 — in time for sunset around the Núi Muối ridge, then a hot dinner of hotpot and Western-style dishes and the first night on the mountain.",
+        slots: [
+          "06:30  Breakfast at hotel",
+          "07:00  Transfer to Ky Quan San village · trailhead 1 (4–16 seat car + motorbike taxi)",
+          "09:00  Trek begins · cardamom forest and bamboo forest",
+          "12:00  Lunch in the forest, beside a stream",
+          "16:00  Arrive at the Núi Muối hut (~2,100m)",
+          "16:30  Sunset around the Núi Muối peak",
+          "18:30  Dinner at the hut · hotpot and Western-style dishes",
+          "21:00  Overnight at the hut",
+        ],
+      },
+      {
+        day: 2,
+        title: "Day 2 — Núi Muối → Ky Quan San summit 3,046m → Núi Muối",
+        stats: { hours: "8–9 hrs trekking", distanceKm: 10, up: 1250, down: 1250 },
+        accommodation: "Núi Muối mountain hut, ~2,100m",
+        meals: "Full board (B/L/D)",
+        narrative: "An early start: sunrise check-in at Núi Muối at 05:30, then a quick breakfast of instant noodles and bread before setting off at 07:00. The trail runs through moss forest, bamboo forest and the exposed \"dinosaur-spine\" ridges before reaching the 3,046m summit marker at around 12:30. The way back to the hut is the same trail; you reach Núi Muối for dinner and a second night on the mountain.",
+        slots: [
+          "05:30  Sunrise check-in · Núi Muối",
+          "06:00  Breakfast at the hut · instant noodles, bread",
+          "07:00  Trek begins · moss forest, \"dinosaur-spine\" ridges, bamboo forest",
+          "12:30  Summit · Ky Quan San 3,046m",
+          "16:00  Descent · back to Núi Muối",
+          "21:00  Dinner and overnight at the hut",
+        ],
+      },
+      {
+        day: 3,
+        title: "Day 3 — Núi Muối → Sa Pa",
+        stats: { hours: "6–7 hrs trekking", distanceKm: 9, up: 60, down: 1100 },
+        accommodation: "Night bus (not included)",
+        meals: "Full board (B/L/D)",
+        narrative: "Breakfast at the hut, then the long walk down the same trail, with lunch on the way. By 14:00 you reach the foot of the mountain and drive back to Sa Pa, where a traditional Dao herbal bath is waiting around 16:30 — a soak the Dao use to ease tired muscles and speed up recovery. Dinner is a farewell meal at a local restaurant in the centre, then a stroll through the night market. If you are heading back to Hanoi, the sleeper bus leaves at 23:00 — it is not included in the tour price.",
+        slots: [
+          "06:30  Breakfast at the hut",
+          "07:00  Descent begins",
+          "12:00  Lunch on the way down",
+          "14:00  Reach the foot of the mountain · transfer to Sa Pa",
+          "16:30  Arrive Sa Pa · Dao herbal bath",
+          "18:00  Farewell dinner · local restaurant in the town centre",
+          "20:00  Night market stroll · rest",
+          "23:00  Sleeper bus to Hanoi (not included) · end of tour",
+        ],
+      },
+    ],
+
+    elevationProfile: [
+      { time: "07:00", label: "Transfer · trailhead",     elevation: 1136, icon: "van",      highlight: false, day: 1 },
+      { time: "09:00", label: "Trek begins",              elevation: 1136, icon: "hike",     highlight: false, day: 1 },
+      { time: "16:00", label: "Núi Muối hut",             elevation: 2100, icon: "resort",   highlight: true,  day: 1 },
+      { time: "18:30", label: "Dinner · hut",             elevation: 2100, icon: "food",     highlight: false, day: 1 },
+
+      { time: "05:30", label: "Sunrise · Núi Muối",       elevation: 2100, icon: "mountain", highlight: true,  day: 2 },
+      { time: "07:00", label: "Trek to summit",           elevation: 2100, icon: "hike",     highlight: false, day: 2 },
+      { time: "12:30", label: "Ky Quan San",              elevation: 3046, icon: "mountain", highlight: true,  day: 2 },
+      { time: "16:00", label: "Back at Núi Muối",         elevation: 2100, icon: "resort",   highlight: false, day: 2 },
+
+      { time: "07:00", label: "Descent begins",           elevation: 2100, icon: "hike",     highlight: false, day: 3 },
+      { time: "14:00", label: "Foot of the mountain",     elevation: 1136, icon: "village",  highlight: false, day: 3 },
+      { time: "16:30", label: "Dao herbal bath",          elevation: 1500, icon: "resort",   highlight: true,  day: 3 },
+    ],
+    elevationMax: 3200,
+
+    ...KQS_COMMON,
+
+    faqs: [
+      ...KQS_FAQS,
+      { q: "Can I get the sleeper bus back to Hanoi?", a: "The Only Trekking price does not include the sleeper bus to Hanoi. Buses leave Sa Pa in the late evening, so after the Dao herbal bath and dinner you can still take the 23:00 service — or stay another night in Sa Pa." },
+      { q: "What makes this different from the Ky Quan San 4D3N?", a: "The 4D3N adds Day 1 in Sa Pa's valleys (Y Linh Hồ, Lao Chải, Tả Van and Giáy culture) and includes the Hanoi ↔ Sa Pa sleeper bus. The mountain trekking is identical. If you are already in Sa Pa, the Only Trekking version is the right choice." },
+      { q: "How many people are needed for the tour to run?", a: "The tour departs with a minimum of 4 guests. If you book alone or in a smaller group, we'll confirm your date once the group reaches 4 — and you pay nothing until then." },
+      ...DEFAULT_FAQS.slice(4),
+    ],
   },
 ];
 

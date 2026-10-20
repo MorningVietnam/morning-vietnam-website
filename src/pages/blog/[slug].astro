@@ -30,6 +30,9 @@ const pageUrl = `https://morningvietnam.co/blog/${post.id}`;
   description={post.data.excerpt}
   navTheme="on-white"
   ogImage={post.data.coverImage}
+  ogType="article"
+  publishedAt={post.data.publishedAt}
+  author={post.data.author.name}
 >
   <article class="blog-post">
     <header class="blog-post__hero">
@@ -82,6 +85,31 @@ const pageUrl = `https://morningvietnam.co/blog/${post.id}`;
       />
     </div>
   </article>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.data.title,
+    "description": post.data.excerpt,
+    "image": new URL(post.data.coverImage, Astro.site).toString(),
+    "datePublished": post.data.publishedAt.toISOString(),
+    "dateModified": (post.data.updatedAt ?? post.data.publishedAt).toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": post.data.author.name
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Morning Vietnam",
+      "logo": {
+        "@type": "ImageObject",
+        "url": new URL('/logo/logo-dark.png', Astro.site).toString()
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": Astro.url.href
+    }
+  })} />
 </BaseLayout>
 
 <style>

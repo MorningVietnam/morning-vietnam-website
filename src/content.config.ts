@@ -15,6 +15,7 @@ const blog = defineCollection({
       name: z.string(),
       role: z.string().optional(),
       avatar: z.string().optional(),
+      quote: z.string().optional(),
     }),
     tags: z.array(z.string()).default([]),
     relatedTourSlug: z.string().optional(),

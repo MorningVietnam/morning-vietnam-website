@@ -1,42 +1,54 @@
 ---
 interface Props {
-  author: { name: string; role?: string; avatar?: string };
+  author: { name: string; role?: string; avatar?: string; quote?: string };
   headings: Array<{ depth: number; slug: string; text: string }>;
   url: string;
 }
 const { author, headings, url } = Astro.props;
-
 const tocItems = headings.filter(h => h.depth === 2);
 ---
 
 <aside class="blog-sidebar">
+  {author.avatar && (
+    <img src={author.avatar} alt={author.name} class="blog-sidebar__avatar" />
+  )}
+
+  {author.quote && (
+    <blockquote class="blog-sidebar__quote">
+      "{author.quote}"
+    </blockquote>
+  )}
+
+  <div class="blog-sidebar__author">
+    <p class="blog-sidebar__name">{author.name}</p>
+    {author.role && <p class="blog-sidebar__role">{author.role}</p>}
+  </div>
+
+  <div class="blog-sidebar__divider"></div>
+
   {tocItems.length > 0 && (
     <nav class="blog-sidebar__toc">
       <p class="blog-sidebar__label">In this post</p>
       <ul>
-        {tocItems.map(h => (
-          <li><a href={`#${h.slug}`}>{h.text}</a></li>
+        {tocItems.map((h, i) => (
+          <li><a href={`#${h.slug}`}><span class="blog-sidebar__toc-num">{i + 1}.</span> {h.text}</a></li>
         ))}
       </ul>
     </nav>
   )}
 
-  <div class="blog-sidebar__author">
-    {author.avatar && (
-      <img src={author.avatar} alt={author.name} class="blog-sidebar__avatar" />
-    )}
-    <div>
-      <p class="blog-sidebar__author-name">{author.name}</p>
-      {author.role && <p class="blog-sidebar__author-role">{author.role}</p>}
-    </div>
-  </div>
-
   <div class="blog-sidebar__share">
-    <p class="blog-sidebar__label">Share</p>
+    <span class="blog-sidebar__share-label">Share link:</span>
     <div class="blog-sidebar__share-icons">
-      <a href={`https://wa.me/?text=${encodeURIComponent(url)}`} target="_blank" rel="noopener" aria-label="WhatsApp">WA</a>
-      <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`} target="_blank" rel="noopener" aria-label="Facebook">FB</a>
-      <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`} target="_blank" rel="noopener" aria-label="Twitter">TW</a>
+      <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`} target="_blank" rel="noopener" aria-label="Facebook">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/morningvietnam.local" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`} target="_blank" rel="noopener" aria-label="Twitter">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.8a8.5 8.5 0 01-2.36.64 4.13 4.13 0 001.81-2.27 8.21 8.21 0 01-2.61 1 4.1 4.1 0 00-7 3.74 11.64 11.64 0 01-8.45-4.29 4.16 4.16 0 001.27 5.49A4.09 4.09 0 012 9.59v.05a4.1 4.1 0 003.3 4A4.07 4.07 0 014.22 14 4.11 4.11 0 008.05 17a8.23 8.23 0 01-6.08 1.7A11.57 11.57 0 008.29 20.5a11.59 11.59 0 0011.52-11.45c0-.17 0-.35-.01-.52A8.36 8.36 0 0022 5.8z"/></svg>
+      </a>
     </div>
   </div>
 </aside>
@@ -45,13 +57,52 @@ const tocItems = headings.filter(h => h.depth === 2);
   .blog-sidebar {
     position: sticky;
     top: calc(var(--site-header-h, 100px) + 24px);
+    padding: 36px 28px;
+    background: #f5f5f5;
+    border-radius: 20px;
+    align-self: start;
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    padding: 28px 24px;
-    background: var(--color-white-nectar);
-    border-radius: 16px;
-    align-self: start;
+    gap: 16px;
+  }
+
+  .blog-sidebar__avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-light-cyan);
+  }
+
+  .blog-sidebar__quote {
+    margin: 8px 0 0;
+    padding: 0;
+    border: none;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--color-nordic);
+    opacity: 0.85;
+    font-style: italic;
+  }
+
+  .blog-sidebar__author { margin-top: 8px; }
+  .blog-sidebar__name {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-nordic);
+  }
+  .blog-sidebar__role {
+    font-size: 13px;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+
+  .blog-sidebar__divider {
+    height: 1px;
+    background: rgba(4, 51, 65, 0.12);
+    margin: 12px 0;
   }
 
   .blog-sidebar__label {
@@ -69,65 +120,47 @@ const tocItems = headings.filter(h => h.depth === 2);
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
   .blog-sidebar__toc a {
-    display: block;
+    display: flex;
+    gap: 6px;
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.45;
     color: var(--color-nordic);
     opacity: 0.75;
     text-decoration: none;
     transition: opacity 0.2s ease, color 0.2s ease;
   }
   .blog-sidebar__toc a:hover { opacity: 1; color: var(--color-java); }
+  .blog-sidebar__toc-num { color: var(--color-nordic); opacity: 0.4; flex-shrink: 0; }
 
-  .blog-sidebar__author {
+  .blog-sidebar__share {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(4, 51, 65, 0.1);
+    margin-top: 8px;
   }
-  .blog-sidebar__avatar {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  .blog-sidebar__author-name {
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--color-nordic);
-  }
-  .blog-sidebar__author-role {
-    font-size: 12px;
+  .blog-sidebar__share-label {
+    font-size: 13px;
     color: var(--color-nordic);
     opacity: 0.6;
   }
-
-  .blog-sidebar__share-icons {
-    display: flex;
-    gap: 10px;
-  }
+  .blog-sidebar__share-icons { display: flex; gap: 8px; }
   .blog-sidebar__share-icons a {
-    width: 36px; height: 36px;
+    width: 32px;
+    height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: white;
-    border: 1px solid rgba(4, 51, 65, 0.15);
-    font-size: 11px;
-    font-weight: 700;
+    background: transparent;
     color: var(--color-nordic);
+    opacity: 0.6;
     text-decoration: none;
     transition: all 0.2s ease;
   }
-  .blog-sidebar__share-icons a:hover {
-    background: var(--color-java);
-    color: white;
-    border-color: var(--color-java);
-  }
+  .blog-sidebar__share-icons a:hover { opacity: 1; color: var(--color-java); }
 
   @media (max-width: 900px) {
     .blog-sidebar { position: static; }

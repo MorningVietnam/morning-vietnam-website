@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+import { BLOG_CATEGORIES } from '../../data/blog-categories';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+---
+
+<BaseLayout
+  title="Journal"
+  description="Stories, guides, and dispatches from Morning Vietnam."
+  navTheme="on-white"
+>
+  <section class="blog-index">
+    <div class="container">
+      <p class="section-label">✦ Latest stories</p>
+      <h1 class="blog-index__heading">Stories from the road.</h1>
+      <p class="blog-index__sub">
+        Guides, deep culture, and dispatches from the field.
+      </p>
+
+      <div class="blog-index__filters">
+        <a href="/blog" class="blog-chip blog-chip--active">All</a>
+        {Object.entries(BLOG_CATEGORIES).map(([slug, cat]) => (
+          <a href={`/blog/category/${slug}`} class="blog-chip">{cat.label}</a>
+        ))}
+      </div>
+
+      <div class="blog-index__grid">
+        {posts.map(post => <BlogCard entry={post} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .blog-index { padding: 120px 0 100px; background: white; }
+  .blog-index__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(44px, 7vw, 96px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: var(--color-nordic);
+    margin: 16px 0 20px;
+  }
+  .blog-index__sub {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-nordic);
+    opacity: 0.65;
+    margin-bottom: 48px;
+  }
+  .blog-index__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 64px;
+  }
+  .blog-chip {
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(4, 51, 65, 0.15);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .blog-chip:hover { border-color: var(--color-java); color: var(--color-java); }
+  .blog-chip--active {
+    background: var(--color-nordic);
+    border-color: var(--color-nordic);
+    color: white;
+  }
+  .blog-index__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 24px;
+  }
+  @media (max-width: 900px) { .blog-index__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .blog-index__grid { grid-template-columns: 1fr; } }
+</style>

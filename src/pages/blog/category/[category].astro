@@ -1,0 +1,136 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import { BLOG_CATEGORIES, type BlogCategory } from '../../../data/blog-categories';
+
+export async function getStaticPaths() {
+  return Object.keys(BLOG_CATEGORIES).map(category => ({
+    params: { category },
+  }));
+}
+
+const { category } = Astro.params;
+const cat = BLOG_CATEGORIES[category as BlogCategory];
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts
+  .filter(p => p.data.category === category)
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+---
+
+<BaseLayout
+  title={`${cat.label} — Journal`}
+  description={cat.description}
+  navTheme="on-white"
+>
+  <section class="blog-cat">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>›</span>
+        <a href="/blog">Journal</a>
+        <span>›</span>
+        <span>{cat.label}</span>
+      </nav>
+
+      <p class="section-label">✦ {cat.label}</p>
+      <h1 class="blog-cat__heading">{cat.label}</h1>
+      <p class="blog-cat__desc">{cat.description}</p>
+
+      <div class="blog-cat__filters">
+        <a href="/blog" class="blog-chip">All</a>
+        {Object.entries(BLOG_CATEGORIES).map(([slug, c]) => (
+          <a
+            href={`/blog/category/${slug}`}
+            class:list={["blog-chip", { "blog-chip--active": slug === category }]}
+          >{c.label}</a>
+        ))}
+      </div>
+
+      {posts.length > 0 ? (
+        <div class="blog-cat__grid">
+          {posts.map(post => <BlogCard entry={post} />)}
+        </div>
+      ) : (
+        <div class="blog-cat__empty">
+          <p>No posts in this category yet — check back soon.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .blog-cat { padding: 120px 0 100px; background: white; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-nordic);
+    opacity: 0.5;
+    margin-bottom: 32px;
+  }
+  .breadcrumb a { color: inherit; text-decoration: none; }
+  .breadcrumb a:hover { opacity: 1; color: var(--color-java); }
+
+  .blog-cat__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(44px, 7vw, 80px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: var(--color-nordic);
+    margin: 16px 0 16px;
+  }
+  .blog-cat__desc {
+    font-size: 17px;
+    color: var(--color-nordic);
+    opacity: 0.6;
+    margin-bottom: 48px;
+  }
+
+  .blog-cat__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 64px;
+  }
+  .blog-chip {
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(4, 51, 65, 0.15);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-nordic);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .blog-chip:hover { border-color: var(--color-java); color: var(--color-java); }
+  .blog-chip--active {
+    background: var(--color-nordic);
+    border-color: var(--color-nordic);
+    color: white;
+  }
+
+  .blog-cat__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 24px;
+  }
+  @media (max-width: 900px) { .blog-cat__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .blog-cat__grid { grid-template-columns: 1fr; } }
+
+  .blog-cat__empty {
+    padding: 64px 0;
+    text-align: center;
+    color: var(--color-nordic);
+    opacity: 0.5;
+    font-size: 17px;
+  }
+</style>

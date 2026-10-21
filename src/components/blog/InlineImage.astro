@@ -1,15 +1,37 @@
 ---
 interface Props {
-  src: string;
+  src?: string;
   alt: string;
   caption?: string;
   aspect?: string;
+  resolution?: string;
+  filename?: string;
+  direction?: string;
 }
-const { src, alt, caption, aspect = '16/9' } = Astro.props;
+const {
+  src = '',
+  alt,
+  caption,
+  aspect = '16/9',
+  resolution = '1600 × 900',
+  filename = 'image.jpg',
+  direction = 'Add image direction here',
+} = Astro.props;
+const hasImage = src && src.length > 0;
 ---
 
 <figure class="inline-image" style={`--aspect: ${aspect}`}>
-  <img src={src} alt={alt} loading="lazy" />
+  {hasImage ? (
+    <img src={src} alt={alt} loading="lazy" />
+  ) : (
+    <div class="photo-ph" style={`aspect-ratio: ${aspect}`}>
+      <span class="photo-ph__icon">📷</span>
+      <span class="photo-ph__label">Photo needed</span>
+      <span class="photo-ph__spec">Resolution: <strong>{resolution}</strong> · Aspect {aspect}</span>
+      <span class="photo-ph__file">public/blog/rice-harvest-sapa/{filename}</span>
+      <span class="photo-ph__direction">{direction}</span>
+    </div>
+  )}
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 

@@ -3,6 +3,7 @@
 @import './variables.css';
 @import './tokens.css';
 @import './animations.css';
+@import './blog-placeholder.css';
 
 /* ─── Reset ──────────────────────────────────────────────────────────────── */
 *, *::before, *::after {

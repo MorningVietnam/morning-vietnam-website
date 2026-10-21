@@ -1,0 +1,70 @@
+/* ── Photo placeholder box (visible khi src rỗng) ─────────── */
+.photo-ph {
+  position: relative;
+  width: 100%;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(29, 160, 160, 0.04),
+      rgba(29, 160, 160, 0.04) 10px,
+      rgba(29, 160, 160, 0.08) 10px,
+      rgba(29, 160, 160, 0.08) 20px
+    );
+  border: 2px dashed var(--color-java);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  color: var(--color-nordic);
+  gap: 8px;
+}
+
+.photo-ph__icon {
+  font-size: 32px;
+  margin-bottom: 4px;
+  opacity: 0.7;
+}
+
+.photo-ph__label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-sorbus);
+}
+
+.photo-ph__spec {
+  font-family: 'SF Mono', 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-nordic);
+  opacity: 0.85;
+}
+
+.photo-ph__spec strong {
+  color: var(--color-java);
+}
+
+.photo-ph__file {
+  font-family: 'SF Mono', 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--color-nordic);
+  opacity: 0.55;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.photo-ph__direction {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--color-nordic);
+  opacity: 0.7;
+  max-width: 90%;
+  line-height: 1.5;
+  margin-top: 6px;
+}

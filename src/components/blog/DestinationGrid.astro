@@ -1,18 +1,37 @@
 ---
-interface Props {
-  items: Array<{ name: string; mood: string; image: string }>;
+interface Item {
+  name: string;
+  mood: string;
+  image?: string;
+  resolution?: string;
+  filename?: string;
+  direction?: string;
 }
+interface Props { items: Item[]; }
 const { items } = Astro.props;
 ---
 
 <div class="dest-grid">
-  {items.map(d => (
-    <div class="dest-card">
-      <img src={d.image} alt={d.name} loading="lazy" />
-      <h4>{d.name}</h4>
-      <p>{d.mood}</p>
-    </div>
-  ))}
+  {items.map(d => {
+    const hasImage = d.image && d.image.length > 0;
+    return (
+      <div class="dest-card">
+        {hasImage ? (
+          <img src={d.image} alt={d.name} loading="lazy" />
+        ) : (
+          <div class="photo-ph" style="aspect-ratio: 3/4">
+            <span class="photo-ph__icon">📷</span>
+            <span class="photo-ph__label">Photo · {d.name}</span>
+            <span class="photo-ph__spec">Resolution: <strong>{d.resolution || '900 × 1200'}</strong> · Aspect 3:4</span>
+            <span class="photo-ph__file">public/blog/rice-harvest-sapa/{d.filename || d.name.toLowerCase().replace(/\s+/g, '-') + '.jpg'}</span>
+            <span class="photo-ph__direction">{d.direction || 'Vertical shot of destination'}</span>
+          </div>
+        )}
+        <h4>{d.name}</h4>
+        <p>{d.mood}</p>
+      </div>
+    );
+  })}
 </div>
 
 <style>
@@ -22,11 +41,7 @@ const { items } = Astro.props;
     gap: 16px;
     margin: 40px 0;
   }
-  .dest-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .dest-card { display: flex; flex-direction: column; gap: 10px; }
   .dest-card img {
     width: 100%;
     aspect-ratio: 3/4;
@@ -49,7 +64,5 @@ const { items } = Astro.props;
     line-height: 1.5;
     margin: 0;
   }
-  @media (max-width: 700px) {
-    .dest-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 700px) { .dest-grid { grid-template-columns: 1fr; } }
 </style>

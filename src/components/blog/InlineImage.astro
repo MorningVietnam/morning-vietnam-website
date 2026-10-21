@@ -1,0 +1,33 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  aspect?: string;
+}
+const { src, alt, caption, aspect = '16/9' } = Astro.props;
+---
+
+<figure class="inline-image" style={`--aspect: ${aspect}`}>
+  <img src={src} alt={alt} loading="lazy" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .inline-image { margin: 40px 0; }
+  .inline-image img {
+    width: 100%;
+    aspect-ratio: var(--aspect);
+    object-fit: cover;
+    border-radius: 16px;
+    display: block;
+  }
+  .inline-image figcaption {
+    margin-top: 12px;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--color-nordic);
+    opacity: 0.65;
+    text-align: center;
+  }
+</style>

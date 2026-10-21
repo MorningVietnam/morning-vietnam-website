@@ -1,0 +1,55 @@
+---
+interface Props {
+  items: Array<{ name: string; mood: string; image: string }>;
+}
+const { items } = Astro.props;
+---
+
+<div class="dest-grid">
+  {items.map(d => (
+    <div class="dest-card">
+      <img src={d.image} alt={d.name} loading="lazy" />
+      <h4>{d.name}</h4>
+      <p>{d.mood}</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .dest-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 40px 0;
+  }
+  .dest-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dest-card img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 14px;
+  }
+  .dest-card h4 {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin: 0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .dest-card p {
+    font-size: 13px;
+    color: var(--color-nordic);
+    opacity: 0.65;
+    line-height: 1.5;
+    margin: 0;
+  }
+  @media (max-width: 700px) {
+    .dest-grid { grid-template-columns: 1fr; }
+  }
+</style>

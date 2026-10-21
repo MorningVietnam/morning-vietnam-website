@@ -1,0 +1,75 @@
+---
+interface Props {
+  tourSlug: string;
+  tourName: string;
+  tourMeta: string;
+  headline: string;
+  body: string;
+  image: string;
+  ctaLabel: string;
+}
+const { tourSlug, tourName, tourMeta, headline, body, image, ctaLabel } = Astro.props;
+---
+
+<aside class="blog-cta-card">
+  <div class="blog-cta-card__image">
+    <img src={image} alt={tourName} loading="lazy" />
+  </div>
+  <div class="blog-cta-card__body">
+    <p class="blog-cta-card__meta">{tourMeta}</p>
+    <h3 class="blog-cta-card__title">{tourName}</h3>
+    <p class="blog-cta-card__headline">{headline}</p>
+    <p class="blog-cta-card__sub">{body}</p>
+    <a href={`/tours/${tourSlug}`} class="btn btn-accent">{ctaLabel}</a>
+  </div>
+</aside>
+
+<style>
+  .blog-cta-card {
+    margin: 56px 0;
+    background: var(--color-light-cyan);
+    border-radius: 20px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .blog-cta-card__image {
+    aspect-ratio: 16/9;
+    overflow: hidden;
+  }
+  .blog-cta-card__image img { width: 100%; height: 100%; object-fit: cover; }
+  .blog-cta-card__body { padding: 32px; display: flex; flex-direction: column; gap: 14px; }
+  .blog-cta-card__meta {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-java);
+    margin: 0;
+  }
+  .blog-cta-card__title {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    color: var(--color-nordic);
+    margin: 0;
+    line-height: 1.1;
+  }
+  .blog-cta-card__headline {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    color: var(--color-nordic);
+    margin: 0;
+  }
+  .blog-cta-card__sub {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-nordic);
+    opacity: 0.75;
+    margin: 0;
+  }
+  .blog-cta-card .btn {
+    align-self: flex-start;
+    margin-top: 8px;
+  }
+</style>

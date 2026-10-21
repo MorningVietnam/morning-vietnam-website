@@ -41,6 +41,8 @@ const morePosts = allPosts
   publishedAt={post.data.publishedAt}
   author={post.data.author.name}
 >
+  <div class="blog-progress"><div class="blog-progress__fill" id="blog-progress-fill"></div></div>
+
   <!-- ══ HERO — 2-col split ══ -->
   <section class="blog-detail__hero">
     <div class="container blog-detail__hero-inner">
@@ -131,6 +133,17 @@ const morePosts = allPosts
     </div>
   </section>
 
+  <script>
+    const fill = document.getElementById('blog-progress-fill');
+    if (fill) {
+      window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = (window.scrollY / h) * 100;
+        (fill as HTMLElement).style.width = Math.min(100, pct) + '%';
+      }, { passive: true });
+    }
+  </script>
+
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -161,7 +174,7 @@ const morePosts = allPosts
 <style>
   /* ══ HERO ══ */
   .blog-detail__hero {
-    padding: 80px 0 60px;
+    padding: calc(var(--site-header-h) + 56px) 0 72px;
     background: white;
   }
   .blog-detail__hero-inner {
@@ -169,13 +182,13 @@ const morePosts = allPosts
     grid-template-columns: 1fr 1fr;
     gap: 60px;
     align-items: stretch;
-    min-height: 560px;
+    min-height: 480px;
   }
   .blog-detail__hero-left {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 24px 0;
+    padding: 0;
   }
   .blog-detail__meta {
     display: flex;
@@ -258,7 +271,27 @@ const morePosts = allPosts
     padding-bottom: 100px;
   }
 
+  /* ══ PROGRESS BAR ══ */
+  .blog-progress {
+    position: fixed;
+    top: var(--site-header-h, 100px);
+    left: 0; right: 0;
+    height: 2px;
+    background: transparent;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .blog-progress__fill {
+    height: 100%;
+    width: 0%;
+    background: var(--color-java);
+    transition: width 0.1s linear;
+  }
+
   /* ══ ARTICLE PROSE ══ */
+  .blog-detail__article {
+    counter-reset: h2-counter;
+  }
   .blog-detail__article :global(h2) {
     font-family: var(--font-heading);
     font-size: clamp(24px, 2.5vw, 32px);
@@ -267,6 +300,18 @@ const morePosts = allPosts
     margin: 56px 0 20px;
     line-height: 1.2;
     scroll-margin-top: calc(var(--site-header-h, 100px) + 24px);
+    position: relative;
+    counter-increment: h2-counter;
+  }
+  .blog-detail__article :global(h2)::before {
+    content: counter(h2-counter, upper-roman) ".";
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--color-sorbus);
+    opacity: 0.6;
+    margin-bottom: 8px;
   }
   .blog-detail__article :global(h3) {
     font-family: var(--font-heading);

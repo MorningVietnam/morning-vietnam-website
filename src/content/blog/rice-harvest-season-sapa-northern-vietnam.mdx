@@ -16,6 +16,12 @@ featured: false
 draft: false
 ---
 
+import PullQuote from '../../components/blog/PullQuote.astro';
+import ImageCompare from '../../components/blog/ImageCompare.astro';
+import DestinationGrid from '../../components/blog/DestinationGrid.astro';
+import InlineImage from '../../components/blog/InlineImage.astro';
+import BlogCTACard from '../../components/blog/BlogCTACard.astro';
+
 Rice harvest in Sapa and Northwest Vietnam runs from mid-August into the season, moving valley by valley. Nam Cang golds earliest, from mid-August. The main Muong Hoa terraces around Sapa turn richest between September 10 and 15, while the higher Lai Chau routes come into gold from mid-September and hold it into early October. Late September is the busiest week, so travelers wanting full gold with fewer crowds may want to visit a little earlier in the window.
 
 ## When does the rice turn gold?
@@ -53,9 +59,26 @@ The Morning Vietnam team monitors field conditions every week through a network 
 
 Check current field conditions in our [WhatsApp Community](https://chat.whatsapp.com/JaRg7YIBpg3FdkT6kAGGhL) before you lock in your dates — it is the same real-time reporting we use ourselves.
 
+<PullQuote>
+The result is not one moment of peak color but a rolling wave that moves gradually across the region over several weeks.
+</PullQuote>
+
 ## Why August–September, not the postcard you've seen
 
 If you have seen glowing green terraces on Instagram, that photo was most likely taken in June or July, during the water season when the fields are freshly flooded and planted. It is a striking sight, but it is not harvest season.
+
+<ImageCompare
+  left={{
+    src: "/blog/rice-harvest-sapa/green-vs-gold-1.jpg",
+    alt: "Flooded green rice terraces in Sapa during June",
+    caption: "What Instagram shows: flooded green mirrors in June–July."
+  }}
+  right={{
+    src: "/blog/rice-harvest-sapa/green-vs-gold-2.jpg",
+    alt: "Golden harvest work in Sapa in September",
+    caption: "What harvest season actually is: gold, stubble, hands-on work."
+  }}
+/>
 
 By August and September the landscape changes completely. Fields turn gold rather than emerald, stubble and cut stalks appear as harvesting progresses, and you will see farmers cutting and bundling rice by hand. It is a more lived-in, working landscape than a glassy postcard shot.
 
@@ -64,6 +87,26 @@ We point this out early because we would rather give you an honest picture than 
 ## Where to go: Sapa vs Nam Cang vs Lai Chau
 
 Sapa center, Nam Cang, and the Lai Chau route each offer a genuinely different experience. None is objectively "better" — they simply suit different travelers.
+
+<DestinationGrid
+  items={[
+    {
+      name: "Sapa Center",
+      mood: "Easy to reach, iconic views, the crowd knows it.",
+      image: "/blog/rice-harvest-sapa/sapa-destination.jpg"
+    },
+    {
+      name: "Nam Cang",
+      mood: "Earliest gold, quiet, Red Dao families.",
+      image: "/blog/rice-harvest-sapa/nam-cang-destination.jpg"
+    },
+    {
+      name: "Lai Chau Route",
+      mood: "Highest pass, longest season, almost no visitors.",
+      image: "/blog/rice-harvest-sapa/lai-chau-destination.jpg"
+    },
+  ]}
+/>
 
 ### Quick comparison
 
@@ -94,13 +137,34 @@ None of these areas will disappoint on their own terms. They just reward differe
 
 Rice harvest season in Sapa is not just a view — it is something you notice with more than your eyes.
 
+<InlineImage
+  src="/blog/rice-harvest-sapa/sensory-smell.jpg"
+  alt="Close-up of hands cutting golden rice stalks"
+  caption="Afternoon smell of warm, cut straw — the first signal."
+  aspect="16/9"
+/>
+
 ### You smell it and hear it before you see it
 
 Harvest announces itself before it comes into view. The air carries the dry, faintly sweet smell of cut straw, strongest in the late afternoon after the terraces have warmed all day. Underneath it runs the rhythmic thud of hand-threshing carrying across the valley, the swish of sickles further down the slope, and the occasional shout between family members coordinating from one terrace to the next.
 
+<InlineImage
+  src="/blog/rice-harvest-sapa/sensory-hamlet.jpg"
+  alt="Three generations harvesting rice together on terrace"
+  caption="Three generations on one terrace — grandparents thresh, parents cut, children carry."
+  aspect="16/9"
+/>
+
 ### A whole hamlet moves as one
 
 During peak harvest days, whole families and often entire hamlets move into the terraces together, racing to bring in the grain before rain or wind can knock it loose. Children carry bundles along narrow field edges, grandparents sort grain from chaff with practiced hands, and parents cut and thresh — three generations often working the same terrace at once. Neighbors move between each other's plots too, a tradition of mutual help that has shaped harvest here for generations. It is a communal side of the season most visitors never get to witness up close.
+
+<InlineImage
+  src="/blog/rice-harvest-sapa/sensory-hours.jpg"
+  alt="Rice terrace at golden hour"
+  caption="Same terrace, different hours — morning gold, afternoon stubble."
+  aspect="16/9"
+/>
 
 ### A terrace, told in hours
 
@@ -134,11 +198,15 @@ Because harvest timing shifts from year to year and rooms in Sapa fill fast once
 
 ## See the harvest with Morning Vietnam
 
-Each year, as harvest arrives, the terraces around Sapa turn a deep, glowing gold — one of Northwest Vietnam's most striking natural changes. Carved into the mountainsides over generations, these fields shift from green to amber in just a few short weeks. It is a fleeting moment, and one best experienced in person rather than through photos alone.
-
-At Morning Vietnam, we help travelers time their visit to catch this golden season at its peak — from choosing the right villages to trek through to finding the viewpoints most people miss. Ready to see it for yourself?
-
-Explore our [Sa Pa – Lai Chau Tour](/tours/sa-pa-lai-chau), discover the [Sa Pa – Nam Cang Tour](/tours/sapa-nam-cang), or join our [Sa Pa Trekking Classic](/tours/sapa-trekking-classic) to walk the golden terraces yourself.
+<BlogCTACard
+  tourSlug="sapa-lai-chau"
+  tourName="Sapa — Lai Chau Trek"
+  tourMeta="4D3N · Max 8 pax · from $420/person"
+  headline="See it live, not in photos."
+  body="Golden terraces, hidden Nam Cang valley, Lai Chau's remote route, and Thai family dinners along the way. Our Unlock Challenge runs through the harvest villages — the kind of thing you can't Google."
+  image="/blog/rice-harvest-sapa/cta-tour-cover.jpg"
+  ctaLabel="See this tour →"
+/>
 
 ## FAQ
 

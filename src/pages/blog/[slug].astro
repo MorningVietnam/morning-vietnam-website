@@ -127,7 +127,7 @@ const morePosts = allPosts
     <div class="blog-detail__cta-overlay"></div>
     <div class="container blog-detail__cta-content">
       <p class="section-label blog-detail__cta-eyebrow">✦ Where stories become trips</p>
-      <h2 class="blog-detail__cta-heading">Read it, then live it.</h2>
+      <h2 class="blog-detail__cta-heading">Read it,<br>then live it.</h2>
       <p class="blog-detail__cta-sub">Our tours turn these stories into days you actually walk through — small groups, local hosts, no scripts.</p>
       <a href="/tours" class="btn btn-primary">See our tours →</a>
     </div>
@@ -169,6 +169,18 @@ const morePosts = allPosts
       "@id": Astro.url.href
     }
   })} />
+
+  {post.data.faqs && post.data.faqs.length > 0 && (
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": post.data.faqs.map((f) => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": { "@type": "Answer", "text": f.a }
+      }))
+    })} />
+  )}
 </BaseLayout>
 
 <style>
@@ -486,6 +498,7 @@ const morePosts = allPosts
     line-height: 0.95;
     letter-spacing: -0.025em;
     margin-bottom: 24px;
+    color: var(--color-white);
   }
   .blog-detail__cta-sub {
     font-size: 18px;

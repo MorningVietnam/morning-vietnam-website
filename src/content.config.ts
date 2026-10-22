@@ -18,6 +18,8 @@ const blog = defineCollection({
       quote: z.string().optional(),
     }),
     tags: z.array(z.string()).default([]),
+    // FAQ dùng để sinh FAQPage schema (Google rich result + AI dễ trích Q&A).
+    faqs: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
     relatedTourSlug: z.string().optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),

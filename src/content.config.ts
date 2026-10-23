@@ -5,6 +5,8 @@ const blog = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
   schema: z.object({
     title: z.string(),
+    // Dòng phụ nhỏ hiển thị ngay dưới tiêu đề ở hero (tùy chọn). Cho phép HTML đơn giản.
+    subtitle: z.string().optional(),
     excerpt: z.string(),
     category: z.enum(['travel-guides', 'deep-culture', 'behind-the-tour']),
     publishedAt: z.coerce.date(),

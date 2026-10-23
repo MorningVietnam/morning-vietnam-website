@@ -53,6 +53,13 @@ const morePosts = allPosts
           <span>{dateStr}</span>
         </div>
         <h1 class="blog-detail__title">{post.data.title}</h1>
+        {post.data.subtitle && (
+          <p
+            class="blog-detail__subtitle"
+            style="font-size: 1rem; font-weight: 600; letter-spacing: 0.02em; color: var(--color-java); margin: 14px 0 0;"
+            set:html={post.data.subtitle}
+          />
+        )}
 
         <div class="blog-detail__hero-spacer"></div>
 

@@ -21,7 +21,7 @@ const tocItems = headings.filter(h => h.depth === 2);
 
   <div class="blog-sidebar__author">
     <p class="blog-sidebar__name">{author.name}</p>
-    {author.role && <p class="blog-sidebar__role">{author.role}</p>}
+    {author.role && <p class="blog-sidebar__role" set:html={author.role} />}
   </div>
 
   <div class="blog-sidebar__divider"></div>

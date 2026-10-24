@@ -311,6 +311,8 @@ const morePosts = allPosts
   .blog-detail__article {
     counter-reset: h2-counter;
   }
+  /* First element (e.g. editor's note) aligns to the top of the sidebar card */
+  .blog-detail__article > :global(:first-child) { margin-top: 0; }
   .blog-detail__article :global(h2) {
     font-family: var(--font-heading);
     font-size: clamp(24px, 2.5vw, 32px);

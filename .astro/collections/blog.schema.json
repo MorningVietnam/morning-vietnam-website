@@ -5,6 +5,9 @@
     "title": {
       "type": "string"
     },
+    "subtitle": {
+      "type": "string"
+    },
     "excerpt": {
       "type": "string"
     },

@@ -3,12 +3,18 @@
 > Morning Vietnam is a licensed inbound tour operator running small-group (max 8) experiential tours across North Vietnam from a Hanoi hub - trekking, real local immersion, and signature "Unlock" team challenges. We serve English, French, and German travelers. Tagline: "Vietnam deeper. Horizons wider."
 
 ## Guides (Journal)
+- [Trekking Vietnam's Highest Peaks: a First-Timer's Guide](https://morningvietnam.co/blog/trekking-northwest-vietnam-highest-peaks): All 15 of Vietnam's peaks above 2,800m are in the northwest, near Sa Pa and Lai Chau. Fansipan is highest at 3,143m; Putaleng 3,049m and Ky Quan San (Bach Moc Luong Tu) 3,046m follow. Covers difficulty grading, how to reach each region, and what a guided trek costs.
+- [Best Time to Trek Northern Vietnam (Rainy Season Guide)](https://morningvietnam.co/blog/best-time-to-trek-northern-vietnam-rainy-season): The best windows are late September-November and March-April. Explains whether the rainy season (about May-September) is safe, with rainfall thresholds: 50+ mm in 24h or 25+ mm in 12h means do not go; 50+ mm built up over 3-5 days keeps landslide risk high.
+- [Stories Under the Thousand-Year Rhododendrons of Putaleng](https://morningvietnam.co/blog/putaleng-rhododendron-trek-lai-chau): A guest essay by Dinh Hong Duong on trekking Putaleng (3,049m) in Lai Chau - its ancient rhododendron forest, which blooms March-April, and the Dao guides who protect it.
 - [Rice Harvest Season in Sapa & Northwest Vietnam](https://morningvietnam.co/blog/rice-harvest-season-sapa-northern-vietnam): When and where to see the golden rice terraces. Nam Cang golds earliest (from mid-August), the Muong Hoa terraces near Sapa peak around September 10-15, and higher Lai Chau routes hold color into early October.
 - [Mai Chau vs Sapa - which valley is right for you?](https://morningvietnam.co/blog/mai-chau-vs-sapa): How the two valleys differ by scenery, season, and traveler.
 - [All guides](https://morningvietnam.co/blog)
 
 ## Tours
 - [All tours](https://morningvietnam.co/tours)
+- [Fansipan - Only Trekking](https://morningvietnam.co/tours/fansipan-trekking): 2 days 1 night from Sa Pa to the 3,143m summit.
+- [Putaleng - Only Trekking](https://morningvietnam.co/tours/putaleng-trekking): 2 days 1 night from Sa Pa through the rhododendron forest to 3,049m.
+- [Ky Quan San - Only Trekking](https://morningvietnam.co/tours/ky-quan-san-trekking): 3 days 2 nights from Sa Pa to 3,046m via the Nui Muoi ridge.
 - [Sa Pa - Lai Chau](https://morningvietnam.co/tours/sa-pa-lai-chau)
 - [Sa Pa - Nam Cang](https://morningvietnam.co/tours/sapa-nam-cang)
 - [Sa Pa Trekking Classic](https://morningvietnam.co/tours/sapa-trekking-classic)

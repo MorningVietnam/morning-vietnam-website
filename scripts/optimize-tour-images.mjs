@@ -1,49 +1,48 @@
 #!/usr/bin/env node
 /**
- * Optimize tour gallery images.
+ * Nén ảnh trong public/ trước khi commit — giữ Vercel Deployment Storage thấp.
  *
- * Cách dùng:
- *   node scripts/optimize-tour-images.mjs           # chạy tối ưu
- *   node scripts/optimize-tour-images.mjs --dry     # chỉ in báo cáo, không ghi đè
- *   node scripts/optimize-tour-images.mjs --restore # khôi phục từ backup
+ * Cách dùng (chạy ở thư mục gốc dự án):
+ *   npm run optimize-images -- --dry      # chỉ xem báo cáo, KHÔNG ghi đè
+ *   npm run optimize-images               # nén thật (backup bản gốc trước)
+ *   npm run optimize-images -- --restore  # khôi phục toàn bộ bản gốc
  *
  * Quy tắc:
- *   - Resize: cạnh dài tối đa 1920px (giữ aspect ratio), không phóng to ảnh nhỏ hơn
- *   - Encode: WebP quality 82 (mặc định smart subsample on)
- *   - Backup: copy nguyên trạng sang public/tours.backup/ trước khi ghi đè
- *   - Bỏ qua: file đã <= 500KB và <= 1920px (đã đủ nhẹ rồi)
+ *   - Quét TOÀN BỘ public/ (tours, team, blog, catalogue, ảnh lẻ...)
+ *   - Chỉ xét ảnh > 500KB. Giữ nguyên tên file + định dạng → không phải sửa code.
+ *   - Ảnh thường: cạnh dài tối đa 1920px, quality 82.
+ *   - Trang brochure (catalogue/, travel-guide/): tối đa 2000px, quality 85 (có chữ).
+ *   - Chỉ thay file nếu nhỏ đi ít nhất 10% (tránh nén lại vô ích làm giảm nét).
+ *   - Backup bản gốc vào _originals/precompress/ — NGOÀI public/, đã gitignore.
+ *     ⚠️ Không bao giờ để backup trong public/: mọi thứ trong public/ đều bị
+ *     deploy lên Vercel và tính vào Deployment Storage.
  */
 
-import { readdir, stat, mkdir, copyFile, readFile, writeFile, rm } from 'node:fs/promises';
+import { readdir, stat, mkdir, copyFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { join, relative, dirname } from 'node:path';
+import { join, relative, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT     = join(__dirname, '..');
-const SRC_DIR  = join(ROOT, 'public', 'tours');
-const BAK_DIR  = join(ROOT, 'public', 'tours.backup');
+const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');
+const PUBLIC  = join(ROOT, 'public');
+const BAK_DIR = join(ROOT, '_originals', 'precompress');
 
-const MAX_DIM      = 1920;
-const WEBP_QUALITY = 82;
-const SKIP_IF_SIZE = 500 * 1024; // 500KB
+const MIN_SIZE   = 500 * 1024;   // chỉ xét ảnh > 500KB
+const MIN_SAVING = 0.10;         // phải nhỏ đi ≥ 10% mới thay
+const IMG_EXT    = /\.(webp|jpe?g|png)$/i;
+const SKIP_DIRS  = new Set(['tours.backup']); // phòng hờ backup cũ còn sót
 
 const args = new Set(process.argv.slice(2));
-const isDry     = args.has('--dry');
+const isDry = args.has('--dry');
 const isRestore = args.has('--restore');
 
-const IMG_EXT = /\.(webp|jpg|jpeg|png)$/i;
-
-function fmt(bytes) {
-  if (bytes < 1024) return bytes + 'B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + 'KB';
-  return (bytes / 1024 / 1024).toFixed(2) + 'MB';
-}
+const fmt = (b) => b < 1048576 ? `${(b / 1024).toFixed(0)}KB` : `${(b / 1048576).toFixed(2)}MB`;
 
 async function walk(dir) {
   const out = [];
   for (const ent of await readdir(dir, { withFileTypes: true })) {
+    if (SKIP_DIRS.has(ent.name)) continue;
     const p = join(dir, ent.name);
     if (ent.isDirectory()) out.push(...await walk(p));
     else if (IMG_EXT.test(ent.name)) out.push(p);
@@ -51,114 +50,58 @@ async function walk(dir) {
   return out;
 }
 
-async function backupOnce(file) {
-  const rel = relative(SRC_DIR, file);
-  const dst = join(BAK_DIR, rel);
-  if (existsSync(dst)) return; // đã backup rồi → không ghi đè backup
-  await mkdir(dirname(dst), { recursive: true });
-  await copyFile(file, dst);
+function rulesFor(rel) {
+  const isBrochure = rel.startsWith('catalogue/') || rel.startsWith('travel-guide/');
+  return isBrochure ? { max: 2000, q: 85 } : { max: 1920, q: 82 };
 }
 
-async function restoreFromBackup() {
-  if (!existsSync(BAK_DIR)) {
-    console.log('Không có thư mục backup tại', BAK_DIR);
-    return;
-  }
+async function encode(file, rel) {
+  const { max, q } = rulesFor(rel);
+  const img = sharp(file).rotate().resize({ width: max, height: max, fit: 'inside', withoutEnlargement: true });
+  const ext = extname(file).toLowerCase();
+  if (ext === '.webp') return img.webp({ quality: q, effort: 5 }).toBuffer();
+  if (ext === '.png')  return img.png({ compressionLevel: 9, palette: false }).toBuffer();
+  return img.jpeg({ quality: q, mozjpeg: true, progressive: true }).toBuffer();
+}
+
+async function restore() {
+  if (!existsSync(BAK_DIR)) return console.log('Không có backup tại', BAK_DIR);
   const files = await walk(BAK_DIR);
-  console.log(`Khôi phục ${files.length} file từ backup...`);
   for (const f of files) {
-    const rel = relative(BAK_DIR, f);
-    const dst = join(SRC_DIR, rel);
+    const dst = join(PUBLIC, relative(BAK_DIR, f));
     await mkdir(dirname(dst), { recursive: true });
     await copyFile(f, dst);
   }
-  console.log('Xong. Bạn có thể xóa thủ công public/tours.backup/ nếu muốn.');
+  console.log(`Đã khôi phục ${files.length} file từ _originals/precompress/`);
 }
 
 async function optimize() {
-  if (!existsSync(SRC_DIR)) {
-    console.error('Không tìm thấy', SRC_DIR);
-    process.exit(1);
-  }
-
-  const files = await walk(SRC_DIR);
-  console.log(`Tìm thấy ${files.length} ảnh trong public/tours/`);
-  console.log(`Mode: ${isDry ? 'DRY RUN (không ghi đè)' : 'GHI ĐÈ'}`);
-  console.log(`Quality: q${WEBP_QUALITY}, max ${MAX_DIM}px cạnh dài\n`);
-
-  let totalBefore = 0, totalAfter = 0, skipped = 0, processed = 0, errors = 0;
-  const perTour = new Map();
+  const files = await walk(PUBLIC);
+  console.log(`Quét ${files.length} ảnh trong public/ — ${isDry ? 'DRY RUN (không ghi đè)' : 'GHI ĐÈ'}\n`);
+  let before = 0, after = 0, changed = 0, errors = 0;
 
   for (const file of files) {
-    const rel = relative(SRC_DIR, file);
-    const tour = rel.split('/')[0];
-    if (!perTour.has(tour)) perTour.set(tour, { before: 0, after: 0, count: 0 });
-
+    const rel = relative(PUBLIC, file);
+    const size = (await stat(file)).size;
+    if (size <= MIN_SIZE) continue;
     try {
-      const st = await stat(file);
-      const meta = await sharp(file).metadata();
-      const maxSide = Math.max(meta.width || 0, meta.height || 0);
-      totalBefore += st.size;
-      perTour.get(tour).before += st.size;
-      perTour.get(tour).count++;
-
-      // Bỏ qua nếu đã nhẹ và dimension đã hợp lý
-      if (st.size <= SKIP_IF_SIZE && maxSide <= MAX_DIM) {
-        skipped++;
-        totalAfter += st.size;
-        perTour.get(tour).after += st.size;
-        continue;
-      }
-
-      // Encode buffer mới
-      const buf = await sharp(file)
-        .resize({
-          width:  meta.width  >= meta.height ? MAX_DIM : null,
-          height: meta.height > meta.width  ? MAX_DIM : null,
-          withoutEnlargement: true,
-          fit: 'inside',
-        })
-        .webp({ quality: WEBP_QUALITY, effort: 5 })
-        .toBuffer();
-
-      totalAfter += buf.length;
-      perTour.get(tour).after += buf.length;
-      processed++;
-
-      const pct = ((1 - buf.length / st.size) * 100).toFixed(0);
-      console.log(`  ${rel.padEnd(50)} ${fmt(st.size).padStart(8)} → ${fmt(buf.length).padStart(8)} (-${pct}%)`);
-
+      const buf = await encode(file, rel);
+      before += size;
+      if (buf.length > size * (1 - MIN_SAVING)) { after += size; continue; }
+      after += buf.length; changed++;
+      console.log(`  ${rel.padEnd(55)} ${fmt(size).padStart(8)} → ${fmt(buf.length).padStart(8)}`);
       if (!isDry) {
-        await backupOnce(file);
-        // Ghi đè cùng filename — đều là .webp nên không đổi extension
+        const bak = join(BAK_DIR, rel);
+        if (!existsSync(bak)) { await mkdir(dirname(bak), { recursive: true }); await copyFile(file, bak); }
         await writeFile(file, buf);
       }
-    } catch (err) {
-      console.error(`  LỖI ${rel}:`, err.message);
-      errors++;
-    }
+    } catch (e) { errors++; console.error(`  LỖI ${rel}: ${e.message}`); }
   }
 
-  console.log('\n— Theo tour —');
-  for (const [tour, s] of perTour) {
-    const pct = s.before ? ((1 - s.after / s.before) * 100).toFixed(0) : '0';
-    console.log(`  ${tour.padEnd(28)} ${String(s.count).padStart(3)} ảnh  ${fmt(s.before).padStart(8)} → ${fmt(s.after).padStart(8)}  (-${pct}%)`);
-  }
-
-  console.log('\n— Tổng —');
-  console.log(`  Xử lý:    ${processed}`);
-  console.log(`  Bỏ qua:   ${skipped} (đã đủ nhẹ)`);
-  console.log(`  Lỗi:      ${errors}`);
-  console.log(`  Trước:    ${fmt(totalBefore)}`);
-  console.log(`  Sau:      ${fmt(totalAfter)}`);
-  const pct = totalBefore ? ((1 - totalAfter / totalBefore) * 100).toFixed(1) : '0';
-  console.log(`  Tiết kiệm: -${pct}% (${fmt(totalBefore - totalAfter)})`);
-  if (!isDry) console.log(`\n  Backup tại: public/tours.backup/`);
-  if (isDry)  console.log(`\n  (Dry run — không có gì bị thay đổi)`);
+  console.log(`\nThay ${changed} file | Lỗi ${errors}`);
+  console.log(`Ảnh >500KB: ${fmt(before)} → ${fmt(after)}${before ? ` (giảm ${((1 - after / before) * 100).toFixed(0)}%)` : ''}`);
+  if (isDry) console.log('(Dry run — chưa thay đổi gì)');
+  else if (changed) console.log('Bản gốc đã lưu ở _originals/precompress/');
 }
 
-if (isRestore) {
-  await restoreFromBackup();
-} else {
-  await optimize();
-}
+isRestore ? await restore() : await optimize();

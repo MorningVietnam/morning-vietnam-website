@@ -7,3 +7,9 @@ dist/
 # Dấu `/` đầu = anchor to repo root → không match src/pages/catalogue/ hay
 # public/catalogue/. Không bỏ dấu `/` đầu — match mọi nơi sẽ làm deploy 404.
 /catalogue/
+
+# Ảnh gốc độ nét cao (backup trước khi nén) — giữ trên máy, KHÔNG deploy.
+# Tuyệt đối không để backup trong public/: mọi thứ trong public/ đều bị
+# copy lên Vercel ở mỗi lần deploy và tính vào Deployment Storage.
+/_originals/
+public/tours.backup/

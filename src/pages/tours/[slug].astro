@@ -52,6 +52,15 @@ function fmtDate(iso: string) {
   return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
+// Helper cho journey card images — tách ra khỏi template vì
+// Astro compiler bị bug khi arrow function trong JSX có block body
+// chứa `const` + `return` (Unexpected "const" tại esbuild transform).
+function dayImgs(d: any) {
+  return (d.images && d.images.length > 0)
+    ? d.images
+    : [1, 2, 3].map((n) => ({ src: '/tours/multi-activity/placeholder.webp', alt: `Day ${d.day} photo ${n} — coming soon` }));
+}
+
 // Trekking-specific modules (only present on hiking/trekking tours)
 const tripGrading  = (tour as any).tripGrading || null;
 const safetyInfo   = (tour as any).safetyInfo || null;
@@ -74,6 +83,8 @@ const isTrekkingTour = !!tripGrading;
 // privateRoute: deliberately don't publish the exact route → hide the route-map
 // section and the elevation chart (and their "pending" placeholders).
 const privateRoute   = !!(tour as any).privateRoute;
+const journeyParts: any = (tour as any).journeyParts || null;
+const showChart      = !!(elevation && elevation.length > 0 && !journeyParts);
 
 const tripInfoData   = (tour.tripInfo as any) || null;
 const hasTripInfo    = !!tripInfoData;
@@ -165,7 +176,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               {selectorMode === 'duration-tabs' ? (
                 /* ── Duration tabs: 1 Day / 2D1N / 3D2N ── */
                 <div class="td-dur-tabs" id="td-dur-tabs">
-                  {tour.durationOptions.map((opt: {id: string; label: string}, i: number) => (
+                  {tour.durationOptions.map((opt: any, i: number) => (
                     <button
                       class={`td-dur-tab${i === 0 ? ' is-active' : ''}`}
                       data-dur-id={opt.id}
@@ -184,7 +195,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                     </label>
                     <div class="td-selector__wrap">
                       <select id="td-sel-vehicle-only" class="td-selector__select">
-                        {tour.durationOptions.map((opt: {id: string; label: string}) => (
+                        {tour.durationOptions.map((opt: any) => (
                           <option value={opt.id}>{opt.label}</option>
                         ))}
                       </select>
@@ -362,7 +373,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               <div class="td-discount">
                 <p class="td-tripinfo__section-label">Discounts</p>
                 <ul class="td-discount__list">
-                  {discountPolicy.rules.map((r: {label: string; value: string}) => (
+                  {discountPolicy.rules.map((r: any) => (
                     <li>
                       <span class="td-discount__label">{r.label}</span>
                       <span class="td-discount__value">{r.value}</span>
@@ -497,7 +508,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               </tr>
             </thead>
             <tbody id="td-value-table-body">
-              {compareRows.map((row: {metric: string; typical: string; us: string}, i: number) => (
+              {compareRows.map((row: any, i: number) => (
                 <tr>
                   <td class="td-value__metric">{row.metric}</td>
                   {allTypicalSame
@@ -588,7 +599,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
 
             {routeDays && (
               <ul class="td-routemap__legend" aria-label="Route legend">
-                {routeDays.map((d: {label: string; color: string}) => (
+                {routeDays.map((d: any) => (
                   <li><span class="td-routemap__legend-swatch" style={`background:${d.color}`}></span>{d.label}</li>
                 ))}
               </ul>
@@ -869,10 +880,64 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   <section class="td-timeline">
     <div class="td-timeline__inner">
       <p class="section-label">The journey</p>
-      <h2 class="td-timeline__heading">{privateRoute ? 'The day, step by step.' : (isMultiDay ? 'The journey, mapped.' : 'A day, mapped.')}</h2>
-      {!privateRoute && <p class="td-timeline__sub">Time across, elevation up. Every spike is a moment worth remembering.</p>}
+      <h2 class="td-timeline__heading">{journeyParts ? 'The journey, day by day.' : (privateRoute && !showChart) ? 'The day, step by step.' : (isMultiDay ? 'The journey, mapped.' : 'A day, mapped.')}</h2>
+      {journeyParts && <p class="td-timeline__sub">How you move, and where you sleep.</p>}
+      {!journeyParts && (!privateRoute || showChart) && <p class="td-timeline__sub">Time across, elevation up. Every spike is a moment worth remembering.</p>}
 
-      {elevation && elevation.length > 0 ? (
+      {journeyParts && itineraryDays && (
+        <div class="td-journey">
+          <div class="td-journey__legend" aria-hidden="true">
+            <span class="td-mode td-mode--bike"><i class="ti ti-bike"></i>E-bike</span>
+            <span class="td-mode td-mode--trek"><i class="ti ti-walk"></i>Trek</span>
+            <span class="td-mode td-mode--drive"><i class="ti ti-car"></i>Drive</span>
+            <span class="td-mode td-mode--boat"><i class="ti ti-ship"></i>Boat</span>
+          </div>
+          {journeyParts.map((part) => (
+            <div class="td-journey__part">
+              <p class="td-journey__band">{part.label} · days {part.from}–{part.to}</p>
+              <ol class="td-journey__list">
+                {itineraryDays.filter((d: any) => d.day >= part.from && d.day <= part.to).map((d: any) => (
+                  <li class="td-journey__item">
+                    <span class="td-journey__num">{d.day}</span>
+                    <article class="td-jcard">
+                      <div class="td-dslider" data-dslider>
+                        <div class="td-dslider__track">
+                          {dayImgs(d).map((im: any, n: number) => (
+                            <figure class="td-dslider__slide"><img src={im.src} alt={im.alt} loading={d.day === 1 && n === 0 ? 'eager' : 'lazy'} /></figure>
+                          ))}
+                        </div>
+                        {dayImgs(d).length > 1 && (
+                          <>
+                            <button type="button" class="td-dslider__btn td-dslider__btn--prev" aria-label="Previous photo"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+                            <button type="button" class="td-dslider__btn td-dslider__btn--next" aria-label="Next photo"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+                            <div class="td-dslider__dots" aria-hidden="true">{dayImgs(d).map((_: any, n: number) => <span class={`td-dslider__dot${n === 0 ? ' is-active' : ''}`}></span>)}</div>
+                          </>
+                        )}
+                      </div>
+                      <div class="td-jcard__body">
+                        <p class="td-jcard__day">Day {d.day}</p>
+                        <h3 class="td-journey__route">{d.route || d.title}</h3>
+                        <div class="td-journey__meta td-journey__meta--card">
+                          {(d.modes || []).map((m: any) => (
+                            <span class={`td-mode td-mode--${m.type}`}><i class={`ti ti-${m.type === 'bike' ? 'bike' : m.type === 'trek' ? 'walk' : m.type === 'boat' ? 'ship' : 'car'}`} aria-hidden="true"></i>{m.label}</span>
+                          ))}
+                        </div>
+                        <div class="td-journey__meta td-journey__meta--card">
+                          {d.accommodation && d.accommodation !== '—' && <span class="td-journey__stay"><i class="ti ti-home" aria-hidden="true"></i>{d.accommodation}</span>}
+                          {d.meals && <span class="td-journey__stay"><i class="ti ti-tools-kitchen-2" aria-hidden="true"></i>{d.meals}</span>}
+                        </div>
+                        {d.narrative && <p class="td-jcard__text">{d.narrative}</p>}
+                      </div>
+                    </article>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showChart ? (
         <div class="td-timeline__chart-wrap">
           <svg
             class="td-timeline__svg"
@@ -979,8 +1044,10 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                     return d;
                   }
 
-                  const dayColor = (day: number) => day === 2 ? 'var(--color-sorbus)' : 'var(--color-java)';
-                  const dayGrad  = (day: number) => day === 2 ? 'url(#elevGradOrange)' : 'url(#elevGradTeal)';
+                  // Màu luân phiên theo parity (even/odd) để các ngày liền kề luôn khác màu.
+                  // Day 1,3,5... = teal (Java). Day 2,4,6... = cam (Sorbus). Day 0 = NIGHT bus (teal mờ).
+                  const dayColor = (day: number) => day % 2 === 0 && day !== 0 ? 'var(--color-sorbus)' : 'var(--color-java)';
+                  const dayGrad  = (day: number) => day % 2 === 0 && day !== 0 ? 'url(#elevGradOrange)' : 'url(#elevGradTeal)';
                   const dayLabel = (day: number) => day === 0 ? 'NIGHT' : `DAY ${day}`;
 
                   return (
@@ -988,7 +1055,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                       {segments.map((seg: Seg) => {
                         const x0 = seg.pathPts[0].x;
                         const x1 = seg.pathPts[seg.pathPts.length - 1].x;
-                        const bgColor = seg.day === 2 ? 'rgba(234,103,57,0.07)' : seg.day === 0 ? 'rgba(29,160,160,0.05)' : 'rgba(29,160,160,0.08)';
+                        const isSorbus = seg.day % 2 === 0 && seg.day !== 0;
+                        const bgColor = isSorbus ? 'rgba(234,103,57,0.07)' : seg.day === 0 ? 'rgba(29,160,160,0.05)' : 'rgba(29,160,160,0.08)';
                         return <rect x={x0} y={30} width={x1 - x0} height={290} fill={bgColor} rx="0" />;
                       })}
                       {dividers.map((div: DivInfo) => (
@@ -1002,16 +1070,15 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                       ))}
                       {segments.map((seg: Seg) => {
                         const midX = (seg.pathPts[0].x + seg.pathPts[seg.pathPts.length-1].x) / 2;
-                        const col = seg.day === 2 ? 'var(--color-sorbus)' : 'var(--color-java)';
                         return (
-                          <text x={midX} y={395} text-anchor="middle" font-size="11" font-weight="700" letter-spacing="0.08em" fill={col} font-family="Commissioner, sans-serif" opacity="0.7">
+                          <text x={midX} y={395} text-anchor="middle" font-size="11" font-weight="700" letter-spacing="0.08em" fill={dayColor(seg.day)} font-family="Commissioner, sans-serif" opacity="0.7">
                             {dayLabel(seg.day)}
                           </text>
                         );
                       })}
                       {coords.map((p: any) => {
-                        const isDay2 = (p.day ?? 1) === 2;
-                        const dotColor = isDay2 ? 'var(--color-sorbus)' : 'var(--color-java)';
+                        const d = p.day ?? 1;
+                        const dotColor = dayColor(d);
                         const dotR = p.highlight ? 10 : 7;
                         const [line1, line2, line3] = labelLines(p.label);
                         const fw = p.highlight ? '700' : '500';
@@ -1118,16 +1185,16 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
             <line x1="60" y1="320" x2="1160" y2="320" stroke="var(--color-nordic)" stroke-width="1" opacity="0.2" />
           </svg>
         </div>
-      ) : privateRoute ? null : (
+      ) : (privateRoute || journeyParts) ? null : (
         <div class="td-timeline__placeholder">
           <strong>Timeline data pending.</strong>
           <p>Elevation profile for {tour.name} will be added once the route is finalized.</p>
         </div>
       )}
-      {elevation && elevation.length > 0 && (
+      {showChart && (
         <p class="td-timeline__disclaimer">⏱ Time markers are estimates — actual pace depends on each group's fitness level.</p>
       )}
-      {useDayCards ? (
+      {(useDayCards && !journeyParts) ? (
         <div class="td-timeline__cards">
           {itineraryDays.map((day: any) => (
             <div class="td-timeline__act-card td-timeline__act-card--day">
@@ -1137,6 +1204,13 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                 {day.meals && <span class="td-timeline__act-badge td-timeline__act-badge--meal"><i class="ti ti-tools-kitchen-2" aria-hidden="true"></i> {day.meals}</span>}
               </div>
               <div class="td-timeline__act-title">{day.title}</div>
+              {day.modes && day.modes.length > 0 && (
+                <div class="td-journey__meta td-journey__meta--card">
+                  {day.modes.map((m: any) => (
+                    <span class={`td-mode td-mode--${m.type}`}><i class={`ti ti-${m.type === 'bike' ? 'bike' : m.type === 'trek' ? 'walk' : m.type === 'boat' ? 'ship' : 'car'}`} aria-hidden="true"></i>{m.label}</span>
+                  ))}
+                </div>
+              )}
               {day.stats && (
                 <div class="td-timeline__act-stats">
                   <span><i class="ti ti-clock" aria-hidden="true"></i>{day.stats.hours}</span>
@@ -1151,12 +1225,13 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
         </div>
       ) : activityCards && activityCards.length > 0 && (
         <div class="td-timeline__cards">
-          {activityCards.map((c: {badges?: string[]; badge?: string; badgeLabel?: string; time: string; title: string; desc: string; highlight: boolean; durationOnly?: string}) => (
+          {activityCards.map((c: any) => (
             <div
               class={`td-timeline__act-card${c.highlight ? ' is-highlight' : ''}${c.durationOnly === '1day' ? ' is-1day-only' : ''}${c.durationOnly === '2d1n' ? ' is-2d1n-only' : ''}${c.durationOnly === '3d2n' ? ' is-3d2n-only' : ''}`}
               data-duration={c.durationOnly || 'all'}
             >
               <div class="td-timeline__act-badges">
+                {c.day != null && <span class="td-timeline__act-badge td-timeline__act-badge--day">Day {c.day}</span>}
                 {(c.badges || (c.badgeLabel ? [c.badgeLabel] : [])).map((b: string) => (
                   <span class={`td-timeline__act-badge td-timeline__act-badge--${b.toLowerCase()}`}>{b}</span>
                 ))}
@@ -1331,7 +1406,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
         <p class="td-unlock__intro">{unlock.intro}</p>
 
         <div class="td-unlock__cards">
-          {(unlock.steps || []).map((step: {num: number; title: string; desc: string}) => (
+          {(unlock.steps || []).map((step: any) => (
             <div class="td-unlock__card">
               <div class="td-unlock__num">{step.num}</div>
               <h3 class="td-unlock__card-title">{step.title}</h3>
@@ -1361,7 +1436,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       <p class="td-season__intro">{season?.intro || "There's no wrong time. But here's what each season gives you."}</p>
 
       <div class="td-season__bar">
-        {(season?.months || []).map((m: {name: string; level: string}) => (
+        {(season?.months || []).map((m: any) => (
           <div class={`td-season__month td-season__month--${m.level}`}>
             <span class="td-season__month-label">{m.name}</span>
             <span class="td-season__month-mark">{
@@ -1380,7 +1455,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       </div>
 
       <div class="td-season__notes">
-        {(season?.notes || []).map((note: {title: string; desc: string}, i: number) => (
+        {(season?.notes || []).map((note: any, i: number) => (
           <div class={`td-season__note${i === 1 ? ' td-season__note--wet' : ''}`}>
             <h4>{note.title}</h4>
             <p>{note.desc}</p>
@@ -1473,7 +1548,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
         <p class="td-faq__sub">Can't find what you're looking for? <a href="https://wa.me/84961836611" target="_blank" rel="noopener">WhatsApp us</a>.</p>
       </div>
       <div class="td-faq__right">
-        {(faqs || []).map((f: {q: string; a: string}) => (
+        {(faqs || []).map((f: any) => (
           <details class="td-faq__item">
             <summary>{f.q}</summary>
             <div class="td-faq__answer">{f.a}</div>
@@ -1490,9 +1565,9 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       <h2 class="td-related__heading">If this resonates,<br/>you'll love these too.</h2>
       <div class="td-related__grid">
         {tours
-          .filter((t: {slug: string; comingSoon?: boolean}) => t.slug !== tour.slug && !t.comingSoon)
+          .filter((t: any) => t.slug !== tour.slug && !t.comingSoon)
           .slice(0, 3)
-          .map((other: {slug: string; image: string; name: string; region: string; tagline: string}) => (
+          .map((other: any) => (
             <a href={`/tours/${other.slug}`} class="td-related__card">
               <div class="td-related__card-image">
                 <img src={other.image} alt={other.name} loading="lazy" />
@@ -1754,6 +1829,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   }
 
   .td-product__tagline {
+    white-space: pre-line;
     font-size: 16px;
     line-height: 1.6;
     color: var(--color-nordic);
@@ -2432,6 +2508,45 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
 
   /* Badge color per type */
   .td-timeline__act-badge--history       { background: rgba(4,51,65,0.08); color: var(--color-nordic); }
+  /* ── Journey overview (multi-activity tours) ── */
+  .td-journey { margin: 8px 0 32px; }
+  .td-journey__legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .td-journey__part { margin-bottom: 22px; }
+  .td-journey__band { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; color: var(--color-nordic); background: var(--color-light-cyan); padding: 8px 14px; border-radius: 8px; margin: 0 0 16px; }
+  .td-journey__list { list-style: none; margin: 0; padding: 0; position: relative; }
+  .td-journey__item { display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: 14px; position: relative; padding-bottom: 18px; }
+  .td-journey__item:not(:last-child)::before { content: ''; position: absolute; left: 16px; top: 34px; bottom: 0; width: 2px; background: var(--color-light-cyan); }
+  .td-journey__num { width: 34px; height: 34px; border-radius: 50%; background: var(--color-java); color: #fff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .td-journey__route { margin: 4px 0 8px; font-weight: 700; font-size: 16px; color: var(--color-nordic); }
+  .td-journey__meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .td-journey__meta--card { margin: 2px 0 10px; }
+  .td-journey__stay { font-size: 13px; color: var(--color-nordic); opacity: 0.75; display: inline-flex; gap: 5px; align-items: center; }
+  .td-mode { font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; }
+  .td-mode--bike  { background: var(--color-light-cyan); color: var(--color-nordic); }
+  .td-mode--trek  { background: var(--color-java); color: #fff; }
+  .td-mode--drive { background: var(--color-white-nectar); color: var(--color-nordic); box-shadow: inset 0 0 0 1px rgba(4,51,65,0.15); }
+  .td-mode--boat  { background: var(--color-riptide); color: var(--color-nordic); }
+  .td-jcard { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 14px rgba(4,51,65,0.10); min-width: 0; }
+  .td-jcard__body { padding: 18px 22px 22px; }
+  .td-jcard__day { margin: 0 0 2px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-java); }
+  .td-jcard__text { margin: 12px 0 0; line-height: 1.65; color: var(--color-nordic); }
+  .td-journey__item { padding-bottom: 28px; }
+  .td-journey__item:not(:last-child)::before { top: 40px; }
+  .td-journey__route { margin: 2px 0 10px; }
+  .td-dslider { position: relative; background: var(--color-nordic); }
+  .td-dslider__track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .td-dslider__track::-webkit-scrollbar { display: none; }
+  .td-dslider__slide { flex: 0 0 100%; margin: 0; scroll-snap-align: start; aspect-ratio: 4 / 3; }
+  .td-dslider__slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .td-dslider__btn { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.92); color: var(--color-nordic); font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,0.25); }
+  .td-dslider__btn--prev { left: 12px; }
+  .td-dslider__btn--next { right: 12px; }
+  .td-dslider__dots { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 6px; }
+  .td-dslider__dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.55); }
+  .td-dslider__dot.is-active { background: #fff; width: 18px; border-radius: 4px; }
+  @media (min-width: 900px) {
+    .td-jcard { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  }
   .td-timeline__act-badge--meal          { background: #fde8d8; color: #8b3a10; }
   .td-timeline__act-badge--challenge     { background: #e8f5e9; color: #2e7d32; }
   .td-timeline__act-badge--hiking        { background: var(--color-light-cyan); color: var(--color-nordic); }
@@ -4575,4 +4690,19 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       footerObserver.observe(footer);
     }
   })();
+</script>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-dslider]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('.td-dslider__track');
+    const dots = Array.from(root.querySelectorAll<HTMLElement>('.td-dslider__dot'));
+    if (!track) return;
+    const go = (dir: number) => track.scrollBy({ left: dir * track.clientWidth, behavior: 'smooth' });
+    root.querySelector('.td-dslider__btn--prev')?.addEventListener('click', () => go(-1));
+    root.querySelector('.td-dslider__btn--next')?.addEventListener('click', () => go(1));
+    track.addEventListener('scroll', () => {
+      const i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+      dots.forEach((d, n) => d.classList.toggle('is-active', n === i));
+    }, { passive: true });
+  });
 </script>

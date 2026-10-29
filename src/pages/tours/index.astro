@@ -16,6 +16,7 @@ const SAPA_HUB_ONLY = new Set([
   'hoang-lien-old-growth-forest-trek',
   'ky-quan-san-4d3n',
   'ky-quan-san-trekking',
+  'mai-chau-ha-giang-10d9n',
 ]);
 // Lai Châu Loop is pinned as the first visible card — not hub-only
 const laiChauLoop = tours.find((t: any) => t.slug === 'lai-chau-loop');
@@ -51,6 +52,7 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
       <button class="filter-pill" data-filter="south">South Vietnam</button>
       <button class="filter-pill" data-filter="mekong-delta">Mekong Delta</button>
       <button class="filter-pill" data-filter="hiking">Hiking &amp; Trekking</button>
+      <button class="filter-pill" data-filter="multi-activity">Multi-activity</button>
       <button class="filter-pill" data-filter="soon">Coming Soon</button>
     </div>
   </div>
@@ -72,6 +74,24 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
             <div class="hh__region">North Vietnam</div>
             <h3 class="hh__name">Hiking &amp; Trekking</h3>
             <p class="hh__tagline">From Mường Hoa valley treks to Fansipan's 3,143m summit. Five trails. All done differently.</p>
+            <div class="hh__footer">
+              <span class="hh__cta">Explore routes →</span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <!-- Multi-activity Adventures hub card -->
+      <article class="hh reveal" data-tour-region="multi-activity" data-tour-tags="multi-activity north">
+        <a href="/tours/multi-activity" class="hh__inner">
+          <div class="hh__image">
+            <img src="/tours/mai-chau-ha-giang/gallery-1.webp" alt="Multi-activity Adventures" loading="eager" />
+            <span class="hh__badge">Multi-activity</span>
+          </div>
+          <div class="hh__body">
+            <div class="hh__region">North Vietnam</div>
+            <h3 class="hh__name">Multi-activity Adventures</h3>
+            <p class="hh__tagline">E-bikes, trails and long roads in one journey — from Mai Châu's rice valleys to the Đồng Văn Karst Plateau.</p>
             <div class="hh__footer">
               <span class="hh__cta">Explore routes →</span>
             </div>

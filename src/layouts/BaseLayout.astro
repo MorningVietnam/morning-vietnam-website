@@ -18,6 +18,12 @@ interface Props {
   publishedAt?: Date;
   author?: string;
   ogImage?: string;
+  /**
+   * Bỏ đuôi "| Morning Vietnam" khỏi thẻ <title>.
+   * Dùng cho bài blog: tiêu đề bài vốn đã dài, thêm đuôi sẽ bị Google cắt (~60 ký tự).
+   * Mặc định false → các trang khác của site giữ nguyên như cũ.
+   */
+  noBrandSuffix?: boolean;
 }
 
 const siteURL = 'https://morningvietnam.co';
@@ -49,6 +55,7 @@ const {
   publishedAt,
   author,
   ogImage,
+  noBrandSuffix = false,
 } = Astro.props;
 
 const ogImageFinal = ogImage ?? image;
@@ -59,7 +66,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? siteURL);
 const isHome = stripLang(Astro.url.pathname) === '/';
 const pageTitle = isHome
   ? HOME_TITLE[currentLang]
-  : `${title} | Morning Vietnam`;
+  : noBrandSuffix
+    ? title
+    : `${title} | Morning Vietnam`;
 
 // Danh sách bản dịch của trang hiện tại → sinh thẻ hreflang cho Google.
 // Chỉ liệt kê ngôn ngữ ĐÃ thật sự có bản dịch (khai báo trong src/i18n/config.ts).

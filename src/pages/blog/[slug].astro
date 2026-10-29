@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogSidebar from '../../components/BlogSidebar.astro';
 import BlogCard from '../../components/BlogCard.astro';
+import StickyTourBar from '../../components/blog/StickyTourBar.astro';
 import { BLOG_CATEGORIES } from '../../data/blog-categories';
 import { tours } from '../../data/tours';
 
@@ -40,6 +41,7 @@ const morePosts = allPosts
   ogType="article"
   publishedAt={post.data.publishedAt}
   author={post.data.author.name}
+  noBrandSuffix
 >
   <div class="blog-progress"><div class="blog-progress__fill" id="blog-progress-fill"></div></div>
 
@@ -188,6 +190,12 @@ const morePosts = allPosts
       }))
     })} />
   )}
+
+  {/* Thanh CTA dính: hiện sau khi cuộn ~25% bài, có thể đóng.
+      Nếu bài khai báo relatedTourSlug thì dẫn thẳng tour đó, không thì về /tours. */}
+  <StickyTourBar
+    href={post.data.relatedTourSlug ? `/tours/${post.data.relatedTourSlug}` : '/tours'}
+  />
 </BaseLayout>
 
 <style>

@@ -119,9 +119,9 @@ function fmtDate(iso: string) {
                   )}
 
                   <div class="hub-card__footer">
-                    {tour.price
-                      ? <span class="hub-card__price">{tour.price}</span>
-                      : <span class="hub-card__price hub-card__price--tbd">Enquire for price</span>
+                    {(tour as any).tripGrading
+                      ? <span class={`hub-card__difficulty hub-card__difficulty--l${(tour as any).tripGrading.level}`}>{(tour as any).tripGrading.label}</span>
+                      : null
                     }
                     <span class="hub-card__cta">View tour →</span>
                   </div>
@@ -581,12 +581,21 @@ function fmtDate(iso: string) {
 .hub-card--c3 .hub-card__footer { border-top: 1px solid rgba(4,51,65,0.15); }
 .hub-card--c4 .hub-card__footer { border-top: 1px solid rgba(125,226,209,0.18); }
 
-.hub-card__price {
+.hub-card__difficulty {
   font-family: var(--font-heading);
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1.5px solid currentColor;
 }
-.hub-card__price--tbd { font-size: 12px; opacity: 0.6; font-weight: 500; }
+.hub-card__difficulty--l1 { color: #1da0a0; }
+.hub-card__difficulty--l2 { color: #5bba8f; }
+.hub-card__difficulty--l3 { color: #e0a830; }
+.hub-card__difficulty--l4 { color: #ea6739; }
+.hub-card__difficulty--l5 { color: #c0392b; }
 
 .hub-card__cta {
   font-size: 12px;

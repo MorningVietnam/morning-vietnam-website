@@ -559,7 +559,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
           ))}
         </div>
         <div class="td-grading__criteria">
-          {tripGrading.criteria.map((c: any) => (
+          {(tripGrading.criteria ?? []).map((c: any) => (
             <div class="td-grading__crit-card">
               <div class="td-grading__crit-top">
                 <p class="td-grading__crit-label">{c.label}</p>

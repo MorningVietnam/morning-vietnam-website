@@ -1784,6 +1784,7 @@ export const tours: Tour[] = [
     hub:        "Nha Trang",
     languages:  ["EN", "FR", "DE"],
     comingSoon: false,
+    tripGrading: { level: 1, label: "Basic" },
     image:      "/tours/mui-doi/1.webp",
 
     selectorMode: 'vehicle-only',
@@ -2804,6 +2805,7 @@ export const tours: Tour[] = [
     hub:         "Hanoi",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
+    tripGrading: { level: 1, label: "Basic" },
     image:       "/tours/sapa-trekking-classic/Sa Pa Trekking Classic-3.webp",
 
     panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
@@ -3068,6 +3070,7 @@ export const tours: Tour[] = [
     hub:         "Sa Pa",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
+    tripGrading: { level: 1, label: "Basic" },
     image:       "/tours/sapa-nam-cang/7.webp",
     panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
     selectorMode: 'duration-tabs',
@@ -3447,6 +3450,7 @@ export const tours: Tour[] = [
     hubUrl:      "/tours/sapa-lai-chau",
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
+    tripGrading: { level: 1, label: "Basic" },
     image:       "/tours/into-nam-luc/1.webp",
     panoramicImage: "/tours/sapa-trekking-classic/panoramic.jpg",
     selectorMode: 'vehicle-only',

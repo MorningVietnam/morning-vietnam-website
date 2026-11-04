@@ -286,32 +286,12 @@ function initFAQ() {
 
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 11. TOUR FILTER (Tours page)
+// 11. TOUR FILTER — handled by inline script in tours/index.astro
 // ─────────────────────────────────────────────────────────────────────────────
 
 function initTourFilter() {
-  const filters = document.querySelectorAll('[data-filter]');
-  const cards   = document.querySelectorAll('[data-tour-region]');
-  if (!filters.length || !cards.length) return;
-
-  const ease = 'cubic-bezier(0.645, 0.045, 0.355, 1)';
-
-  filters.forEach((filter) => {
-    filter.addEventListener('click', () => {
-      const region = filter.dataset.filter;
-
-      filters.forEach((f) => f.classList.remove('active'));
-      filter.classList.add('active');
-
-      cards.forEach((card) => {
-        const match = region === 'all' || card.dataset.tourRegion === region;
-        card.style.transition     = `opacity 0.4s ${ease}, transform 0.4s ${ease}`;
-        card.style.opacity        = match ? '1' : '0.3';
-        card.style.transform      = match ? 'scale(1)' : 'scale(0.97)';
-        card.style.pointerEvents  = match ? 'all' : 'none';
-      });
-    });
-  });
+  // No-op: the tours page has its own more complete filter logic inline.
+  // This stub prevents the old opacity-0.3 handler from conflicting.
 }
 
 

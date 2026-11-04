@@ -84,6 +84,19 @@ const isTrekkingTour = !!tripGrading;
 // section and the elevation chart (and their "pending" placeholders).
 const privateRoute   = !!(tour as any).privateRoute;
 const journeyParts: any = (tour as any).journeyParts || null;
+// hideSeasonality: true = don't render the "By season" (When to go) section on this tour.
+const hideSeasonality = !!(tour as any).hideSeasonality;
+const MODE_META: Record<string, { label: string; icon: string }> = {
+  bike:  { label: 'E-bike',  icon: 'bike' },
+  trek:  { label: 'Trek',    icon: 'walk' },
+  walk:  { label: 'On foot', icon: 'walk' },
+  drive: { label: 'Drive',   icon: 'car' },
+  fly:   { label: 'Flight',  icon: 'plane' },
+  boat:  { label: 'Boat',    icon: 'ship' },
+};
+const usedModes = (journeyParts && tour.itinerary)
+  ? Object.keys(MODE_META).filter((k) => tour.itinerary!.some((d: any) => (d.modes || []).some((m: any) => m.type === k)))
+  : [];
 const showChart      = !!(elevation && elevation.length > 0 && !journeyParts);
 
 const tripInfoData   = (tour.tripInfo as any) || null;
@@ -887,10 +900,9 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
       {journeyParts && itineraryDays && (
         <div class="td-journey">
           <div class="td-journey__legend" aria-hidden="true">
-            <span class="td-mode td-mode--bike"><i class="ti ti-bike"></i>E-bike</span>
-            <span class="td-mode td-mode--trek"><i class="ti ti-walk"></i>Trek</span>
-            <span class="td-mode td-mode--drive"><i class="ti ti-car"></i>Drive</span>
-            <span class="td-mode td-mode--boat"><i class="ti ti-ship"></i>Boat</span>
+            {usedModes.map((k) => (
+              <span class={`td-mode td-mode--${k}`}><i class={`ti ti-${MODE_META[k].icon}`}></i>{MODE_META[k].label}</span>
+            ))}
           </div>
           {journeyParts.map((part) => (
             <div class="td-journey__part">
@@ -919,7 +931,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                         <h3 class="td-journey__route">{d.route || d.title}</h3>
                         <div class="td-journey__meta td-journey__meta--card">
                           {(d.modes || []).map((m: any) => (
-                            <span class={`td-mode td-mode--${m.type}`}><i class={`ti ti-${m.type === 'bike' ? 'bike' : m.type === 'trek' ? 'walk' : m.type === 'boat' ? 'ship' : 'car'}`} aria-hidden="true"></i>{m.label}</span>
+                            <span class={`td-mode td-mode--${m.type}`}><i class={`ti ti-${(MODE_META[m.type] || MODE_META.drive).icon}`} aria-hidden="true"></i>{m.label}</span>
                           ))}
                         </div>
                         <div class="td-journey__meta td-journey__meta--card">
@@ -1207,7 +1219,7 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
               {day.modes && day.modes.length > 0 && (
                 <div class="td-journey__meta td-journey__meta--card">
                   {day.modes.map((m: any) => (
-                    <span class={`td-mode td-mode--${m.type}`}><i class={`ti ti-${m.type === 'bike' ? 'bike' : m.type === 'trek' ? 'walk' : m.type === 'boat' ? 'ship' : 'car'}`} aria-hidden="true"></i>{m.label}</span>
+                    <span class={`td-mode td-mode--${m.type}`}><i class={`ti ti-${(MODE_META[m.type] || MODE_META.drive).icon}`} aria-hidden="true"></i>{m.label}</span>
                   ))}
                 </div>
               )}
@@ -1429,41 +1441,43 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   )}
 
   <!-- ═══ S9 · b-season (When to go) ═══════════════════════════ -->
-  <section class="td-season">
-    <div class="td-season__inner">
-      <p class="section-label">When to go</p>
-      <h2 class="td-season__heading">By season.</h2>
-      <p class="td-season__intro">{season?.intro || "There's no wrong time. But here's what each season gives you."}</p>
+  {!hideSeasonality && (
+    <section class="td-season">
+      <div class="td-season__inner">
+        <p class="section-label">When to go</p>
+        <h2 class="td-season__heading">By season.</h2>
+        <p class="td-season__intro">{season?.intro || "There's no wrong time. But here's what each season gives you."}</p>
 
-      <div class="td-season__bar">
-        {(season?.months || []).map((m: any) => (
-          <div class={`td-season__month td-season__month--${m.level}`}>
-            <span class="td-season__month-label">{m.name}</span>
-            <span class="td-season__month-mark">{
-              m.level === 'best' ? '★' :
-              m.level === 'good' ? '◎' :
-              '~'
-            }</span>
-          </div>
-        ))}
-      </div>
+        <div class="td-season__bar">
+          {(season?.months || []).map((m: any) => (
+            <div class={`td-season__month td-season__month--${m.level}`}>
+              <span class="td-season__month-label">{m.name}</span>
+              <span class="td-season__month-mark">{
+                m.level === 'best' ? '★' :
+                m.level === 'good' ? '◎' :
+                '~'
+              }</span>
+            </div>
+          ))}
+        </div>
 
-      <div class="td-season__legend">
-        <span><i class="td-season__dot td-season__dot--best"></i>Best conditions</span>
-        <span><i class="td-season__dot td-season__dot--good"></i>Good, some haze</span>
-        <span><i class="td-season__dot td-season__dot--wet"></i>Wet season — still doable</span>
-      </div>
+        <div class="td-season__legend">
+          <span><i class="td-season__dot td-season__dot--best"></i>Best conditions</span>
+          <span><i class="td-season__dot td-season__dot--good"></i>Good, some haze</span>
+          <span><i class="td-season__dot td-season__dot--wet"></i>Wet season — still doable</span>
+        </div>
 
-      <div class="td-season__notes">
-        {(season?.notes || []).map((note: any, i: number) => (
-          <div class={`td-season__note${i === 1 ? ' td-season__note--wet' : ''}`}>
-            <h4>{note.title}</h4>
-            <p>{note.desc}</p>
-          </div>
-        ))}
+        <div class="td-season__notes">
+          {(season?.notes || []).map((note: any, i: number) => (
+            <div class={`td-season__note${i === 1 ? ' td-season__note--wet' : ''}`}>
+              <h4>{note.title}</h4>
+              <p>{note.desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <!-- ═══ S7 · b-reviews ════════════════════════════════════════ -->
   <section class="td-reviews">
@@ -2526,6 +2540,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   .td-mode--trek  { background: var(--color-java); color: #fff; }
   .td-mode--drive { background: var(--color-white-nectar); color: var(--color-nordic); box-shadow: inset 0 0 0 1px rgba(4,51,65,0.15); }
   .td-mode--boat  { background: var(--color-riptide); color: var(--color-nordic); }
+  .td-mode--walk  { background: var(--color-java); color: #fff; }
+  .td-mode--fly   { background: var(--color-nordic); color: #fff; }
   .td-jcard { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 14px rgba(4,51,65,0.10); min-width: 0; }
   .td-jcard__body { padding: 18px 22px 22px; }
   .td-jcard__day { margin: 0 0 2px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-java); }

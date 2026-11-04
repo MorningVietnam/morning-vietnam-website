@@ -130,6 +130,7 @@ export interface Tour {
   routeMarkers?:     RouteMarkers;  // the 4 map markers (start/summit/shelter/end) for the gpxFile route map above — required if gpxFile is set, otherwise the map renders with no markers
   routeDays?:        { label: string; color: string }[];  // optional per-day line colours for the route map — one entry per <trk> in gpxFile, in order. Also drives the legend under the map.
   journeyParts?:     JourneyPart[];  // multi-activity tours: when set, the elevation chart is replaced by a day-by-day journey overview (uses each itinerary day's `route` + `modes` + `accommodation`), grouped into these parts
+  hideSeasonality?:  boolean;  // true = hide the "By season" (When to go) section on the tour page
   privateRoute?:     boolean;  // true = deliberately don't publish the exact route: hides the "Route map" section AND the elevation chart, and suppresses their "pending" placeholders. Use together with tripGrading (which would otherwise show a "Route map pending" box when gpxFile is missing).
 }
 
@@ -6208,7 +6209,7 @@ export const tours: Tour[] = [
     hub:         "Da Nang",
     languages:   ["EN"],
     comingSoon:  false,
-    image:       "/tours/vietnam-heritage-luxury/gallery-2.webp",
+    image:       "/tours/vietnam-heritage-luxury/cover.webp",
 
     panoramicImage: "/tours/vietnam-heritage-luxury/panorama.jpg",
 
@@ -6225,9 +6226,19 @@ export const tours: Tour[] = [
       { src: "/tours/vietnam-heritage-luxury/gallery-10.webp", alt: "Boats trading at the Cái Răng floating market" },
       { src: "/tours/vietnam-heritage-luxury/gallery-11.webp", alt: "A visitor walking towards a white mosque in a Cham village near Châu Đốc" },
       { src: "/tours/vietnam-heritage-luxury/gallery-12.webp", alt: "Aerial view of Khem Beach and its turquoise water on Phú Quốc" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-13.webp", alt: "Aerial view of Thiên Mụ Pagoda and its grounds beside a lake in Huế" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-14.webp", alt: "A bridge crossing a turquoise lagoon below forested mountains on the central coast" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-15.webp", alt: "Golden terraced rice fields in the northern mountains, with light breaking through the clouds" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-16.webp", alt: "Two young girls in colourful ethnic clothing laughing together in Đồng Văn" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-17.webp", alt: "A cable car crossing the sea towards small islands off Phú Quốc" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-18.webp", alt: "The Khuê Văn Các pavilion in the Temple of Literature, lit up at night" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-19.webp", alt: "A visitor in a conical hat on a viewing platform above green rice fields in An Giang" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-20.webp", alt: "An infinity pool at the edge of green rice fields, with mountains on the horizon" },
+      { src: "/tours/vietnam-heritage-luxury/gallery-21.webp", alt: "A visitor in a conical hat walking down stone and tile steps between red-roofed buildings" },
     ],
 
     privateRoute: true,
+    hideSeasonality: true,
 
     journeyParts: [
       { label: "Part 1 · Central coast: Da Nang, Hội An and Huế", from: 1, to: 5 },

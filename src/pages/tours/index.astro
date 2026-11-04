@@ -17,6 +17,7 @@ const SAPA_HUB_ONLY = new Set([
   'ky-quan-san-4d3n',
   'ky-quan-san-trekking',
   'mai-chau-ha-giang-10d9n',
+  'vietnam-heritage-luxury-21d20n',
 ]);
 // Lai Châu Loop is pinned as the first visible card — not hub-only
 const laiChauLoop = tours.find((t: any) => t.slug === 'lai-chau-loop');
@@ -53,6 +54,7 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
       <button class="filter-pill" data-filter="mekong-delta">Mekong Delta</button>
       <button class="filter-pill" data-filter="hiking">Hiking &amp; Trekking</button>
       <button class="filter-pill" data-filter="multi-activity">Multi-activity</button>
+      <button class="filter-pill" data-filter="grand-journey">Grand Journeys</button>
       <button class="filter-pill" data-filter="soon">Coming Soon</button>
     </div>
   </div>
@@ -94,6 +96,24 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
             <p class="hh__tagline">E-bikes, trails and long roads in one journey — from Mai Châu's rice valleys to the Đồng Văn Karst Plateau.</p>
             <div class="hh__footer">
               <span class="hh__cta">Explore routes →</span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <!-- Grand Journeys hub card -->
+      <article class="hh reveal" data-tour-region="grand-journey" data-tour-tags="grand-journey north central south">
+        <a href="/tours/grand-journeys" class="hh__inner">
+          <div class="hh__image">
+            <img src="/tours/vietnam-heritage-luxury/cover.webp" alt="Grand Journeys" loading="eager" />
+            <span class="hh__badge">Grand Journeys</span>
+          </div>
+          <div class="hh__body">
+            <div class="hh__region">Whole of Vietnam · Private</div>
+            <h3 class="hh__name">Grand Journeys</h3>
+            <p class="hh__tagline">Private, multi-week itineraries across Vietnam. Premium stays, every transfer arranged, shaped around you.</p>
+            <div class="hh__footer">
+              <span class="hh__cta">Explore journeys →</span>
             </div>
           </div>
         </a>

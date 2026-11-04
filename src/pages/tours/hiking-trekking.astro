@@ -94,7 +94,11 @@ function fmtDate(iso: string) {
                 <div class="hub-card__image">
                   <img src={tour.image} alt={tour.name} loading={i < 2 ? 'eager' : 'lazy'} style={tour.imagePosition ? `object-position:${tour.imagePosition}` : undefined} />
                   <span class="hub-card__duration">{durationLabel}</span>
-                  <span class="hub-card__departs">📍 From {tour.hub}</span>
+                  {(tour as any).tripGrading && (
+                    <span class={`hub-card__grade hub-card__grade--l${(tour as any).tripGrading.level}`}>
+                      {(tour as any).tripGrading.label}
+                    </span>
+                  )}
                 </div>
 
                 <div class="hub-card__body">
@@ -464,18 +468,25 @@ function fmtDate(iso: string) {
   z-index: 2;
 }
 
-.hub-card__departs {
+.hub-card__grade {
   position: absolute;
   top: 12px; right: 12px;
-  background: rgba(255,255,255,0.88);
-  color: var(--color-nordic);
   font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   padding: 4px 10px;
   border-radius: 100px;
+  border: 1.5px solid currentColor;
   z-index: 2;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.35);
 }
+.hub-card__grade--l1 { color: #7de2d1; }
+.hub-card__grade--l2 { color: #7de2d1; }
+.hub-card__grade--l3 { color: #f5c842; }
+.hub-card__grade--l4 { color: #ea6739; }
+.hub-card__grade--l5 { color: #e05555; }
 
 .hub-card__body {
   padding: 22px 20px 18px;

@@ -6210,7 +6210,7 @@ export const tours: Tour[] = [
     comingSoon:  false,
     image:       "/tours/vietnam-heritage-luxury/gallery-2.webp",
 
-    panoramicImage: "/tours/vietnam-heritage-luxury/panorama.webp",
+    panoramicImage: "/tours/vietnam-heritage-luxury/panorama.jpg",
 
     gallery: [
       { src: "/tours/vietnam-heritage-luxury/gallery-1.webp", alt: "The brick towers of the Mỹ Sơn Cham sanctuary below a green mountain" },

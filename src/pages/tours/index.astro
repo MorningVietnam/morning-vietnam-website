@@ -54,7 +54,7 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
       <button class="filter-pill" data-filter="mekong-delta">Mekong Delta</button>
       <button class="filter-pill" data-filter="hiking">Hiking &amp; Trekking</button>
       <button class="filter-pill" data-filter="multi-activity">Multi-activity</button>
-      <button class="filter-pill" data-filter="grand-journey">Grand Journeys</button>
+      <button class="filter-pill" data-filter="grand-journey">Package Tours</button>
       <button class="filter-pill" data-filter="soon">Coming Soon</button>
     </div>
   </div>
@@ -66,7 +66,7 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
       {laiChauLoop && <TourCard tour={laiChauLoop} index={0} />}
 
       <!-- Hiking & Trekking hub card -->
-      <article class="hh reveal" data-tour-region="hiking" data-tour-tags="hiking north">
+      <article class="hh reveal" data-tour-region="hiking" data-tour-tags="hiking north" data-always-show="true">
         <a href="/tours/hiking-trekking" class="hh__inner">
           <div class="hh__image">
             <img src="/tours/fansipan/2.webp" alt="Hiking & Trekking" loading="eager" />
@@ -84,7 +84,7 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
       </article>
 
       <!-- Multi-activity Adventures hub card -->
-      <article class="hh reveal" data-tour-region="multi-activity" data-tour-tags="multi-activity north">
+      <article class="hh reveal" data-tour-region="multi-activity" data-tour-tags="multi-activity north" data-always-show="true">
         <a href="/tours/multi-activity" class="hh__inner">
           <div class="hh__image">
             <img src="/tours/mai-chau-ha-giang/gallery-1.webp" alt="Multi-activity Adventures" loading="eager" />
@@ -101,16 +101,16 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
         </a>
       </article>
 
-      <!-- Grand Journeys hub card -->
-      <article class="hh reveal" data-tour-region="grand-journey" data-tour-tags="grand-journey north central south">
+      <!-- Package Tours hub card -->
+      <article class="hh reveal" data-tour-region="grand-journey" data-tour-tags="grand-journey north central south" data-always-show="true">
         <a href="/tours/grand-journeys" class="hh__inner">
           <div class="hh__image">
-            <img src="/tours/vietnam-heritage-luxury/cover.webp" alt="Grand Journeys" loading="eager" />
-            <span class="hh__badge">Grand Journeys</span>
+            <img src="/tours/vietnam-heritage-luxury/cover.webp" alt="Package Tours" loading="eager" />
+            <span class="hh__badge">Package Tours</span>
           </div>
           <div class="hh__body">
             <div class="hh__region">Whole of Vietnam · Private</div>
-            <h3 class="hh__name">Grand Journeys</h3>
+            <h3 class="hh__name">Package Tours</h3>
             <p class="hh__tagline">Private, multi-week itineraries across Vietnam. Premium stays, every transfer arranged, shaped around you.</p>
             <div class="hh__footer">
               <span class="hh__cta">Explore journeys →</span>
@@ -119,8 +119,8 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
         </a>
       </article>
 
-      <!-- Bespoke card — second in grid -->
-      <article class="bc reveal" data-tour-region="bespoke">
+      <!-- Bespoke card -->
+      <article class="bc reveal" data-tour-region="bespoke" data-always-show="true">
         <a href="/contact" class="bc__inner">
           <div class="bc__image">
             <img src="/bespoke-tour.jpg" alt="Bespoke Tour" loading="eager" />
@@ -132,6 +132,24 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
             <p class="bc__tagline">Only for You and your Beloved. We design the entire journey around your story — your pace, your places, your moments.</p>
             <div class="bc__footer">
               <span class="bc__cta">Plan your journey →</span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <!-- For DIY Travellers card -->
+      <article class="diy reveal" data-tour-region="diy" data-always-show="true">
+        <a href="/contact" class="diy__inner">
+          <div class="diy__image">
+            <img src="/bespoke-tour.jpg" alt="For DIY Travellers" loading="eager" />
+            <span class="diy__badge">À la carte</span>
+          </div>
+          <div class="diy__body">
+            <div class="diy__region">Your Itinerary · Your Pace</div>
+            <h3 class="diy__name">For DIY Travellers</h3>
+            <p class="diy__tagline">Prefer to plan your own trip? Pick the services you need — transfers, local hosts, accommodation — and build it your way.</p>
+            <div class="diy__footer">
+              <span class="diy__cta">Build your trip →</span>
             </div>
           </div>
         </a>
@@ -456,6 +474,95 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
     color: white;
   }
 
+  /* ── DIY Travellers card ── */
+  .diy {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(4, 51, 65, 0.10);
+    transition: transform 0.4s cubic-bezier(0.645, 0.045, 0.355, 1),
+                box-shadow 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+  .diy:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 56px rgba(4, 51, 65, 0.18);
+  }
+  .diy__inner {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+  .diy__image {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .diy__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .diy:hover .diy__image img { transform: scale(1.08); }
+  .diy__badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: var(--color-java);
+    backdrop-filter: blur(4px);
+    color: white;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    z-index: 1;
+  }
+  .diy__body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    background: var(--color-java);
+  }
+  .diy__region {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .diy__name {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: white;
+  }
+  .diy__tagline {
+    font-size: 14px;
+    line-height: 1.55;
+    flex: 1;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .diy__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.22);
+  }
+  .diy__cta {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: white;
+  }
+
   /* Popup */
   .b-popup {
     position: fixed;
@@ -560,10 +667,11 @@ const hubOnlyTours = tours.filter((t: any) => SAPA_HUB_ONLY.has(t.slug));
   // tags — that's what keeps them out of "All tours" and "North Vietnam"
   // and reachable only via their own filter (currently "hiking").
   function cardMatches(card: HTMLElement, filter: string): boolean {
+    if (card.dataset.alwaysShow === 'true') return true;
     const region = card.dataset.tourRegion ?? '';
     const tags = (card.dataset.tourTags ?? '').split(' ').filter(Boolean);
     if (card.dataset.hubOnly === 'true') return tags.includes(filter);
-    return region === filter || tags.includes(filter) || region === 'bespoke';
+    return region === filter || tags.includes(filter);
   }
 
   function applyFilter(filter: string) {

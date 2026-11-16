@@ -22,6 +22,17 @@ const hikingTours = HIKING_SLUGS
 
 const CARD_BGTYPES = ['c4', 'c1', 'c2', 'c3', 'c4', 'c1', 'c2', 'c3'] as const;
 
+// Lowest price (USD) across a tour's options and their group-size tiers — shown as the "From $…" teaser.
+function lowestPriceUSD(t: any): number | null {
+  const prices: number[] = [];
+  for (const o of (t.durationOptions || [])) {
+    if (typeof o.price === 'number') prices.push(o.price);
+    for (const p of (o.paxTiers || [])) if (typeof p.price === 'number') prices.push(p.price);
+  }
+  if (!prices.length && typeof t.priceUSD === 'number') prices.push(t.priceUSD);
+  return prices.length ? Math.min(...prices) : null;
+}
+
 function fmtDate(iso: string) {
   return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
 }
@@ -105,14 +116,6 @@ function fmtDate(iso: string) {
                   <h3 class="hub-card__name">{tour.name}</h3>
                   <p class="hub-card__tagline">{tour.tagline}</p>
 
-                  {tour.highlights && tour.highlights.length > 0 && (
-                    <ul class="hub-card__highlights">
-                      {tour.highlights.slice(0, 3).map(h => (
-                        <li>{h}</li>
-                      ))}
-                    </ul>
-                  )}
-
                   {tour.upcomingDates && tour.upcomingDates.length > 0 && (
                     <div class="hub-card__dates" data-dates-wrap>
                       <p class="hub-card__dates-label">Next departures</p>
@@ -123,6 +126,9 @@ function fmtDate(iso: string) {
                   )}
 
                   <div class="hub-card__footer">
+                    {lowestPriceUSD(tour) != null && (
+                      <span class="hub-card__price">From ${lowestPriceUSD(tour)}</span>
+                    )}
                     <span class="hub-card__cta">View tour →</span>
                   </div>
                 </div>
@@ -519,22 +525,6 @@ function fmtDate(iso: string) {
   flex: 1;
 }
 
-.hub-card__highlights {
-  list-style: none;
-  padding: 0; margin: 4px 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.hub-card__highlights li {
-  font-size: 12px;
-  opacity: 0.7;
-  padding-left: 14px;
-  position: relative;
-  line-height: 1.4;
-}
-.hub-card__highlights li::before { content: '→'; position: absolute; left: 0; }
-
 .hub-card__dates { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
 .hub-card__dates-label {
   font-size: 10px; font-weight: 700;
@@ -604,6 +594,11 @@ function fmtDate(iso: string) {
 .hub-card__difficulty--l4 { color: #ea6739; }
 .hub-card__difficulty--l5 { color: #c0392b; }
 
+.hub-card__price {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+}
 .hub-card__cta {
   font-size: 12px;
   font-weight: 700;

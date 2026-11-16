@@ -12,9 +12,9 @@
 
 ## Tours
 - [All tours](https://morningvietnam.co/tours)
-- [Fansipan - Only Trekking](https://morningvietnam.co/tours/fansipan-trekking): 2 days 1 night from Sa Pa to the 3,143m summit.
-- [Putaleng - Only Trekking](https://morningvietnam.co/tours/putaleng-trekking): 2 days 1 night from Sa Pa through the rhododendron forest to 3,049m.
-- [Ky Quan San - Only Trekking](https://morningvietnam.co/tours/ky-quan-san-trekking): 3 days 2 nights from Sa Pa to 3,046m via the Nui Muoi ridge.
+- [Fansipan - Trekking](https://morningvietnam.co/tours/fansipan-trekking): 2 days 1 night from Sa Pa to the 3,143m summit.
+- [Putaleng - Trekking](https://morningvietnam.co/tours/putaleng-trekking): 2 days 1 night from Sa Pa through the rhododendron forest to 3,049m.
+- [Ky Quan San - Trekking](https://morningvietnam.co/tours/ky-quan-san-trekking): 3 days 2 nights from Sa Pa to 3,046m via the Nui Muoi ridge.
 - [Sa Pa - Lai Chau](https://morningvietnam.co/tours/sa-pa-lai-chau)
 - [Sa Pa - Nam Cang](https://morningvietnam.co/tours/sapa-nam-cang)
 - [Sa Pa Trekking Classic](https://morningvietnam.co/tours/sapa-trekking-classic)

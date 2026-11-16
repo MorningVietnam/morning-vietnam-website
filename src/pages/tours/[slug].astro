@@ -47,6 +47,11 @@ const unlock       = tour.unlockChallenge;
 const season       = tour.seasonality;
 const faqs         = tour.faqs;
 const upcomingDates = (tour as any).upcomingDates as string[] | undefined;
+const dateNotes: Record<string, string> = (tour as any).upcomingDateNotes || {};
+
+function fmtDayMonth(iso: string) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
 
 function fmtDate(iso: string) {
   return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
@@ -86,6 +91,13 @@ const privateRoute   = !!(tour as any).privateRoute;
 const journeyParts: any = (tour as any).journeyParts || null;
 // hideSeasonality: true = don't render the "By season" (When to go) section on this tour.
 const hideSeasonality = !!(tour as any).hideSeasonality;
+// variants: sibling tour pages (e.g. "Only trekking" ↔ "Extended tour") → pills on the hero that link to each page.
+const variantPills: any[] = (((tour as any).variants as any[]) || [])
+  .map((v: any) => {
+    const t = tours.find((x: any) => x.slug === v.slug) as any;
+    return t ? { slug: v.slug, label: v.label, sub: t.durationOptions?.[0]?.label || (t.duration || []).join(' / ') } : null;
+  })
+  .filter(Boolean);
 const MODE_META: Record<string, { label: string; icon: string }> = {
   bike:  { label: 'E-bike',  icon: 'bike' },
   trek:  { label: 'Trek',    icon: 'walk' },
@@ -177,6 +189,27 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
         <h1 class="td-product__heading">{tour.name}</h1>
         {(tour as any).subtitle && (
           <p class="td-product__subtitle">{(tour as any).subtitle}</p>
+        )}
+
+        {variantPills.length > 1 && (
+          <nav class="td-variants" aria-label="Choose your version">
+            <p class="td-variants__label">Choose your version</p>
+            <div class="td-variants__list">
+              {variantPills.map((v: any) => (
+                v.slug === tour.slug ? (
+                  <span class="td-variant is-active" aria-current="page">
+                    <span class="td-variant__name">{v.label}</span>
+                    <span class="td-variant__sub">{v.sub}</span>
+                  </span>
+                ) : (
+                  <a class="td-variant" href={`/tours/${v.slug}`}>
+                    <span class="td-variant__name">{v.label}</span>
+                    <span class="td-variant__sub">{v.sub}</span>
+                  </a>
+                )
+              ))}
+            </div>
+          </nav>
         )}
 
         {hasDurationOptions ? (
@@ -333,6 +366,9 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                        class="td-upcoming__pill" data-date={d}>{fmtDate(d)}</a>
                   ))}
                 </div>
+                {upcomingDates.filter((d: string) => dateNotes[d]).map((d: string) => (
+                  <p class="td-upcoming__note" data-date={d}><strong>{fmtDayMonth(d)}</strong> · {dateNotes[d]}</p>
+                ))}
               </div>
             ) : (
               <p class="td-product__tagline" id="td-tagline-display">{tour.durationOptions[0].tagline}</p>
@@ -419,6 +455,9 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
                        class="td-upcoming__pill" data-date={d}>{fmtDate(d)}</a>
                   ))}
                 </div>
+                {upcomingDates.filter((d: string) => dateNotes[d]).map((d: string) => (
+                  <p class="td-upcoming__note" data-date={d}><strong>{fmtDayMonth(d)}</strong> · {dateNotes[d]}</p>
+                ))}
               </div>
             ) : (
               <p class="td-product__tagline">{tour.tagline}</p>
@@ -1400,7 +1439,10 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
         <div class="td-departures__list">
           {upcomingDates.map((date: string) => (
             <div class="td-departures__item" data-date={date}>
-              <span class="td-departures__date">{fmtDate(date)}</span>
+              <span class="td-departures__when">
+                <span class="td-departures__date">{fmtDate(date)}</span>
+                {dateNotes[date] && <span class="td-departures__note">{dateNotes[date]}</span>}
+              </span>
               <a href={`/contact?tour=${encodeURIComponent(tour.name)}&date=${encodeURIComponent(fmtDate(date))}`} class="td-departures__book">Reserve spot →</a>
             </div>
           ))}
@@ -1979,6 +2021,30 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
   }
 
   /* ── Duration tabs (1 Day / 2D1N / 3D2N) ─────────── */
+  /* ── Version switcher (Only trekking ↔ Extended tour) ── */
+  .td-variants { margin: 4px 0 18px; }
+  .td-variants__label {
+    margin: 0 0 8px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--color-text-muted, #aaa);
+  }
+  .td-variants__list { display: flex; gap: 8px; flex-wrap: wrap; }
+  .td-variant {
+    display: flex; flex-direction: column; gap: 2px;
+    flex: 1 1 0; min-width: 150px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(4, 51, 65, 0.18);
+    background: transparent;
+    color: var(--color-nordic);
+    text-decoration: none;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+  }
+  a.td-variant:hover { border-color: var(--color-java); color: var(--color-java); }
+  .td-variant.is-active { background: var(--color-java); border-color: var(--color-java); color: #fff; cursor: default; }
+  .td-variant__name { font-family: var(--font-heading); font-size: 14px; font-weight: 700; line-height: 1.2; }
+  .td-variant__sub { font-size: 12px; font-weight: 500; opacity: 0.8; }
+
   .td-dur-tabs {
     display: flex;
     gap: 8px;
@@ -2110,6 +2176,14 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     transition: background 0.18s, color 0.18s;
     white-space: nowrap;
   }
+
+  .td-upcoming__note {
+    margin: 8px 0 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--color-nordic);
+  }
+  .td-upcoming__note strong { color: var(--color-sorbus); }
 
   .td-upcoming__pill:hover {
     background: var(--color-nordic);
@@ -3249,6 +3323,8 @@ const ctaContactLink = `/contact?tour=${encodeURIComponent(tour.name)}${firstOpt
     font-weight: 600;
     color: var(--color-light-cyan);
   }
+  .td-departures__when { display: flex; flex-direction: column; gap: 2px; }
+  .td-departures__note { font-size: 12px; color: var(--color-riptide); opacity: 0.85; }
   .td-departures__book {
     font-size: 13px;
     font-weight: 600;

@@ -119,6 +119,7 @@ export interface Tour {
   faqs?:             FAQ[];
   unlockChallenge?:  UnlockChallenge | null;
   upcomingDates?:    string[];   // ISO dates "YYYY-MM-DD" — past dates auto-hidden client-side
+  upcomingDateNotes?: Record<string, string>;  // optional short note per ISO date, e.g. {"2026-12-30": "Celebrating the New Year in the mountain"}
   subtitle?:         string;     // Secondary line shown under h1 on hero, smaller font
   priceNote?:        string;     // Small note shown below price block on hero
 
@@ -130,6 +131,7 @@ export interface Tour {
   routeMarkers?:     RouteMarkers;  // the 4 map markers (start/summit/shelter/end) for the gpxFile route map above — required if gpxFile is set, otherwise the map renders with no markers
   routeDays?:        { label: string; color: string }[];  // optional per-day line colours for the route map — one entry per <trk> in gpxFile, in order. Also drives the legend under the map.
   journeyParts?:     JourneyPart[];  // multi-activity tours: when set, the elevation chart is replaced by a day-by-day journey overview (uses each itinerary day's `route` + `modes` + `accommodation`), grouped into these parts
+  variants?:         { slug: string; label: string }[];  // sibling tour pages shown as a "choose your version" switcher on the hero (each pill links to that tour's own page; the current page is highlighted)
   hideSeasonality?:  boolean;  // true = hide the "By season" (When to go) section on the tour page
   privateRoute?:     boolean;  // true = deliberately don't publish the exact route: hides the "Route map" section AND the elevation chart, and suppresses their "pending" placeholders. Use together with tripGrading (which would otherwise show a "Route map pending" box when gpxFile is missing).
 }
@@ -4008,6 +4010,10 @@ export const tours: Tour[] = [
       "Red Dao herbal bath (Day 3)",
     ],
     hub:         "Hanoi",
+    variants: [
+      { slug: "fansipan-trekking", label: "Only trekking" },
+      { slug: "fansipan-3d2n", label: "Extended tour" },
+    ],
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     upcomingDates: ["2026-09-20", "2026-09-25"],
@@ -4306,7 +4312,7 @@ export const tours: Tour[] = [
   // ── Fansipan — Only Trekking (2D1N) ──────────────────────────────────────
   {
     slug:        "fansipan-trekking",
-    name:        "Fansipan — Only Trekking",
+    name:        "Fansipan - Trekking",
     region:      "north",
     tags:        ["hiking"],
     duration:    ["2D1N"],
@@ -4337,6 +4343,10 @@ export const tours: Tour[] = [
       "All meals: Day 1 lunch + dinner · Day 2 full board",
     ],
     hub:         "Sa Pa",
+    variants: [
+      { slug: "fansipan-trekking", label: "Only trekking" },
+      { slug: "fansipan-3d2n", label: "Extended tour" },
+    ],
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     upcomingDates: ["2026-09-21", "2026-09-26"],
@@ -4368,7 +4378,7 @@ export const tours: Tour[] = [
         tagline:  "Sa Pa → Trạm Tôn (1,900m) → 2,800m camp Day 1 → Fansipan 3,143m summit at dawn → Sa Pa Day 2.",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then · Hanoi pickup +450,000₫/person",
-        waText:   "Hi Morning Vietnam — I'd like to book Fansipan Only Trekking (2D1N). Can you tell me about available dates?",
+        waText:   "Hi Morning Vietnam — I'd like to book Fansipan - Trekking (2D1N). Can you tell me about available dates?",
         paxTiers: [
           { min: 1, max: 2, price: 148, priceVND: 3850000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
           { min: 3, max: 3, price: 148, priceVND: 3850000 },
@@ -4639,9 +4649,14 @@ export const tours: Tour[] = [
       "Red Dao herbal bath in Sì Thâu Chải (Day 3)",
     ],
     hub:         "Hanoi",
+    variants: [
+      { slug: "putaleng-trekking", label: "Only trekking" },
+      { slug: "putaleng-3d2n", label: "Extended tour" },
+    ],
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
-    upcomingDates: ["2026-10-09"],
+    upcomingDates: ["2026-12-11", "2026-12-29"],
+    upcomingDateNotes: {"2026-12-29": "Celebrating the New Year in the mountain"},
     image:       "/tours/putaleng/1.webp",
 
     panoramicImage: "/tours/putaleng/panorama.webp",
@@ -4918,7 +4933,7 @@ export const tours: Tour[] = [
   // ── Putaleng — Only Trekking (2D1N) ──────────────────────────────────────
   {
     slug:        "putaleng-trekking",
-    name:        "Putaleng — Only Trekking",
+    name:        "Putaleng - Trekking",
     region:      "north",
     tags:        ["hiking"],
     duration:    ["2D1N"],
@@ -4950,9 +4965,14 @@ export const tours: Tour[] = [
       "Red Dao herbal bath in Sì Thâu Chải (Day 2)",
     ],
     hub:         "Sa Pa",
+    variants: [
+      { slug: "putaleng-trekking", label: "Only trekking" },
+      { slug: "putaleng-3d2n", label: "Extended tour" },
+    ],
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
-    upcomingDates: ["2026-10-10"],
+    upcomingDates: ["2026-12-12", "2026-12-30"],
+    upcomingDateNotes: {"2026-12-30": "Celebrating the New Year in the mountain"},
     image:       "/tours/putaleng/4.webp",
 
     panoramicImage: "/tours/putaleng/panorama.webp",
@@ -4985,7 +5005,7 @@ export const tours: Tour[] = [
         tagline:  "Sa Pa → Tà Lèng (motorbike taxi to trailhead) → summit 3,049m Day 1 → Rhododendron Peak → Red Dao herbal bath → Sa Pa Day 2.",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then · Hanoi pickup +450,000₫/person",
-        waText:   "Hi Morning Vietnam — I'd like to book Putaleng Only Trekking (2D1N). Can you tell me about available dates?",
+        waText:   "Hi Morning Vietnam — I'd like to book Putaleng - Trekking (2D1N). Can you tell me about available dates?",
         paxTiers: [
           { min: 1, max: 2, price: 136, priceVND: 3550000, note: "This tour departs from a minimum of 3 guests. Booking as 1 or 2 — we'll confirm your date once the group reaches 3." },
           { min: 3, max: 3, price: 136, priceVND: 3550000 },
@@ -5417,6 +5437,12 @@ export const tours: Tour[] = [
       "Dao herbal bath in Sa Pa (Day 4)",
     ],
     hub:         "Hanoi",
+    variants: [
+      { slug: "ky-quan-san-trekking", label: "Only trekking" },
+      { slug: "ky-quan-san-4d3n", label: "Extended tour" },
+    ],
+    upcomingDates: ["2026-11-20", "2026-11-26", "2026-12-03", "2026-12-10", "2026-12-17", "2026-12-29"],
+    upcomingDateNotes: {"2026-12-29": "Celebrating the New Year in the mountain"},
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     image:       "/tours/ky-quan-san/9.webp",
@@ -5586,7 +5612,7 @@ export const tours: Tour[] = [
   // Prices set — see note on the 4D3N tour above. Price excludes the Hanoi sleeper bus.
   {
     slug:        "ky-quan-san-trekking",
-    name:        "Ky Quan San — Only Trekking",
+    name:        "Ky Quan San - Trekking",
     region:      "north",
     tags:        ["hiking"],
     duration:    ["3D2N"],
@@ -5617,6 +5643,12 @@ export const tours: Tour[] = [
       "Dao herbal bath in Sa Pa (Day 3)",
     ],
     hub:         "Sa Pa",
+    variants: [
+      { slug: "ky-quan-san-trekking", label: "Only trekking" },
+      { slug: "ky-quan-san-4d3n", label: "Extended tour" },
+    ],
+    upcomingDates: ["2026-11-21", "2026-11-27", "2026-12-04", "2026-12-11", "2026-12-18", "2026-12-30"],
+    upcomingDateNotes: {"2026-12-30": "Celebrating the New Year in the mountain"},
     languages:   ["EN", "FR", "DE"],
     comingSoon:  false,
     image:       "/tours/ky-quan-san/7.webp",
@@ -5654,7 +5686,7 @@ export const tours: Tour[] = [
         tagline:  "Sa Pa → Núi Muối hut Day 1 → Ky Quan San summit 3,046m Day 2 → descent + Dao herbal bath → Sa Pa Day 3.",
         ctaLabel: "I'm in →",
         ctaNote:  "No payment now · Pay 14 days before · Free cancellation until then",
-        waText:   "Hi Morning Vietnam — I'd like to book Ky Quan San Only Trekking (3D2N). Can you tell me about prices and available dates?",
+        waText:   "Hi Morning Vietnam — I'd like to book Ky Quan San - Trekking (3D2N). Can you tell me about prices and available dates?",
         paxTiers: [
           { min: 1, max: 3, price: 161, priceVND: 4200000, note: "This tour departs from a minimum of 4 guests. Booking as 1–3 — we'll confirm your date once the group reaches 4." },
           { min: 4, max: 5, price: 161, priceVND: 4200000 },
